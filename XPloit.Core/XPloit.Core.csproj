@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5333AA93-B792-47CC-B006-EF7E234C1234}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XPloit.Core</RootNamespace>
+    <AssemblyName>XPloit.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\SerializableBSONReferenceAttribute.cs" />
+    <Compile Include="Configs\ListenSocketConfig.cs" />
+    <Compile Include="Helpers\Crypt\AESHelper.cs" />
+    <Compile Include="Attributes\SerializableJSONReferenceAttribute.cs" />
+    <Compile Include="Enums\EPlatform.cs" />
+    <Compile Include="Enums\EReferenceType.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\SerializationExtension.cs" />
+    <Compile Include="Helpers\ArgumentHelper.cs" />
+    <Compile Include="Helpers\BitConverterHelper.cs" />
+    <Compile Include="Helpers\ConvertHelper.cs" />
+    <Compile Include="Helpers\HashHelper.cs" />
+    <Compile Include="Helpers\HexHelper.cs" />
+    <Compile Include="Helpers\SerializationHelper.cs" />
+    <Compile Include="Multi\StreamSpeedLimit.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Interfaces\IExploit.cs" />
+    <Compile Include="Interfaces\IJob.cs" />
+    <Compile Include="Interfaces\IListener.cs" />
+    <Compile Include="Interfaces\IPayload.cs" />
+    <Compile Include="Interfaces\ISession.cs" />
+    <Compile Include="Listeners\StreamListener.cs" />
+    <Compile Include="Listeners\TelnetListener.cs" />
+    <Compile Include="Multi\DomainUser.cs" />
+    <Compile Include="Multi\IPFilter.cs" />
+    <Compile Include="Multi\Password.cs" />
+    <Compile Include="Multi\Reference.cs" />
+    <Compile Include="Multi\Target.cs" />
+    <Compile Include="Multi\User.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sockets\Enums\EDissconnectReason.cs" />
+    <Compile Include="Sockets\Enums\EXPloitSocketMsg.cs" />
+    <Compile Include="Helpers\IPHelpers.cs" />
+    <Compile Include="Sockets\Exceptions\StopFirstException.cs" />
+    <Compile Include="Sockets\Exceptions\ProtocolException.cs" />
+    <Compile Include="Sockets\Exceptions\MaxLengthPacketException.cs" />
+    <Compile Include="Sockets\Interfaces\IXPloitSocketMsg.cs" />
+    <Compile Include="Sockets\Interfaces\IXPloitSocketProtocol.cs" />
+    <Compile Include="Sockets\Messages\XPloitMsgLogin.cs" />
+    <Compile Include="Sockets\Messages\XPloitMsgPing.cs" />
+    <Compile Include="Sockets\Protocols\XPloitSocketProtocol.cs" />
+    <Compile Include="Sockets\XPloitSocket.cs" />
+    <Compile Include="Sockets\XPloitSocketClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">
+      <Project>{912c9a24-1f3d-4dec-973c-02b93303ffd4}</Project>
+      <Name>XPloit.Res</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
