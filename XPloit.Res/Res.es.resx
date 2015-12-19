@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Connecting_To" xml:space="preserve">
+    <value>Connecting to '%0' ... </value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="Nothing_To_Show" xml:space="preserve">
+    <value>Nothing to show ... </value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
+  </data>
+  <data name="Press_Any_Key" xml:space="preserve">
+    <value>Press any key to continue</value>
   </data>
   <data name="Starting_Listener" xml:space="preserve">
     <value>Starting listener '%0' ... </value>

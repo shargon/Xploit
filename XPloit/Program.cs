@@ -21,34 +21,62 @@ namespace XPloit
 
             // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
             // \"CryptKey=#Crypt0M3#\" 
-            Config cfg = ArgumentHelper.Parse<Config>("\"SocketInterface={ListenPort=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
+            Config cfg = ArgumentHelper.Parse<Config>("\"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
 
-            List<IListener> listeners = new List<IListener>();
+            ConsoleCommand command = new ConsoleCommand();
 
-            // Lauch Telnet
-            if (cfg.SocketInterface != null) listeners.Add(new SocketListener(cfg.SocketInterface, true));
-
-            // Run listeners
-            foreach (IListener l in listeners)
+            if (cfg.Connect != null)
             {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.Write(Lang.Get("Starting_Listener", l.ToString()));
+                // Connect to server
+                SocketListener client = new SocketListener(cfg.Connect);
 
-                if (l.Start())
+                command.SetForeColor(ConsoleColor.Gray);
+                command.Write(Lang.Get("Connecting_To", client.ToString()));
+                if (client.Start())
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(Lang.Get("Ok").ToUpperInvariant());
+                    command.SetForeColor(ConsoleColor.Green);
+                    command.Write(Lang.Get("Ok").ToUpperInvariant(), true);
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(Lang.Get("Error").ToUpperInvariant());
+                    command.SetForeColor(ConsoleColor.Red);
+                    command.Write(Lang.Get("Error").ToUpperInvariant(), true);
                 }
-            }
 
-            // Console listener
-            CommandListener cmd = new CommandListener(new ConsoleCommand());
-            cmd.Start();
+                command.SetForeColor(ConsoleColor.DarkGray);
+                command.Write(Lang.Get("Press_Any_Key"), true);
+
+                Console.ReadKey();
+            }
+            else
+            {
+                List<IListener> listeners = new List<IListener>();
+
+                // Launch socket listener
+                if (cfg.Listen != null) listeners.Add(new SocketListener(cfg.Listen));
+
+                // Run listeners
+                foreach (IListener listener in listeners)
+                {
+                    command.SetForeColor(ConsoleColor.Gray);
+                    command.Write(Lang.Get("Starting_Listener", listener.ToString()));
+
+                    if (listener.Start())
+                    {
+                        command.SetForeColor(ConsoleColor.Green);
+                        command.Write(Lang.Get("Ok").ToUpperInvariant(), true);
+                    }
+                    else
+                    {
+                        command.SetForeColor(ConsoleColor.Red);
+                        command.Write(Lang.Get("Error").ToUpperInvariant(), true);
+                    }
+                }
+
+                // Console listener
+                CommandListener cmd = new CommandListener(command);
+                cmd.Start();
+            }
 
             // Wait exit signal
             return 0;

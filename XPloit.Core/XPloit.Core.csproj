@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\SerializableBSONReferenceAttribute.cs" />
+    <Compile Include="Configs\ClientSocketConfig.cs" />
     <Compile Include="Configs\ListenSocketConfig.cs" />
     <Compile Include="Helpers\Crypt\AESHelper.cs" />
     <Compile Include="Attributes\SerializableJSONReferenceAttribute.cs" />
@@ -61,6 +62,9 @@
     <Compile Include="Helpers\HexHelper.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Interfaces\ICommandLayer.cs" />
+    <Compile Include="Menus\Main\MenuSystem.cs" />
+    <Compile Include="Menus\Main\MenuVersion.cs" />
+    <Compile Include="Menus\Menu.cs" />
     <Compile Include="Multi\ConsoleCommand.cs" />
     <Compile Include="Multi\StreamSpeedLimit.cs" />
     <Compile Include="Helpers\StringHelper.cs" />

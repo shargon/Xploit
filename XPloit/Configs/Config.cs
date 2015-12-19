@@ -6,9 +6,13 @@ namespace XPloit.Configs
     public class Config
     {
         /// <summary>
-        /// Config for Telnet run mode
+        /// Config socket server
         /// </summary>
-        public ListenSocketConfig SocketInterface { get; set; }
+        public ListenSocketConfig Listen { get; set; }
+        /// <summary>
+        /// Config socket client
+        /// </summary>
+        public ClientSocketConfig Connect { get; set; }
         /// <summary>
         /// User
         /// </summary>

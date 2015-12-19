@@ -4,6 +4,7 @@ using System.Text;
 using XPloit.Core.Configs;
 using XPloit.Core.Helpers.Crypt;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Multi;
 using XPloit.Core.Sockets;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
@@ -15,16 +16,17 @@ namespace XPloit.Core.Listeners
     {
         Encoding _Codec = Encoding.UTF8;
 
-        ListenSocketConfig _Config;
+        IPFilter _IPFilter;
+        ClientSocketConfig _Config;
         XPloitSocket _Socket;
         bool _IsServer;
 
         public override string ToString()
         {
-            IPAddress ip = _Config.ListenAddress;
+            IPAddress ip = _Config.Address;
             if (ip == null) ip = IPAddress.Any;
 
-            return "SocketListener (" + ip.ToString() + ":" + _Config.ListenPort.ToString() + ")";
+            return "SocketListener (" + ip.ToString() + ":" + _Config.Port.ToString() + ")";
         }
 
         /// <summary>
@@ -36,11 +38,11 @@ namespace XPloit.Core.Listeners
         /// Constructor
         /// </summary>
         /// <param name="config">Configurar</param>
-        /// <param name="isServer">True if its server</param>
-        public SocketListener(ListenSocketConfig config, bool isServer)
+        public SocketListener(ClientSocketConfig config)
         {
             _Config = config;
-            _IsServer = isServer;
+            _IsServer = config is ListenSocketConfig;
+            _IPFilter = _IsServer ? ((ListenSocketConfig)config).IPFilter : null;
         }
 
         public override bool IsStarted { get { return _Socket != null && _Socket.Enable; } }
@@ -55,9 +57,9 @@ namespace XPloit.Core.Listeners
             if (_Config.CryptKey != null && !string.IsNullOrEmpty(_Config.CryptKey.RawPassword))
                 crypt = new AESHelper(_Config.CryptKey.RawPassword, "Made with love ;)", 20000, "**#Int#Vector#**", AESHelper.EKeyLength.Length_256);
 
-            _Socket = new XPloitSocket(new XPloitSocketProtocol(_Codec, crypt, XPloitSocketProtocol.EProtocolMode.None), _Config.ListenAddress, _Config.ListenPort, _IsServer)
+            _Socket = new XPloitSocket(new XPloitSocketProtocol(_Codec, crypt, XPloitSocketProtocol.EProtocolMode.None), _Config.Address, _Config.Port, _IsServer)
             {
-                IPFilter = _Config.IPFilter,
+                IPFilter = _IPFilter,
                 TimeOut = TimeSpan.Zero
             };
 
