@@ -28,6 +28,10 @@
         /// <summary>
         /// Desconectado por TimeOut
         /// </summary>
-        TimeOut = 5
+        TimeOut = 5,
+        /// <summary>
+        /// Desconectado por el protocolo
+        /// </summary>
+        Protocol = 6,
     };
 }

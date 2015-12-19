@@ -1,5 +1,4 @@
-﻿using XPloit.Core.Sockets.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,9 +6,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using XPloit.Core.Helpers;
-using XPloit.Core.Sockets.Interfaces;
 using XPloit.Core.Multi;
+using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Exceptions;
+using XPloit.Core.Sockets.Interfaces;
 
 namespace XPloit.Core.Sockets
 {
@@ -20,7 +20,6 @@ namespace XPloit.Core.Sockets
         Socket _Server = null;
         XPloitSocketClient _Client = null;
         int _MaxConnections = 2000;
-        bool _UseAsyncRead = false;
 
         XPloitSocketClient[] _Clients = new XPloitSocketClient[] { }; //array por que se realizaran mas lecturas que añadir/eliminar
         bool _IsServer = false, _IsStopping = false, _AutoReconnect = false, _UseSpeedLimit = false;
@@ -56,18 +55,6 @@ namespace XPloit.Core.Sockets
         public ReadOnlyCollection<XPloitSocketClient> Clients
         {
             get { return Array.AsReadOnly<XPloitSocketClient>(_Clients); }
-        }
-        /// <summary>
-        /// Establece si se usa Lectura asyncrona o syncrona
-        /// </summary>
-        public bool UseAsyncRead
-        {
-            get { return _UseAsyncRead; }
-            set
-            {
-                if (Enable) throw (new StopFirstException());
-                _UseAsyncRead = value;
-            }
         }
         /// <summary>
         /// Establece si se usa Límite de velocidad
@@ -242,7 +229,7 @@ namespace XPloit.Core.Sockets
                         _Thread = new Thread(new ParameterizedThreadStart(noserver_thread));
                         _Thread.Name = "SOCKET-CLIENT";
 
-                        Add(_Client);
+                        if (!Add(_Client)) throw (new ProtocolException());
                     }
 
                     _Thread.SetApartmentState(ApartmentState.MTA);
@@ -275,38 +262,21 @@ namespace XPloit.Core.Sockets
             XPloitSocket cs = (XPloitSocket)o;
             XPloitSocketClient c = cs._Client;
             bool check_time_out = cs._TimeOut != TimeSpan.Zero;
-            bool use_async = cs._UseAsyncRead;
 
             try
             {
-                if (use_async) c.BeginReceive();
                 while (!cs._IsStopping && c.IsConnected)
                 {
-                    if (use_async)
+                    //lectura sincrona en este hilo
+                    if (!c.Read(c) && check_time_out && c.HasTimeOut)
                     {
-                        //solo hay que ver si está conectado y si ocurre el timeout
-                        if (check_time_out && c.HasTimeOut && DateTime.Now - c.LastRead > cs._TimeOut)
+                        if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
                         {
-                            if (!cs.RaiseOnTimeOut(c))
-                            {
-                                c.Disconnect(EDissconnectReason.TimeOut);
-                                break;
-                            }
+                            c.Disconnect(EDissconnectReason.TimeOut);
+                            break;
                         }
                     }
-                    else
-                    {
-                        //lectura sincrona en este hilo
-                        if (c.ReadFronSocket(c) <= 0 && check_time_out && c.HasTimeOut)
-                        {
-                            if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
-                            {
-                                c.Disconnect(EDissconnectReason.TimeOut);
-                                break;
-                            }
-                        }
-                    }
-                    Thread.Sleep(use_async ? 25 : 0);
+                    Thread.Sleep(0);
                 }
             }
             catch { }
@@ -331,12 +301,7 @@ namespace XPloit.Core.Sockets
                         if (_IPFilter != null && !_IPFilter.IsAllowed(tc.IPAddress)) tc.Disconnect(EDissconnectReason.Banned);
                         else
                             if (Connections >= _MaxConnections) tc.Disconnect(EDissconnectReason.MaxAllowed);
-                            else
-                            {
-                                Add(tc);
-                                //recibir de forma asyncrona, son varios
-                                if (_UseAsyncRead) tc.BeginReceive();
-                            }
+                            else Add(tc);
                     }
                 }
                 catch { }
@@ -354,7 +319,6 @@ namespace XPloit.Core.Sockets
             bool check_time_out = cs._TimeOut != TimeSpan.Zero;
             AsyncCallback callme = new AsyncCallback(cs.socket_acept);
             cs._Server.BeginAccept(callme, cs);
-            bool use_async = cs._UseAsyncRead;
 
             while (!cs._IsStopping)
             {
@@ -364,35 +328,20 @@ namespace XPloit.Core.Sockets
                 {
                     XPloitSocketClient c = cs._Clients[x];
 
-                    if (use_async)
+                    //lectura sincrona en este hilo
+                    if (!c.Read(c) && check_time_out && c.HasTimeOut)
                     {
-                        //solo hay que ver si está conectado y si ocurre el timeout
-                        if (check_time_out && c.HasTimeOut && DateTime.Now - c.LastRead > cs._TimeOut)
+                        if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
                         {
-                            if (!cs.RaiseOnTimeOut(c))
-                            {
-                                cs.Remove(c, EDissconnectReason.TimeOut);
-                                continue;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //lectura sincrona en este hilo
-                        if (c.ReadFronSocket(c) <= 0 && check_time_out && c.HasTimeOut)
-                        {
-                            if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
-                            {
-                                cs.Remove(c, EDissconnectReason.TimeOut);
-                                continue;
-                            }
+                            cs.Remove(c, EDissconnectReason.TimeOut);
+                            continue;
                         }
                     }
 
                     if (!c.IsConnected) { cs.Remove(c, c.DisconnectReason); }
                     //}
                 }
-                Thread.Sleep(use_async ? 25 : 0);
+                Thread.Sleep(0);
             }
         }
         #endregion
@@ -450,23 +399,18 @@ namespace XPloit.Core.Sockets
         #region METODOS DE ENVIO
         public int Send(XPloitSocketClient cl, params  IXPloitSocketMsg[] msg)
         {
-            if (cl == null || msg == null) return 0;
-
-            int ret = 0;
-            foreach (IXPloitSocketMsg mx in msg)
-                ret += _Protocol.Send(cl, mx);
-
-            return ret;
+            if (cl == null) return 0;
+            return cl.Send(msg);
         }
         public int SendAll(params IXPloitSocketMsg[] msg)
         {
-            if (_Clients == null || msg == null) return 0;
+            if (_Clients == null) return 0;
+
             int dv = 0;
             lock (_Clients)
             {
                 foreach (XPloitSocketClient cl in _Clients)
-                    foreach (IXPloitSocketMsg mx in msg)
-                        dv += _Protocol.Send(cl, mx);
+                    dv += cl.Send(msg);
             }
             return dv;
         }
@@ -490,8 +434,7 @@ namespace XPloit.Core.Sockets
             {
                 cl2 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 cl2.Connect(ip, prto);
-                Add(new XPloitSocketClient(this, cl2, _UseSpeedLimit));
-                return true;
+                return Add(new XPloitSocketClient(this, cl2, _UseSpeedLimit));
             }
             catch
             {
@@ -504,15 +447,23 @@ namespace XPloit.Core.Sockets
         /// Add client
         /// </summary>
         /// <param name="cl">Client</param>
-        void Add(XPloitSocketClient cl)
+        bool Add(XPloitSocketClient cl)
         {
+            if (!_Protocol.Connect(cl))
+            {
+                cl.Disconnect(EDissconnectReason.Protocol);
+                return false;
+            }
+
             lock (_Clients)
             {
                 int l = _Clients.Length;
                 Array.Resize(ref _Clients, l + 1);
                 _Clients[l] = cl;
             }
+
             if (OnConnect != null) OnConnect(this, cl);
+            return true;
         }
         void Remove(XPloitSocketClient c, EDissconnectReason dr)
         {
@@ -532,7 +483,6 @@ namespace XPloit.Core.Sockets
             }
             if (c != null) c.Disconnect(dr);
         }
-
 
         #region RAISES
         internal void RaiseOnDisconnect(XPloitSocketClient cl, EDissconnectReason dr)

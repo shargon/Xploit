@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text;
 using XPloit.Core.Configs;
 using XPloit.Core.Helpers.Crypt;
@@ -10,18 +11,36 @@ using XPloit.Core.Sockets.Protocols;
 
 namespace XPloit.Core.Listeners
 {
-    public class TelnetListener : IListener
+    public class SocketListener : IListener
     {
+        Encoding _Codec = Encoding.UTF8;
+
         ListenSocketConfig _Config;
         XPloitSocket _Socket;
+        bool _IsServer;
+
+        public override string ToString()
+        {
+            IPAddress ip = _Config.ListenAddress;
+            if (ip == null) ip = IPAddress.Any;
+
+            return "SocketListener (" + ip.ToString() + ":" + _Config.ListenPort.ToString() + ")";
+        }
+
+        /// <summary>
+        /// IsServer
+        /// </summary>
+        public bool IsServer { get { return _IsServer; } }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="config">Configurar</param>
-        public TelnetListener(ListenSocketConfig config)
+        /// <param name="isServer">True if its server</param>
+        public SocketListener(ListenSocketConfig config, bool isServer)
         {
             _Config = config;
+            _IsServer = isServer;
         }
 
         public override bool IsStarted { get { return _Socket != null && _Socket.Enable; } }
@@ -36,7 +55,7 @@ namespace XPloit.Core.Listeners
             if (_Config.CryptKey != null && !string.IsNullOrEmpty(_Config.CryptKey.RawPassword))
                 crypt = new AESHelper(_Config.CryptKey.RawPassword, "Made with love ;)", 20000, "**#Int#Vector#**", AESHelper.EKeyLength.Length_256);
 
-            _Socket = new XPloitSocket(new XPloitSocketProtocol(Encoding.UTF8, crypt, XPloitSocketProtocol.EProtocolMode.None), _Config.ListenAddress, _Config.ListenPort, true)
+            _Socket = new XPloitSocket(new XPloitSocketProtocol(_Codec, crypt, XPloitSocketProtocol.EProtocolMode.None), _Config.ListenAddress, _Config.ListenPort, _IsServer)
             {
                 IPFilter = _Config.IPFilter,
                 TimeOut = TimeSpan.Zero
@@ -50,14 +69,12 @@ namespace XPloit.Core.Listeners
 
         void _Socket_OnConnect(XPloitSocket sender, XPloitSocketClient cl)
         {
-
+            //cl.Tag=new StreamListener(_Codec,null,null,null);
         }
-
         void _Socket_OnDisconnect(XPloitSocket sender, XPloitSocketClient cl, EDissconnectReason e)
         {
 
         }
-
         void _Socket_OnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg)
         {
 

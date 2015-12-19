@@ -1,15 +1,14 @@
-﻿using XPloit.Core.Sockets.Enums;
-using System;
+﻿using System;
 using System.Text;
 using XPloit.Core.Helpers;
 using XPloit.Core.Helpers.Crypt;
 using XPloit.Core.Sockets.Interfaces;
 using XPloit.Core.Sockets.Exceptions;
-using System.Collections.Generic;
+using System.IO;
 
 namespace XPloit.Core.Sockets.Protocols
 {
-    //4 bytes length msg ,msg -> read first 4 bytes length
+    // 4 bytes length msg ,msg -> read first 4 bytes length
     public class XPloitSocketProtocol : IXPloitSocketProtocol
     {
         AESHelper _Crypt;
@@ -77,14 +76,27 @@ namespace XPloit.Core.Sockets.Protocols
             }
 
             _HeaderPadding = new byte[_HeaderLength];
-            _MaxLength = (int)Math.Pow(255, _HeaderLength) - _HeaderLength;
+            _MaxLength = (int)Math.Pow(255, _HeaderLength);
         }
         public XPloitSocketProtocol(Encoding codec, EProtocolMode mode) : this(codec, null, mode) { }
         public XPloitSocketProtocol(AESHelper crypt, EProtocolMode mode) : this(Encoding.UTF8, crypt, mode) { }
 
-        public virtual int Send(XPloitSocketClient cl, IXPloitSocketMsg msg)
+        void ReadFull(Stream stream, byte[] data, int index, int length)
         {
-            if (cl == null || msg == null) return 0;
+            int dv = 0;
+
+            do
+            {
+                dv = stream.Read(data, index, length);
+                length -= dv;
+                index += dv;
+            }
+            while (length > 0);
+        }
+
+        public virtual int Send(IXPloitSocketMsg msg, Stream stream)
+        {
+            if (stream == null || msg == null) return 0;
 
             byte[] bff;
             if (_Crypt != null)
@@ -130,100 +142,66 @@ namespace XPloit.Core.Sockets.Protocols
             }
 
             //Log(bff, 0, length, true, cl.Parent.IsServer);
-            cl.Write(bff, 0, length, true);
+            stream.Write(bff, 0, length);
 
             return length;
         }
-        public virtual IEnumerable<IXPloitSocketMsg> ProcessBuffer(XPloitSocketClient cl, ref byte[] bxf)
+        public virtual IXPloitSocketMsg Read(Stream stream)
         {
             // Comprobar que la cabera es menor que el paquere
-            int bjl = bxf == null ? 0 : bxf.Length;
-            int bl = bjl - _HeaderLength;
-            if (bl <= 0) return new IXPloitSocketMsg[] { };
+            if (stream == null) return null;
 
-            // Parsear
-            List<IXPloitSocketMsg> lret = new List<IXPloitSocketMsg>();
-            int ml, x = 0;
-            try
+            int msgLength = -1;
+
+            // Asignamos el tamaño del mensaje
+            switch (_HeaderLength)
             {
-                while (x < bl)
-                {
-                    // Choose header
-                    switch (_HeaderLength)
+                case 0: { msgLength = 1; break; }
+                case 1: { msgLength = stream.ReadByte(); break; }
+                case 2:
                     {
-                        case 0: { ml = 1; break; }
-                        case 1: { ml = bxf[0]; break; }
-                        case 2: { ml = (int)BitConverterHelper.ToUInt16(bxf, 0); break; }
-                        case 3: { ml = (int)BitConverterHelper.ToUInt24(bxf, 0); break; }
-                        case 4: { ml = (int)BitConverterHelper.ToInt32(bxf, 0); break; }
-
-                        default: throw (new ProtocolException());
+                        byte[] bxf = new byte[_HeaderLength];
+                        ReadFull(stream, bxf, 0, _HeaderLength);
+                        msgLength = (int)BitConverterHelper.ToUInt16(bxf, 0);
+                        break;
                     }
-
-                    // Control de tamaño máximo
-                    if (ml > _MaxLength) cl.Disconnect(EDissconnectReason.Error);
-
-                    if (bl >= ml)
+                case 3:
                     {
-                        x += _HeaderLength;
-
-                        IXPloitSocketMsg msg = XPloitSocketProtocol.ProcessMessage(_Crypt, _Codec, bxf, x, ml);
-                        x += ml;
-                        if (msg != null) lret.Add(msg);
-
-                        continue;
+                        byte[] bxf = new byte[_HeaderLength];
+                        ReadFull(stream, bxf, 0, _HeaderLength);
+                        msgLength = (int)BitConverterHelper.ToUInt24(bxf, 0);
+                        break;
                     }
-
-                    break;
-                }
-
-                int nl = bjl - x;
-
-                // se consume todo
-                if (nl == 0) bxf = new byte[] { };
-                else
-                {
-                    // no llega a consumir ningún paquete
-                    if (bjl != nl && nl > 0)
+                case 4:
                     {
-                        // recoger lo sobrante y modificarlo
-                        byte[] bff = new byte[nl];
-                        Array.Copy(bxf, x, bff, 0, nl);
-
-                        bxf = bff;
+                        byte[] bxf = new byte[_HeaderLength];
+                        ReadFull(stream, bxf, 0, _HeaderLength);
+                        msgLength = (int)BitConverterHelper.ToInt32(bxf, 0);
+                        break;
                     }
-                    else
-                    {
-                        if (nl < 0) throw new ProtocolException();
-                    }
-                }
-                // desconexion (pierde el buffer)
-
-                return lret;
+                default: throw (new ProtocolException());
             }
-            catch
-            {
-                cl.Disconnect(EDissconnectReason.Error);
 
-                return lret;
-            }
-        }
+            // Control de tamaño máximo
+            if (msgLength > _MaxLength) throw (new ProtocolException());
 
-        internal static IXPloitSocketMsg ProcessMessage(AESHelper crypt, Encoding codec, byte[] msg, int index, int length)
-        {
-            if (msg == null || index < 0 || length <= 0) return null;
+            int index = 0;
+            byte[] bxfData = new byte[msgLength];
+            ReadFull(stream, bxfData, 0, msgLength);
 
             //Log(msg, index - 4, length + 4, false, cl.Parent.IsServer);
-            if (crypt != null)
+            if (_Crypt != null)
             {
                 //desencriptamos el mensaje
-                msg = crypt.Decrypt(msg, index, ref length);
-                if (msg == null) return null;
+                bxfData = _Crypt.Decrypt(bxfData, index, ref msgLength);
+                if (bxfData == null) return null;
 
                 index = 0;
             }
 
-            return IXPloitSocketMsg.Deserialize(codec, msg, index, length);
+            return IXPloitSocketMsg.Deserialize(_Codec, bxfData, index, msgLength);
         }
+
+        public bool Connect(XPloitSocketClient client) { return true; }
     }
 }

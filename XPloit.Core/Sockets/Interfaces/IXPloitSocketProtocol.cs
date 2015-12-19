@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.IO;
 
 namespace XPloit.Core.Sockets.Interfaces
 {
     public interface IXPloitSocketProtocol
     {
-        int Send(XPloitSocketClient cl, IXPloitSocketMsg msg);
-        IEnumerable<IXPloitSocketMsg> ProcessBuffer(XPloitSocketClient cl, ref byte[] bxf);
+        int Send(IXPloitSocketMsg msg, Stream stream);
+        IXPloitSocketMsg Read(Stream stream);
+        bool Connect(XPloitSocketClient client);
     }
 }

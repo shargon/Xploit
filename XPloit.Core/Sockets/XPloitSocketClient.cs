@@ -1,11 +1,11 @@
-﻿using XPloit.Core.Sockets.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using XPloit.Core.Multi;
+using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
 
 namespace XPloit.Core.Sockets
@@ -14,36 +14,26 @@ namespace XPloit.Core.Sockets
     {
         #region Variables
         static int _dfbl = ushort.MaxValue; //512 * 1024;
-        const int ASYNC_READ_BUFFER_SIZE = 150 * 1024;
-        object _Tag = null;
-        IPEndPoint _IPEndPoint = null;
-        Socket _Socket = null;
-        Stream _Stream = null;
-        XPloitSocket _Parent = null;
+        object _Tag;
+        IPEndPoint _IPEndPoint;
+        Socket _Socket;
+        Stream _Stream;
+        XPloitSocket _Parent;
         bool _HasTimeOut = true;
-        byte[] _ALL_BUFFER = new byte[] { };
-        byte[] _ASYNC_READ_BUFFER = null;
+
         //object read_lock = new object();
         object write_lock = new object();
 
         DateTime _LastRead = DateTime.Now;
         DateTime _lchk_status = DateTime.Now.AddDays(-1);
-        EndPoint _LocalEndPoint = null, _RemoteEndPoint = null;
+        EndPoint _LocalEndPoint, _RemoteEndPoint;
         Dictionary<string, object> var = null;
         EDissconnectReason _DisconnectReason = EDissconnectReason.None;
 
-        ulong _BytesWritten = 0, _BytesReaded = 0, _MsgSend = 0, _MsgReceived = 0;
+        ulong _MsgSend = 0, _MsgReceived = 0;
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Número de bytes escritos
-        /// </summary>
-        public ulong BytesWritten { get { return _BytesWritten; } }
-        /// <summary>
-        /// Número de bytes leidos
-        /// </summary>
-        public ulong BytesReaded { get { return _BytesReaded; } }
         /// <summary>
         /// Número de mensajes enviados
         /// </summary>
@@ -141,21 +131,6 @@ namespace XPloit.Core.Sockets
             }
         }
         /// <summary>
-        /// Devuelve el número de bytes disponibles para lectura
-        /// </summary>
-        internal int Available
-        {
-            get
-            {
-                if (_Socket != null)
-                {
-                    try { return _Socket.Available; }
-                    catch { Disconnect(EDissconnectReason.Error); }
-                }
-                return -1;
-            }
-        }
-        /// <summary>
         /// Devuelve si tiene o no una variable
         /// </summary>
         /// <param name="name">Nombre de la variable</param>
@@ -231,98 +206,7 @@ namespace XPloit.Core.Sockets
             _Socket = tc;
             var = new Dictionary<string, object>();
         }
-        /// <summary>
-        /// Lee del socket y lo suma al buffer
-        /// </summary>
-        /// <param name="length">Tamaño a leer</param>
-        /// <returns>Bytes leidos</returns>
-        internal int ReadFronSocket(XPloitSocketClient c)
-        {
-            if (_Stream == null) return 0;
-
-            int dv = 0;
-            //lock (read_lock)
-            //{
-            int length = 0;
-            if ((length = c.Available) > 0)
-            {
-                int ix = _ALL_BUFFER.Length;
-                Array.Resize(ref _ALL_BUFFER, _ALL_BUFFER.Length + length);
-
-                int le = 0;
-                do
-                {
-                    ix += le;
-
-                    le = _Stream.Read(_ALL_BUFFER, ix, length);
-
-                    dv += le;
-                    length -= le;
-
-                } while (length > 0);
-            }
-            if (dv <= 0) return 0;
-
-            foreach (IXPloitSocketMsg msg in _Parent.Protocol.ProcessBuffer(this, ref _ALL_BUFFER))
-                if (msg != null) RaiseOnMessage(msg);
-            //}
-            if (dv > 0)
-            {
-                _LastRead = DateTime.Now;
-                _BytesReaded += (ulong)dv;
-            }
-            return dv;
-        }
-        /// <summary>
-        /// Añade al buffer los bytes proporcionados
-        /// </summary>
-        /// <param name="data">Data</param>
-        /// <param name="index">indice</param>
-        /// <param name="length">Tamaño</param>
-        /// <returns></returns>
-        internal int ReadFromData(byte[] data, int index, int length)
-        {
-            //lock (read_lock)
-            //{
-            int ix = _ALL_BUFFER.Length;
-            Array.Resize(ref _ALL_BUFFER, ix + length);
-            Array.Copy(data, 0, _ALL_BUFFER, ix, length);
-
-            foreach (IXPloitSocketMsg msg in _Parent.Protocol.ProcessBuffer(this, ref _ALL_BUFFER))
-                if (msg != null) RaiseOnMessage(msg);
-            //}
-
-            _LastRead = DateTime.Now;
-            _BytesReaded += (ulong)length;
-            return length;
-        }
-        /// <summary>
-        /// Escribe en el cliente
-        /// </summary>
-        /// <param name="bff">array de bytes</param>
-        /// <param name="index">Indice en el buffer de datos</param>
-        /// <param name="length">Tamaño de lectura</param>
-        /// <param name="msgSendIncrement">Incrementamos en el contador de mensajes enviados</param>
-        /// <returns>Devuelve si ha escrito o no</returns>
-        internal bool Write(byte[] bff, int index, int length, bool msgSendIncrement)
-        {
-            try
-            {
-                if (_Stream != null)
-                {
-                    lock (write_lock)
-                    {
-                        _Stream.Write(bff, index, length);
-                        //_Stream.Flush();
-                    }
-                    _BytesWritten += (ulong)length;
-                    if (msgSendIncrement) _MsgSend++;
-                    return true;
-                }
-            }
-            catch { Disconnect(EDissconnectReason.Error); }
-            return false;
-        }
+        
         /// <summary>
         /// Realiza la desconexión del cliente
         /// </summary>
@@ -355,8 +239,6 @@ namespace XPloit.Core.Sockets
             if (disok)
             {
                 _DisconnectReason = dr;
-                _ALL_BUFFER = new byte[] { };
-                _ASYNC_READ_BUFFER = null;
                 _Parent.RaiseOnDisconnect(this, dr);
             }
         }
@@ -368,8 +250,8 @@ namespace XPloit.Core.Sockets
         {
             if (_Parent == null) return;
 
-            _Parent.RaiseOnMessage(this, msg);
             _MsgReceived++;
+            _Parent.RaiseOnMessage(this, msg);
         }
         /// <summary>
         /// Envia los mensajes al cliente en cuestión
@@ -381,37 +263,49 @@ namespace XPloit.Core.Sockets
             if (_Parent == null || msg == null) return 0;
 
             int ret = 0;
-            foreach (IXPloitSocketMsg mx in msg)
-                ret += _Parent.Protocol.Send(this, mx);
+            try
+            {
+                lock (write_lock)
+                {
+                    foreach (IXPloitSocketMsg mx in msg)
+                    {
+                        ret += _Parent.Protocol.Send(mx, _Stream);
+                        _MsgSend++;
+                    }
+                    _Stream.Flush();
+                }
+            }
+            catch { Disconnect(EDissconnectReason.Error); }
 
             return ret;
         }
-
-        #region LECTURA ASINCRONA
-        internal void BeginReceive()
+        /// <summary>
+        /// Lee del socket y lo suma al buffer
+        /// </summary>
+        /// <param name="client">Client</param>
+        /// <returns>Bytes leidos</returns>
+        internal bool Read(XPloitSocketClient client)
         {
+            if (_Stream == null) return false;
+
             try
             {
-                _ASYNC_READ_BUFFER = new byte[XPloitSocketClient.ASYNC_READ_BUFFER_SIZE];
-                _Stream.BeginRead(_ASYNC_READ_BUFFER, 0, XPloitSocketClient.ASYNC_READ_BUFFER_SIZE, new AsyncCallback(Read_Callback), _Stream);
+                if (_Socket.Available > 0)
+                {
+                    IXPloitSocketMsg msg = _Parent.Protocol.Read(_Stream);
+                    _LastRead = DateTime.Now;
+
+                    if (msg != null) RaiseOnMessage(msg);
+                    return true;
+                }
             }
-            catch { Disconnect(EDissconnectReason.Error); }
-        }
-        void Read_Callback(IAsyncResult ar)
-        {
-            try
+            catch
             {
-                Stream st = (Stream)ar.AsyncState;
-
-                int read = st.EndRead(ar);
-                if (read > 0) ReadFromData(_ASYNC_READ_BUFFER, 0, read);
-
-                _Stream.BeginRead(_ASYNC_READ_BUFFER, 0, XPloitSocketClient.ASYNC_READ_BUFFER_SIZE, new AsyncCallback(Read_Callback), _Stream);
+                client.Disconnect(EDissconnectReason.Error);
+                return false;
             }
-            catch { Disconnect(EDissconnectReason.Error); }
+            return false;
         }
-        #endregion
-
         /// <summary>
         /// Liberación de recursos
         /// </summary>

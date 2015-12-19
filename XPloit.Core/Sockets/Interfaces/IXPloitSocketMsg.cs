@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using XPloit.Core.Attributes;
@@ -20,7 +19,7 @@ namespace XPloit.Core.Sockets.Interfaces
         //Variable para acelerar la reflexión
         static Dictionary<byte, SerializableJSONReferenceAttribute> _Cache = new Dictionary<byte, SerializableJSONReferenceAttribute>();
         /// <summary>
-        /// Private constructor
+        /// Protected constructor
         /// </summary>
         protected IXPloitSocketMsg() { }
 

@@ -60,6 +60,8 @@
     <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Helpers\HexHelper.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
+    <Compile Include="Interfaces\ICommandLayer.cs" />
+    <Compile Include="Multi\ConsoleCommand.cs" />
     <Compile Include="Multi\StreamSpeedLimit.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Interfaces\IExploit.cs" />
@@ -67,8 +69,8 @@
     <Compile Include="Interfaces\IListener.cs" />
     <Compile Include="Interfaces\IPayload.cs" />
     <Compile Include="Interfaces\ISession.cs" />
-    <Compile Include="Listeners\StreamListener.cs" />
-    <Compile Include="Listeners\TelnetListener.cs" />
+    <Compile Include="Listeners\CommandListener.cs" />
+    <Compile Include="Listeners\SocketListener.cs" />
     <Compile Include="Multi\DomainUser.cs" />
     <Compile Include="Multi\IPFilter.cs" />
     <Compile Include="Multi\Password.cs" />
@@ -84,8 +86,11 @@
     <Compile Include="Sockets\Exceptions\MaxLengthPacketException.cs" />
     <Compile Include="Sockets\Interfaces\IXPloitSocketMsg.cs" />
     <Compile Include="Sockets\Interfaces\IXPloitSocketProtocol.cs" />
+    <Compile Include="Sockets\Messages\XPloitMsgByteArray.cs" />
+    <Compile Include="Sockets\Messages\XPloitMsgString.cs" />
     <Compile Include="Sockets\Messages\XPloitMsgLogin.cs" />
     <Compile Include="Sockets\Messages\XPloitMsgPing.cs" />
+    <Compile Include="Sockets\Protocols\XPloitTelnetProtocol.cs" />
     <Compile Include="Sockets\Protocols\XPloitSocketProtocol.cs" />
     <Compile Include="Sockets\XPloitSocket.cs" />
     <Compile Include="Sockets\XPloitSocketClient.cs" />
