@@ -1,5 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Menus;
 using XPloit.Core.Menus.Main;
@@ -8,7 +13,7 @@ using XPloit.Res;
 
 namespace XPloit.Core.Listeners
 {
-    public class CommandListener : IListener
+    public class CommandListener : IListener, IGetAutocompleteCommand
     {
         const string CommandStart = " > ";
 
@@ -28,6 +33,71 @@ namespace XPloit.Core.Listeners
                 new MenuSystem()
             };
 
+        #region AutoComplete commands
+        /// <summary>
+        /// Get Available commands
+        /// </summary>
+        public string[] AvailableCommands()
+        {
+            List<string> av = new List<string>();
+            av.Add("cd");
+            av.Add("ls");
+            av.Add("cls");
+            av.Add("clear");
+            av.Add("banner");
+            av.Add("set");
+            av.Add("use");
+            av.Add("dir");
+            av.Add("exit");
+
+            Menu[] currentMenus = _Current == null ? menus : _Current.Childs;
+
+            if (currentMenus != null)
+            {
+                foreach (Menu m in currentMenus)
+                    foreach (string a in m.AllowedNames)
+                        av.Add(a);
+            }
+
+            return av.ToArray();
+        }
+        public string[] AvailableCommandOptions(string command)
+        {
+            List<string> av = new List<string>();
+
+            Menu[] currentMenus = _Current == null ? menus : _Current.Childs;
+            if (currentMenus != null)
+            {
+                switch (command)
+                {
+                    case "use":
+                    case "cd":
+                        {
+                            foreach (Menu m in currentMenus)
+                                foreach (string a in m.AllowedNames)
+                                    av.Add(a);
+                            break;
+                        }
+                    default:
+                        {
+                            // Search by name
+                            Menu m = Menu.SearchByName(currentMenus, command);
+                            if (m != null)
+                            {
+
+                            }
+                            break;
+                        }
+                }
+            }
+
+            return av.ToArray();// "arg0", "arg1", "arg2", "arg3", "arg4", "arg5" };
+        }
+        public EAllowAutocompleteCommand AllowAutocompleteMaths { get { return EAllowAutocompleteCommand.OnlyWhenEmpty; } }
+        public EAllowAutocompleteCommand AllowAutocompleteFiles { get { return EAllowAutocompleteCommand.Yes; } }
+        public EAllowAutocompleteCommand AllowAutocompleteFolders { get { return EAllowAutocompleteCommand.Yes; } }
+        #endregion
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -37,36 +107,7 @@ namespace XPloit.Core.Listeners
             if (command != null && command is ConsoleCommand)
             {
                 ConsoleCommand cmd = (ConsoleCommand)command;
-                cmd.OnAutoComplete += cmd_OnAutoComplete;
-            }
-        }
-        /// <summary>
-        /// Fill autocomplete source
-        /// </summary>
-        /// <param name="search">Search word</param>
-        /// <param name="availables">Avaiables</param>
-        void cmd_OnAutoComplete(string search, out string[] availables)
-        {
-            availables = null;
-
-            search = search.ToLowerInvariant();
-
-            // Search by name
-            if (search.StartsWith("cd ")) search = search.Substring(3);
-
-            Menu[] currentMenus = _Current == null ? menus : _Current.Childs;
-
-            if (currentMenus != null)
-            {
-                List<string> ret = new List<string>();
-
-                foreach (Menu m in currentMenus)
-                {
-                    if (m.Name.ToLowerInvariant().StartsWith(search))
-                        ret.Add(m.Name);
-                }
-
-                availables = ret.ToArray();
+                cmd.AutoCompleteSource = this;
             }
         }
         public override bool IsStarted { get { return _IsStarted; } }
@@ -74,8 +115,9 @@ namespace XPloit.Core.Listeners
         {
             _IsStarted = true;
 
-            _Command.SetForeColor(_ServerGoodColor);
-            _Command.Write(Lang.Get("Wellcome"), true);
+            _Command.Write("", true);
+            BannerHelper.GetRandomBanner(_Command);
+            _Command.Write("", true);
 
             string read;
             string readl;
@@ -114,6 +156,19 @@ namespace XPloit.Core.Listeners
                             }
                             break;
                         }
+                    case "cls":
+                    case "clear":
+                        {
+                            _Command.Clear();
+                            break;
+                        }
+                    case "banner":
+                        {
+                            _Command.Write("", true);
+                            BannerHelper.GetRandomBanner(_Command);
+                            _Command.Write("", true);
+                            break;
+                        }
                     case "..":
                     case "cd/":
                     case "cd\\":
@@ -125,7 +180,6 @@ namespace XPloit.Core.Listeners
                             {
                                 _Current = null;
                             }
-
                             break;
                         }
                     case "ls":
@@ -151,6 +205,9 @@ namespace XPloit.Core.Listeners
                     default:
                         {
                             if (readl.StartsWith("cd ")) readl = readl.Substring(3);
+                            else if (readl.StartsWith("use ")) readl = readl.Substring(4);
+
+                            readl = readl.Trim('/', '\\');
 
                             if (_LastList != null)
                             {
@@ -170,6 +227,16 @@ namespace XPloit.Core.Listeners
                                     _Current = m;
                                     _LastList = null;
                                     continue;
+                                }
+                                else
+                                {
+                                    double c = MathHelper.Calc(readl);
+                                    if (!double.IsNaN(c))
+                                    {
+                                        _Command.SetForeColor(_ServerColor);
+                                        _Command.Write(c.ToString(CultureInfo.InvariantCulture), true);
+                                        continue;
+                                    }
                                 }
                             }
 

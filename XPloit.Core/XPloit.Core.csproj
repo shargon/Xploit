@@ -49,6 +49,8 @@
     <Compile Include="Attributes\SerializableBSONReferenceAttribute.cs" />
     <Compile Include="Configs\ClientSocketConfig.cs" />
     <Compile Include="Configs\ListenSocketConfig.cs" />
+    <Compile Include="Enums\EAllowAutocompleteCommand.cs" />
+    <Compile Include="Helpers\BannerHelper.cs" />
     <Compile Include="Helpers\Crypt\AESHelper.cs" />
     <Compile Include="Attributes\SerializableJSONReferenceAttribute.cs" />
     <Compile Include="Enums\EPlatform.cs" />
@@ -60,8 +62,10 @@
     <Compile Include="Helpers\ConvertHelper.cs" />
     <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Helpers\HexHelper.cs" />
+    <Compile Include="Helpers\MathHelper.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Interfaces\ICommandLayer.cs" />
+    <Compile Include="Interfaces\IGetAutocompleteCommand.cs" />
     <Compile Include="Menus\Main\MenuSystem.cs" />
     <Compile Include="Menus\Main\MenuVersion.cs" />
     <Compile Include="Menus\Menu.cs" />

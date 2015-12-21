@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace XPloit.Core.Helpers
@@ -94,6 +95,17 @@ namespace XPloit.Core.Helpers
                     return null;
                 }
             }
+        }
+        /// <summary>
+        /// Replicate String
+        /// </summary>
+        /// <param name="input">Input</param>
+        /// <param name="iterations">Iterations</param>
+        public static string Replicate(string input, int iterations)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int x = 0; x < iterations; x++) sb.Append(input);
+            return sb.ToString();
         }
     }
 }

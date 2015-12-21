@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Multi
@@ -11,9 +16,135 @@ namespace XPloit.Core.Multi
         TextWriter _Out;
         TextReader _In;
 
-        public event delOnAutoComplete OnAutoComplete = null;
+        IGetAutocompleteCommand _AutoCompleteSource = null;
+        /// <summary>
+        /// AutoComplete Source
+        /// </summary>
+        public IGetAutocompleteCommand AutoCompleteSource { get { return _AutoCompleteSource; } set { _AutoCompleteSource = value; } }
 
-        public delegate void delOnAutoComplete(string search, out string[] availables);
+        class CommandTabState
+        {
+            public string[] Posibilities = null;
+
+            public string Last;
+            public string Cmd;
+            public string Input;
+            public int Index = -1;
+            public bool MultipleChoise = false;
+            public bool StartWithQuotes = false;
+
+            static string[] GetCommand(ref string cmd, IGetAutocompleteCommand options)
+            {
+                int ix = cmd.LastIndexOf(' ');
+                if (ix != -1)
+                {
+                    int ix2 = cmd.IndexOf(' ');
+                    if (ix2 != -1)
+                    {
+                        string exe = cmd.Substring(0, ix2);
+
+                        cmd = cmd.Substring(ix + 1);
+                        return options.AvailableCommandOptions(exe.Trim('"'));
+                    }
+                }
+                return options.AvailableCommands();
+            }
+            public CommandTabState(string write, IGetAutocompleteCommand commander)
+            {
+                Input = write;
+                Cmd = write.ToLowerInvariant();
+                Posibilities = GetCommand(ref Cmd, commander);
+
+                if (Cmd.StartsWith("\""))
+                {
+                    Cmd = Cmd.Substring(1);
+                    StartWithQuotes = true;
+                }
+
+                // Manual
+                List<string> av = new List<string>();
+                foreach (string a in Posibilities)
+                {
+                    if (a.StartsWith(Cmd, StringComparison.InvariantCultureIgnoreCase))
+                        av.Add(a);
+                }
+
+                MultipleChoise = av.Count > 1;
+
+                // Files
+                if (!string.IsNullOrEmpty(Cmd))
+                {
+                    try
+                    {
+                        string path = Path.GetDirectoryName(Cmd);
+                        if (!Directory.Exists(path) && Directory.Exists(Cmd)) path = Cmd;
+
+                        if (Directory.Exists(path))
+                        {
+                            bool hasDir = false;
+                            int hasFiles = 0;
+                            string file = Path.GetFileName(Cmd);
+
+                            if (commander.AllowAutocompleteFolders == EAllowAutocompleteCommand.Yes || (commander.AllowAutocompleteFolders == EAllowAutocompleteCommand.OnlyWhenEmpty && av.Count <= 0))
+                                foreach (string di in Directory.GetDirectories(path, file + "*"))
+                                {
+                                    hasDir = true;
+                                    av.Add(di + Path.DirectorySeparatorChar);
+                                }
+
+                            if (commander.AllowAutocompleteFiles == EAllowAutocompleteCommand.Yes || (commander.AllowAutocompleteFiles == EAllowAutocompleteCommand.OnlyWhenEmpty && av.Count <= 0))
+                                foreach (string di in Directory.GetFiles(path, file + "*"))
+                                {
+                                    hasFiles++;
+                                    av.Add(di);
+                                }
+
+                            if (hasDir || hasFiles > 1)
+                            {
+                                // When is directory dont complete
+                                MultipleChoise = true;
+                            }
+                        }
+                    }
+                    catch { }
+
+                    if (commander.AllowAutocompleteMaths == EAllowAutocompleteCommand.Yes || (commander.AllowAutocompleteMaths == EAllowAutocompleteCommand.OnlyWhenEmpty && av.Count <= 0))
+                    {
+                        // Trick for calc from string
+                        double c = MathHelper.Calc(Cmd);
+                        if (!double.IsNaN(c)) av.Add(c.ToString(CultureInfo.InvariantCulture));
+                    }
+                }
+
+                av.Sort();
+                Posibilities = av.Count == 0 ? null : av.ToArray();
+
+                Last = null;
+            }
+            public string Next()
+            {
+                if (Posibilities == null)
+                {
+                    Last = null;
+                    return null;
+                }
+
+                Index++;
+                if (Posibilities.Length <= Index) Index = 0;
+                return Last = Posibilities[Index];
+            }
+        }
+        void Delete(ref string write, int count)
+        {
+            if (write.Length > 0 && count > 0)
+            {
+                write = write.Substring(0, write.Length - count);
+
+                for (int x = 0; x < count; x++)
+                    Write("\b \b");
+            }
+        }
+
 
         public ConsoleCommand()
         {
@@ -21,7 +152,13 @@ namespace XPloit.Core.Multi
             _Out = Console.Out;
             _In = Console.In;
         }
+
         public void Clear() { Console.Clear(); }
+        /// <summary>
+        /// Write a char
+        /// </summary>
+        /// <param name="c">Char</param>
+        public void Write(char c) { Write(c.ToString(), false); }
         /// <summary>
         /// Write
         /// </summary>
@@ -37,77 +174,113 @@ namespace XPloit.Core.Multi
             if (line != null) _Out.Write(line);
             if (appendNewLine) _Out.Write(Environment.NewLine);
         }
-        public string ReadLine()
+        public void SetForeColor(ConsoleColor color) { Console.ForegroundColor = color; }
+        public void SetBackgroundColor(ConsoleColor color) { Console.BackgroundColor = color; }
+
+
+        public string ReadLine() { return ReadLine(false); }
+        public string ReadLine(bool isPassword)
         {
-            string sInput = "";
-            string onSearch = null;
-            string[] autoComplete = null;
-            int autoIndex = -1;
+            string write = "";
+            CommandTabState state = null;
 
-            for (; ; )
+            ConsoleKeyInfo cki;
+
+            do
             {
-                ConsoleKeyInfo myKey = Console.ReadKey(true);
+                cki = Console.ReadKey(true);
+                char l = cki.KeyChar;
 
-                if (myKey.Key == ConsoleKey.Enter)
-                {
-                    Write(Environment.NewLine);
-                    return sInput;
-                }
-
-                switch (myKey.Key)
+                switch (cki.Key)
                 {
                     case ConsoleKey.Tab:
                         {
-                            // Check in list 
-                            if (autoComplete == null)
+                            string get = null;
+
+                            if (!isPassword)
                             {
-                                if (OnAutoComplete != null)
+                                if (_AutoCompleteSource != null)
                                 {
-                                    onSearch = sInput;
-                                    OnAutoComplete(sInput, out autoComplete);
-                                    autoIndex = -1;
+                                    bool erase = true;
+                                    if (state == null)
+                                    {
+                                        state = new CommandTabState(write, _AutoCompleteSource);
+                                        erase = false;
+                                    }
+
+                                    int llast = state.Last == null ? 0 : state.Last.Length;
+
+                                    get = state.Next();
+
+                                    if (get != null)
+                                    {
+                                        int lget = get.Length;
+                                        int lcmd = state.Cmd.Length;
+
+                                        if (lget < lcmd)
+                                        {
+                                            Delete(ref write, lcmd);
+
+                                            Write(get);
+                                            write += get;
+                                        }
+                                        else
+                                        {
+                                            if (erase) Delete(ref write, llast - lcmd);
+
+                                            // Print rest
+                                            Write(get.Substring(lcmd));
+                                            write += get.Substring(lcmd);
+
+                                            if (state.MultipleChoise) break;
+                                        }
+                                    }
+
+                                    if (state.Posibilities != null && state.StartWithQuotes && !write.EndsWith("\""))
+                                    {
+                                        l = '"';
+                                        write += l.ToString();
+
+                                        if (isPassword && l != ' ') l = '*';
+                                        Write(l);
+                                    }
                                 }
+
+                                l = ' ';
+                                goto default;
                             }
 
-                            // Select autocomplete
-                            if (onSearch != null && autoComplete != null && autoComplete.Length > 0)
-                            {
-                                autoIndex++;
-                                if (autoIndex >= autoComplete.Length) autoIndex = 0;
-
-                                string next = autoComplete[autoIndex];
-                                for (int x = onSearch.Length, m = next.Length; x < m; x++)
-                                    Console.Write(next[x]);
-
-                                sInput = next;
-                                //autoComplete = null;
-                            }
                             break;
                         }
                     case ConsoleKey.Backspace:
                         {
-                            if (sInput != "")
-                            {
-                                sInput = sInput.Remove(sInput.Length - 1);
-                                Console.Write(myKey.KeyChar);
-                                Console.Write(' ');
-                                Console.Write(myKey.KeyChar);
-                                onSearch = null;
-                            }
+                            state = null;
+                            Delete(ref write, 1);
+                            break;
+                        }
+                    case ConsoleKey.Enter:
+                        {
+                            state = null;
+                            Write(Environment.NewLine);
                             break;
                         }
                     default:
                         {
-                            Console.Write(myKey.KeyChar);
-                            sInput = sInput + myKey.KeyChar;
-                            onSearch = null;
+                            if (l == '\0') continue;
+
+                            state = null;
+                            write += l.ToString();
+
+                            if (isPassword && l != ' ') l = '*';
+                            Write(l);
                             break;
                         }
+
                 }
-                continue;
-            }
+
+            } while (cki.Key != ConsoleKey.Enter);
+
+            return write;
         }
-        public void SetForeColor(ConsoleColor color) { Console.ForegroundColor = color; }
-        public void SetBackgroundColor(ConsoleColor color) { Console.BackgroundColor = color; }
     }
 }

@@ -84,5 +84,9 @@ namespace XPloit.Core.Menus
 
             return sb;
         }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
