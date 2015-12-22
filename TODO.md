@@ -2,7 +2,7 @@
 - [ ] Arrow command (UP/DOWN)
 - [ ] Arrow command (LEFT/RIGHT)
 - [ ] ProgressBar
-- [ ] CursorVisible only when need Read
+- [X] CursorVisible only when need Read
 - [ ] Remote Connection
 - [ ] Use modules with slashes  (hash/bruteforce)
 - [ ] Autocomplete with slashes (hash/bruteforce)
