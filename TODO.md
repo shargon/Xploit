@@ -14,5 +14,5 @@
 - [ ] PasswordDictionary (hash/bruteforce/generateDictionary)
 
 #PAYLOAD
-- [ ] Payload Bitlocker (BruteForce)
-- [ ] Payload MySql Hash  (BruteForce)
+- [X] Payload Bitlocker (BruteForce)
+- [X] Payload MySql Hash  (BruteForce)

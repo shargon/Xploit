@@ -7,7 +7,6 @@ using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Menus;
-using XPloit.Core.Menus.Main;
 using XPloit.Core.Multi;
 using XPloit.Res;
 
@@ -29,8 +28,8 @@ namespace XPloit.Core.Listeners
         Menu _Current = null;
         Menu[] menus = new Menu[]
             {
-                new MenuVersion(),
-                new MenuSystem()
+                //new MenuVersion(),
+                //new MenuSystem()
             };
 
         #region AutoComplete commands
@@ -40,6 +39,9 @@ namespace XPloit.Core.Listeners
         public string[] AvailableCommands()
         {
             List<string> av = new List<string>();
+            av.Add("ver");
+            av.Add("version");
+            av.Add("cd");
             av.Add("cd");
             av.Add("ls");
             av.Add("cls");
@@ -160,6 +162,11 @@ namespace XPloit.Core.Listeners
                     case "clear":
                         {
                             _Command.Clear();
+                            break;
+                        }
+                    case "ver":
+                    case "version":
+                        {
                             break;
                         }
                     case "banner":

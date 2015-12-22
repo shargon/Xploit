@@ -17,6 +17,7 @@ namespace XPloit
             //Console.InputEncoding = Encoding.UTF8;
             //Console.OutputEncoding = Encoding.UTF8;
             Console.CursorSize = 100;
+            Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
 

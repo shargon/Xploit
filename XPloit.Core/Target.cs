@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using XPloit.Core.Enums;
 
-namespace XPloit.Core.Multi
+namespace XPloit.Core
 {
     public class Target
     {

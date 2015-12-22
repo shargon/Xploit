@@ -181,6 +181,8 @@ namespace XPloit.Core.Multi
         public string ReadLine() { return ReadLine(false); }
         public string ReadLine(bool isPassword)
         {
+            Console.CursorVisible = true;
+
             string write = "";
             CommandTabState state = null;
 
@@ -280,6 +282,8 @@ namespace XPloit.Core.Multi
 
             } while (cki.Key != ConsoleKey.Enter);
 
+
+            Console.CursorVisible = false;
             return write;
         }
     }
