@@ -5,7 +5,7 @@ using System.IO;
 
 namespace XPloit.Core.Helpers
 {
-    public class SerializationHelper
+    public class SerializationJsonHelper
     {
         //static JavaScriptSerializer JSON = new JavaScriptSerializer();
         /// <summary>

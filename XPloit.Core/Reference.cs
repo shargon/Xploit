@@ -22,5 +22,10 @@ namespace XPloit.Core
             Type = type;
             Value = value;
         }
+
+        public override string ToString()
+        {
+            return Type.ToString() + "-" + Value;
+        }
     }
 }

@@ -3,14 +3,14 @@ using System.Security;
 using XPloit.Core;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Payloads.Cmd
+namespace XPloit.Modules.Payloads.Multi
 {
     public class ProcessStartPayload : Payload
     {
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Execute a raw command"; } }
         public override string Name { get { return "ProcessStart"; } }
-        public override string Path { get { return "payloads/system/command"; } }
+        public override string Path { get { return "Payloads/Multi"; } }
 
         #region Properties
         public string Password { get; set; }
@@ -66,7 +66,7 @@ namespace XPloit.Modules.Payloads.Cmd
                         pi.Password.AppendChar(c);
                 }
 
-                return this.Encoding.GetBytes(SerializationHelper.Serialize(pi));
+                return this.Encoding.GetBytes(SerializationJsonHelper.Serialize(pi));
             }
         }
     }

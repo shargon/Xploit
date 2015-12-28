@@ -123,6 +123,9 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="Module_Not_Found" xml:space="preserve">
+    <value>Module '%0' not found</value>
+  </data>
   <data name="Nothing_To_Show" xml:space="preserve">
     <value>Nothing to show ... </value>
   </data>

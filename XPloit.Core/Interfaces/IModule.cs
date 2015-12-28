@@ -20,14 +20,27 @@ namespace XPloit.Core.Interfaces
         /// Path
         /// </summary>
         public virtual string Path { get { return null; } }
+        /// <summary>
+        /// Return full path
+        /// </summary>
+        public string FullPath
+        {
+            get
+            {
+                string p = Path;
+                string n = Name;
+
+                if (!string.IsNullOrEmpty(p)) p = p.Trim('/') + "/"; else p = "";
+                if (string.IsNullOrEmpty(n)) n = "";
+
+                return p + n;
+            }
+        }
         ///// <summary>
         /// Type
         /// </summary>
         internal virtual EModuleType ModuleType { get { return EModuleType.Exploit; } }
 
-        public override string ToString()
-        {
-            return Path + "/" + Name;
-        }
+        public override string ToString() { return FullPath; }
     }
 }

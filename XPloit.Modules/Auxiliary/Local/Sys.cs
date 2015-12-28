@@ -4,8 +4,8 @@ using XPloit.Core;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
 using XPloit.Core.PayloadRequirements;
-using XPloit.Modules.Encoders;
-using XPloit.Modules.Payloads.Cmd;
+using XPloit.Modules.Encoders.String;
+using XPloit.Modules.Payloads.Multi;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
@@ -31,7 +31,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public override bool Run(ICommandLayer cmd)
         {
-            JsonDecoder encoder = new JsonDecoder() { Type = typeof(ProcessStartInfo) };
+            JsonDecoder encoder = new JsonDecoder(typeof(ProcessStartInfo));
             ProcessStartInfo info = (ProcessStartInfo)encoder.Run(Payload);
 
             using (Process pr = new Process())
@@ -41,7 +41,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
                 if (dv)
                 {
-                    cmd.Write("Executed in pid: " + pr.Id.ToString(), true);
+                    cmd.WriteLine("Executed in pid: " + pr.Id.ToString());
                 }
                 return dv;
             }

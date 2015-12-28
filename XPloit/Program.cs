@@ -5,6 +5,7 @@ using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners;
 using XPloit.Core.Multi;
+using XPloit.Modules.Payloads.Multi;
 using XPloit.Res;
 
 namespace XPloit
@@ -13,19 +14,23 @@ namespace XPloit
     {
         static int Main(string[] args)
         {
+            ProcessStartPayload p = new ProcessStartPayload();
+
             // Configure
             //Console.InputEncoding = Encoding.UTF8;
             //Console.OutputEncoding = Encoding.UTF8;
+            ConsoleCommand command = new ConsoleCommand();
+            command.AddInput("use Auxiliary/Local/WordListBruteForce");
+
             Console.CursorSize = 100;
             Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Black;
+
+            command.SetBackgroundColor(ConsoleColor.White);
+            command.SetBackgroundColor(ConsoleColor.Black);
 
             // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
             // \"CryptKey=#Crypt0M3#\" 
             Config cfg = ArgumentHelper.Parse<Config>("\"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
-
-            ConsoleCommand command = new ConsoleCommand();
 
             if (cfg.Connect != null)
             {
@@ -37,16 +42,16 @@ namespace XPloit
                 if (client.Start())
                 {
                     command.SetForeColor(ConsoleColor.Green);
-                    command.Write(Lang.Get("Ok").ToUpperInvariant(), true);
+                    command.WriteLine(Lang.Get("Ok").ToUpperInvariant());
                 }
                 else
                 {
                     command.SetForeColor(ConsoleColor.Red);
-                    command.Write(Lang.Get("Error").ToUpperInvariant(), true);
+                    command.WriteLine(Lang.Get("Error").ToUpperInvariant());
                 }
 
                 command.SetForeColor(ConsoleColor.DarkGray);
-                command.Write(Lang.Get("Press_Any_Key"), true);
+                command.WriteLine(Lang.Get("Press_Any_Key"));
 
                 Console.ReadKey();
             }
@@ -66,12 +71,12 @@ namespace XPloit
                     if (listener.Start())
                     {
                         command.SetForeColor(ConsoleColor.Green);
-                        command.Write(Lang.Get("Ok").ToUpperInvariant(), true);
+                        command.WriteLine(Lang.Get("Ok").ToUpperInvariant());
                     }
                     else
                     {
                         command.SetForeColor(ConsoleColor.Red);
-                        command.Write(Lang.Get("Error").ToUpperInvariant(), true);
+                        command.WriteLine(Lang.Get("Error").ToUpperInvariant());
                     }
                 }
 

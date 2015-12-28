@@ -17,5 +17,6 @@ namespace XPloit.Core
         /// Variables
         /// </summary>
         public Dictionary<string, object> Variables { get; set; }
+        public override string ToString() { return Name; }
     }
 }

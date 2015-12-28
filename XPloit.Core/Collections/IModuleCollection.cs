@@ -6,7 +6,7 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Collections
 {
-    public class IModuleCollection<T> : IList<IModule>
+    public class IModuleCollection<T> : IList<T> where T :IModule
     {
         Type _TypeT;
         EModuleType _Type;
@@ -16,7 +16,7 @@ namespace XPloit.Core.Collections
         /// </summary>
         public EModuleType Type { get { return _Type; } }
 
-        List<IModule> _InternalList = new List<IModule>();
+        List<T> _InternalList = new List<T>();
 
         protected IModuleCollection()
         {
@@ -27,22 +27,22 @@ namespace XPloit.Core.Collections
             else if (_TypeT == typeof(Exploit)) _Type = EModuleType.Exploit;
         }
 
-        public int IndexOf(IModule item) { return _InternalList.IndexOf(item); }
-        public void Insert(int index, IModule item) { _InternalList.Insert(index, item); }
+        public int IndexOf(T item) { return _InternalList.IndexOf(item); }
+        public void Insert(int index, T item) { _InternalList.Insert(index, item); }
         public void RemoveAt(int index) { _InternalList.RemoveAt(index); }
-        public IModule this[int index]
+        public T this[int index]
         {
             get { return _InternalList[index]; }
             set { _InternalList[index] = value; }
         }
-        public void Add(IModule item) { _InternalList.Add(item); }
+        public void Add(T item) { _InternalList.Add(item); }
         public void Clear() { _InternalList.Clear(); }
-        public bool Contains(IModule item) { return _InternalList.Contains(item); }
-        public void CopyTo(IModule[] array, int arrayIndex) { _InternalList.CopyTo(array, arrayIndex); }
+        public bool Contains(T item) { return _InternalList.Contains(item); }
+        public void CopyTo(T[] array, int arrayIndex) { _InternalList.CopyTo(array, arrayIndex); }
         public int Count { get { return _InternalList.Count; } }
         public bool IsReadOnly { get { return false; } }
-        public bool Remove(IModule item) { return _InternalList.Remove(item); }
-        public IEnumerator<IModule> GetEnumerator()
+        public bool Remove(T item) { return _InternalList.Remove(item); }
+        public IEnumerator<T> GetEnumerator()
         {
             return _InternalList.GetEnumerator();
         }
@@ -64,15 +64,29 @@ namespace XPloit.Core.Collections
             {
                 foreach (Type type in asm.GetTypes())
                 {
-                    if (type.IsAssignableFrom(_TypeT))
+                    if (_TypeT == type) continue;
+                    if (_TypeT.IsAssignableFrom(type))
                     {
-                        IModule o = (IModule)Activator.CreateInstance(type);
+                        T o = (T)Activator.CreateInstance(type);
                         Add(o);
                     }
                 }
             }
 
             return Count - hay;
+        }
+
+        /// <summary>
+        /// Get module by fullPath
+        /// </summary>
+        /// <param name="fullPath">FullPath</param>
+        public T GetByFullPath(string fullPath)
+        {
+            foreach(T m in _InternalList)
+            {
+                if (m.FullPath == fullPath) return m;
+            }
+            return default(T);
         }
     }
 }

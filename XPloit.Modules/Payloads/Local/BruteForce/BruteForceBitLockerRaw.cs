@@ -8,13 +8,13 @@ using XPloit.Core.Enums;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForceBitLocker : Payload, BruteForce.ICheckPassword
+    public class BruteForceBitLockerRaw : Payload, BruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive"; } }
         public override string Path { get { return "Payloads/Local/BruteForce"; } }
-        public override string Name { get { return "BruteForceBitLocker"; } }
+        public override string Name { get { return "BruteForceBitLockerRaw"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://github.com/Aorimn/dislocker") }; } }
         #endregion
 
@@ -25,7 +25,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public string HexMac { get; set; }
         #endregion
 
-        public BruteForceBitLocker()
+        public BruteForceBitLockerRaw()
         {
             // VALORES REQUERIDOS PARA EL CRACK DEL TEST #123456#
             HexSalt = "33 b1 76 41 46 2c 04 5d 3e 55 db d9 c3 43 60 44";

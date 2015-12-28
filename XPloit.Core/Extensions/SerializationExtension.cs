@@ -9,9 +9,9 @@ namespace XPloit.Core.Extensions
         /// </summary>
         /// <param name="obj">Objeto a devolver</param>
         /// <returns>Devuelve el Json Serializado</returns>
-        public static string Serialize(this object obj)
+        public static string Serialize2Json(this object obj)
         {
-            return SerializationHelper.Serialize(obj);
+            return SerializationJsonHelper.Serialize(obj);
         }
         /// <summary>
         /// Obtiene el objeto del GameAction
@@ -19,9 +19,9 @@ namespace XPloit.Core.Extensions
         /// <typeparam name="T">Objeto a devolver</typeparam>
         /// <param name="json">Json</param>
         /// <returns>Obtiene el objeto del GameAction</returns>
-        public static T Deserialize<T>(this string json)
+        public static T DeserializeFromJson<T>(this string json)
         {
-            return SerializationHelper.Deserialize<T>(json);
+            return SerializationJsonHelper.Deserialize<T>(json);
         }
     }
 }

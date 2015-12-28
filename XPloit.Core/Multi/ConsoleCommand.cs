@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Linq;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
@@ -16,141 +16,32 @@ namespace XPloit.Core.Multi
         TextWriter _Out;
         TextReader _In;
 
-        IGetAutocompleteCommand _AutoCompleteSource = null;
+        class Frame
+        {
+            public IEnumerator<string> E;
+            public Frame(IEnumerable<string> source) { E = source.GetEnumerator(); }
+        }
+
+        readonly Stack<Frame> _Frames = new Stack<Frame>();
+
+        ConsoleColor _LastFore, _LastBack;
+        ConsoleColor _PromptColor = ConsoleColor.Green;
+        ConsoleColor _InputColor = ConsoleColor.White;
+
+        public string PromptCharacter { get; set; }
+
         /// <summary>
-        /// AutoComplete Source
+        /// Use autocomplete
         /// </summary>
-        public IGetAutocompleteCommand AutoCompleteSource { get { return _AutoCompleteSource; } set { _AutoCompleteSource = value; } }
-
-        class CommandTabState
-        {
-            public string[] Posibilities = null;
-
-            public string Last;
-            public string Cmd;
-            public string Input;
-            public int Index = -1;
-            public bool MultipleChoise = false;
-            public bool StartWithQuotes = false;
-
-            static string[] GetCommand(ref string cmd, IGetAutocompleteCommand options)
-            {
-                int ix = cmd.LastIndexOf(' ');
-                if (ix != -1)
-                {
-                    int ix2 = cmd.IndexOf(' ');
-                    if (ix2 != -1)
-                    {
-                        string exe = cmd.Substring(0, ix2);
-
-                        cmd = cmd.Substring(ix + 1);
-                        return options.AvailableCommandOptions(exe.Trim('"'));
-                    }
-                }
-                return options.AvailableCommands();
-            }
-            public CommandTabState(string write, IGetAutocompleteCommand commander)
-            {
-                Input = write;
-                Cmd = write.ToLowerInvariant();
-                Posibilities = GetCommand(ref Cmd, commander);
-
-                if (Cmd.StartsWith("\""))
-                {
-                    Cmd = Cmd.Substring(1);
-                    StartWithQuotes = true;
-                }
-
-                // Manual
-                List<string> av = new List<string>();
-                foreach (string a in Posibilities)
-                {
-                    if (a.StartsWith(Cmd, StringComparison.InvariantCultureIgnoreCase))
-                        av.Add(a);
-                }
-
-                MultipleChoise = av.Count > 1;
-
-                // Files
-                if (!string.IsNullOrEmpty(Cmd))
-                {
-                    try
-                    {
-                        string path = Path.GetDirectoryName(Cmd);
-                        if (!Directory.Exists(path) && Directory.Exists(Cmd)) path = Cmd;
-
-                        if (Directory.Exists(path))
-                        {
-                            bool hasDir = false;
-                            int hasFiles = 0;
-                            string file = Path.GetFileName(Cmd);
-
-                            if (commander.AllowAutocompleteFolders == EAllowAutocompleteCommand.Yes || (commander.AllowAutocompleteFolders == EAllowAutocompleteCommand.OnlyWhenEmpty && av.Count <= 0))
-                                foreach (string di in Directory.GetDirectories(path, file + "*"))
-                                {
-                                    hasDir = true;
-                                    av.Add(di + Path.DirectorySeparatorChar);
-                                }
-
-                            if (commander.AllowAutocompleteFiles == EAllowAutocompleteCommand.Yes || (commander.AllowAutocompleteFiles == EAllowAutocompleteCommand.OnlyWhenEmpty && av.Count <= 0))
-                                foreach (string di in Directory.GetFiles(path, file + "*"))
-                                {
-                                    hasFiles++;
-                                    av.Add(di);
-                                }
-
-                            if (hasDir || hasFiles > 1)
-                            {
-                                // When is directory dont complete
-                                MultipleChoise = true;
-                            }
-                        }
-                    }
-                    catch { }
-
-                    if (commander.AllowAutocompleteMaths == EAllowAutocompleteCommand.Yes || (commander.AllowAutocompleteMaths == EAllowAutocompleteCommand.OnlyWhenEmpty && av.Count <= 0))
-                    {
-                        // Trick for calc from string
-                        double c = MathHelper.Calc(Cmd);
-                        if (!double.IsNaN(c)) av.Add(c.ToString(CultureInfo.InvariantCulture));
-                    }
-                }
-
-                av.Sort();
-                Posibilities = av.Count == 0 ? null : av.ToArray();
-
-                Last = null;
-            }
-            public string Next()
-            {
-                if (Posibilities == null)
-                {
-                    Last = null;
-                    return null;
-                }
-
-                Index++;
-                if (Posibilities.Length <= Index) Index = 0;
-                return Last = Posibilities[Index];
-            }
-        }
-        void Delete(ref string write, int count)
-        {
-            if (write.Length > 0 && count > 0)
-            {
-                write = write.Substring(0, write.Length - count);
-
-                for (int x = 0; x < count; x++)
-                    Write("\b \b");
-            }
-        }
-
+        public bool AllowAutocomplete { get; set; }
 
         public ConsoleCommand()
         {
             _Codec = Console.OutputEncoding;
             _Out = Console.Out;
             _In = Console.In;
+
+            PromptCharacter = "> ";
         }
 
         public void Clear() { Console.Clear(); }
@@ -158,133 +49,204 @@ namespace XPloit.Core.Multi
         /// Write a char
         /// </summary>
         /// <param name="c">Char</param>
-        public void Write(char c) { Write(c.ToString(), false); }
+        public void Write(char c) { Write(c.ToString()); }
         /// <summary>
         /// Write
         /// </summary>
         /// <param name="line">Line</param>
-        public void Write(string line) { Write(line, false); }
-        /// <summary>
-        /// Write
-        /// </summary>
-        /// <param name="line">Line</param>
-        /// <param name="appendNewLine">True for append newLine</param>
-        public void Write(string line, bool appendNewLine)
+        public void Write(string line)
         {
             if (line != null) _Out.Write(line);
-            if (appendNewLine) _Out.Write(Environment.NewLine);
         }
-        public void SetForeColor(ConsoleColor color) { Console.ForegroundColor = color; }
-        public void SetBackgroundColor(ConsoleColor color) { Console.BackgroundColor = color; }
+        /// <summary>
+        /// Write
+        /// </summary>
+        /// <param name="line">Line</param>
+        public void WriteLine(string line)
+        {
+            if (line != null) _Out.Write(line);
+            _Out.Write(Environment.NewLine);
+        }
 
+        public void SetBackgroundColor(ConsoleColor value)
+        {
+            if (_LastBack == value) return;
+            _LastBack = value;
+            Console.BackgroundColor = value;
+        }
+        public void SetForeColor(ConsoleColor value)
+        {
+            if (_LastFore == value) return;
+            _LastFore = value;
+            Console.ForegroundColor = value;
+        }
 
-        public string ReadLine() { return ReadLine(false); }
-        public string ReadLine(bool isPassword)
+        string GetNextFrameInput()
+        {
+            while (_Frames.Any())
+            {
+                Frame f = _Frames.Peek();
+                if (!f.E.MoveNext())
+                {
+                    _Frames.Pop();
+                    continue;
+                }
+                return f.E.Current;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Adds a new input source on top of the input stack.
+        ///
+        /// This source will be used until it is exhausted, then the previous source will be used in the same manner.
+        /// </summary>
+        public void AddInput(IEnumerable<string> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            _Frames.Push(new Frame(source));
+        }
+        /// <summary>
+        /// Puts a single line of input on top of the stack.
+        /// </summary>
+        public void AddInput(string source)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            AddInput(new string[] { source });
+        }
+
+        void OnPrompt(ICommandLayer sender)
+        {
+            sender.SetForeColor(_PromptColor);
+            sender.Write(PromptCharacter);
+            sender.SetForeColor(_InputColor);
+        }
+
+        public string ReadLine(PromptDelegate prompt) { return ReadLine(prompt, false); }
+        public string ReadLine(PromptDelegate prompt, bool isPassword)
         {
             Console.CursorVisible = true;
 
-            string write = "";
-            CommandTabState state = null;
+            string input = GetNextFrameInput();
 
-            ConsoleKeyInfo cki;
-
-            do
+            if (string.IsNullOrEmpty(input))
             {
-                cki = Console.ReadKey(true);
-                char l = cki.KeyChar;
+                if (prompt != null) prompt(this);
 
-                switch (cki.Key)
+                if (!AllowAutocomplete)
                 {
-                    case ConsoleKey.Tab:
-                        {
-                            string get = null;
+                    input = Console.ReadLine();
+                }
+                else
+                {
+                    //string write = "";
+                    //CommandTabState state = null;
 
-                            if (!isPassword)
-                            {
-                                if (_AutoCompleteSource != null)
-                                {
-                                    bool erase = true;
-                                    if (state == null)
-                                    {
-                                        state = new CommandTabState(write, _AutoCompleteSource);
-                                        erase = false;
-                                    }
+                    //ConsoleKeyInfo cki;
 
-                                    int llast = state.Last == null ? 0 : state.Last.Length;
+                    //do
+                    //{
+                    //    cki = Console.ReadKey(true);
+                    //    char l = cki.KeyChar;
 
-                                    get = state.Next();
+                    //    switch (cki.Key)
+                    //    {
+                    //        case ConsoleKey.Tab:
+                    //            {
+                    //                string get = null;
 
-                                    if (get != null)
-                                    {
-                                        int lget = get.Length;
-                                        int lcmd = state.Cmd.Length;
+                    //                if (!isPassword)
+                    //                {
+                    //                    if (_AutoCompleteSource != null)
+                    //                    {
+                    //                        bool erase = true;
+                    //                        if (state == null)
+                    //                        {
+                    //                            state = new CommandTabState(write, _AutoCompleteSource);
+                    //                            erase = false;
+                    //                        }
 
-                                        if (lget < lcmd)
-                                        {
-                                            Delete(ref write, lcmd);
+                    //                        int llast = state.Last == null ? 0 : state.Last.Length;
 
-                                            Write(get);
-                                            write += get;
-                                        }
-                                        else
-                                        {
-                                            if (erase) Delete(ref write, llast - lcmd);
+                    //                        get = state.Next();
 
-                                            // Print rest
-                                            Write(get.Substring(lcmd));
-                                            write += get.Substring(lcmd);
+                    //                        if (get != null)
+                    //                        {
+                    //                            int lget = get.Length;
+                    //                            int lcmd = state.Cmd.Length;
 
-                                            if (state.MultipleChoise) break;
-                                        }
-                                    }
+                    //                            if (lget < lcmd)
+                    //                            {
+                    //                                Delete(ref write, lcmd);
 
-                                    if (state.Posibilities != null && state.StartWithQuotes && !write.EndsWith("\""))
-                                    {
-                                        l = '"';
-                                        write += l.ToString();
+                    //                                Write(get);
+                    //                                write += get;
+                    //                            }
+                    //                            else
+                    //                            {
+                    //                                if (erase) Delete(ref write, llast - lcmd);
 
-                                        if (isPassword && l != ' ') l = '*';
-                                        Write(l);
-                                    }
-                                }
+                    //                                // Print rest
+                    //                                Write(get.Substring(lcmd));
+                    //                                write += get.Substring(lcmd);
 
-                                l = ' ';
-                                goto default;
-                            }
+                    //                                if (state.MultipleChoise) break;
+                    //                            }
+                    //                        }
 
-                            break;
-                        }
-                    case ConsoleKey.Backspace:
-                        {
-                            state = null;
-                            Delete(ref write, 1);
-                            break;
-                        }
-                    case ConsoleKey.Enter:
-                        {
-                            state = null;
-                            Write(Environment.NewLine);
-                            break;
-                        }
-                    default:
-                        {
-                            if (l == '\0') continue;
+                    //                        if (state.Posibilities != null && state.StartWithQuotes && !write.EndsWith("\""))
+                    //                        {
+                    //                            l = '"';
+                    //                            write += l.ToString();
 
-                            state = null;
-                            write += l.ToString();
+                    //                            if (isPassword && l != ' ') l = '*';
+                    //                            Write(l);
+                    //                        }
+                    //                    }
 
-                            if (isPassword && l != ' ') l = '*';
-                            Write(l);
-                            break;
-                        }
+                    //                    l = ' ';
+                    //                    goto default;
+                    //                }
+
+                    //                break;
+                    //            }
+                    //        case ConsoleKey.Backspace:
+                    //            {
+                    //                state = null;
+                    //                Delete(ref write, 1);
+                    //                break;
+                    //            }
+                    //        case ConsoleKey.Enter:
+                    //            {
+                    //                state = null;
+                    //                Write(Environment.NewLine);
+                    //                break;
+                    //            }
+                    //        default:
+                    //            {
+                    //                if (l == '\0') continue;
+
+                    //                state = null;
+                    //                write += l.ToString();
+
+                    //                if (isPassword && l != ' ') l = '*';
+                    //                Write(l);
+                    //                break;
+                    //            }
+
+                    //    }
+
+                    //} while (cki.Key != ConsoleKey.Enter);
 
                 }
-
-            } while (cki.Key != ConsoleKey.Enter);
-
+                SetForeColor(ConsoleColor.Gray);
+            }
 
             Console.CursorVisible = false;
-            return write;
+            return input;
         }
     }
 }
