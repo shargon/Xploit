@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Linq;
-using XPloit.Core.Enums;
+using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 
-namespace XPloit.Core.Multi
+namespace XPloit.Core.Command
 {
     public class ConsoleCommand : ICommandLayer
     {
@@ -18,14 +16,19 @@ namespace XPloit.Core.Multi
 
         List<string> _Frames = new List<string>();
 
-        public void GetCommand(string input, out string word, out string command, out int argNum)
+        public void GetCommand(string input, out string word, out string command, out string[] args)
         {
+            if (input == null) input = "";
+            input = input.TrimStart();
+
             int ix = input == null ? -1 : input.IndexOf(' ');
             if (ix != -1)
             {
                 command = input.Substring(0, ix).Trim();
-                string[] split = input.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                argNum = Math.Max(0, split.Length - 2);
+
+                args = ArgumentHelper.ArrayFromCommandLine(input.TrimStart().Substring(command.Length));
+                // Añadimos un parametro extra para diferenciar que ya ha acabado de escribir el ultimo parametro
+                if (input.EndsWith(" ")) Array.Resize(ref args, args.Length + 1);
 
                 ix = input.LastIndexOf(' ');
                 word = input.Substring(ix + 1, input.Length - ix - 1);
@@ -35,7 +38,7 @@ namespace XPloit.Core.Multi
                 // Command
                 word = input == null ? "" : input.TrimStart();
                 command = "";
-                argNum = 0;
+                args = null;
             }
         }
 
@@ -80,13 +83,15 @@ namespace XPloit.Core.Multi
 
         public void SetBackgroundColor(ConsoleColor value)
         {
-            if (_LastBack == value) return;
+            if (_LastBack == value)
+                return;
             _LastBack = value;
             Console.BackgroundColor = value;
         }
         public void SetForeColor(ConsoleColor value)
         {
-            if (_LastFore == value) return;
+            if (_LastFore == value)
+                return;
             _LastFore = value;
             Console.ForegroundColor = value;
         }
@@ -136,7 +141,7 @@ namespace XPloit.Core.Multi
             for (; ; )
             {
                 string input;
-                if (_Frames.Count > 1)
+                if (_Frames.Count >= 1)
                 {
                     input = _Frames[0];
                     _Frames.RemoveAt(0);
@@ -161,12 +166,12 @@ namespace XPloit.Core.Multi
                                         // Check in list
                                         string command;
                                         string word;
-                                        int argNum;
-                                        GetCommand(input, out word, out command, out argNum);
+                                        string[] args;
+                                        GetCommand(input, out word, out command, out args);
 
                                         IEnumerable<string> source;
                                         if (string.IsNullOrEmpty(command)) source = autoComplete.GetCommand();
-                                        else source = autoComplete.GetArgument(command, argNum);
+                                        else source = autoComplete.GetArgument(command, args);
 
                                         if (source == null) break;
 
@@ -252,7 +257,6 @@ namespace XPloit.Core.Multi
 
                                                     foreach (string s in ls)
                                                     {
-                                                        Write(" ");
                                                         SetBackgroundColor(ConsoleColor.Gray);
                                                         SetForeColor(ConsoleColor.Black);
                                                         Write(s.Substring(0, word.Length));

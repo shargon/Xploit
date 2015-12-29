@@ -24,7 +24,7 @@ namespace XPloit.Core.Helpers
 
         static Type _IListType = typeof(IList);
 
-        internal static object ConvertTo(string input, Type type)
+        public static object ConvertTo(string input, Type type)
         {
             if (!string.IsNullOrEmpty(input))
             {

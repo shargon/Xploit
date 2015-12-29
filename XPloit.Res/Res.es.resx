@@ -164,11 +164,12 @@
   </data>
   <data name="Man_Help" xml:space="preserve">
     <value>help [command]
-Displays a help text for the specified command, or
-Displays a list of all available commands.</value>
+
+Displays a help text for the specified command, or displays a list of all available commands.</value>
   </data>
   <data name="Man_Exit" xml:space="preserve">
     <value>exit / quit
+
 Exit xploit framework.</value>
   </data>
   <data name="Command_Incomplete" xml:space="preserve">
@@ -179,14 +180,17 @@ Exit xploit framework.</value>
   </data>
   <data name="Man_Use" xml:space="preserve">
     <value>use [module]
+
 Use a XPloit module</value>
   </data>
   <data name="Man_Banner" xml:space="preserve">
     <value>banner
+
 Show a beautifull xploit banner</value>
   </data>
   <data name="Man_Clear" xml:space="preserve">
     <value>clear
+
 Clear console</value>
   </data>
   <data name="Require_Module" xml:space="preserve">
@@ -224,7 +228,17 @@ Example: "use &lt;module&gt;"</value>
     <value>Target</value>
   </data>
   <data name="Man_Show" xml:space="preserve">
-    <value>show
-Displays the config for current module</value>
+    <value>show [options]
+
+Show available information for the current module
+
+  Available options:
+  
+  config/options - Displays the config for current module
+  payloads       - Display available payloads for the current module
+  targets        - Display available targets for the current module</value>
+  </data>
+  <data name="Incorrect_Command_Usage" xml:space="preserve">
+    <value>Incorrect command ussage</value>
   </data>
 </root>

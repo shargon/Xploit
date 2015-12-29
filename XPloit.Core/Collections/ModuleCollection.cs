@@ -1,19 +1,19 @@
 ﻿namespace XPloit.Core.Collections
 {
-    public class ExploitCollection : IModuleCollection<Exploit>
+    public class ModuleCollection : IModuleCollection<Module>
     {
-        static ExploitCollection _Current = null;
+        static ModuleCollection _Current = null;
 
         /// <summary>
         /// Current Exploits
         /// </summary>
-        public static ExploitCollection Current
+        public static ModuleCollection Current
         {
             get
             {
                 if (_Current == null)
                 {
-                    _Current = new ExploitCollection();
+                    _Current = new ModuleCollection();
                     _Current.Load();
                 }
                 return _Current;

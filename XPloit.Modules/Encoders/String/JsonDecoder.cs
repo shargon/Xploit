@@ -33,7 +33,7 @@ namespace XPloit.Modules.Encoders.String
         /// <returns>Return object</returns>
         public override object Run(Payload payload)
         {
-            return SerializationJsonHelper.Deserialize(payload.StringValue, Type);
+            return JsonHelper.Deserialize(payload.StringValue, Type);
         }
     }
 }

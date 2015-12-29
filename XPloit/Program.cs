@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using XPloit.Configs;
+using XPloit.Core.Command;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners;
-using XPloit.Core.Multi;
 using XPloit.Modules.Payloads.Multi;
 using XPloit.Res;
 
@@ -21,6 +21,8 @@ namespace XPloit
             //Console.OutputEncoding = Encoding.UTF8;
             ConsoleCommand command = new ConsoleCommand();
             command.AddInput("use Auxiliary/Local/WordListBruteForce");
+            command.AddInput("banner");
+
 
             Console.CursorSize = 100;
             Console.CursorVisible = false;

@@ -2,11 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using XPloit.Core.Extensions;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
-using XPloit.Core.Extensions;
 using XPloit.Res;
 
 namespace XPloit.Core.Command

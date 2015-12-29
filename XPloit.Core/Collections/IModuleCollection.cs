@@ -24,7 +24,7 @@ namespace XPloit.Core.Collections
 
             if (_TypeT == typeof(Encoder)) _Type = EModuleType.Encoder;
             else if (_TypeT == typeof(Payload)) _Type = EModuleType.Payload;
-            else if (_TypeT == typeof(Exploit)) _Type = EModuleType.Exploit;
+            else if (_TypeT == typeof(Module)) _Type = EModuleType.Exploit;
         }
 
         public int IndexOf(T item) { return _InternalList.IndexOf(item); }

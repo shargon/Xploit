@@ -19,7 +19,7 @@ namespace XPloit.Core.PayloadRequirements
 
         public bool IsAllowedPayload(Payload payload)
         {
-            return payload.GetType().IsAssignableFrom(_Type);
+            return _Type.IsAssignableFrom(payload.GetType());
         }
     }
 }

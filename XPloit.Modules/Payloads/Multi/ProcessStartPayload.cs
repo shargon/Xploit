@@ -66,7 +66,7 @@ namespace XPloit.Modules.Payloads.Multi
                         pi.Password.AppendChar(c);
                 }
 
-                return this.Encoding.GetBytes(SerializationJsonHelper.Serialize(pi));
+                return this.Encoding.GetBytes(JsonHelper.Serialize(pi));
             }
         }
     }

@@ -25,7 +25,7 @@ namespace XPloit.Core.Attributes
 
         public virtual byte[] Serialize(Encoding codec, EXPloitSocketMsg type, IXPloitSocketMsg msg, byte[] header)
         {
-            string smsg = SerializationJsonHelper.Serialize(msg);
+            string smsg = JsonHelper.Serialize(msg);
             byte[] data = codec.GetBytes(smsg);
             int l = data.Length;
 

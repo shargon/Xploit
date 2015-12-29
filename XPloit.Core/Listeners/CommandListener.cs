@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Text;
 using XPloit.Core.Collections;
 using XPloit.Core.Command;
+using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
+using XPloit.Core.PayloadRequirements;
 using XPloit.Res;
 
 namespace XPloit.Core.Listeners
@@ -15,7 +17,7 @@ namespace XPloit.Core.Listeners
         CommandMenu _Command = null;
         bool _IsStarted;
 
-        Exploit _Current = null;
+        Module _Current = null;
 
         #region IAutoCompleteSource
         public IEnumerable<string> GetCommand()
@@ -24,18 +26,18 @@ namespace XPloit.Core.Listeners
                 foreach (string s in ci.Selector)
                     yield return s;
         }
-        public IEnumerable<string> GetArgument(string command, int argumentNumber)
+        public IEnumerable<string> GetArgument(string command, string[] arguments)
         {
-            switch (command.ToLowerInvariant())
+            switch (command.ToLowerInvariant().Trim())
             {
                 case "use":
                     {
-                        foreach (Exploit e in ExploitCollection.Current) yield return e.FullPath;
+                        foreach (Module e in ModuleCollection.Current) yield return e.FullPath;
                         break;
                     }
                 case "show":
                     {
-                        if (argumentNumber == 0)
+                        if (arguments == null || arguments.Length <= 1)
                         {
                             foreach (string e in new string[] { "options", "config", "payloads", "targets" }) yield return e;
                         }
@@ -43,12 +45,31 @@ namespace XPloit.Core.Listeners
                     }
                 case "set":
                     {
-                        if (_Current == null || argumentNumber != 0) break;
+                        if (_Current == null) break;
 
-                        if (argumentNumber == 0)
+                        if (arguments == null || arguments.Length <= 1)
                         {
-                            foreach (PropertyInfo pi in _Current.GetProperties(true, true))
+                            foreach (PropertyInfo pi in _Current.GetProperties(true, true, false))
                                 yield return pi.Name;
+                        }
+                        else
+                        {
+                            switch (arguments[0].ToLowerInvariant().Trim())
+                            {
+                                case "payload":
+                                    {
+                                        IPayloadRequirements req = _Current.PayloadRequirements;
+                                        if (req != null && !(req is NoPayloadRequired))
+                                        {
+                                            foreach (Payload p in PayloadCollection.Current)
+                                            {
+                                                if (!req.IsAllowedPayload(p)) continue;
+                                                yield return p.FullPath;
+                                            }
+                                        }
+                                        break;
+                                    }
+                            }
                         }
                         break;
                     }
@@ -98,7 +119,6 @@ namespace XPloit.Core.Listeners
                 _Command.IO.WriteLine(Lang.Get("Require_Module"));
                 return;
             }
-
         }
         public void cmdShow(string args)
         {
@@ -153,10 +173,8 @@ namespace XPloit.Core.Listeners
                             tb.AddRow(Lang.Get("Payload"), _Current.Payload.FullPath, "");
 
                         bool primera = true;
-                        foreach (PropertyInfo pi in _Current.GetProperties(true, true))
+                        foreach (PropertyInfo pi in _Current.GetProperties(true, true, true))
                         {
-                            if (pi.Name == "Target" || pi.Name == "Payload") continue;
-
                             if (primera)
                             {
                                 tb.AddRow("", "", "");
@@ -195,6 +213,23 @@ namespace XPloit.Core.Listeners
                     }
                 case "payloads":
                     {
+                        IPayloadRequirements req = _Current.PayloadRequirements;
+                        if (req == null || req is NoPayloadRequired)
+                            _Command.IO.WriteLine(Lang.Get("Nothing_To_Show"));
+                        else
+                        {
+                            CommandTable tb = new CommandTable();
+
+                            tb.AddRow(tb.AddRow(Lang.Get("Name"), Lang.Get("Description")).MakeSeparator());
+
+                            foreach (Payload p in PayloadCollection.Current)
+                            {
+                                if (!req.IsAllowedPayload(p)) continue;
+                                tb.AddRow(p.FullPath, p.Description);
+                            }
+
+                            _Command.IO.Write(tb.Output());
+                        }
                         break;
                     }
                 case "targets":
@@ -205,7 +240,9 @@ namespace XPloit.Core.Listeners
                 default:
                     {
                         // incorrect use
-                        //_Command.IO.WriteLine(Lang.Get("Require_Module"));
+                        WriteError(Lang.Get("Incorrect_Command_Usage"));
+                        _Command.IO.SetForeColor(ConsoleColor.Gray);
+                        _Command.IO.AddInput("help show");
                         break;
                     }
             }
@@ -220,13 +257,13 @@ namespace XPloit.Core.Listeners
             else
             {
                 args = args.Trim();
-                _Current = ExploitCollection.Current.GetByFullPath(args);
+                _Current = ModuleCollection.Current.GetByFullPath(args);
             }
 
             if (_Current == null) WriteError(Lang.Get(string.IsNullOrEmpty(args) ? "Command_Incomplete" : "Module_Not_Found", args));
             else
             {
-                _Command.PromptCharacter = "(" + _Current.Name + ")> ";
+                _Command.PromptCharacter =  _Current.Name + "> ";
             }
         }
         void WriteError(string error)
@@ -238,9 +275,6 @@ namespace XPloit.Core.Listeners
         public override bool Start()
         {
             _IsStarted = true;
-
-            _Command.IO.AddInput("banner");
-            //cmdBanner("");
 
             _Command.Run();
 

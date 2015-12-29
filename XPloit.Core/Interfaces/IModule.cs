@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Reflection;
 using XPloit.Core.Enums;
 
@@ -50,12 +52,43 @@ namespace XPloit.Core.Interfaces
         /// </summary>
         /// <param name="excludeOnlyRead">True for exclude onlyRead</param>
         /// <param name="excludeOnlyWrite">True for exclude onlyWrite</param>
-        public IEnumerable<PropertyInfo> GetProperties( bool excludeOnlyRead, bool excludeOnlyWrite)
+        public IEnumerable<PropertyInfo> GetProperties(bool excludeOnlyRead, bool excludeOnlyWrite, bool excludeNonEditableProperties)
         {
             foreach (PropertyInfo pi in GetType().GetProperties())
             {
                 if (excludeOnlyRead && pi.CanRead && !pi.CanWrite) continue;
                 if (excludeOnlyWrite && pi.CanWrite && !pi.CanRead) continue;
+                if (excludeNonEditableProperties)
+                {
+                    if (!pi.CanWrite) continue;
+                    if (pi.PropertyType.IsClass)
+                    {
+                        if (
+                            pi.PropertyType != typeof(string) &&
+                            pi.PropertyType != typeof(Boolean) &&
+
+                            pi.PropertyType != typeof(SByte) &&
+                            pi.PropertyType != typeof(UInt16) &&
+                            pi.PropertyType != typeof(UInt32) &&
+                            pi.PropertyType != typeof(UInt64) &&
+
+                            pi.PropertyType != typeof(Byte) &&
+                            pi.PropertyType != typeof(Int16) &&
+                            pi.PropertyType != typeof(Int32) &&
+                            pi.PropertyType != typeof(Int64) &&
+
+                            pi.PropertyType != typeof(Decimal) &&
+                            pi.PropertyType != typeof(float) &&
+                            pi.PropertyType != typeof(Double) &&
+
+                            pi.PropertyType != typeof(IPAddress) &&
+                            pi.PropertyType != typeof(IPEndPoint) &&
+                            pi.PropertyType != typeof(TimeSpan) &&
+                            pi.PropertyType != typeof(DateTime)
+                            )
+                            continue;
+                    }
+                }
 
                 yield return pi;
             }

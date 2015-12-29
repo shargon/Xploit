@@ -9,7 +9,7 @@ using XPloit.Modules.Payloads.Multi;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class Sys : Exploit
+    public class Sys : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }

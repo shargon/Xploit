@@ -8,7 +8,7 @@ using XPloit.Core.PayloadRequirements;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForce : Exploit
+    public class BruteForce : Module
     {
         public interface ICheckPassword
         {

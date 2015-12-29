@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using XPloit.Core.Command.Interfaces;
 
 namespace XPloit.Core.Interfaces
 {

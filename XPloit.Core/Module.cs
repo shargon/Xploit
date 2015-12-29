@@ -4,7 +4,7 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core
 {
-    public class Exploit : IModule
+    public class Module : IModule
     {
         /// <summary>
         /// ModuleType

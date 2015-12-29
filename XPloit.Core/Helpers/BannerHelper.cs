@@ -431,9 +431,7 @@ namespace XPloit.Core.Helpers
             command.Write(StringHelper.Replicate(" ", 2));
 
             command.SetBackgroundColor(ConsoleColor.DarkGray);
-            command.Write(StringHelper.Replicate(" ", 14));
-            command.SetBackgroundColor(ConsoleColor.DarkGray);
-            command.Write(StringHelper.Replicate(" ", 4));
+            command.Write(StringHelper.Replicate(" ", 18));
             command.SetBackgroundColor(ConsoleColor.Black);
             command.Write(StringHelper.Replicate(" ", 2));
 
@@ -477,7 +475,7 @@ namespace XPloit.Core.Helpers
             command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 20));
             //18
-            command.SetBackgroundColor(ConsoleColor.DarkBlue);
+            //command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.Write(StringHelper.Replicate(" ", 8));
             command.SetBackgroundColor(ConsoleColor.White);
             command.Write(StringHelper.Replicate(" ", 2));
@@ -512,13 +510,10 @@ namespace XPloit.Core.Helpers
             command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 20));
             //19
-            command.SetBackgroundColor(ConsoleColor.DarkBlue);
+            //command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.Write(StringHelper.Replicate(" ", 16));
             command.SetBackgroundColor(ConsoleColor.Black);
-            command.Write(StringHelper.Replicate(" ", 6));
-
-            command.SetBackgroundColor(ConsoleColor.Black);
-            command.Write(StringHelper.Replicate(" ", 2));
+            command.Write(StringHelper.Replicate(" ", 8));
             command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.Write(StringHelper.Replicate(" ", 2));
             command.SetBackgroundColor(ConsoleColor.Black);
@@ -535,21 +530,21 @@ namespace XPloit.Core.Helpers
             command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 20));
             //20
-            command.SetBackgroundColor(ConsoleColor.DarkBlue);
+            //command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.Write(StringHelper.Replicate(" ", 16));
             command.SetBackgroundColor(ConsoleColor.White);
             command.Write(StringHelper.Replicate(" ", 2));
             command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 62));
             //20
-            command.SetBackgroundColor(ConsoleColor.DarkBlue);
+            //command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.Write(StringHelper.Replicate(" ", 12));
             command.SetBackgroundColor(ConsoleColor.White);
             command.Write(StringHelper.Replicate(" ", 2));
             command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 66));
             //21
-            command.SetBackgroundColor(ConsoleColor.DarkBlue);
+            //command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 80));
 
 
