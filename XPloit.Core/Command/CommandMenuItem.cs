@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Extensions;
+using XPloit.Res;
 
 namespace XPloit.Core.Command
 {
@@ -118,9 +119,7 @@ namespace XPloit.Core.Command
         /// Creates a new CommandMenuItem from keyword.
         /// </summary>
         /// <param name="selector">Keyword</param>
-        public CommandMenuItem(string[] selector)
-            : this(selector, (Action<string>)null)
-        { }
+        public CommandMenuItem(string[] selector) : this(selector, (Action<string>)null) { }
 
         /// <summary>
         /// Gets or sets the CommandMenuItem associated with the specified keyword.
@@ -152,14 +151,8 @@ namespace XPloit.Core.Command
             }
             set
             {
-                if (key == null)
-                {
-                    _Default = value;
-                }
-                else
-                {
-                    _Menu[key] = value;
-                }
+                if (key == null) { _Default = value; }
+                else { _Menu[key] = value; }
             }
         }
 
@@ -172,14 +165,8 @@ namespace XPloit.Core.Command
         /// <returns>The added CommandMenuItem</returns>
         public virtual CommandMenuItem Add(CommandMenuItem it)
         {
-            if (it == null)
-            {
-                throw new ArgumentNullException("it");
-            }
-            if (it.Parent != null)
-            {
-                throw new ArgumentException("Menuitem already has a parent.", "it");
-            }
+            if (it == null) throw new ArgumentNullException("it");
+            if (it.Parent != null) throw new ArgumentException("Menuitem already has a parent.", "it");
 
             if (it.Selector != null)
             {
@@ -188,10 +175,7 @@ namespace XPloit.Core.Command
             }
             else
             {
-                if (_Default != null)
-                {
-                    throw new ArgumentException("The default item was already set.", "it");
-                }
+                if (_Default != null) throw new ArgumentException("The default item was already set.", "it");
                 _Default = it;
             }
 
@@ -320,8 +304,8 @@ namespace XPloit.Core.Command
                 {
                     IO.SetForeColor(ConsoleColor.Red);
                     string s = cmd == ""
-                        ? "Command incomplete."
-                        : "Command <" + cmd + "> not unique.";
+                        ? Lang.Get("Command_Incomplete")
+                        : Lang.Get("Command_Not_Unique", cmd);
 
                     IO.WriteLine(s + " Candidates: " + string.Join(", ", selectors));
                 }
@@ -341,7 +325,7 @@ namespace XPloit.Core.Command
             if (complain)
             {
                 IO.SetForeColor(ConsoleColor.Red);
-                IO.WriteLine("Unknown command: " + cmd);
+                IO.WriteLine(Lang.Get("Unknown_Command", cmd));
 
                 if (StringComparison.IsCaseSensitive())
                 {

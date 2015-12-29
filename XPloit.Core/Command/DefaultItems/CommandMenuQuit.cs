@@ -1,4 +1,6 @@
-﻿namespace XPloit.Core.Command.DefaultItems
+﻿using XPloit.Res;
+
+namespace XPloit.Core.Command.DefaultItems
 {
     public class CommandMenuQuit : CommandMenuItem
     {
@@ -8,10 +10,7 @@
             : base(new string[] { "quit", "exit" })
         {
             _Menu = menu;
-
-            HelpText = ""
-                + "quit\n"
-                + "Quits menu processing.";
+            HelpText = Lang.Get("Man_Exit");
         }
 
         public override void Execute(string arg) { _Menu.Quit(); }

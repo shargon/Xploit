@@ -21,9 +21,10 @@ namespace XPloit.Core.Command
         bool _Quit;
         PromptDelegate Prompt = null;
         ConsoleColor _PromptColor = ConsoleColor.Green;
+        IAutoCompleteSource _AutoCompleteSource = null;
 
         ConsoleColor _ClientColor = ConsoleColor.White;
-        ConsoleColor _ServerColor = ConsoleColor.DarkGray;
+        //ConsoleColor _ServerColor = ConsoleColor.DarkGray;
 
 
         /// <summary>
@@ -41,10 +42,11 @@ namespace XPloit.Core.Command
         /// </list>
         /// </para>
         /// </summary>
-        public CommandMenu(ICommandLayer io, string[] selector = null)
+        public CommandMenu(ICommandLayer io, IAutoCompleteSource autoCompleteSource, string[] selector = null)
             : base(selector)
         {
             _IO = io;
+            _AutoCompleteSource = autoCompleteSource;
 
             if (selector == null)
             {
@@ -76,7 +78,7 @@ namespace XPloit.Core.Command
             _Quit = false;
             while (!_Quit)
             {
-                string input = IO.ReadLine(Prompt);
+                string input = IO.ReadLine(Prompt, _AutoCompleteSource);
                 ExecuteChild(input);
             }
         }

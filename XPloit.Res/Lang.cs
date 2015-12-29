@@ -38,7 +38,7 @@ namespace XPloit.Res
         public static string Get(string name, params string[] pars)
         {
             string ret = rs == null ? null : rs.GetString(name, true);
-            if (ret == null) return "?";
+            if (ret == null) return "<<" + name + ">>";
 
             //string ret = rm.GetString(name, Current);
 

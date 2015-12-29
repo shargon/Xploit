@@ -1,4 +1,6 @@
-﻿using XPloit.Core.Enums;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using XPloit.Core.Enums;
 
 namespace XPloit.Core.Interfaces
 {
@@ -42,5 +44,21 @@ namespace XPloit.Core.Interfaces
         internal virtual EModuleType ModuleType { get { return EModuleType.Exploit; } }
 
         public override string ToString() { return FullPath; }
+
+        /// <summary>
+        /// Return Properties
+        /// </summary>
+        /// <param name="excludeOnlyRead">True for exclude onlyRead</param>
+        /// <param name="excludeOnlyWrite">True for exclude onlyWrite</param>
+        public IEnumerable<PropertyInfo> GetProperties( bool excludeOnlyRead, bool excludeOnlyWrite)
+        {
+            foreach (PropertyInfo pi in GetType().GetProperties())
+            {
+                if (excludeOnlyRead && pi.CanRead && !pi.CanWrite) continue;
+                if (excludeOnlyWrite && pi.CanWrite && !pi.CanRead) continue;
+
+                yield return pi;
+            }
+        }
     }
 }

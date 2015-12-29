@@ -53,6 +53,9 @@
     <Compile Include="Collections\PayloadCollection.cs" />
     <Compile Include="Command\CommandMenu.cs" />
     <Compile Include="Command\CommandMenuItem.cs" />
+    <Compile Include="Command\CommandTable.cs" />
+    <Compile Include="Command\CommandTableCol.cs" />
+    <Compile Include="Command\CommandTableRow.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />
     <Compile Include="Configs\ClientSocketConfig.cs" />
@@ -74,6 +77,7 @@
     <Compile Include="Helpers\HexHelper.cs" />
     <Compile Include="Helpers\MathHelper.cs" />
     <Compile Include="Helpers\SerializationJsonHelper.cs" />
+    <Compile Include="Interfaces\IAutoCompleteSource.cs" />
     <Compile Include="Interfaces\ICommandLayer.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />

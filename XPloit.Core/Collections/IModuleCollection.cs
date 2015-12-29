@@ -6,7 +6,7 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Collections
 {
-    public class IModuleCollection<T> : IList<T> where T :IModule
+    public class IModuleCollection<T> : IList<T> where T : IModule
     {
         Type _TypeT;
         EModuleType _Type;
@@ -82,9 +82,9 @@ namespace XPloit.Core.Collections
         /// <param name="fullPath">FullPath</param>
         public T GetByFullPath(string fullPath)
         {
-            foreach(T m in _InternalList)
+            foreach (T m in _InternalList)
             {
-                if (m.FullPath == fullPath) return m;
+                if (string.Compare(m.FullPath, fullPath, StringComparison.InvariantCultureIgnoreCase) == 0) return m;
             }
             return default(T);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using XPloit.Res;
 
 namespace XPloit.Core.Command.DefaultItems
 {
@@ -10,17 +11,11 @@ namespace XPloit.Core.Command.DefaultItems
         public CommandMenuHelp(CommandMenu menu)
             : base(new string[] { "help", "man" })
         {
-            if (menu == null)
-            {
-                throw new ArgumentNullException("menu");
-            }
+            if (menu == null) throw new ArgumentNullException("menu");
 
             _Menu = menu;
 
-            HelpText = ""
-                + "help [command]\n"
-                + "Displays a help text for the specified command, or\n"
-                + "Displays a list of all available commands.";
+            HelpText = Lang.Get("Man_Help");
         }
 
         public override void Execute(string arg)
@@ -28,16 +23,10 @@ namespace XPloit.Core.Command.DefaultItems
             DisplayHelp(arg, _Menu, false);
         }
 
-        private static void DisplayHelp(string arg, CommandMenuItem context, bool isInner)
+        static void DisplayHelp(string arg, CommandMenuItem context, bool isInner)
         {
-            if (arg == null)
-            {
-                throw new ArgumentNullException("arg");
-            }
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+            if (arg == null) throw new ArgumentNullException("arg");
+            if (context == null) throw new ArgumentNullException("context");
 
             if (string.IsNullOrEmpty(arg))
             {
@@ -56,27 +45,26 @@ namespace XPloit.Core.Command.DefaultItems
                 return;
             }
 
-            context.IO.WriteLine("Could not find inner command \"" + cmd + "\".");
+            context.IO.WriteLine(Lang.Get("Could_Not_Find_Inner_Command", cmd));
+
             if (context.Selector != null)
-            {
-                context.IO.WriteLine("Help for " + context.Selector + ":");
-            }
+                context.IO.WriteLine(Lang.Get("Help_For", string.Join(", ", context.Selector) + ":"));
+
             DisplayItemHelp(context, true);
         }
 
-        private static bool DisplayItemHelp(CommandMenuItem item, bool force)
+        static bool DisplayItemHelp(CommandMenuItem item, bool force)
         {
             if (item == null)
             {
                 throw new ArgumentNullException("item");
             }
 
-            if (item.HelpText == null)
+            if (string.IsNullOrEmpty(item.HelpText))
             {
-                if (force)
-                {
-                    item.IO.WriteLine("No help available for " + item.Selector);
-                }
+                if (force && item.Selector != null)
+                    item.IO.WriteLine(Lang.Get("No_Help_Available", string.Join(", ", item.Selector)));
+
                 return false;
             }
             else
@@ -86,34 +74,41 @@ namespace XPloit.Core.Command.DefaultItems
             }
         }
 
-        private static void DisplayAvailableCommands(CommandMenuItem menu, bool inner)
+        static void DisplayAvailableCommands(CommandMenuItem menu, bool inner)
         {
-            if (menu == null)
-            {
-                throw new ArgumentNullException("menu");
-            }
+            if (menu == null) throw new ArgumentNullException("menu");
+
+            CommandTable tb = new CommandTable();
 
             if (!inner)
             {
-                menu.IO.WriteLine("Available commands:");
+                menu.IO.WriteLine(Lang.Get("Available_Commands") + ":");
+                menu.IO.WriteLine("");
+
+                tb.AddRow(tb.AddRow(Lang.Get("Short"), Lang.Get("Command")).MakeSeparator());
             }
+
+            bool entra = false;
             var abbreviations = menu.CommandAbbreviations().OrderBy(it => it.Key);
             foreach (var ab in abbreviations)
             {
-                if (ab.Value == null)
-                {
-                    menu.IO.Write("      ");
-                }
-                else
-                {
-                    menu.IO.Write(ab.Value.PadRight(3) + " | ");
-                }
-                menu.IO.WriteLine(ab.Key);
+                //if (ab.Value == null)
+                //{
+                //    menu.IO.Write("      ");
+                //}
+                //else
+                //{
+                //    menu.IO.Write(ab.Value.PadRight(3) + " | ");
+                //}
+
+                tb.AddRow(ab.Value, ab.Key)[0].Align = CommandTableCol.EAlign.Right;
+                //menu.IO.WriteLine(ab.Key);
+                entra = true;
             }
-            if (!inner)
-            {
-                menu.IO.WriteLine("Type \"help <command>\" for individual command help.");
-            }
+
+            if (entra) menu.IO.WriteLine(tb.Output());
+
+            if (!inner) menu.IO.WriteLine(Lang.Get("Type_Help"));
         }
     }
 }

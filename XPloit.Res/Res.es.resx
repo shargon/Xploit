@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Available_Commands" xml:space="preserve">
+    <value>Available commands</value>
+  </data>
+  <data name="Command" xml:space="preserve">
+    <value>Command</value>
+  </data>
   <data name="Connecting_To" xml:space="preserve">
     <value>Connecting to '%0' ... </value>
   </data>
@@ -129,16 +135,96 @@
   <data name="Nothing_To_Show" xml:space="preserve">
     <value>Nothing to show ... </value>
   </data>
+  <data name="No_Help_Available" xml:space="preserve">
+    <value>No help available for %0</value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="Press_Any_Key" xml:space="preserve">
     <value>Press any key to continue</value>
   </data>
+  <data name="Short" xml:space="preserve">
+    <value>Short</value>
+  </data>
   <data name="Starting_Listener" xml:space="preserve">
     <value>Starting listener '%0' ... </value>
   </data>
+  <data name="Type_Help" xml:space="preserve">
+    <value>Type "help &lt;command&gt;" for individual command help.</value>
+  </data>
   <data name="Unknown_Command" xml:space="preserve">
-    <value>Unknown command</value>
+    <value>Unknown command '%0'</value>
+  </data>
+  <data name="Help_For" xml:space="preserve">
+    <value>Help for %0</value>
+  </data>
+  <data name="Could_Not_Find_Inner_Command" xml:space="preserve">
+    <value>Could not find inner command "%0"</value>
+  </data>
+  <data name="Man_Help" xml:space="preserve">
+    <value>help [command]
+Displays a help text for the specified command, or
+Displays a list of all available commands.</value>
+  </data>
+  <data name="Man_Exit" xml:space="preserve">
+    <value>exit / quit
+Exit xploit framework.</value>
+  </data>
+  <data name="Command_Incomplete" xml:space="preserve">
+    <value>Command incomplete.</value>
+  </data>
+  <data name="Command_Not_Unique" xml:space="preserve">
+    <value>Command &lt;%0&gt; not unique.</value>
+  </data>
+  <data name="Man_Use" xml:space="preserve">
+    <value>use [module]
+Use a XPloit module</value>
+  </data>
+  <data name="Man_Banner" xml:space="preserve">
+    <value>banner
+Show a beautifull xploit banner</value>
+  </data>
+  <data name="Man_Clear" xml:space="preserve">
+    <value>clear
+Clear console</value>
+  </data>
+  <data name="Require_Module" xml:space="preserve">
+    <value>At first, you need to use a module.
+Example: "use &lt;module&gt;"</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DisclosureDate" xml:space="preserve">
+    <value>Disclosure Date</value>
+  </data>
+  <data name="IsLocal" xml:space="preserve">
+    <value>Is Local</value>
+  </data>
+  <data name="IsRemote" xml:space="preserve">
+    <value>Is Remote</value>
+  </data>
+  <data name="References" xml:space="preserve">
+    <value>References</value>
+  </data>
+  <data name="Targets" xml:space="preserve">
+    <value>Targets</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Payload" xml:space="preserve">
+    <value>Payload</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="Man_Show" xml:space="preserve">
+    <value>show
+Displays the config for current module</value>
   </data>
 </root>
