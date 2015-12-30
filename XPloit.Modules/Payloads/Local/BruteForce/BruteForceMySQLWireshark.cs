@@ -4,17 +4,18 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Parsers;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForceMySQLWireshark : Payload, BruteForce.ICheckPassword
+    public class BruteForceMySQLWireshark : Payload, AuxiliaryBruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack MySql sniffed with WireShark Credentials"; } }
-        public override string Path { get { return "Payloads/Local/BruteForce"; } }
+        public override string Path { get { return "Local/BruteForce"; } }
         public override string Name { get { return "BruteForceMySQLWireshark"; } }
         public override Reference[] References
         {
@@ -46,6 +47,7 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         #region Properties
+        [ConfigurableProperty(Required = true, Description = "WireShark TCPDump file")]
         public string WireSharkTCPStreamFile { get; set; }
         #endregion
 

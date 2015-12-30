@@ -3,12 +3,13 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
 using XPloit.Core.PayloadRequirements;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForce : Module
+    public class AuxiliaryBruteForce : Module
     {
         public interface ICheckPassword
         {
@@ -30,9 +31,13 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         #region Properties
+        [ConfigurableProperty(Required = true, Description = "Number of threads")]
         public int Threads { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Read lines number per block")]
         public int ReadBlock { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Wordlist file")]
         public string WordList { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Save state for next call")]
         public bool SaveState { get; set; }
         #endregion
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using XPloit.Core.Attributes;
+using XPloit.Core.Collections;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
 
@@ -33,10 +35,12 @@ namespace XPloit.Core
         /// <summary>
         /// Target
         /// </summary>
+        [ConfigurableProperty(Required = true, Description = "Especify the Target")]
         public Target Target { get; set; }
         /// <summary>
         /// Payload
         /// </summary>
+        [ConfigurableProperty(Required = true, Description = "Especify the Payload")]
         public Payload Payload { get; set; }
         /// <summary>
         /// Payload Requirements
@@ -55,5 +59,23 @@ namespace XPloit.Core
         /// </summary>
         /// <param name="cmd">Command</param>
         public virtual ECheck Check(ICommandLayer cmd) { return ECheck.CantCheck; }
+        /// <summary>
+        /// Prepare the current module
+        /// </summary>
+        public virtual void Prepare()
+        {
+            if (Target == null)
+            {
+                Target[] t = Targets;
+                if (t != null && t.Length > 0)
+                    Target = t[0];
+            }
+            if (Payload == null)
+            {
+                Payload[] payloads = PayloadCollection.Current.GetPayloadAvailables(PayloadRequirements);
+                if (payloads != null && payloads.Length == 1)
+                    Payload = payloads[0];
+            }
+        }
     }
 }

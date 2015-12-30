@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
+using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Command;
 using XPloit.Core.Command.Interfaces;
+using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.PayloadRequirements;
@@ -30,6 +34,15 @@ namespace XPloit.Core.Listeners
         {
             switch (command.ToLowerInvariant().Trim())
             {
+                case "man":
+                case "help":
+                    {
+                        foreach (CommandMenuItem m in _Command)
+                            foreach (string sep in m.Selector)
+                                yield return sep;
+
+                        break;
+                    }
                 case "use":
                     {
                         foreach (Module e in ModuleCollection.Current) yield return e.FullPath;
@@ -49,13 +62,30 @@ namespace XPloit.Core.Listeners
 
                         if (arguments == null || arguments.Length <= 1)
                         {
-                            foreach (PropertyInfo pi in _Current.GetProperties(true, true, false))
-                                yield return pi.Name;
+                            Target[] t = _Current.Targets;
+                            if (t != null && t.Length > 1) yield return "Target";
+                            if (_Current.PayloadRequirements != null && !(_Current.PayloadRequirements is NoPayloadRequired))
+                                yield return "Payload";
+
+                            if (_Current.Payload != null)
+                                foreach (PropertyInfo pi in _Current.Payload.GetProperties(true, true, true)) yield return pi.Name;
+
+                            foreach (PropertyInfo pi in _Current.GetProperties(true, true, true)) yield return pi.Name;
                         }
                         else
                         {
                             switch (arguments[0].ToLowerInvariant().Trim())
                             {
+                                case "target":
+                                    {
+                                        Target[] ts = _Current.Targets;
+                                        if (ts != null)
+                                        {
+                                            foreach (Target t in ts)
+                                                yield return t.Id.ToString();
+                                        }
+                                        break;
+                                    }
                                 case "payload":
                                     {
                                         IPayloadRequirements req = _Current.PayloadRequirements;
@@ -86,24 +116,97 @@ namespace XPloit.Core.Listeners
             _Command = new CommandMenu(command, this);
 
             _Command.Add(new string[] { "banner" }, cmdBanner, Lang.Get("Man_Banner"));
-            _Command.Add(new string[] { "clear" }, cmdClear, Lang.Get("Man_Clear"));
-            _Command.Add(new string[] { "cd", "cd..", "cd\\", "cd/" }, cmdCD, "Un-use the current module");
+            _Command.Add(new string[] { "version" }, cmdVersion, Lang.Get("Man_Version"));
+            _Command.Add(new string[] { "clear", "cls" }, cmdClear, Lang.Get("Man_Clear"));
+            _Command.Add(new string[] { "cd", "cd..", "cd\\", "cd/", "back" }, cmdCD, Lang.Get("Man_Cd"));
 
             // Modules command
             _Command.Add(new string[] { "use" }, cmdUse, Lang.Get("Man_Use"));
             _Command.Add(new string[] { "show" }, cmdShow, Lang.Get("Man_Show"));
+            _Command.Add(new string[] { "set" }, cmdSet, Lang.Get("Man_Set"));
 
 
-            _Command.Add(new string[] { "set" }, cmdSet, "set [variable] [value] for current exploit");
-            _Command.Add(new string[] { "search" }, null, "set [variable] [value] for current exploit");
-            _Command.Add(new string[] { "check" }, null, "check the current module");
-            _Command.Add(new string[] { "exploit", "run" }, null, "run the current module");
+            _Command.Add(new string[] { "check" }, cmdCheck, Lang.Get("Man_Check"));
+            _Command.Add(new string[] { "exploit", "run" }, cmdRun, Lang.Get("Man_Run"));
+            _Command.Add(new string[] { "search" }, null, Lang.Get("Man_Search"));
         }
+        bool CheckModule(bool checkRequieredProperties)
+        {
+            if (_Current == null)
+            {
+                _Command.IO.WriteLine(Lang.Get("Require_Module"));
+                return false;
+            }
+
+            if (checkRequieredProperties)
+            {
+                foreach (PropertyInfo pi in _Current.GetProperties(true, true, true))
+                {
+                    ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
+                    if (c == null)
+                        continue;
+
+                    if (!c.Required) continue;
+                    if (pi.GetValue(_Current) == null)
+                    {
+                        _Command.IO.WriteLine(Lang.Get("Require_Set_Property", pi.Name));
+                        return false;
+                    }
+                }
+                if (_Current.Payload != null)
+                {
+                    foreach (PropertyInfo pi in _Current.Payload.GetProperties(true, true, true))
+                    {
+                        ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
+                        if (c == null)
+                            continue;
+
+                        if (!c.Required) continue;
+                        if (pi.GetValue(_Current.Payload) == null)
+                        {
+                            _Command.IO.WriteLine(Lang.Get("Require_Set_Property", pi.Name));
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public void cmdClear(string args) { _Command.IO.Clear(); }
         public void cmdCD(string args)
         {
             _Current = null;
             _Command.PromptCharacter = "> ";
+        }
+        public void cmdVersion(string args)
+        {
+            _Command.IO.WriteLine("");
+
+            CommandTable tb = new CommandTable();
+
+            _Command.IO.WriteLine(Lang.Get("Version_Start"));
+            _Command.IO.WriteLine("");
+
+            tb.AddRow(tb.AddRow(Lang.Get("File"), Lang.Get("Version")).MakeSeparator());
+
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (asm.GlobalAssemblyCache) continue;
+
+                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
+                tb.AddRow(Path.GetFileName(asm.Location), asm.ImageRuntimeVersion);
+            }
+
+            tb.AddRow("", "");
+
+            tb.AddRow(tb.AddRow(Lang.Get("Module"), Lang.Get("Count")).MakeSeparator());
+            tb.AddRow(Lang.Get("Modules"), ModuleCollection.Current.Count.ToString());
+            tb.AddRow(Lang.Get("Encoders"), EncoderCollection.Current.Count.ToString());
+            tb.AddRow(Lang.Get("Payloads"), PayloadCollection.Current.Count.ToString());
+
+            _Command.IO.WriteLine(tb.Output());
         }
         public void cmdBanner(string args)
         {
@@ -111,24 +214,94 @@ namespace XPloit.Core.Listeners
             BannerHelper.GetRandomBanner(_Command.IO);
             _Command.IO.WriteLine("");
         }
+        public void cmdCheck(string args)
+        {
+            if (!CheckModule(true)) return;
+            args = args.Trim();
+
+            try
+            {
+                switch (_Current.Check(_Command.IO))
+                {
+                    case ECheck.CantCheck: _Command.IO.WriteLine(Lang.Get("Check_CantCheck")); break;
+                    case ECheck.Error: _Command.IO.WriteLine(Lang.Get("Check_Error")); break;
+                    case ECheck.NotSure: _Command.IO.WriteLine(Lang.Get("Check_NotSure")); break;
+                    case ECheck.Ok: _Command.IO.WriteLine(Lang.Get("Check_Ok")); break;
+                }
+            }
+            catch
+            {
+                _Command.IO.WriteLine(Lang.Get("Check_Error"));
+            }
+        }
+
+        public void cmdRun(string args)
+        {
+            if (!CheckModule(true)) return;
+            args = args.Trim();
+
+            try
+            {
+                if (!_Current.Run(_Command.IO))
+                    _Command.IO.WriteLine(Lang.Get("Run_Error"));
+            }
+            catch
+            {
+                _Command.IO.WriteLine(Lang.Get("Run_Error"));
+            }
+        }
         public void cmdSet(string args)
         {
+            if (!CheckModule(false)) return;
             args = args.Trim();
-            if (_Current == null)
+
+            string[] prop = ArgumentHelper.ArrayFromCommandLine(args);
+            if (prop == null || prop.Length != 2)
             {
-                _Command.IO.WriteLine(Lang.Get("Require_Module"));
+                _Command.IO.WriteLine(Lang.Get("Incorrect_Command_Usage"));
                 return;
+            }
+
+            try
+            {
+                switch (prop[0].ToLowerInvariant())
+                {
+                    case "target":
+                        {
+                            int ix = (int)ConvertHelper.ConvertTo(prop[1], typeof(int));
+                            _Current.Target = _Current.Targets[ix];
+                            return;
+                        }
+                }
+
+                PropertyInfo[] pi = null;
+                if (_Current.Payload != null)
+                {
+                    pi = _Current.Payload.GetProperties(prop[0]);
+                    if (pi != null && pi.Length == 1)
+                    {
+                        pi[0].SetValue(_Current.Payload, ConvertHelper.ConvertTo(prop[1], pi[0].PropertyType));
+                        return;
+                    }
+                }
+
+                pi = _Current.GetProperties(prop[0]);
+                if (pi != null && pi.Length == 1)
+                {
+                    pi[0].SetValue(_Current, ConvertHelper.ConvertTo(prop[1], pi[0].PropertyType));
+                    return;
+                }
+            }
+            catch
+            {
+                WriteError(Lang.Get("Error_Converting_Value"));
             }
         }
         public void cmdShow(string args)
         {
             // Todo comentar en Res.res los comandos y acabar del set para abajo
+            if (!CheckModule(false)) return;
             args = args.Trim().ToLowerInvariant();
-            if (_Current == null)
-            {
-                _Command.IO.WriteLine(Lang.Get("Require_Module"));
-                return;
-            }
 
             switch (args)
             {
@@ -136,16 +309,40 @@ namespace XPloit.Core.Listeners
                 case "options":
                 case "config":
                     {
+                        // set target id
+                        Target[] ps = _Current.Targets;
+                        if (ps != null)
+                        {
+                            int ix = 0;
+                            foreach (Target t in ps) { t.Id = ix; ix++; }
+                        }
+
                         CommandTable tb = new CommandTable();
 
+                        tb.AddRow(Lang.Get("Path"), _Current.Path, "");
                         tb.AddRow(Lang.Get("Name"), _Current.Name, "");
-                        tb.AddRow("", "");
 
-                        if (!string.IsNullOrEmpty(_Current.Author)) tb.AddRow(Lang.Get("Author"), _Current.Author, "");
-                        if (!string.IsNullOrEmpty(_Current.Description)) tb.AddRow(Lang.Get("Description"), _Current.Description, "");
-                        if (_Current.DisclosureDate != DateTime.MinValue) tb.AddRow(Lang.Get("DisclosureDate"), _Current.DisclosureDate, "");
-                        tb.AddRow(Lang.Get("IsLocal"), _Current.IsLocal, "");
-                        tb.AddRow(Lang.Get("IsRemote"), _Current.IsRemote, "");
+                        tb.AddRow("", "", "");
+                        tb.AddSeparator(3, '*');
+                        tb.AddRow("", "", "");
+
+                        if (!string.IsNullOrEmpty(_Current.Author))
+                        {
+                            CommandTableRow row = tb.AddRow(1, Lang.Get("Author"), _Current.Author, "");
+                            row[1].Align = CommandTableCol.EAlign.None;
+                            row[2].Align = CommandTableCol.EAlign.None;
+                        }
+                        if (!string.IsNullOrEmpty(_Current.Description))
+                        {
+                            foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("Description"), _Current.Description, ""))
+                            {
+                                row[1].Align = CommandTableCol.EAlign.None;
+                                row[2].Align = CommandTableCol.EAlign.None;
+                            }
+                        }
+                        if (_Current.DisclosureDate != DateTime.MinValue) tb.AddRow(Lang.Get("DisclosureDate"), _Current.DisclosureDate.ToString(), "");
+                        tb.AddRow(Lang.Get("IsLocal"), _Current.IsLocal.ToString(), "");
+                        tb.AddRow(Lang.Get("IsRemote"), _Current.IsRemote.ToString(), "");
 
                         if (_Current.References != null && _Current.References.Length > 0)
                         {
@@ -158,38 +355,86 @@ namespace XPloit.Core.Listeners
                                 sb.AppendLine(r.Type.ToString() + " - " + r.Value);
                             }
 
-                            tb.AddRow(Lang.Get("References"), sb.ToString(), "");
+                            foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("References"), sb.ToString(), ""))
+                            {
+                                row[1].Align = CommandTableCol.EAlign.None;
+                                row[2].Align = CommandTableCol.EAlign.None;
+                            }
                         }
 
-                        tb.AddRow("", "", "");
-                        if (_Current.Target == null)
-                            tb.AddRow(Lang.Get("Target"), "NULL", "")[1].ForeColor = ConsoleColor.Red;
-                        else
-                            tb.AddRow(Lang.Get("Target"), _Current.Target.Name, "");
-
-                        if (_Current.Payload == null)
-                            tb.AddRow(Lang.Get("Payload"), "NULL", "")[1].ForeColor = ConsoleColor.Red;
-                        else
-                            tb.AddRow(Lang.Get("Payload"), _Current.Payload.FullPath, "");
-
-                        bool primera = true;
-                        foreach (PropertyInfo pi in _Current.GetProperties(true, true, true))
+                        bool fistAll = true;
+                        bool hasX0 = false;
+                        for (int x = 0; x <= 3; x++)
                         {
-                            if (primera)
+                            PropertyInfo[] pis = null;
+
+                            object pv = _Current;
+                            switch (x)
                             {
-                                tb.AddRow("", "", "");
-                                primera = false;
+                                case 0:
+                                    {
+                                        if (_Current.PayloadRequirements != null && !(_Current.PayloadRequirements is NoPayloadRequired))
+                                        {
+                                            pis = _Current.GetProperties("Payload");
+                                            hasX0 = pis != null && pis.Length > 0;
+                                        }
+                                        break;
+                                    }
+                                case 1:
+                                    {
+                                        Target[] t = _Current.Targets;
+                                        if (t != null && t.Length > 1)
+                                            pis = _Current.GetProperties("Target");
+                                        break;
+                                    }
+                                case 2: pis = _Current.GetProperties(true, true, true); break;
+                                case 3:
+                                    {
+                                        pv = _Current.Payload;
+                                        if (_Current.Payload == null) pis = null;
+                                        else pis = _Current.Payload.GetProperties(true, true, true);
+                                        break;
+                                    }
                             }
 
-                            object val = pi.GetValue(_Current);
-                            if (val == null)
+                            if (pis != null)
                             {
-                                val = "NULL";
-                                tb.AddRow(pi.Name, val.ToString(), "")[1].ForeColor = ConsoleColor.Red;
-                            }
-                            else
-                            {
-                                tb.AddRow(pi.Name, val.ToString(), "");
+                                bool primera = x != 1 || !hasX0;
+                                foreach (PropertyInfo pi in pis)
+                                {
+                                    ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
+                                    if (c == null)
+                                        continue;
+
+                                    if (primera)
+                                    {
+                                        tb.AddRow("", "", "");
+                                        tb.AddSeparator(3, fistAll ? '*' : '.');
+                                        tb.AddRow("", "", "");
+
+                                        primera = false;
+                                        fistAll = false;
+                                    }
+
+                                    object val = pi.GetValue(pv);
+                                    if (val == null)
+                                    {
+                                        val = "NULL";
+                                        CommandTableRow row = tb.AddRow(pi.Name, val.ToString(), c.Description);
+                                        if (c.Required) row[1].ForeColor = ConsoleColor.Red;
+                                        else
+                                        {
+                                            if (x == 0 || x == 3)
+                                                row[1].ForeColor = ConsoleColor.Cyan;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CommandTableRow row = tb.AddRow(pi.Name, val.ToString(), c.Description);
+                                        if (x == 0 || x == 3)
+                                            row[1].ForeColor = ConsoleColor.Cyan;
+                                    }
+                                }
                             }
                         }
 
@@ -198,9 +443,14 @@ namespace XPloit.Core.Listeners
                         {
                             foreach (CommandTableCol col in row)
                             {
-                                if (col.Index == 0)
+                                if (col.ReplicatedChar == '\0')
                                 {
-                                    _Command.IO.SetForeColor(ConsoleColor.DarkGray);
+                                    switch (col.Index)
+                                    {
+                                        case 0: _Command.IO.SetForeColor(ConsoleColor.DarkGray); break;
+                                        case 1: _Command.IO.SetForeColor(col.ForeColor); break;
+                                        case 2: _Command.IO.SetForeColor(ConsoleColor.Yellow); break;
+                                    }
                                 }
                                 else _Command.IO.SetForeColor(col.ForeColor);
 
@@ -213,8 +463,8 @@ namespace XPloit.Core.Listeners
                     }
                 case "payloads":
                     {
-                        IPayloadRequirements req = _Current.PayloadRequirements;
-                        if (req == null || req is NoPayloadRequired)
+                        Payload[] ps = PayloadCollection.Current.GetPayloadAvailables(_Current.PayloadRequirements);
+                        if (ps == null || ps.Length == 0)
                             _Command.IO.WriteLine(Lang.Get("Nothing_To_Show"));
                         else
                         {
@@ -222,11 +472,8 @@ namespace XPloit.Core.Listeners
 
                             tb.AddRow(tb.AddRow(Lang.Get("Name"), Lang.Get("Description")).MakeSeparator());
 
-                            foreach (Payload p in PayloadCollection.Current)
-                            {
-                                if (!req.IsAllowedPayload(p)) continue;
+                            foreach (Payload p in ps)
                                 tb.AddRow(p.FullPath, p.Description);
-                            }
 
                             _Command.IO.Write(tb.Output());
                         }
@@ -234,7 +481,24 @@ namespace XPloit.Core.Listeners
                     }
                 case "targets":
                     {
+                        Target[] ps = _Current.Targets;
+                        if (ps == null || ps.Length <= 1)
+                            _Command.IO.WriteLine(Lang.Get("Nothing_To_Show"));
+                        else
+                        {
+                            CommandTable tb = new CommandTable();
 
+                            tb.AddRow(tb.AddRow(Lang.Get("Name"), Lang.Get("Description")).MakeSeparator());
+
+                            int ix = 0;
+                            foreach (Target p in ps)
+                            {
+                                p.Id = ix; ix++;
+                                tb.AddRow(p.Id.ToString(), p.Name);
+                            }
+
+                            _Command.IO.Write(tb.Output());
+                        }
                         break;
                     }
                 default:
@@ -258,12 +522,13 @@ namespace XPloit.Core.Listeners
             {
                 args = args.Trim();
                 _Current = ModuleCollection.Current.GetByFullPath(args);
+                if (_Current != null) _Current.Prepare();
             }
 
             if (_Current == null) WriteError(Lang.Get(string.IsNullOrEmpty(args) ? "Command_Incomplete" : "Module_Not_Found", args));
             else
             {
-                _Command.PromptCharacter =  _Current.Name + "> ";
+                _Command.PromptCharacter = _Current.Name + "> ";
             }
         }
         void WriteError(string error)

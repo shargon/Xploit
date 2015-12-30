@@ -9,6 +9,7 @@ namespace XPloit.Core.Helpers
 {
     public class ConvertHelper
     {
+        static Type _BoolType = typeof(bool);
         static Type _StringType = typeof(string);
 
         static Type _Int64Type = typeof(long), _UInt64Type = typeof(ulong);
@@ -64,6 +65,17 @@ namespace XPloit.Core.Helpers
                 // String conversion
                 if (type == _StringType) return input;
 
+                // Bool
+                if (type == _BoolType)
+                {
+                    Boolean r;
+                    if (!Boolean.TryParse(input.Trim(), out r))
+                    {
+                        string si = input.ToLowerInvariant();
+                        return si == "y" || si == "s" || si == "yes" || si == "si" || si == "1" || si == "true";
+                    }
+                    return r;
+                }
                 // Date/Time
                 if (type == _TimeSpanType)
                 {
@@ -82,38 +94,38 @@ namespace XPloit.Core.Helpers
                 if (type == _Int64Type)
                 {
                     long r;
-                    if (!long.TryParse(input.Trim(), out r)) return (long)0;
+                    if (!long.TryParse(input.Trim(), out r)) return Convert.ToInt64(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _UInt64Type)
                 {
                     ulong r;
-                    if (!ulong.TryParse(input.Trim(), out r)) return (ulong)0;
+                    if (!ulong.TryParse(input.Trim(), out r)) return Convert.ToUInt64(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _Int32Type)
                 {
                     int r;
-                    if (!int.TryParse(input.Trim(), out r)) return (int)0;
+                    if (!int.TryParse(input.Trim(), out r)) return Convert.ToInt32(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _UInt32Type)
                 {
                     uint r;
-                    if (!uint.TryParse(input.Trim(), out r)) return (uint)0;
+                    if (!uint.TryParse(input.Trim(), out r)) return Convert.ToUInt32(MathHelper.Calc(input));
                     return r;
                 }
 
                 if (type == _Int16Type)
                 {
                     short r;
-                    if (!short.TryParse(input.Trim(), out r)) return (short)0;
+                    if (!short.TryParse(input.Trim(), out r)) return Convert.ToInt16(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _UInt16Type)
                 {
                     ushort r;
-                    if (!ushort.TryParse(input.Trim(), out r)) return (ushort)0;
+                    if (!ushort.TryParse(input.Trim(), out r)) return Convert.ToUInt16(MathHelper.Calc(input));
                     return r;
                 }
 
@@ -121,19 +133,19 @@ namespace XPloit.Core.Helpers
                 if (type == _DoubleType)
                 {
                     double r;
-                    if (!double.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return (double)0;
+                    if (!double.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return Convert.ToDouble(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _DecimalType)
                 {
                     Decimal r;
-                    if (!Decimal.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return Decimal.Zero;
+                    if (!Decimal.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return Convert.ToDecimal(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _FloatType)
                 {
                     float r;
-                    if (!float.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return (float)0;
+                    if (!float.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return Convert.ToSingle(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _IPAddressType)

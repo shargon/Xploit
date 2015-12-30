@@ -41,12 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auxiliary\Local\AuxiliarySniffer.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerDisLocker.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerWMI.cs" />
-    <Compile Include="Auxiliary\Local\BruteForce.cs" />
-    <Compile Include="Auxiliary\Local\Sys.cs" />
+    <Compile Include="Auxiliary\Local\AuxiliaryBruteForce.cs" />
+    <Compile Include="Auxiliary\Local\AuxiliarySys.cs" />
     <Compile Include="Encoders\String\JsonDecoder.cs" />
     <Compile Include="Payloads\Multi\ProcessStartPayload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

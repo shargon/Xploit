@@ -20,9 +20,11 @@ namespace XPloit
             //Console.InputEncoding = Encoding.UTF8;
             //Console.OutputEncoding = Encoding.UTF8;
             ConsoleCommand command = new ConsoleCommand();
-            command.AddInput("use Auxiliary/Local/WordListBruteForce");
+            command.AddInput("use Auxiliary/Local/System");
+            //command.AddInput("version");
             command.AddInput("banner");
 
+            //command.AddInput("show options");
 
             Console.CursorSize = 100;
             Console.CursorVisible = false;

@@ -6,5 +6,6 @@
         OSVDB = 1,
         URL = 2,
         TEXT = 3,
+        INFO = 4
     }
 }

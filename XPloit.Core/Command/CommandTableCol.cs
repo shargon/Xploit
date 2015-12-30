@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+
 namespace XPloit.Core.Command
 {
     public class CommandTableCol
@@ -17,7 +17,11 @@ namespace XPloit.Core.Command
             /// <summary>
             /// Right align
             /// </summary>
-            Right
+            Right,
+            /// <summary>
+            /// No intercept
+            /// </summary>
+            None
         }
 
         /// <summary>
@@ -35,6 +39,10 @@ namespace XPloit.Core.Command
 
         int _Index;
         CommandTableRow _Parent;
+        /// <summary>
+        /// Replicated char
+        /// </summary>
+        public char ReplicatedChar { get; set; }
 
         /// <summary>
         /// Index
@@ -50,13 +58,26 @@ namespace XPloit.Core.Command
             _Index = index;
             _Parent = parent;
             ForeColor = ConsoleColor.Gray;
+            ReplicatedChar = '\0';
         }
 
         public string GetFormatedValue()
         {
-            string val = Value;
+            string val = Value == null ? "" : Value;
+
             int l = _Parent.Parent.GetLength(_Index);
-            if (val.Length > l) val = val.Substring(0, l);
+
+            if (ReplicatedChar != '\0')
+            {
+                val = val.PadLeft(l, ReplicatedChar);
+                return val;
+            }
+
+            if (val.Length > l)
+            {
+                if (Align != EAlign.None)
+                    val = val.Substring(0, l);
+            }
             else
             {
                 switch (Align)

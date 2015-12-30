@@ -1,5 +1,6 @@
 ﻿using System;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Helpers;
 
 namespace XPloit.Modules.Encoders.String
@@ -33,6 +34,7 @@ namespace XPloit.Modules.Encoders.String
         /// <returns>Return object</returns>
         public override object Run(Payload payload)
         {
+            if (payload == null) return null;
             return JsonHelper.Deserialize(payload.StringValue, Type);
         }
     }

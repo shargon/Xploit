@@ -189,7 +189,7 @@ Use a XPloit module</value>
 Show a beautifull xploit banner</value>
   </data>
   <data name="Man_Clear" xml:space="preserve">
-    <value>clear
+    <value>clear / cls
 
 Clear console</value>
   </data>
@@ -240,5 +240,84 @@ Show available information for the current module
   </data>
   <data name="Incorrect_Command_Usage" xml:space="preserve">
     <value>Incorrect command ussage</value>
+  </data>
+  <data name="Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Encoders" xml:space="preserve">
+    <value>Encoders</value>
+  </data>
+  <data name="Modules" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="Payloads" xml:space="preserve">
+    <value>Payloads</value>
+  </data>
+  <data name="Count" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Version_Start" xml:space="preserve">
+    <value>Wellcome to Xploit Framework :)
+Official openSource repository in: https://github.com/shargon/Xploit</value>
+  </data>
+  <data name="Man_Version" xml:space="preserve">
+    <value>version
+
+Displays the current version of Xploit framework</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Man_Set" xml:space="preserve">
+    <value>set [variable] [value]
+
+Set a variable for the current module</value>
+  </data>
+  <data name="Error_Converting_Value" xml:space="preserve">
+    <value>Error while convert input value</value>
+  </data>
+  <data name="Man_Cd" xml:space="preserve">
+    <value>cd / cd.. / back
+
+Un-use the current module</value>
+  </data>
+  <data name="Man_Check" xml:space="preserve">
+    <value>check
+
+Check the current module</value>
+  </data>
+  <data name="Man_Run" xml:space="preserve">
+    <value>run / exploit
+
+Run the current module</value>
+  </data>
+  <data name="Man_Search" xml:space="preserve">
+    <value>search [command] [query]
+
+Search a module in the loaded modules</value>
+  </data>
+  <data name="Require_Set_Property" xml:space="preserve">
+    <value>Its required to set the property %0 (use set %0 &lt;value&gt;)</value>
+  </data>
+  <data name="Check_CantCheck" xml:space="preserve">
+    <value>This module havent check</value>
+  </data>
+  <data name="Check_Error" xml:space="preserve">
+    <value>Error while checking the module</value>
+  </data>
+  <data name="Check_NotSure" xml:space="preserve">
+    <value>Im not sure if the check was successful or not ... :S</value>
+  </data>
+  <data name="Check_Ok" xml:space="preserve">
+    <value>The check was successful</value>
+  </data>
+  <data name="Run_Error" xml:space="preserve">
+    <value>Error while running the module</value>
   </data>
 </root>

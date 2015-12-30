@@ -46,8 +46,10 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ConfigurableProperty.cs" />
     <Compile Include="Attributes\SerializableBSONReferenceAttribute.cs" />
     <Compile Include="Collections\EncoderCollection.cs" />
+    <Compile Include="Collections\JobCollection.cs" />
     <Compile Include="Collections\IModuleCollection.cs" />
     <Compile Include="Collections\ModuleCollection.cs" />
     <Compile Include="Collections\PayloadCollection.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="Multi\StreamSpeedLimit.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Module.cs" />
-    <Compile Include="Interfaces\IJob.cs" />
+    <Compile Include="Job.cs" />
     <Compile Include="Interfaces\IListener.cs" />
     <Compile Include="Interfaces\IPayloadRequirements.cs" />
     <Compile Include="Parsers\WireSharkTCPStreamHexDump.cs" />
@@ -99,6 +101,13 @@
     <Compile Include="PayloadRequirements\NoPayloadRequired.cs" />
     <Compile Include="PayloadRequirements\InterfacePayload.cs" />
     <Compile Include="Reference.cs" />
+    <Compile Include="Sniffer\IPacket.cs" />
+    <Compile Include="Sniffer\IPHeader.cs" />
+    <Compile Include="Sniffer\ITcpStreamFilter.cs" />
+    <Compile Include="Sniffer\Sniffer.cs" />
+    <Compile Include="Sniffer\TcpHeader.cs" />
+    <Compile Include="Sniffer\TcpStream.cs" />
+    <Compile Include="Sniffer\UdpHeader.cs" />
     <Compile Include="Target.cs" />
     <Compile Include="Multi\User.cs" />
     <Compile Include="PayloadRequirements\UniquePayload.cs" />

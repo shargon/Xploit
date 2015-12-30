@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
 namespace XPloit.Core.Interfaces
@@ -47,24 +48,51 @@ namespace XPloit.Core.Interfaces
 
         public override string ToString() { return FullPath; }
 
+        int Sort(PropertyInfo a, PropertyInfo b) { return a.Name.CompareTo(b.Name); }
         /// <summary>
         /// Return Properties
         /// </summary>
-        /// <param name="excludeOnlyRead">True for exclude onlyRead</param>
-        /// <param name="excludeOnlyWrite">True for exclude onlyWrite</param>
-        public IEnumerable<PropertyInfo> GetProperties(bool excludeOnlyRead, bool excludeOnlyWrite, bool excludeNonEditableProperties)
+        /// <param name="properties">Properties</param>
+        public PropertyInfo[] GetProperties(params string[] properties)
         {
+            List<PropertyInfo> ls = new List<PropertyInfo>();
             foreach (PropertyInfo pi in GetType().GetProperties())
             {
-                if (excludeOnlyRead && pi.CanRead && !pi.CanWrite) continue;
-                if (excludeOnlyWrite && pi.CanWrite && !pi.CanRead) continue;
+                bool esta = false;
+                foreach (string s in properties)
+                    if (string.Equals(pi.Name, s, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        esta = true;
+                        break;
+                    }
+                if (!esta) continue;
+
+                ls.Add(pi);
+            }
+            ls.Sort(Sort);
+            return ls.ToArray();
+        }
+        /// <summary>
+        /// Return Properties
+        /// </summary>
+        /// <param name="requiereRead">True for require read</param>
+        /// <param name="requireWrite">True for require write</param>
+        public PropertyInfo[] GetProperties(bool requiereRead, bool requireWrite, bool excludeNonEditableProperties)
+        {
+            List<PropertyInfo> ls = new List<PropertyInfo>();
+            foreach (PropertyInfo pi in GetType().GetProperties())
+            {
+                if (requiereRead && !pi.CanRead) continue;
+                if (requireWrite && !pi.CanWrite) continue;
+
                 if (excludeNonEditableProperties)
                 {
-                    if (!pi.CanWrite) continue;
+                    ConfigurableProperty cfg = pi.GetCustomAttribute<ConfigurableProperty>();
+                    if (cfg == null) continue;
+
                     if (pi.PropertyType.IsClass)
                     {
-                        if (
-                            pi.PropertyType != typeof(string) &&
+                        if (pi.PropertyType != typeof(string) &&
                             pi.PropertyType != typeof(Boolean) &&
 
                             pi.PropertyType != typeof(SByte) &&
@@ -89,9 +117,10 @@ namespace XPloit.Core.Interfaces
                             continue;
                     }
                 }
-
-                yield return pi;
+                ls.Add(pi);
             }
+            ls.Sort(Sort);
+            return ls.ToArray();
         }
     }
 }

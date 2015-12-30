@@ -4,24 +4,29 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForceBitLockerRaw : Payload, BruteForce.ICheckPassword
+    public class BruteForceBitLockerRaw : Payload, AuxiliaryBruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive"; } }
-        public override string Path { get { return "Payloads/Local/BruteForce"; } }
+        public override string Path { get { return "Local/BruteForce"; } }
         public override string Name { get { return "BruteForceBitLockerRaw"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://github.com/Aorimn/dislocker") }; } }
         #endregion
 
         #region Properties
+        [ConfigurableProperty(Required = true, Description = "Salt (33 b1 76 41 46 2c 04 5d 3e 55 db d9 c3 43 60 44)")]
         public string HexSalt { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Nonce (e0 49 1b 14 4a b7 d0 01 03 00 00 00)")]
         public string HexNonce { get; set; }
+        [ConfigurableProperty(Required = true, Description = "InputBuffer (0b 73 ab e8 60 c9 05 c7 57 62 d4 85 ...)")]
         public string HexInputBuffer { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Mac (16 21 33 02 af aa 69 2c-4a a3 f8 0b dc b9 54 af)")]
         public string HexMac { get; set; }
         #endregion
 

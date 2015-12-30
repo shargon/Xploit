@@ -6,6 +6,10 @@ namespace XPloit.Core
     public class Target
     {
         /// <summary>
+        /// Id
+        /// </summary>
+        internal int Id { get; set; }
+        /// <summary>
         /// Name
         /// </summary>
         public string Name { get; set; }
@@ -17,6 +21,6 @@ namespace XPloit.Core
         /// Variables
         /// </summary>
         public Dictionary<string, object> Variables { get; set; }
-        public override string ToString() { return Name; }
+        public override string ToString() { return Id + " - " + Name; }
     }
 }

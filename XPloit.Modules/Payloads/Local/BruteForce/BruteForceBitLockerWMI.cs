@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Management;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForceBitLockerWMI : Payload, BruteForce.ICheckPassword
+    public class BruteForceBitLockerWMI : Payload, AuxiliaryBruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive calling windows API"; } }
-        public override string Path { get { return "Payloads/Local/BruteForce"; } }
+        public override string Path { get { return "Local/BruteForce"; } }
         public override string Name { get { return "BruteForceBitLockerWMI"; } }
         public override Reference[] References
         {
@@ -22,6 +23,7 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         #region Properties
+        [ConfigurableProperty(Required = true, Description = "Drive for the crypted file (E:)")]
         public string Drive { get; set; }
         #endregion
 

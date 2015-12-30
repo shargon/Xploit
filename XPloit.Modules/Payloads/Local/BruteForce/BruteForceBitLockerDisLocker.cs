@@ -1,21 +1,23 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class BruteForceBitLockerDisLocker : Payload, BruteForce.ICheckPassword
+    public class BruteForceBitLockerDisLocker : Payload, AuxiliaryBruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive calling dislocker"; } }
-        public override string Path { get { return "Payloads/Local/BruteForce"; } }
+        public override string Path { get { return "Local/BruteForce"; } }
         public override string Name { get { return "BruteForceBitLockerDisLocker"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://github.com/Aorimn/dislocker") }; } }
         #endregion
 
         #region Properties
+        [ConfigurableProperty(Required = true, Description = "Drive for the crypted file (/dev/XXXX)")]
         public string Drive { get; set; }
         #endregion
 

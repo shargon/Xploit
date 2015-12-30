@@ -9,7 +9,7 @@ using XPloit.Modules.Payloads.Multi;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
-    public class Sys : Module
+    public class AuxiliarySys : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
@@ -23,7 +23,11 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             get
             {
-                return new Reference[] { new Reference(EReferenceType.URL, "https://msdn.microsoft.com/es-es/library/system.diagnostics.processstartinfo(v=vs.110).aspx") };
+                return new Reference[] 
+                { 
+                    new Reference(EReferenceType.URL, "https://msdn.microsoft.com/es-es/library/system.diagnostics.processstartinfo(v=vs.110).aspx") ,
+                    new Reference(EReferenceType.URL,"http://referencesource.microsoft.com/#System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs")
+                };
             }
         }
         public override IPayloadRequirements PayloadRequirements { get { return new UniquePayload(typeof(ProcessStartPayload)); } }
@@ -31,12 +35,14 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public override bool Run(ICommandLayer cmd)
         {
-            JsonDecoder encoder = new JsonDecoder(typeof(ProcessStartInfo));
-            ProcessStartInfo info = (ProcessStartInfo)encoder.Run(Payload);
+            JsonDecoder encoder = new JsonDecoder(typeof(ProcessStartPayload.SerializableProcessStartInfo));
+            ProcessStartPayload.SerializableProcessStartInfo info = (ProcessStartPayload.SerializableProcessStartInfo)encoder.Run(Payload);
+
+            if (info == null) return false;
 
             using (Process pr = new Process())
             {
-                pr.StartInfo = info;
+                pr.StartInfo = info.ConvertToProcessStartInfo();
                 bool dv = pr.Start();
 
                 if (dv)
