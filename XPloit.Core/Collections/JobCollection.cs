@@ -4,6 +4,7 @@ namespace XPloit.Core.Collections
 {
     public class JobCollection : IEnumerable<Job>
     {
+        uint _Id = 0;
         List<Job> _InternalList = new List<Job>();
 
         static JobCollection _Current = null;
@@ -20,13 +21,20 @@ namespace XPloit.Core.Collections
             }
         }
 
-        protected JobCollection()
-        {
-        }
+        protected JobCollection() { }
 
         public int IndexOf(Job item) { return _InternalList.IndexOf(item); }
         public Job this[int index] { get { return _InternalList[index]; } }
-        internal void Add(Job item) { _InternalList.Add(item); }
+        /// <summary>
+        /// Add a job to the list
+        /// </summary>
+        /// <param name="item">Job</param>
+        internal void Add(Job item)
+        {
+            item.Id = _Id;
+            _InternalList.Add(item);
+            _Id++;
+        }
         public bool Contains(Job item) { return _InternalList.Contains(item); }
         public void CopyTo(Job[] array, int arrayIndex) { _InternalList.CopyTo(array, arrayIndex); }
         public int Count { get { return _InternalList.Count; } }

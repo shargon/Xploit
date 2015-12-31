@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
+using XPloit.Core.Helpers;
 
 namespace XPloit.Core.Sniffer
 {
@@ -51,11 +53,11 @@ namespace XPloit.Core.Sniffer
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="parent">Parent</param>
+            /// <param name="data">Data</param>
             /// <param name="emisor">Emisor</param>
-            public Stream(TcpHeader packet, EEmisor emisor)
+            public Stream(byte[] data, EEmisor emisor)
             {
-                _Data = packet.Data;
+                _Data = data;
                 _Emisor = emisor;
             }
             /// <summary>
@@ -78,6 +80,15 @@ namespace XPloit.Core.Sniffer
         Stream _Last;
         List<Stream> _InternalList = new List<Stream>();
 
+        public Stream this[int index]
+        {
+            get
+            {
+                if (_InternalList.Count <= index) return null;
+                return _InternalList[index];
+            }
+        }
+
         void Add(TcpHeader packet)
         {
             if (packet.Flags.HasFlag(TcpFlags.Fin))
@@ -91,7 +102,7 @@ namespace XPloit.Core.Sniffer
 
             if (_Last == null)
             {
-                _Last = new Stream(packet, emisor);
+                _Last = new Stream(packet.Data, emisor);
                 _InternalList.Add(_Last);
             }
             else
@@ -102,7 +113,7 @@ namespace XPloit.Core.Sniffer
                 else
                 {
                     // New Packet
-                    _Last = new Stream(packet, emisor);
+                    _Last = new Stream(packet.Data, emisor);
                     _InternalList.Add(_Last);
                 }
             }
@@ -152,6 +163,7 @@ namespace XPloit.Core.Sniffer
         ushort _DestinationPort, _SourcePort;
         IPAddress _DestinationAddress, _SourceAddress;
 
+        public int Count { get { return _InternalList.Count; } }
         public TcpStream.Stream LastStream { get { return _Last; } }
         public bool IsClossed { get { return _IsClossed; } }
         public ushort DestinationPort { get { return _DestinationPort; } }
@@ -167,16 +179,81 @@ namespace XPloit.Core.Sniffer
         /// <param name="packet">Packet</param>
         public TcpStream(TcpHeader packet)
         {
-            _DestinationPort = packet.DestinationPort;
-            _SourcePort = packet.SourcePort;
+            if (packet != null)
+            {
+                _DestinationPort = packet.DestinationPort;
+                _SourcePort = packet.SourcePort;
 
-            _DestinationAddress = packet.IpHeader.DestinationAddress;
-            _SourceAddress = packet.IpHeader.SourceAddress;
+                _DestinationAddress = packet.IpHeader.DestinationAddress;
+                _SourceAddress = packet.IpHeader.SourceAddress;
 
-            Add(packet);
+                Add(packet);
+            }
+            else
+            {
+                _IsClossed = true;
+            }
         }
 
         public IEnumerator<Stream> GetEnumerator() { return _InternalList.GetEnumerator(); }
         IEnumerator IEnumerable.GetEnumerator() { return _InternalList.GetEnumerator(); }
+
+        public override string ToString()
+        {
+            return Count.ToString() + (_IsClossed ? " [Clossed]" : "");
+        }
+
+        /// <summary>
+        /// Load TCP Stream from WireShark TCPStreamFormat
+        /// </summary>
+        /// <param name="file">File</param>
+        public static TcpStream FromFile(string file)
+        {
+            TcpStream tcp = new TcpStream(null);
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                string[] sp = File.ReadAllLines(file);
+
+                foreach (string line in sp)
+                {
+                    string l = line.TrimStart().Replace(":", "");
+
+                    EEmisor em = line.StartsWith(" ") ? EEmisor.A : EEmisor.B;
+                   
+                    if (l.Length >= 9 && !l.Substring(0, 8).Contains(" "))
+                    {
+                        // remove offset
+                        l = l.Substring(8, l.Length - 8).Trim();
+                    }
+
+                    if (l.Length > 48)
+                        l = l.Substring(0, 48);
+                    l = l.Replace(" ", "");
+
+                    byte[] data = HexHelper.FromHexString(l);
+
+                    if (tcp._Last == null)
+                    {
+                        tcp._Last = new Stream(data, em);
+                        tcp._InternalList.Add(tcp._Last);
+                    }
+                    else
+                    {
+                        // Check if its the same
+                        if (tcp._Last.Emisor == em)
+                            tcp._Last.AddData(data);
+                        else
+                        {
+                            // New Packet
+                            tcp._Last = new Stream(data, em);
+                            tcp._InternalList.Add(tcp._Last);
+                        }
+                    }
+                }
+            }
+
+            return tcp;
+        }
     }
 }

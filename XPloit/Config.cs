@@ -1,7 +1,7 @@
 ﻿using XPloit.Core.Configs;
 using XPloit.Core.Multi;
 
-namespace XPloit.Configs
+namespace XPloit
 {
     public class Config
     {
@@ -17,5 +17,9 @@ namespace XPloit.Configs
         /// User
         /// </summary>
         public User User { get; set; }
+        /// <summary>
+        /// File for run command
+        /// </summary>
+        public string RunFile { get; set; }
     }
 }

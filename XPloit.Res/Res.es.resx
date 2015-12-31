@@ -308,16 +308,21 @@ Search a module in the loaded modules</value>
   <data name="Check_CantCheck" xml:space="preserve">
     <value>This module havent check</value>
   </data>
-  <data name="Check_Error" xml:space="preserve">
-    <value>Error while checking the module</value>
-  </data>
   <data name="Check_NotSure" xml:space="preserve">
     <value>Im not sure if the check was successful or not ... :S</value>
   </data>
-  <data name="Check_Ok" xml:space="preserve">
-    <value>The check was successful</value>
-  </data>
   <data name="Run_Error" xml:space="preserve">
     <value>Error while running the module</value>
+  </data>
+  <data name="Check_Result" xml:space="preserve">
+    <value>Checked result</value>
+  </data>
+  <data name="Job_Created" xml:space="preserve">
+    <value>Job created</value>
+  </data>
+  <data name="Man_Set_Global" xml:space="preserve">
+    <value>setg [variable] [value]
+
+Set a global variable for the current module and the next call to this module</value>
   </data>
 </root>

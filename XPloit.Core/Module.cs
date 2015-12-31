@@ -50,20 +50,19 @@ namespace XPloit.Core
         /// Run Method
         /// </summary>
         /// <param name="cmd">Command</param>
-        public virtual bool Run(ICommandLayer cmd)
-        {
-            return false;
-        }
+        public virtual bool Run() { return false; }
         /// <summary>
         /// Check Method
         /// </summary>
         /// <param name="cmd">Command</param>
-        public virtual ECheck Check(ICommandLayer cmd) { return ECheck.CantCheck; }
+        public virtual ECheck Check() { return ECheck.CantCheck; }
         /// <summary>
         /// Prepare the current module
         /// </summary>
-        public virtual void Prepare()
+        internal void Prepare(ICommandLayer io)
         {
+            SetIO(io);
+
             if (Target == null)
             {
                 Target[] t = Targets;
@@ -74,7 +73,10 @@ namespace XPloit.Core
             {
                 Payload[] payloads = PayloadCollection.Current.GetPayloadAvailables(PayloadRequirements);
                 if (payloads != null && payloads.Length == 1)
+                {
                     Payload = payloads[0];
+                    Payload.SetIO(io);
+                }
             }
         }
     }

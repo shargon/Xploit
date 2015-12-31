@@ -80,6 +80,7 @@
     <Compile Include="Helpers\MathHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Command\Interfaces\IAutoCompleteSource.cs" />
+    <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Interfaces\ICommandLayer.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
@@ -90,7 +91,6 @@
     <Compile Include="Job.cs" />
     <Compile Include="Interfaces\IListener.cs" />
     <Compile Include="Interfaces\IPayloadRequirements.cs" />
-    <Compile Include="Parsers\WireSharkTCPStreamHexDump.cs" />
     <Compile Include="Payload.cs" />
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Listeners\CommandListener.cs" />
@@ -129,6 +129,7 @@
     <Compile Include="Sockets\Protocols\XPloitSocketProtocol.cs" />
     <Compile Include="Sockets\XPloitSocket.cs" />
     <Compile Include="Sockets\XPloitSocketClient.cs" />
+    <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">

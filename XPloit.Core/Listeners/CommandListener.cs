@@ -21,6 +21,7 @@ namespace XPloit.Core.Listeners
         CommandMenu _Command = null;
         bool _IsStarted;
 
+        Module _CurrentGlobal = null;
         Module _Current = null;
 
         #region IAutoCompleteSource
@@ -57,6 +58,7 @@ namespace XPloit.Core.Listeners
                         break;
                     }
                 case "set":
+                case "setg":
                     {
                         if (_Current == null) break;
 
@@ -68,13 +70,14 @@ namespace XPloit.Core.Listeners
                                 yield return "Payload";
 
                             if (_Current.Payload != null)
-                                foreach (PropertyInfo pi in _Current.Payload.GetProperties(true, true, true)) yield return pi.Name;
+                                foreach (PropertyInfo pi in ReflectionHelper.GetProperties(_Current.Payload, true, true, true)) yield return pi.Name;
 
-                            foreach (PropertyInfo pi in _Current.GetProperties(true, true, true)) yield return pi.Name;
+                            foreach (PropertyInfo pi in ReflectionHelper.GetProperties(_Current, true, true, true)) yield return pi.Name;
                         }
                         else
                         {
-                            switch (arguments[0].ToLowerInvariant().Trim())
+                            string pname = arguments[0].ToLowerInvariant().Trim();
+                            switch (pname)
                             {
                                 case "target":
                                     {
@@ -95,6 +98,23 @@ namespace XPloit.Core.Listeners
                                             {
                                                 if (!req.IsAllowedPayload(p)) continue;
                                                 yield return p.FullPath;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        // By property value
+                                        PropertyInfo[] pi = null;
+
+                                        if (_Current.Payload != null) pi = ReflectionHelper.GetProperties(_Current.Payload, pname);
+                                        if (pi == null || pi.Length == 0) pi = ReflectionHelper.GetProperties(_Current, pname);
+                                        if (pi != null && pi.Length > 0)
+                                        {
+                                            if (pi[0].PropertyType == typeof(bool))
+                                            {
+                                                yield return "true";
+                                                yield return "false";
                                             }
                                         }
                                         break;
@@ -124,12 +144,20 @@ namespace XPloit.Core.Listeners
             _Command.Add(new string[] { "use" }, cmdUse, Lang.Get("Man_Use"));
             _Command.Add(new string[] { "show" }, cmdShow, Lang.Get("Man_Show"));
             _Command.Add(new string[] { "set" }, cmdSet, Lang.Get("Man_Set"));
-
-
+            _Command.Add(new string[] { "setg" }, cmdSetG, Lang.Get("Man_Set_Global"));
             _Command.Add(new string[] { "check" }, cmdCheck, Lang.Get("Man_Check"));
             _Command.Add(new string[] { "exploit", "run" }, cmdRun, Lang.Get("Man_Run"));
+
+
             _Command.Add(new string[] { "search" }, null, Lang.Get("Man_Search"));
+
+            //_Command.Add(new string[] { "jobs" }, null, Lang.Get("Man_Search"));
+            //_Command.Add(new string[] { "kill" }, null, Lang.Get("Man_Search"));
+
+            //_Command.Add(new string[] { "load" }, null, Lang.Get("Man_Search"));      // load .net DLL modules
+            //_Command.Add(new string[] { "reload" }, null, Lang.Get("Man_Search"));    // module use same module
         }
+
         bool CheckModule(bool checkRequieredProperties)
         {
             if (_Current == null)
@@ -138,39 +166,12 @@ namespace XPloit.Core.Listeners
                 return false;
             }
 
-            if (checkRequieredProperties)
+            string propertyName;
+            if (checkRequieredProperties && !_Current.CheckRequiredProperties(out propertyName))
             {
-                foreach (PropertyInfo pi in _Current.GetProperties(true, true, true))
-                {
-                    ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
-                    if (c == null)
-                        continue;
-
-                    if (!c.Required) continue;
-                    if (pi.GetValue(_Current) == null)
-                    {
-                        _Command.IO.WriteLine(Lang.Get("Require_Set_Property", pi.Name));
-                        return false;
-                    }
-                }
-                if (_Current.Payload != null)
-                {
-                    foreach (PropertyInfo pi in _Current.Payload.GetProperties(true, true, true))
-                    {
-                        ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
-                        if (c == null)
-                            continue;
-
-                        if (!c.Required) continue;
-                        if (pi.GetValue(_Current.Payload) == null)
-                        {
-                            _Command.IO.WriteLine(Lang.Get("Require_Set_Property", pi.Name));
-                            return false;
-                        }
-                    }
-                }
+                _Current.WriteInfo(Lang.Get("Require_Set_Property", propertyName));
+                return false;
             }
-
             return true;
         }
 
@@ -221,20 +222,19 @@ namespace XPloit.Core.Listeners
 
             try
             {
-                switch (_Current.Check(_Command.IO))
+                switch (_Current.Check())
                 {
-                    case ECheck.CantCheck: _Command.IO.WriteLine(Lang.Get("Check_CantCheck")); break;
-                    case ECheck.Error: _Command.IO.WriteLine(Lang.Get("Check_Error")); break;
-                    case ECheck.NotSure: _Command.IO.WriteLine(Lang.Get("Check_NotSure")); break;
-                    case ECheck.Ok: _Command.IO.WriteLine(Lang.Get("Check_Ok")); break;
+                    case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
+                    case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
+                    case ECheck.NotSure: _Current.WriteInfo(Lang.Get("Check_NotSure")); break;
+                    case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); break;
                 }
             }
-            catch
+            catch (Exception e)
             {
-                _Command.IO.WriteLine(Lang.Get("Check_Error"));
+                _Current.WriteError(e.Message);
             }
         }
-
         public void cmdRun(string args)
         {
             if (!CheckModule(true)) return;
@@ -242,15 +242,17 @@ namespace XPloit.Core.Listeners
 
             try
             {
-                if (!_Current.Run(_Command.IO))
-                    _Command.IO.WriteLine(Lang.Get("Run_Error"));
+                if (!_Current.Run())
+                    _Current.WriteError(Lang.Get("Run_Error"));
             }
-            catch
+            catch (Exception e)
             {
-                _Command.IO.WriteLine(Lang.Get("Run_Error"));
+                _Current.WriteError(e.Message);
             }
         }
-        public void cmdSet(string args)
+        public void cmdSet(string args) { cmdSet(args, false); }
+        public void cmdSetG(string args) { cmdSet(args, true); }
+        public void cmdSet(string args, bool global)
         {
             if (!CheckModule(false)) return;
             args = args.Trim();
@@ -258,43 +260,17 @@ namespace XPloit.Core.Listeners
             string[] prop = ArgumentHelper.ArrayFromCommandLine(args);
             if (prop == null || prop.Length != 2)
             {
-                _Command.IO.WriteLine(Lang.Get("Incorrect_Command_Usage"));
+                WriteError(Lang.Get("Incorrect_Command_Usage"));
                 return;
             }
 
-            try
-            {
-                switch (prop[0].ToLowerInvariant())
-                {
-                    case "target":
-                        {
-                            int ix = (int)ConvertHelper.ConvertTo(prop[1], typeof(int));
-                            _Current.Target = _Current.Targets[ix];
-                            return;
-                        }
-                }
-
-                PropertyInfo[] pi = null;
-                if (_Current.Payload != null)
-                {
-                    pi = _Current.Payload.GetProperties(prop[0]);
-                    if (pi != null && pi.Length == 1)
-                    {
-                        pi[0].SetValue(_Current.Payload, ConvertHelper.ConvertTo(prop[1], pi[0].PropertyType));
-                        return;
-                    }
-                }
-
-                pi = _Current.GetProperties(prop[0]);
-                if (pi != null && pi.Length == 1)
-                {
-                    pi[0].SetValue(_Current, ConvertHelper.ConvertTo(prop[1], pi[0].PropertyType));
-                    return;
-                }
-            }
-            catch
+            if (!_Current.SetProperty(prop[0], prop[1]))
             {
                 WriteError(Lang.Get("Error_Converting_Value"));
+            }
+            else
+            {
+                if (global) _CurrentGlobal.SetProperty(prop[0], prop[1]);
             }
         }
         public void cmdShow(string args)
@@ -364,6 +340,7 @@ namespace XPloit.Core.Listeners
 
                         bool fistAll = true;
                         bool hasX0 = false;
+                        bool hasX2 = false;
                         for (int x = 0; x <= 3; x++)
                         {
                             PropertyInfo[] pis = null;
@@ -375,7 +352,7 @@ namespace XPloit.Core.Listeners
                                     {
                                         if (_Current.PayloadRequirements != null && !(_Current.PayloadRequirements is NoPayloadRequired))
                                         {
-                                            pis = _Current.GetProperties("Payload");
+                                            pis = ReflectionHelper.GetProperties(_Current, "Payload");
                                             hasX0 = pis != null && pis.Length > 0;
                                         }
                                         break;
@@ -384,22 +361,27 @@ namespace XPloit.Core.Listeners
                                     {
                                         Target[] t = _Current.Targets;
                                         if (t != null && t.Length > 1)
-                                            pis = _Current.GetProperties("Target");
+                                            pis = ReflectionHelper.GetProperties(_Current, "Target");
                                         break;
                                     }
-                                case 2: pis = _Current.GetProperties(true, true, true); break;
+                                case 2:
+                                    {
+                                        pis = ReflectionHelper.GetProperties(_Current, true, true, true);
+                                        hasX2 = pis != null && pis.Length > 0;
+                                        break;
+                                    }
                                 case 3:
                                     {
                                         pv = _Current.Payload;
                                         if (_Current.Payload == null) pis = null;
-                                        else pis = _Current.Payload.GetProperties(true, true, true);
+                                        else pis = ReflectionHelper.GetProperties(_Current.Payload, true, true, true);
                                         break;
                                     }
                             }
 
                             if (pis != null)
                             {
-                                bool primera = x != 1 || !hasX0;
+                                bool primera = (x != 1 || !hasX0);
                                 foreach (PropertyInfo pi in pis)
                                 {
                                     ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
@@ -408,10 +390,16 @@ namespace XPloit.Core.Listeners
 
                                     if (primera)
                                     {
-                                        tb.AddRow("", "", "");
-                                        tb.AddSeparator(3, fistAll ? '*' : '.');
-                                        tb.AddRow("", "", "");
-
+                                        if (x == 3 && hasX2)
+                                        {
+                                            tb.AddRow("", "", "");
+                                        }
+                                        else
+                                        {
+                                            tb.AddRow("", "", "");
+                                            tb.AddSeparator(3, fistAll ? '*' : '.');
+                                            tb.AddRow("", "", "");
+                                        }
                                         primera = false;
                                         fistAll = false;
                                     }
@@ -505,7 +493,6 @@ namespace XPloit.Core.Listeners
                     {
                         // incorrect use
                         WriteError(Lang.Get("Incorrect_Command_Usage"));
-                        _Command.IO.SetForeColor(ConsoleColor.Gray);
                         _Command.IO.AddInput("help show");
                         break;
                     }
@@ -521,8 +508,16 @@ namespace XPloit.Core.Listeners
             else
             {
                 args = args.Trim();
-                _Current = ModuleCollection.Current.GetByFullPath(args);
-                if (_Current != null) _Current.Prepare();
+                _CurrentGlobal = ModuleCollection.Current.GetByFullPath(args, false);
+                if (_CurrentGlobal != null)
+                {
+                    _Current = (Module)ReflectionHelper.Clone(_CurrentGlobal, true);
+                    _Current.Prepare(_Command.IO);
+                }
+                else
+                {
+                    _Current = null;
+                }
             }
 
             if (_Current == null) WriteError(Lang.Get(string.IsNullOrEmpty(args) ? "Command_Incomplete" : "Module_Not_Found", args));
@@ -535,14 +530,13 @@ namespace XPloit.Core.Listeners
         {
             _Command.IO.SetForeColor(ConsoleColor.Red);
             _Command.IO.WriteLine(error);
+            _Command.IO.SetForeColor(ConsoleColor.Gray);
         }
         public override bool IsStarted { get { return _IsStarted; } }
         public override bool Start()
         {
             _IsStarted = true;
-
             _Command.Run();
-
             return _IsStarted;
         }
         public override bool Stop()

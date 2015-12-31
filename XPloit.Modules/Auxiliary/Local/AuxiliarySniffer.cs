@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Interfaces;
 using XPloit.Core.Sniffer;
 
 namespace XPloit.Modules.Auxiliary.Local
@@ -40,18 +40,21 @@ namespace XPloit.Modules.Auxiliary.Local
         public string Folder { get; set; }
         #endregion
 
-        public override bool Run(ICommandLayer cmd)
+        public override bool Run()
         {
             Sniffer s = new Sniffer(Address);
             s.OnTcpStream += s_OnTcpStream;
-            s.Filter = new filter() { Port = this.Port };
+            s.Filter = new filter()
+            {
+                Port = this.Port
+            };
             s.Start();
 
-            Job.Create(cmd, s);
+            CreateJob(s);
             return true;
         }
 
-        public override ECheck Check(ICommandLayer cmd)
+        public override ECheck Check()
         {
             Sniffer s = null;
             try
@@ -62,10 +65,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
                 return ECheck.Ok;
             }
-            catch
-            {
-                return ECheck.Error;
-            }
+            catch { return ECheck.Error; }
             finally
             {
                 if (s != null) s.Dispose();
@@ -75,37 +75,48 @@ namespace XPloit.Modules.Auxiliary.Local
         void s_OnTcpStream(TcpStream stream)
         {
             TcpStream.Stream l = stream.LastStream;
-            if (l != null)
+            if (l == null) return;
+
+            int ld = l.Data.Length;
+            int va = l.Tag;
+            if (ld <= va) return;
+
+            // Copy rest
+            string path = Folder + System.IO.Path.DirectorySeparatorChar +
+                stream.Source.ToString().Replace(":", ",") + " - " +
+                stream.Destination.ToString().Replace(":", ",") + ".dump";
+
+            StringBuilder sb = new StringBuilder();
+            for (int x = va; x < ld; x++)
             {
-                int ld = l.Data.Length;
-
-                if (ld > l.Tag)
+                if (va + x % 16 == 0)
                 {
-                    // Copy rest
-                    byte[] dd = new byte[ld - l.Tag];
-                    Array.Copy(l.Data, l.Tag, dd, 0, dd.Length);
+                    // comienzo
+                    if (stream.Count != 1 || x != 0)
+                    {
+                        // No esta empezando
+                        sb.AppendLine();
+                    }
 
-                    string path = Folder + System.IO.Path.DirectorySeparatorChar +
-                        stream.Source.ToString().Replace(":", ",") + " - " +
-                        stream.Destination.ToString().Replace(":", ",") + ".dump";
-
-                    File.AppendAllText(path,
-                        (l.Tag == 0 ? (l.Emisor == TcpStream.EEmisor.A ? ">" : "<") : "") +
-                        l.DataHex);
-
-                    l.Tag = ld;
+                    sb.Append((l.Emisor == TcpStream.EEmisor.A ? "    " : ""));
+                    sb.Append(x.ToString("x2").PadLeft(8, '0') + "  ");
                 }
+                else
+                {
+                    sb.Append(" ");
+                }
+
+                sb.Append(l.Data[l.Tag + x].ToString("x2"));
             }
+
+            File.AppendAllText(path, sb.ToString());
+            l.Tag = ld;
         }
 
         class filter : ITcpStreamFilter
         {
             public ushort Port = 0;
-
-            public bool AllowTcpPacket(TcpHeader packet)
-            {
-                return packet.DestinationPort == Port || packet.SourcePort == Port;
-            }
+            public bool AllowTcpPacket(TcpHeader packet) { return packet.DestinationPort == Port || packet.SourcePort == Port; }
         }
     }
 }

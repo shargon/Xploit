@@ -41,7 +41,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public bool SaveState { get; set; }
         #endregion
 
-        public override bool Run(ICommandLayer cmd)
+        public override bool Run()
         {
             ICheckPassword check = (ICheckPassword)this.Payload;
             if (!check.PreRun())
@@ -49,6 +49,7 @@ namespace XPloit.Modules.Auxiliary.Local
                 check.PostRun();
                 return false;
             }
+
             try
             {
                 int readBlock = ReadBlock;
@@ -70,7 +71,7 @@ namespace XPloit.Modules.Auxiliary.Local
                         if (index == readBlock)
                         {
                             // Crack
-                            if (Crack(cmd, toCrack, 0, index, threads, check, check.AllowMultipleOk))
+                            if (Crack(toCrack, 0, index, threads, check, check.AllowMultipleOk))
                             {
                                 index = 0;
                                 if (!check.AllowMultipleOk) break;
@@ -85,7 +86,7 @@ namespace XPloit.Modules.Auxiliary.Local
                     if (index != 0)
                     {
                         // Sobras
-                        if (Crack(cmd, toCrack, 0, index, threads, check, check.AllowMultipleOk))
+                        if (Crack(toCrack, 0, index, threads, check, check.AllowMultipleOk))
                         {
                             index = 0;
                         }
@@ -105,10 +106,10 @@ namespace XPloit.Modules.Auxiliary.Local
                 check.PostRun();
             }
 
-            return false;
+            return true;
         }
 
-        bool Crack(ICommandLayer cmd, string[] toCrack, int index, int length, int threads, ICheckPassword check, bool allowMultipleOk)
+        bool Crack(string[] toCrack, int index, int length, int threads, ICheckPassword check, bool allowMultipleOk)
         {
             bool found = false;
 
@@ -127,10 +128,7 @@ namespace XPloit.Modules.Auxiliary.Local
                         {
                             found = true;
 
-                            cmd.SetForeColor(ConsoleColor.DarkGray);
-                            cmd.Write("Password Found! ");
-                            cmd.SetForeColor(ConsoleColor.Green);
-                            cmd.WriteLine(w);
+                            WriteInfo("Password Found! ", w, ConsoleColor.Green);
 
                             cts.Cancel();
                             return;

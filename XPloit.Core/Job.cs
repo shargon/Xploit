@@ -1,6 +1,7 @@
 ﻿using System;
 using XPloit.Core.Collections;
 using XPloit.Core.Interfaces;
+using XPloit.Res;
 
 namespace XPloit.Core
 {
@@ -29,11 +30,20 @@ namespace XPloit.Core
         }
 
         IJobable _Object;
+        uint _Id;
 
         /// <summary>
         /// Object
         /// </summary>
         public IJobable Object { get { return _Object; } }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public uint Id
+        {
+            get { return _Id; }
+            internal set { _Id = value; }
+        }
 
         /// <summary>
         /// IsRunning
@@ -45,11 +55,13 @@ namespace XPloit.Core
         /// </summary>
         /// <param name="cmd">Command</param>
         /// <param name="obj">Object for dispose</param>
-        public static Job Create(ICommandLayer cmd, IJobable obj)
+        public static Job Create(IModule module, IJobable obj)
         {
             Job j = new Job(obj);
             // Append to global list
             JobCollection.Current.Add(j);
+
+            module.WriteInfo(Lang.Get("Job_Created"), j.Id.ToString(), ConsoleColor.Green);
             return j;
         }
 

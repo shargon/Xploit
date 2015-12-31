@@ -26,5 +26,13 @@
         /// MAC
         /// </summary>
         MAC = 5,
+        /// <summary>
+        /// PHP
+        /// </summary>
+        PHP = 6,
+        /// <summary>
+        /// RFID
+        /// </summary>
+        RFID = 7,
     }
 }

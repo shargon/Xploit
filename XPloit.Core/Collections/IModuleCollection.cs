@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Collections
@@ -80,11 +81,16 @@ namespace XPloit.Core.Collections
         /// Get module by fullPath
         /// </summary>
         /// <param name="fullPath">FullPath</param>
-        public T GetByFullPath(string fullPath)
+        /// <param name="clone">Clone</param>
+        public T GetByFullPath(string fullPath, bool clone)
         {
             foreach (T m in _InternalList)
             {
-                if (string.Compare(m.FullPath, fullPath, StringComparison.InvariantCultureIgnoreCase) == 0) return m;
+                if (string.Compare(m.FullPath, fullPath, StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    if (clone) return (T)ReflectionHelper.Clone(m, true);
+                    return m;
+                }
             }
             return default(T);
         }

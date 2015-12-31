@@ -33,7 +33,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public override IPayloadRequirements PayloadRequirements { get { return new UniquePayload(typeof(ProcessStartPayload)); } }
         #endregion
 
-        public override bool Run(ICommandLayer cmd)
+        public override bool Run()
         {
             JsonDecoder encoder = new JsonDecoder(typeof(ProcessStartPayload.SerializableProcessStartInfo));
             ProcessStartPayload.SerializableProcessStartInfo info = (ProcessStartPayload.SerializableProcessStartInfo)encoder.Run(Payload);
@@ -43,13 +43,13 @@ namespace XPloit.Modules.Auxiliary.Local
             using (Process pr = new Process())
             {
                 pr.StartInfo = info.ConvertToProcessStartInfo();
-                bool dv = pr.Start();
 
-                if (dv)
+                if (pr.Start())
                 {
-                    cmd.WriteLine("Executed in pid: " + pr.Id.ToString());
+                    WriteInfo("Executed in pid ", pr.Id.ToString(), ConsoleColor.Green);
+                    return true;
                 }
-                return dv;
+                return false;
             }
         }
     }

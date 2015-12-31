@@ -1,14 +1,85 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
+using XPloit.Core.PayloadRequirements;
 
 namespace XPloit.Core.Interfaces
 {
     public class IModule
     {
+        ICommandLayer _IO;
+
+        internal ICommandLayer IO { get { return _IO; } }
+
+        internal void SetIO(ICommandLayer io) { _IO = io; }
+
+        /// <summary>
+        /// Create a new job
+        /// </summary>
+        /// <param name="job">Job</param>
+        /// <returns>Return the job</returns>
+        public Job CreateJob(Job.IJobable job)
+        {
+            return Job.Create(this, job);
+        }
+
+        #region Log methods
+        void WriteStart(string ch, ConsoleColor color)
+        {
+            if (_IO == null) return;
+
+            _IO.SetForeColor(ConsoleColor.Gray);
+            _IO.Write("[");
+            _IO.SetForeColor(color);
+            _IO.Write(ch);
+            _IO.SetForeColor(ConsoleColor.Gray);
+            _IO.Write("] ");
+
+        }
+        public void WriteError(string error)
+        {
+            if (_IO == null) return;
+
+            if (string.IsNullOrEmpty(error)) error = "";
+            else error = error.Trim();
+
+            WriteStart("!", ConsoleColor.Red);
+            _IO.SetForeColor(ConsoleColor.Red);
+            _IO.WriteLine(error);
+        }
+        public void WriteInfo(string info)
+        {
+            if (_IO == null) return;
+
+            if (string.IsNullOrEmpty(info)) info = "";
+            else info = info.Trim();
+
+            WriteStart("*", ConsoleColor.Cyan);
+            _IO.WriteLine(info);
+        }
+        public void WriteInfo(string info, string colorText, ConsoleColor color)
+        {
+            if (_IO == null) return;
+
+            if (string.IsNullOrEmpty(info)) info = "";
+            else info = info.Trim();
+
+            WriteStart("*", ConsoleColor.Cyan);
+            _IO.Write(info);
+
+            if (!string.IsNullOrEmpty(colorText))
+            {
+                _IO.Write(" ... [");
+                _IO.SetForeColor(color);
+                _IO.Write(colorText);
+                _IO.SetForeColor(ConsoleColor.Gray);
+                _IO.WriteLine("]");
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Author
         /// </summary>
@@ -48,79 +119,123 @@ namespace XPloit.Core.Interfaces
 
         public override string ToString() { return FullPath; }
 
-        int Sort(PropertyInfo a, PropertyInfo b) { return a.Name.CompareTo(b.Name); }
         /// <summary>
-        /// Return Properties
+        /// Clone current module
         /// </summary>
-        /// <param name="properties">Properties</param>
-        public PropertyInfo[] GetProperties(params string[] properties)
-        {
-            List<PropertyInfo> ls = new List<PropertyInfo>();
-            foreach (PropertyInfo pi in GetType().GetProperties())
-            {
-                bool esta = false;
-                foreach (string s in properties)
-                    if (string.Equals(pi.Name, s, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        esta = true;
-                        break;
-                    }
-                if (!esta) continue;
+        public IModule Clone() { return (IModule)ReflectionHelper.Clone(this, true); }
 
-                ls.Add(pi);
+        /// <summary>
+        /// Set property Value
+        /// </summary>
+        /// <param name="propertyName">Property</param>
+        /// <param name="value">Value</param>
+        /// <returns>Return true if its ok</returns>
+        public bool SetProperty(string propertyName, object value)
+        {
+            if (string.IsNullOrEmpty(propertyName)) return false;
+
+            if (this is Module)
+            {
+                // Module especify
+                Module m = (Module)this;
+                switch (propertyName.ToLowerInvariant())
+                {
+                    case "target":
+                        {
+                            try
+                            {
+                                int ix = (int)ConvertHelper.ConvertTo(value.ToString(), typeof(int));
+                                m.Target = m.Targets[ix];
+                                return true;
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+                        }
+                }
+
+                if (m.Payload != null)
+                {
+                    if (m.Payload.SetProperty(propertyName, value))
+                        return true;
+                }
+
+                bool dv = ReflectionHelper.SetProperty(this, propertyName, value);
+
+                if (dv && string.Compare(propertyName, "Payload", true) == 0)
+                {
+                    if (m.Payload != null)
+                        m.Payload.SetIO(_IO);
+                }
+
+                return dv;
             }
-            ls.Sort(Sort);
-            return ls.ToArray();
+            else
+            {
+                return ReflectionHelper.SetProperty(this, propertyName, value);
+            }
         }
         /// <summary>
-        /// Return Properties
+        /// Check Required Properties
         /// </summary>
-        /// <param name="requiereRead">True for require read</param>
-        /// <param name="requireWrite">True for require write</param>
-        public PropertyInfo[] GetProperties(bool requiereRead, bool requireWrite, bool excludeNonEditableProperties)
+        /// <param name="propertyName">Variable for capture property fail</param>
+        /// <returns>Return true if OK, false if not</returns>
+        public bool CheckRequiredProperties(out string propertyName)
         {
-            List<PropertyInfo> ls = new List<PropertyInfo>();
-            foreach (PropertyInfo pi in GetType().GetProperties())
+            propertyName = null;
+
+            foreach (PropertyInfo pi in ReflectionHelper.GetProperties(this, true, true, true))
             {
-                if (requiereRead && !pi.CanRead) continue;
-                if (requireWrite && !pi.CanWrite) continue;
+                ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
+                if (c == null)
+                    continue;
 
-                if (excludeNonEditableProperties)
+                if (!c.Required) continue;
+                if (pi.GetValue(this) == null)
                 {
-                    ConfigurableProperty cfg = pi.GetCustomAttribute<ConfigurableProperty>();
-                    if (cfg == null) continue;
+                    propertyName = pi.Name;
+                    return false;
+                }
+            }
 
-                    if (pi.PropertyType.IsClass)
+            if (this is Module)
+            {
+                // Module especify
+                Module m = (Module)this;
+
+                if (m.Target == null)
+                {
+                    propertyName = "Target";
+                    return false;
+                }
+
+                if (m.Payload == null)
+                {
+                    if (m.PayloadRequirements != null && !(m.PayloadRequirements is NoPayloadRequired))
                     {
-                        if (pi.PropertyType != typeof(string) &&
-                            pi.PropertyType != typeof(Boolean) &&
-
-                            pi.PropertyType != typeof(SByte) &&
-                            pi.PropertyType != typeof(UInt16) &&
-                            pi.PropertyType != typeof(UInt32) &&
-                            pi.PropertyType != typeof(UInt64) &&
-
-                            pi.PropertyType != typeof(Byte) &&
-                            pi.PropertyType != typeof(Int16) &&
-                            pi.PropertyType != typeof(Int32) &&
-                            pi.PropertyType != typeof(Int64) &&
-
-                            pi.PropertyType != typeof(Decimal) &&
-                            pi.PropertyType != typeof(float) &&
-                            pi.PropertyType != typeof(Double) &&
-
-                            pi.PropertyType != typeof(IPAddress) &&
-                            pi.PropertyType != typeof(IPEndPoint) &&
-                            pi.PropertyType != typeof(TimeSpan) &&
-                            pi.PropertyType != typeof(DateTime)
-                            )
-                            continue;
+                        propertyName = "Payload";
+                        return false;
                     }
                 }
-                ls.Add(pi);
+
+                if (m.Payload != null)
+                    foreach (PropertyInfo pi in ReflectionHelper.GetProperties(m.Payload, true, true, true))
+                    {
+                        ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
+                        if (c == null)
+                            continue;
+
+                        if (!c.Required) continue;
+                        if (pi.GetValue(m.Payload) == null)
+                        {
+                            propertyName = pi.Name;
+                            return false;
+                        }
+                    }
             }
-            ls.Sort(Sort);
-            return ls.ToArray();
+
+            return true;
         }
     }
 }

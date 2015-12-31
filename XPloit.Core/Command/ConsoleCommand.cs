@@ -56,7 +56,6 @@ namespace XPloit.Core.Command
 
             PromptCharacter = "> ";
         }
-
         public void Clear() { Console.Clear(); }
         /// <summary>
         /// Write a char
@@ -80,7 +79,6 @@ namespace XPloit.Core.Command
             if (line != null) _Out.Write(line);
             _Out.Write(Environment.NewLine);
         }
-
         public void SetBackgroundColor(ConsoleColor value)
         {
             if (_LastBack == value)
@@ -118,7 +116,6 @@ namespace XPloit.Core.Command
 
             _Frames.Add(source);
         }
-
         void OnPrompt(ICommandLayer sender)
         {
             sender.SetForeColor(_PromptColor);
@@ -384,6 +381,5 @@ namespace XPloit.Core.Command
                 if (!string.IsNullOrWhiteSpace(input)) return input;
             }
         }
-
     }
 }

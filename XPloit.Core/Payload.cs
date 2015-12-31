@@ -25,7 +25,15 @@ namespace XPloit.Core
         /// <summary>
         /// PayloadString value
         /// </summary>
-        public string StringValue { get { return this.Encoding.GetString(Value); } }
+        public string StringValue
+        {
+            get
+            {
+                byte[] va = Value;
+                if (va == null) return null;
+                return this.Encoding.GetString(Value);
+            }
+        }
         /// <summary>
         /// References
         /// </summary>
@@ -37,7 +45,7 @@ namespace XPloit.Core
         /// <param name="input">Input</param>
         public static implicit operator Payload(string input)
         {
-            return PayloadCollection.Current.GetByFullPath(input);
+            return PayloadCollection.Current.GetByFullPath(input, true);
         }
 
         public class PayloadTypeConverter : TypeConverter
@@ -53,7 +61,9 @@ namespace XPloit.Core
             public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
             {
                 if (value is string)
-                    return PayloadCollection.Current.GetByFullPath(value.ToString());
+                {
+                    return (Payload)value.ToString();
+                }
 
                 return base.ConvertFrom(context, culture, value);
             }

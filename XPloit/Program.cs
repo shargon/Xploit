@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using XPloit.Configs;
+using System.IO;
 using XPloit.Core.Command;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
@@ -14,18 +14,28 @@ namespace XPloit
     {
         static int Main(string[] args)
         {
+            // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
+
             ProcessStartPayload p = new ProcessStartPayload();
 
             // Configure
             //Console.InputEncoding = Encoding.UTF8;
             //Console.OutputEncoding = Encoding.UTF8;
             ConsoleCommand command = new ConsoleCommand();
-            command.AddInput("use Auxiliary/Local/System");
-            //command.AddInput("version");
             command.AddInput("banner");
 
-            //command.AddInput("show options");
+            command.AddInput("use Auxiliary/Local/wordListBruteForce");
+            command.AddInput("set Payload Local/BruteForce/BruteForceMySQLWireshark");
+            command.AddInput("set ReadBlock 100");
+            command.AddInput("set SaveState true");
+            command.AddInput("set Threads 10");
+            command.AddInput("set WordList D:\\Temp\\test.txt");
+            command.AddInput("set WireSharkTCPStreamFile D:\\Temp\\test.dump");
+            command.AddInput("show options");
 
+            //command.AddInput("use Auxiliary/Local/System");
+            //command.AddInput("version");
+           
             Console.CursorSize = 100;
             Console.CursorVisible = false;
 
@@ -35,6 +45,13 @@ namespace XPloit
             // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
             // \"CryptKey=#Crypt0M3#\" 
             Config cfg = ArgumentHelper.Parse<Config>("\"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
+
+            // Run file
+            if (!string.IsNullOrEmpty(cfg.RunFile))
+            {
+                foreach (string line in File.ReadAllLines(cfg.RunFile))
+                    command.AddInput(line.Trim());
+            }
 
             if (cfg.Connect != null)
             {
