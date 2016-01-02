@@ -5,7 +5,7 @@ using XPloit.Core.Helpers;
 
 namespace XPloit.Modules.Encoders.String
 {
-    public class JsonDecoder : XPloit.Core.Encoder
+    public class JsonDecoder : Encoder
     {
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Parse json string to Object"; } }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using XPloit.Core.Interfaces;
+
 namespace XPloit.Core.Collections
 {
     public class PayloadCollection : IModuleCollection<Payload>

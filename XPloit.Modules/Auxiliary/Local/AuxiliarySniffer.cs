@@ -32,11 +32,11 @@ namespace XPloit.Modules.Auxiliary.Local
 
         #region Properties
         [ConfigurableProperty(Required = true, Description = "Sniff this port")]
-        public ushort Port { get; set; }
+        public ushort LocalPort { get; set; }
         [ConfigurableProperty(Required = true, Description = "Address for binding")]
-        public IPAddress Address { get; set; }
+        public IPAddress LocalAddress { get; set; }
         [ConfigurableProperty(Required = true, Description = "Directory for creating TcpStream files")]
-        public string Folder { get; set; }
+        public string DumpFolder { get; set; }
         #endregion
 
         public override bool Run()
@@ -44,9 +44,9 @@ namespace XPloit.Modules.Auxiliary.Local
             if (!SystemHelper.IsAdministrator())
                 WriteError("Require admin rights");
 
-            Sniffer s = new Sniffer(Address);
+            Sniffer s = new Sniffer(LocalAddress);
             s.OnTcpStream += s_OnTcpStream;
-            s.Filter = new SnifferPortFilter(this.Port);
+            s.Filter = new SnifferPortFilter(this.LocalPort);
             s.Start();
 
             CreateJob(s);
@@ -61,8 +61,8 @@ namespace XPloit.Modules.Auxiliary.Local
                 if (!SystemHelper.IsAdministrator())
                     WriteError("Require admin rights");
 
-                s = new Sniffer(Address);
-                s.Filter = new SnifferPortFilter(this.Port);
+                s = new Sniffer(LocalAddress);
+                s.Filter = new SnifferPortFilter(this.LocalPort);
                 s.Start();
 
                 return ECheck.Ok;
@@ -78,7 +78,7 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             if (stream == null) return;
 
-            stream.DumpToFile(Folder + System.IO.Path.DirectorySeparatorChar +
+            stream.DumpToFile(DumpFolder + System.IO.Path.DirectorySeparatorChar +
                 stream.Source.ToString().Replace(":", ",") + " - " +
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }

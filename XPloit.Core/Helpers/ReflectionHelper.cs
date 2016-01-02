@@ -25,7 +25,10 @@ namespace XPloit.Core.Helpers
                     if (value != null && value is string)
                     {
                         // Convert to String
-                        pi[0].SetValue(obj, ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType));
+                        object val = ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType);
+                        if (val == null && value != null) return false;
+
+                        pi[0].SetValue(obj, val);
                         return true;
                     }
                     else

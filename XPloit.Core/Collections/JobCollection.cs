@@ -47,7 +47,7 @@ namespace XPloit.Core.Collections
         public bool Kill(int jobId)
         {
             Job k = Search(jobId);
-            if( k != null && k.Kill())
+            if (k != null && k.Kill())
             {
                 _InternalList.Remove(k);
                 return true;
@@ -57,11 +57,27 @@ namespace XPloit.Core.Collections
 
         public Job Search(int jobId)
         {
-            foreach (Job j in _InternalList)
-            {
-                if (j.Id == jobId) return j;
-            }
+            lock (_InternalList)
+                foreach (Job j in _InternalList)
+                {
+                    if (j.Id == jobId) return j;
+                }
             return null;
+        }
+        /// <summary>
+        /// Kill all jobs
+        /// </summary>
+        public void KillAll()
+        {
+            lock (_InternalList)
+            {
+                for (int x = Count - 1; x >= 0; x--)
+                {
+                    _InternalList[x].Kill();
+                }
+
+                _InternalList.Clear();
+            }
         }
     }
 }

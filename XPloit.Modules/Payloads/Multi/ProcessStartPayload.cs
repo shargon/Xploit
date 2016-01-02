@@ -88,13 +88,11 @@ namespace XPloit.Modules.Payloads.Multi
         }
 
         /// <summary>
-        /// Payload Value
+        /// Get serializabled class
         /// </summary>
-        public override byte[] Value
+        public SerializableProcessStartInfo GetSerializableClass()
         {
-            get
-            {
-                SerializableProcessStartInfo pi = new SerializableProcessStartInfo()
+            return new SerializableProcessStartInfo()
                  {
                      Arguments = this.Arguments,
                      CreateNoWindow = !this.CreateWindow,
@@ -106,9 +104,19 @@ namespace XPloit.Modules.Payloads.Multi
                      WindowStyle = (int)this.ProcessWindowStyle,
                      Password = this.Password
                  };
-
-                return this.Encoding.GetBytes(JsonHelper.Serialize(pi, false, false));
-            }
         }
+
+        /// <summary>
+        /// Get ProcessStartInfo
+        /// </summary>
+        public ProcessStartInfo GetProcessStartInfo()
+        {
+            return GetSerializableClass().ConvertToProcessStartInfo();
+        }
+
+        /// <summary>
+        /// Payload Value
+        /// </summary>
+        public override byte[] Value { get { return this.Encoding.GetBytes(JsonHelper.Serialize(GetSerializableClass(), false, false)); } }
     }
 }

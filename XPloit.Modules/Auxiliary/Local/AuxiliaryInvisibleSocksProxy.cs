@@ -36,12 +36,12 @@ namespace XPloit.Modules.Auxiliary.Local
 
         #region Properties
         [ConfigurableProperty(Required = true, Description = "Local port for listening")]
-        public ushort Port { get; set; }
+        public ushort LocalPort { get; set; }
         [ConfigurableProperty(Required = true, Description = "Connect to")]
-        public IPEndPoint RemoteHost { get; set; }
+        public IPEndPoint RemoteEndPoint { get; set; }
 
         [ConfigurableProperty(Required = true, Description = "Proxy")]
-        public IPEndPoint Proxy { get; set; }
+        public IPEndPoint ProxyEndPoint { get; set; }
         [ConfigurableProperty(Description = "Proxy user")]
         public string ProxyUser { get; set; }
         [ConfigurableProperty(Description = "Proxy Password")]
@@ -50,13 +50,13 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public AuxiliaryInvisibleSocksProxy()
         {
-            Proxy = new IPEndPoint(IPAddress.Loopback, 9050);
-            Port = 10000;
+            ProxyEndPoint = new IPEndPoint(IPAddress.Loopback, 9050);
+            LocalPort = 10000;
         }
 
         public override ECheck Check()
         {
-            if (SystemHelper.IsAvailableTcpPort(Port)) return ECheck.Ok;
+            if (SystemHelper.IsAvailableTcpPort(LocalPort)) return ECheck.Ok;
             return ECheck.Error;
         }
 
@@ -64,10 +64,10 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             int version = Convert.ToInt32(Target["Version"]);
 
-            TcpForwarder tcp = new TcpForwarder(this, Proxy, 4, ProxyUser, ProxyPassword);
+            TcpForwarder tcp = new TcpForwarder(this, ProxyEndPoint, 4, ProxyUser, ProxyPassword);
             try
             {
-                tcp.Start(new IPEndPoint(IPAddress.Any, Port), RemoteHost);
+                tcp.Start(new IPEndPoint(IPAddress.Any, LocalPort), RemoteEndPoint);
             }
             catch
             {

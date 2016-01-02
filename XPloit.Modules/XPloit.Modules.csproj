@@ -45,6 +45,10 @@
     <Compile Include="Auxiliary\Local\AuxiliarySniffer.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryNFC.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryWordListGenerator.cs" />
+    <Compile Include="BuildLink.cs" />
+    <Compile Include="Encoders\String\Base64Encoder.cs" />
+    <Compile Include="Encoders\String\Base64Decoder.cs" />
+    <Compile Include="Encoders\String\JsonEncoder.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerDisLocker.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
@@ -52,6 +56,7 @@
     <Compile Include="Auxiliary\Local\AuxiliaryBruteForce.cs" />
     <Compile Include="Auxiliary\Local\AuxiliarySys.cs" />
     <Compile Include="Encoders\String\JsonDecoder.cs" />
+    <Compile Include="Payloads\Multi\ProcessKillPayload.cs" />
     <Compile Include="Payloads\Multi\ProcessStartPayload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

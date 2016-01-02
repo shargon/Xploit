@@ -11,6 +11,7 @@ namespace XPloit.Core.Collections
     {
         Type _TypeT;
         EModuleType _Type;
+        List<string> _LoadedAsm;
 
         /// <summary>
         /// Type of collection
@@ -22,6 +23,7 @@ namespace XPloit.Core.Collections
         protected IModuleCollection()
         {
             _TypeT = typeof(T);
+            _LoadedAsm = new List<string>();
 
             if (_TypeT == typeof(Encoder)) _Type = EModuleType.Encoder;
             else if (_TypeT == typeof(Payload)) _Type = EModuleType.Payload;
@@ -63,6 +65,9 @@ namespace XPloit.Core.Collections
             // Load All loaded modules
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
+                if (_LoadedAsm.Contains(asm.FullName)) continue;
+                _LoadedAsm.Add(asm.FullName);
+
                 foreach (Type type in asm.GetTypes())
                 {
                     if (_TypeT == type) continue;

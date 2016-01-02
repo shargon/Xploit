@@ -157,7 +157,7 @@ namespace XPloit.Core.Helpers
                 }
                 if (type == _IPEndPointType)
                 {
-                    string[] si = input.Trim().Split(':');
+                    string[] si = input.Trim().Split(',');
                     
                     if (si.Length < 2) return null;
 

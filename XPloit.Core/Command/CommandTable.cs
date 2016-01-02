@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Command
 {
@@ -112,5 +113,22 @@ namespace XPloit.Core.Command
         public IEnumerator<CommandTableRow> GetEnumerator() { return rows.GetEnumerator(); }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return rows.GetEnumerator(); }
         #endregion
+
+        public void OutputColored(ICommandLayer io)
+        {
+            string separator = Separator;
+            foreach (CommandTableRow row in this)
+            {
+                foreach (CommandTableCol col in row)
+                {
+                    io.SetForeColor(col.ForeColor);
+
+                    if (col.Index != 0) io.Write(separator);
+                    io.Write(col.GetFormatedValue());
+                }
+                io.WriteLine("");
+            }
+
+        }
     }
 }

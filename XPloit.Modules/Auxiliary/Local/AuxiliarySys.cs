@@ -4,7 +4,6 @@ using XPloit.Core;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
 using XPloit.Core.PayloadRequirements;
-using XPloit.Modules.Encoders.String;
 using XPloit.Modules.Payloads.Multi;
 
 namespace XPloit.Modules.Auxiliary.Local
@@ -30,27 +29,53 @@ namespace XPloit.Modules.Auxiliary.Local
                 };
             }
         }
-        public override IPayloadRequirements PayloadRequirements { get { return new UniquePayload(typeof(ProcessStartPayload)); } }
+        public override IPayloadRequirements PayloadRequirements { get { return new UniquePayload(typeof(ProcessStartPayload), typeof(ProcessKillPayload)); } }
         #endregion
 
         public override bool Run()
         {
-            JsonDecoder encoder = new JsonDecoder(typeof(ProcessStartPayload.SerializableProcessStartInfo));
-            ProcessStartPayload.SerializableProcessStartInfo info = (ProcessStartPayload.SerializableProcessStartInfo)encoder.Run(Payload);
-
-            if (info == null) return false;
-
-            using (Process pr = new Process())
+            if (Payload is ProcessStartPayload)
             {
-                pr.StartInfo = info.ConvertToProcessStartInfo();
+                //JsonDecoder encoder = new JsonDecoder(typeof(ProcessStartPayload.SerializableProcessStartInfo));
+                //ProcessStartPayload.SerializableProcessStartInfo info = (ProcessStartPayload.SerializableProcessStartInfo)encoder.Run(Payload);
 
-                if (pr.Start())
+                ProcessStartPayload pi = (ProcessStartPayload)Payload;
+                ProcessStartInfo info = pi.GetProcessStartInfo();
+                if (info == null) return false;
+
+                using (Process pr = new Process())
                 {
-                    WriteInfo("Executed in pid ", pr.Id.ToString(), ConsoleColor.Green);
-                    return true;
+                    pr.StartInfo = info;
+
+                    if (pr.Start())
+                    {
+                        WriteInfo("Executed in pid ", pr.Id.ToString(), ConsoleColor.Green);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
+
+            if (Payload is ProcessKillPayload)
+            {
+                WriteInfo("Search process ...");
+
+                ProcessKillPayload pi = (ProcessKillPayload)Payload;
+                Process pr = Process.GetProcessById(pi.PID.Value);
+                if (pr == null)
+                {
+                    WriteInfo("Process not found");
+                    return false;
+                }
+
+                WriteInfo("Trying kill process");
+                pr.Kill();
+                WriteInfo("Killed process " + pi.PID.ToString());
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

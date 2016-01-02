@@ -339,4 +339,45 @@ Kill the selected job</value>
   <data name="Kill_Job" xml:space="preserve">
     <value>Kill job</value>
   </data>
+  <data name="Man_Reload" xml:space="preserve">
+    <value>reload
+
+Reload the current module with the global variables</value>
+  </data>
+  <data name="Reloaded_Module" xml:space="preserve">
+    <value>Module '%0' reloaded</value>
+  </data>
+  <data name="Man_Resource" xml:space="preserve">
+    <value>resource [file]
+
+Run the commands stored in a file</value>
+  </data>
+  <data name="File_Not_Exists" xml:space="preserve">
+    <value>File '%0' doesn't exists</value>
+  </data>
+  <data name="Man_Jobs" xml:space="preserve">
+    <value>jobs
+
+List all current jobs</value>
+  </data>
+  <data name="Dead" xml:space="preserve">
+    <value>Dead</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Man_Load" xml:space="preserve">
+    <value>load [file]
+
+Load all modules from selected file</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
 </root>

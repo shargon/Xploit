@@ -5,18 +5,24 @@ namespace XPloit.Core.PayloadRequirements
 {
     public class UniquePayload : IPayloadRequirements
     {
-        Type _Type;
+        Type[] _Types;
 
         /// <summary>
         /// Type
         /// </summary>
-        public Type Type { get { return _Type; } }
+        public Type[] Types { get { return _Types; } }
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="type">Type</param>
-        public UniquePayload(Type type) { _Type = type; }
+        /// <param name="types">Types</param>
+        public UniquePayload(params Type[] types) { _Types = types; }
 
-        public bool IsAllowedPayload(Payload payload) { return _Type == payload.GetType(); }
+        public bool IsAllowedPayload(Payload payload)
+        {
+            Type t2 = payload.GetType();
+            foreach (Type t in _Types)
+                if (t == t2) return true;
+            return false;
+        }
     }
 }

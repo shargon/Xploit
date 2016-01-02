@@ -47,7 +47,7 @@ namespace XPloit.Core.Interfaces
 
             WriteStart("!", ConsoleColor.Red);
             _IO.SetForeColor(ConsoleColor.Red);
-            _IO.WriteLine(error);
+            _IO.WriteLine(error.Replace("\n", "\n    "));
         }
         public void WriteInfo(string info)
         {
@@ -57,7 +57,7 @@ namespace XPloit.Core.Interfaces
             else info = info.Trim();
 
             WriteStart("*", ConsoleColor.Cyan);
-            _IO.WriteLine(info);
+            _IO.WriteLine(info.Replace("\n", "\n    "));
         }
         public void WriteInfo(string info, string colorText, ConsoleColor color)
         {

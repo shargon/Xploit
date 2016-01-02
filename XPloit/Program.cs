@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using XPloit.Core.Collections;
 using XPloit.Core.Command;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners;
-using XPloit.Modules.Payloads.Multi;
+using XPloit.Modules;
 using XPloit.Res;
 
 namespace XPloit
@@ -16,7 +17,8 @@ namespace XPloit
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
 
-            ProcessStartPayload p = new ProcessStartPayload();
+            // Linq to library assembly
+            BuildLink.Dummy();
 
             // Configure
             //Console.InputEncoding = Encoding.UTF8;
@@ -47,7 +49,11 @@ namespace XPloit
                     command.Write(Lang.Get("Reading_File", cfg.Resource));
 
                     foreach (string line in File.ReadAllLines(cfg.Resource))
-                        command.AddInput(line.Trim());
+                    {
+                        string ap = line.Trim();
+                        if (string.IsNullOrEmpty(ap)) continue;
+                        command.AddInput(ap);
+                    }
 
                     command.SetForeColor(ConsoleColor.Green);
                     command.WriteLine(Lang.Get("Ok").ToUpperInvariant());
@@ -113,6 +119,7 @@ namespace XPloit
             }
 
             // Wait exit signal
+            JobCollection.Current.KillAll();
             return 0;
         }
     }
