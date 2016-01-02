@@ -48,7 +48,7 @@ namespace XPloit.Core
         /// <summary>
         /// IsRunning
         /// </summary>
-        public bool IsRunning { get { return _Object != null && _Object.IsDisposed; } }
+        public bool IsRunning { get { return _Object != null && !_Object.IsDisposed; } }
 
         /// <summary>
         /// Create a new job
@@ -72,6 +72,19 @@ namespace XPloit.Core
         private Job(IJobable obj)
         {
             _Object = obj;
+        }
+        /// <summary>
+        /// Kill the job
+        /// </summary>
+        /// <returns></returns>
+        internal bool Kill()
+        {
+            if (IsRunning)
+            {
+                _Object.Dispose();
+                return true;
+            }
+            return false;
         }
     }
 }

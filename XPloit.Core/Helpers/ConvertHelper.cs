@@ -22,6 +22,7 @@ namespace XPloit.Core.Helpers
         static Type _TimeSpanType = typeof(TimeSpan);
         static Type _DateTimeType = typeof(DateTime);
         static Type _IPAddressType = typeof(IPAddress);
+        static Type _IPEndPointType = typeof(IPEndPoint);
 
         static Type _IListType = typeof(IList);
 
@@ -153,6 +154,20 @@ namespace XPloit.Core.Helpers
                     IPAddress r;
                     if (!IPAddress.TryParse(input.Trim(), out r)) return IPAddress.Any;
                     return r;
+                }
+                if (type == _IPEndPointType)
+                {
+                    string[] si = input.Trim().Split(':');
+                    
+                    if (si.Length < 2) return null;
+
+                    IPAddress ip;
+                    if (!IPAddress.TryParse(si[0], out ip)) return null;
+
+                    ushort port;
+                    if (!ushort.TryParse(si[1], out port)) return null;
+
+                    return new IPEndPoint(ip, port);
                 }
 
                 // Array

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Principal;
 
 namespace XPloit.Core.Helpers
@@ -36,6 +38,32 @@ namespace XPloit.Core.Helpers
             {
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
+        /// <summary>
+        /// Check if its avaiable tcp port
+        /// </summary>
+        /// <param name="port">Port</param>
+        public static bool IsAvailableTcpPort(ushort port)
+        {
+            TcpListener tcp = null;
+            try
+            {
+                tcp = new TcpListener(IPAddress.Any, port);
+                tcp.Start();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                if (tcp != null)
+                {
+                    tcp.Stop();
+                }
             }
         }
     }

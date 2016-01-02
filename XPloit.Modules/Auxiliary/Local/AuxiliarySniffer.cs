@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Net;
-using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -48,10 +46,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
             Sniffer s = new Sniffer(Address);
             s.OnTcpStream += s_OnTcpStream;
-            s.Filter = new filter()
-            {
-                Port = this.Port
-            };
+            s.Filter = new SnifferPortFilter(this.Port);
             s.Start();
 
             CreateJob(s);
@@ -67,7 +62,7 @@ namespace XPloit.Modules.Auxiliary.Local
                     WriteError("Require admin rights");
 
                 s = new Sniffer(Address);
-                s.Filter = new filter() { Port = this.Port };
+                s.Filter = new SnifferPortFilter(this.Port);
                 s.Start();
 
                 return ECheck.Ok;
@@ -86,12 +81,6 @@ namespace XPloit.Modules.Auxiliary.Local
             stream.DumpToFile(Folder + System.IO.Path.DirectorySeparatorChar +
                 stream.Source.ToString().Replace(":", ",") + " - " +
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
-        }
-
-        class filter : ITcpStreamFilter
-        {
-            public ushort Port = 0;
-            public bool AllowTcpPacket(TcpHeader packet) { return packet.DestinationPort == Port || packet.SourcePort == Port; }
         }
     }
 }

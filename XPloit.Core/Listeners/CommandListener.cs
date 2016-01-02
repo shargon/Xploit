@@ -58,7 +58,7 @@ namespace XPloit.Core.Listeners
                         break;
                     }
                 case "set":
-                case "setg":
+                case "gset":
                     {
                         if (_Current == null) break;
 
@@ -152,15 +152,14 @@ namespace XPloit.Core.Listeners
             _Command.Add(new string[] { "use" }, cmdUse, Lang.Get("Man_Use"));
             _Command.Add(new string[] { "show" }, cmdShow, Lang.Get("Man_Show"));
             _Command.Add(new string[] { "set" }, cmdSet, Lang.Get("Man_Set"));
-            _Command.Add(new string[] { "setg" }, cmdSetG, Lang.Get("Man_Set_Global"));
+            _Command.Add(new string[] { "gset" }, cmdSetG, Lang.Get("Man_Set_Global"));
             _Command.Add(new string[] { "check" }, cmdCheck, Lang.Get("Man_Check"));
             _Command.Add(new string[] { "exploit", "run" }, cmdRun, Lang.Get("Man_Run"));
 
-
-            _Command.Add(new string[] { "search" }, null, Lang.Get("Man_Search"));
+            //_Command.Add(new string[] { "search" }, null, Lang.Get("Man_Search"));
 
             //_Command.Add(new string[] { "jobs" }, null, Lang.Get("Man_Search"));
-            //_Command.Add(new string[] { "kill" }, null, Lang.Get("Man_Search"));
+            _Command.Add(new string[] { "kill" }, cmdKill, Lang.Get("Man_Kill"));
 
             //_Command.Add(new string[] { "load" }, null, Lang.Get("Man_Search"));      // load .net DLL modules
             //_Command.Add(new string[] { "reload" }, null, Lang.Get("Man_Search"));    // module use same module
@@ -252,6 +251,33 @@ namespace XPloit.Core.Listeners
             {
                 if (!_Current.Run())
                     _Current.WriteError(Lang.Get("Run_Error"));
+            }
+            catch (Exception e)
+            {
+                _Current.WriteError(e.Message);
+            }
+        }
+        public void cmdKill(string args)
+        {
+            args = args.Trim();
+
+            try
+            {
+                if (string.IsNullOrEmpty(args))
+                {
+                    _Current.WriteError(Lang.Get("Incorrect_Command_Usage"));
+                    return;
+                }
+
+                int job = (int)ConvertHelper.ConvertTo(args, typeof(int));
+                if (JobCollection.Current.Kill(job))
+                {
+                    _Current.WriteInfo(Lang.Get("Kill_Job"), Lang.Get("Ok"), ConsoleColor.Green);
+                }
+                else
+                {
+                    _Current.WriteInfo(Lang.Get("Kill_Job"), Lang.Get("Error"), ConsoleColor.Red);
+                }
             }
             catch (Exception e)
             {

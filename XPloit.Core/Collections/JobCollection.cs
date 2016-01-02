@@ -43,5 +43,25 @@ namespace XPloit.Core.Collections
         {
             return _InternalList.GetEnumerator();
         }
+
+        public bool Kill(int jobId)
+        {
+            Job k = Search(jobId);
+            if( k != null && k.Kill())
+            {
+                _InternalList.Remove(k);
+                return true;
+            }
+            return false;
+        }
+
+        public Job Search(int jobId)
+        {
+            foreach (Job j in _InternalList)
+            {
+                if (j.Id == jobId) return j;
+            }
+            return null;
+        }
     }
 }

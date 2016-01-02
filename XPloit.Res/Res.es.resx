@@ -331,4 +331,12 @@ Set a global variable for the current module and the next call to this module</v
   <data name="Reading_File" xml:space="preserve">
     <value>Reading File '%0' ... </value>
   </data>
+  <data name="Man_Kill" xml:space="preserve">
+    <value>kill [job]
+
+Kill the selected job</value>
+  </data>
+  <data name="Kill_Job" xml:space="preserve">
+    <value>Kill job</value>
+  </data>
 </root>

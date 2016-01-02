@@ -23,6 +23,7 @@ namespace XPloit
             //Console.OutputEncoding = Encoding.UTF8;
             ConsoleCommand command = new ConsoleCommand();
             command.AddInput("banner");
+            //command.AddInput("load \"XPloit.Modules.dll\"");
 
             //command.AddInput("use Auxiliary/Local/System");
             //command.AddInput("version");

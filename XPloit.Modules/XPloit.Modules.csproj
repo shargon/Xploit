@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auxiliary\Local\AuxiliaryInvisibleSocksProxy.cs" />
     <Compile Include="Auxiliary\Local\AuxiliarySniffer.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryNFC.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryWordListGenerator.cs" />
