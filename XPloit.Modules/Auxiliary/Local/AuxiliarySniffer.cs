@@ -5,6 +5,7 @@ using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 using XPloit.Core.Sniffer;
 
 namespace XPloit.Modules.Auxiliary.Local
@@ -42,6 +43,9 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public override bool Run()
         {
+            if (!SystemHelper.IsAdministrator())
+                WriteError("Require admin rights");
+
             Sniffer s = new Sniffer(Address);
             s.OnTcpStream += s_OnTcpStream;
             s.Filter = new filter()
@@ -59,6 +63,9 @@ namespace XPloit.Modules.Auxiliary.Local
             Sniffer s = null;
             try
             {
+                if (!SystemHelper.IsAdministrator())
+                    WriteError("Require admin rights");
+
                 s = new Sniffer(Address);
                 s.Filter = new filter() { Port = this.Port };
                 s.Start();
@@ -74,43 +81,11 @@ namespace XPloit.Modules.Auxiliary.Local
 
         void s_OnTcpStream(TcpStream stream)
         {
-            TcpStream.Stream l = stream.LastStream;
-            if (l == null) return;
+            if (stream == null) return;
 
-            int ld = l.Data.Length;
-            int va = l.Tag;
-            if (ld <= va) return;
-
-            // Copy rest
-            string path = Folder + System.IO.Path.DirectorySeparatorChar +
+            stream.DumpToFile(Folder + System.IO.Path.DirectorySeparatorChar +
                 stream.Source.ToString().Replace(":", ",") + " - " +
-                stream.Destination.ToString().Replace(":", ",") + ".dump";
-
-            StringBuilder sb = new StringBuilder();
-            for (int x = va; x < ld; x++)
-            {
-                if (va + x % 16 == 0)
-                {
-                    // comienzo
-                    if (stream.Count != 1 || x != 0)
-                    {
-                        // No esta empezando
-                        sb.AppendLine();
-                    }
-
-                    sb.Append((l.Emisor == TcpStream.EEmisor.A ? "    " : ""));
-                    sb.Append(x.ToString("x2").PadLeft(8, '0') + "  ");
-                }
-                else
-                {
-                    sb.Append(" ");
-                }
-
-                sb.Append(l.Data[l.Tag + x].ToString("x2"));
-            }
-
-            File.AppendAllText(path, sb.ToString());
-            l.Tag = ld;
+                stream.Destination.ToString().Replace(":", ",") + ".dump");
         }
 
         class filter : ITcpStreamFilter

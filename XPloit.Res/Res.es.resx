@@ -325,4 +325,10 @@ Search a module in the loaded modules</value>
 
 Set a global variable for the current module and the next call to this module</value>
   </data>
+  <data name="Error_Reading_File" xml:space="preserve">
+    <value>Error reading file '%0'</value>
+  </data>
+  <data name="Reading_File" xml:space="preserve">
+    <value>Reading File '%0' ... </value>
+  </data>
 </root>

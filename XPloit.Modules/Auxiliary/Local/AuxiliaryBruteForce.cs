@@ -41,6 +41,12 @@ namespace XPloit.Modules.Auxiliary.Local
         public bool SaveState { get; set; }
         #endregion
 
+        public AuxiliaryBruteForce()
+        {
+            ReadBlock = 1000;
+            Threads = 5;
+        }
+
         public override bool Run()
         {
             ICheckPassword check = (ICheckPassword)this.Payload;
@@ -52,8 +58,8 @@ namespace XPloit.Modules.Auxiliary.Local
 
             try
             {
-                int readBlock = ReadBlock;
-                int threads = Threads;
+                int readBlock = Math.Max(1, ReadBlock);
+                int threads = Math.Max(1, Threads);
                 bool save = SaveState;
 
                 using (StreamReader reader = new StreamReader(WordList))
@@ -74,8 +80,10 @@ namespace XPloit.Modules.Auxiliary.Local
                             if (Crack(toCrack, 0, index, threads, check, check.AllowMultipleOk))
                             {
                                 index = 0;
+
                                 if (!check.AllowMultipleOk) break;
                             }
+                            else index = 0;
                             if (save)
                             {
                                 // Write position
@@ -115,12 +123,13 @@ namespace XPloit.Modules.Auxiliary.Local
 
             CancellationTokenSource cts = new CancellationTokenSource();
 
-            // Use ParallelOptions instance to store the CancellationToken
-            ParallelOptions po = new ParallelOptions();
-            po.CancellationToken = cts.Token;
-
             try
             {
+                // Use ParallelOptions instance to store the CancellationToken
+                ParallelOptions po = new ParallelOptions();
+                po.CancellationToken = cts.Token;
+                po.MaxDegreeOfParallelism = threads;
+
                 ParallelLoopResult res = Parallel.For(index, index + length, x =>
                     {
                         string w = toCrack[x];

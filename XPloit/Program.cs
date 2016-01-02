@@ -24,18 +24,9 @@ namespace XPloit
             ConsoleCommand command = new ConsoleCommand();
             command.AddInput("banner");
 
-            command.AddInput("use Auxiliary/Local/wordListBruteForce");
-            command.AddInput("set Payload Local/BruteForce/BruteForceMySQLWireshark");
-            command.AddInput("set ReadBlock 100");
-            command.AddInput("set SaveState true");
-            command.AddInput("set Threads 10");
-            command.AddInput("set WordList D:\\Temp\\test.txt");
-            command.AddInput("set WireSharkTCPStreamFile D:\\Temp\\test.dump");
-            command.AddInput("show options");
-
             //command.AddInput("use Auxiliary/Local/System");
             //command.AddInput("version");
-           
+
             Console.CursorSize = 100;
             Console.CursorVisible = false;
 
@@ -44,13 +35,27 @@ namespace XPloit
 
             // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
             // \"CryptKey=#Crypt0M3#\" 
-            Config cfg = ArgumentHelper.Parse<Config>("\"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
+            Config cfg = ArgumentHelper.Parse<Config>("\"Resource=d:\\temp\\console.txt\" \"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
 
             // Run file
-            if (!string.IsNullOrEmpty(cfg.RunFile))
+            if (!string.IsNullOrEmpty(cfg.Resource))
             {
-                foreach (string line in File.ReadAllLines(cfg.RunFile))
-                    command.AddInput(line.Trim());
+                try
+                {
+                    command.SetForeColor(ConsoleColor.Gray);
+                    command.Write(Lang.Get("Reading_File", cfg.Resource));
+
+                    foreach (string line in File.ReadAllLines(cfg.Resource))
+                        command.AddInput(line.Trim());
+
+                    command.SetForeColor(ConsoleColor.Green);
+                    command.WriteLine(Lang.Get("Ok").ToUpperInvariant());
+                }
+                catch
+                {
+                    command.SetForeColor(ConsoleColor.Red);
+                    command.WriteLine(Lang.Get("Error").ToUpperInvariant());
+                }
             }
 
             if (cfg.Connect != null)

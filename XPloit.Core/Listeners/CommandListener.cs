@@ -116,6 +116,14 @@ namespace XPloit.Core.Listeners
                                                 yield return "true";
                                                 yield return "false";
                                             }
+                                            else
+                                            {
+                                                if (pi[0].PropertyType.IsEnum)
+                                                {
+                                                    foreach (string name in Enum.GetNames(pi[0].PropertyType))
+                                                        yield return name;
+                                                }
+                                            }
                                         }
                                         break;
                                     }

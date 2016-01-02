@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Auxiliary\Local\AuxiliarySniffer.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryNFC.cs" />
+    <Compile Include="Auxiliary\Local\AuxiliaryWordListGenerator.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerDisLocker.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
@@ -59,7 +60,10 @@
       <Name>XPloit.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Auxiliary\Remote\" />
+    <Folder Include="Payloads\Remote\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

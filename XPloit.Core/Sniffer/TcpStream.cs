@@ -15,12 +15,8 @@ namespace XPloit.Core.Sniffer
         {
             EEmisor _Emisor;
             byte[] _Data;
-            int _Tag = 0;
+            internal int _LastRead = 0;
 
-            /// <summary>
-            /// Tag
-            /// </summary>
-            public int Tag { get { return _Tag; } set { _Tag = value; } }
             /// <summary>
             /// Data
             /// </summary>
@@ -220,7 +216,7 @@ namespace XPloit.Core.Sniffer
                     string l = line.TrimStart().Replace(":", "");
 
                     EEmisor em = line.StartsWith(" ") ? EEmisor.A : EEmisor.B;
-                   
+
                     if (l.Length >= 9 && !l.Substring(0, 8).Contains(" "))
                     {
                         // remove offset
@@ -254,6 +250,46 @@ namespace XPloit.Core.Sniffer
             }
 
             return tcp;
+        }
+
+        /// <summary>
+        /// Dump to file
+        /// </summary>
+        /// <param name="file">File</param>
+        public void DumpToFile(string file)
+        {
+            TcpStream.Stream l = _Last;
+            if (l == null) return;
+
+            int ld = l.Data.Length;
+            int va = l._LastRead;
+            if (ld <= va) return;
+
+            StringBuilder sb = new StringBuilder();
+            for (int x = va; x < ld; x++)
+            {
+                if (va + x % 16 == 0)
+                {
+                    // comienzo
+                    if (Count != 1 || x != 0)
+                    {
+                        // No esta empezando
+                        sb.AppendLine();
+                    }
+
+                    sb.Append((l.Emisor == TcpStream.EEmisor.A ? "    " : ""));
+                    sb.Append(x.ToString("x2").PadLeft(8, '0') + "  ");
+                }
+                else
+                {
+                    sb.Append(" ");
+                }
+
+                sb.Append(l.Data[l._LastRead + x].ToString("x2"));
+            }
+
+            File.AppendAllText(file, sb.ToString());
+            l._LastRead = ld;
         }
     }
 }

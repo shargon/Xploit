@@ -90,10 +90,12 @@ namespace XPloit.Modules.Auxiliary.Local
                 WriteInfo("User found", DBUser, ConsoleColor.Green);
 
             string _sh = HexToString(Hash, true);
-            string _seed = HexToString(Seed, true);
-            bseed = codec.GetBytes(_seed);
+
             byte[] bhash_all = codec.GetBytes(_sh);
             if (bhash_all.Length != 21) return false;
+            
+            string _seed = HexToString(Seed, true);
+            bseed = codec.GetBytes(_seed);
             bhash = new byte[bhash_all.Length - 1];
             Array.Copy(bhash_all, 1, bhash, 0, bhash.Length);
             //ihash = new int[bhash.Length];
@@ -273,7 +275,6 @@ namespace XPloit.Modules.Auxiliary.Local
             private byte sequenceByte;
             private int peekByte;
             private Encoding encoding;
-            private DBVersion version;
 
             private MemoryStream bufferStream;
 
@@ -285,8 +286,6 @@ namespace XPloit.Modules.Auxiliary.Local
             private ulong inPos;
 
             private Stream outStream;
-            private ulong outLength;
-            private ulong outPos;
             private bool isLastPacket;
             private byte[] byteBuffer;
 
@@ -328,13 +327,6 @@ namespace XPloit.Modules.Auxiliary.Local
                 // for us.
             }
 
-            #region Properties
-
-            public bool IsLastPacket { get { return isLastPacket; } }
-            public DBVersion Version { get { return version; } set { version = value; } }
-            public Encoding Encoding { get { return encoding; } set { encoding = value; } }
-            public MemoryStream InternalBuffer { get { return bufferStream; } }
-            public byte SequenceByte { get { return sequenceByte; } set { sequenceByte = value; } }
             public bool HasMoreData
             {
                 get
@@ -343,12 +335,8 @@ namespace XPloit.Modules.Auxiliary.Local
                              (inLength == (ulong)maxBlockSize || inPos < inLength);
                 }
             }
-            public int MaxBlockSize { get { return maxBlockSize; } set { maxBlockSize = value; } }
-            public ulong MaxPacketSize { get { return maxPacketSize; } set { maxPacketSize = value; } }
-            #endregion
 
             #region Packet methods
-
             /// <summary>
             /// OpenPacket is called by NativeDriver to start reading the next
             /// packet on the stream.
@@ -398,86 +386,14 @@ namespace XPloit.Modules.Auxiliary.Local
 
                 inPos = 0;
             }
-
-            /// <summary>
-            /// SkipPacket will read the remaining bytes of a packet into a small
-            /// local buffer and discard them.
-            /// </summary>
-            public void SkipPacket()
-            {
-                byte[] tempBuf = new byte[1024];
-                while (inPos < inLength)
-                {
-                    int toRead = (int)Math.Min((ulong)tempBuf.Length, (inLength - inPos));
-                    Read(tempBuf, 0, toRead);
-                }
-            }
-
-            public void SendEntirePacketDirectly(byte[] buffer, int count)
-            {
-                buffer[0] = (byte)(count & 0xff);
-                buffer[1] = (byte)((count >> 8) & 0xff);
-                buffer[2] = (byte)((count >> 16) & 0xff);
-                buffer[3] = sequenceByte++;
-                outStream.Write(buffer, 0, count + 4);
-                outStream.Flush();
-            }
-
-            /// <summary>
-            /// StartOutput is used to reset the write state of the stream.
-            /// </summary>
-            public void StartOutput(ulong length, bool resetSequence)
-            {
-                outLength = outPos = 0;
-                if (length > 0)
-                {
-                    if (length > maxPacketSize) throw new Exception("ERROR");
-                    outLength = length;
-                }
-
-                if (resetSequence)
-                    sequenceByte = 0;
-            }
-
-            /// <summary>
-            /// Writes out the header that is used at the start of a transmission
-            /// and at the beginning of every packet when multipacket is used.
-            /// </summary>
-            private void WriteHeader()
-            {
-                int len = (int)Math.Min((outLength - outPos), (ulong)maxBlockSize);
-
-                outStream.WriteByte((byte)(len & 0xff));
-                outStream.WriteByte((byte)((len >> 8) & 0xff));
-                outStream.WriteByte((byte)((len >> 16) & 0xff));
-                outStream.WriteByte(sequenceByte++);
-            }
-
-            public void SendEmptyPacket()
-            {
-                outLength = 0;
-                outPos = 0;
-                WriteHeader();
-                outStream.Flush();
-            }
-
             #endregion
 
             #region Byte methods
-
-            public int ReadNBytes()
-            {
-                byte c = (byte)ReadByte();
-                if (c < 1 || c > 4) throw new Exception("EROR");
-                return ReadInteger(c);
-            }
-
             public void SkipBytes(int len)
             {
                 while (len-- > 0)
                     ReadByte();
             }
-
             /// <summary>
             /// Reads the next byte from the incoming stream
             /// </summary>
@@ -576,90 +492,9 @@ namespace XPloit.Modules.Auxiliary.Local
                 return peekByte;
             }
 
-            /// <summary>
-            /// Writes a single byte to the output stream.
-            /// </summary>
-            public void WriteByte(byte value)
-            {
-                byteBuffer[0] = value;
-                Write(byteBuffer, 0, 1);
-            }
-
-            public void Write(byte[] buffer, int offset, int count)
-            {
-                //Debug.Assert(buffer != null && offset >= 0 && count >= 0);
-
-                // if we are buffering, then just write it to the buffer
-                if (outLength == 0)
-                {
-                    bufferStream.Write(buffer, offset, count);
-                    return;
-                }
-
-                // make sure the inputs to the method make sense
-                //Debug.Assert(outLength > 0 && (outPos + (ulong)count) <= outLength);
-
-                int pos = 0;
-                // if we get here, we are not buffering.  
-                // outLength is the total amount of data we are going to send
-                // This means that multiple calls to write could be combined.
-                while (count > 0)
-                {
-                    int cntToWrite = (int)Math.Min((outLength - outPos), (ulong)count);
-                    cntToWrite = Math.Min(maxBlockSize - (int)(outPos % (ulong)maxBlockSize), cntToWrite);
-
-                    // if we are at a block border, then we need to send a new header
-                    if ((outPos % (ulong)maxBlockSize) == 0)
-                        WriteHeader();
-
-                    outStream.Write(buffer, pos, cntToWrite);
-
-                    outPos += (ulong)cntToWrite;
-                    pos += cntToWrite;
-                    count -= cntToWrite;
-                }
-            }
-
-            public void Write(byte[] buffer)
-            {
-                Write(buffer, 0, buffer.Length);
-            }
-
-            public void Flush()
-            {
-                if (outLength == 0)
-                {
-                    if (bufferStream.Length > 0)
-                    {
-                        byte[] bytes = bufferStream.GetBuffer();
-                        StartOutput((ulong)bufferStream.Length, false);
-                        Write(bytes, 0, (int)bufferStream.Length);
-                    }
-                    bufferStream.SetLength(0);
-                    bufferStream.Position = 0;
-                }
-
-                outStream.Flush();
-            }
-
             #endregion
 
             #region Integer methods
-
-            public long ReadFieldLength()
-            {
-                byte c = (byte)ReadByte();
-
-                switch (c)
-                {
-                    case 251: return -1;
-                    case 252: return ReadInteger(2);
-                    case 253: return ReadInteger(3);
-                    case 254: return ReadInteger(8);
-                    default: return c;
-                }
-            }
-
             public ulong ReadLong(int numbytes)
             {
                 ulong val = 0;
@@ -678,24 +513,6 @@ namespace XPloit.Modules.Auxiliary.Local
                 return (int)ReadLong(numbytes);
             }
 
-            /// <summary>
-            /// WriteInteger
-            /// </summary>
-            /// <param name="v"></param>
-            /// <param name="numbytes"></param>
-            public void WriteInteger(long v, int numbytes)
-            {
-                long val = v;
-
-                //Debug.Assert(numbytes > 0 && numbytes < 5);
-
-                for (int x = 0; x < numbytes; x++)
-                {
-                    WriteByte((byte)(val & 0xff));
-                    val >>= 8;
-                }
-            }
-
             public int ReadPackedInteger()
             {
                 byte c = (byte)ReadByte();
@@ -710,49 +527,11 @@ namespace XPloit.Modules.Auxiliary.Local
                 }
             }
 
-            public void WriteLength(long length)
-            {
-                if (length < 251)
-                    WriteByte((byte)length);
-                else if (length < 65536L)
-                {
-                    WriteByte(252);
-                    WriteInteger(length, 2);
-                }
-                else if (length < 16777216L)
-                {
-                    WriteByte(253);
-                    WriteInteger(length, 3);
-                }
-                else
-                {
-                    WriteByte(254);
-                    WriteInteger(length, 4);
-                }
-            }
 
             #endregion
 
             #region String methods
 
-            public void WriteLenString(string s)
-            {
-                byte[] bytes = encoding.GetBytes(s);
-                WriteLength(bytes.Length);
-                Write(bytes, 0, bytes.Length);
-            }
-
-            public void WriteStringNoNull(string v)
-            {
-                byte[] bytes = encoding.GetBytes(v);
-                Write(bytes, 0, bytes.Length);
-            }
-
-            public void WriteString(string v)
-            {
-                WriteStringNoNull(v);
-                WriteByte(0);
-            }
 
             public string ReadLenString()
             {
@@ -785,66 +564,6 @@ namespace XPloit.Modules.Auxiliary.Local
 
             #endregion
 
-        }
-        class MatchChar
-        {
-            public static IEnumerable<char[]> GetAllMatches(string scurrent, char[] chars, int length)
-            {
-                int[] indexes = new int[length];
-                char[] current = new char[length];
-                int cl = chars.Length;
-
-                if (!string.IsNullOrEmpty(scurrent) && current.Length == length)
-                {
-                    for (int i = 0; i < length; i++) current[i] = scurrent[0];
-                }
-                else for (int i = 0; i < length; i++) current[i] = chars[0];
-
-                do { yield return current; }
-                while (Increment(indexes, length - 1, current, chars, cl));
-            }
-            public static bool Increment(int[] indexes, int pos, char[] current, char[] chars, int cl)
-            {
-                while (pos >= 0)
-                {
-                    indexes[pos]++;
-                    if (indexes[pos] < cl) { current[pos] = chars[indexes[pos]]; return true; }
-                    indexes[pos] = 0;
-                    current[pos] = chars[0];
-                    pos--;
-                }
-                return false;
-            }
-        }
-        class MatchByte
-        {
-            public static IEnumerable<byte[]> GetAllMatches(string scurrent, byte[] chars, int chars_length, int length)
-            {
-                int[] indexes = new int[length];
-                byte[] current = new byte[length];
-
-                if (!string.IsNullOrEmpty(scurrent))
-                {
-                    int lgc = scurrent.Length;
-                    for (int i = 0; i < lgc; i++) current[i] = (byte)scurrent[i];
-                }
-                else for (int i = 0; i < length; i++) current[i] = chars[0];
-
-                do { yield return current; }
-                while (Increment(indexes, length - 1, current, chars, chars_length));
-            }
-            public static bool Increment(int[] indexes, int pos, byte[] current, byte[] chars, int cl)
-            {
-                while (pos >= 0)
-                {
-                    indexes[pos]++;
-                    if (indexes[pos] < cl) { current[pos] = chars[indexes[pos]]; return true; }
-                    indexes[pos] = 0;
-                    current[pos] = chars[0];
-                    pos--;
-                }
-                return false;
-            }
         }
         #endregion
     }

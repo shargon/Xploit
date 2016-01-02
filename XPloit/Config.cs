@@ -20,6 +20,6 @@ namespace XPloit
         /// <summary>
         /// File for run command
         /// </summary>
-        public string RunFile { get; set; }
+        public string Resource { get; set; }
     }
 }

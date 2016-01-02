@@ -6,6 +6,7 @@ using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
@@ -33,10 +34,10 @@ namespace XPloit.Modules.Auxiliary.Local
         public BruteForceBitLockerRaw()
         {
             // VALORES REQUERIDOS PARA EL CRACK DEL TEST #123456#
-            HexSalt = "33 b1 76 41 46 2c 04 5d 3e 55 db d9 c3 43 60 44";
-            HexNonce = "e0 49 1b 14 4a b7 d0 01 03 00 00 00";
-            HexInputBuffer = "0b 73 ab e8 60 c9 05 c7 57 62 d4 85 1b 0e 49 a0 6d c4 72 d4 99 1f 23 49 30 f9 27 de 50 69 12 66 23 74 d7 cd b5 09 52 66 e2 fd b9 88";
-            HexMac = "16 21 33 02 af aa 69 2c-4a a3 f8 0b dc b9 54 af";
+            HexSalt = "33 b1 76 41 46 2c 04 5d 3e 55 db d9 c3 43 60 44".Replace(" ", "");
+            HexNonce = "e0 49 1b 14 4a b7 d0 01 03 00 00 00".Replace(" ", "");
+            HexInputBuffer = "0b 73 ab e8 60 c9 05 c7 57 62 d4 85 1b 0e 49 a0 6d c4 72 d4 99 1f 23 49 30 f9 27 de 50 69 12 66 23 74 d7 cd b5 09 52 66 e2 fd b9 88".Replace(" ", "");
+            HexMac = "16 21 33 02 af aa 69 2c 4a a3 f8 0b dc b9 54 af".Replace(" ", "");
         }
 
         const int SHA256_DIGEST_LENGTH = 32;
@@ -273,33 +274,33 @@ namespace XPloit.Modules.Auxiliary.Local
                 return null;
             }
         }
-      /*  public static byte[] AES_CBC(bool encrypt, byte[] cipherData, byte[] key)
-        {
-            try
-            {
-                //RijndaelManaged
-                using (AesManaged rijndaelManaged = new AesManaged
-                {
-                    Key = key,
-                    IV = cipherData,
-                    //BlockSize = 256,
-                    Mode = CipherMode.CBC
-                })
-                using (MemoryStream memoryStream = new MemoryStream(cipherData))
-                using (CryptoStream cryptoStream = new CryptoStream(memoryStream,
-                    encrypt ? rijndaelManaged.CreateEncryptor() : rijndaelManaged.CreateDecryptor()
-                    , CryptoStreamMode.Read))
-                {
-                    byte[] bx = ReadFully(cryptoStream);
-                    return bx;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("A Cryptographic error occurred: {0}", e.Message);
-                return null;
-            }
-        }*/
+        /*  public static byte[] AES_CBC(bool encrypt, byte[] cipherData, byte[] key)
+          {
+              try
+              {
+                  //RijndaelManaged
+                  using (AesManaged rijndaelManaged = new AesManaged
+                  {
+                      Key = key,
+                      IV = cipherData,
+                      //BlockSize = 256,
+                      Mode = CipherMode.CBC
+                  })
+                  using (MemoryStream memoryStream = new MemoryStream(cipherData))
+                  using (CryptoStream cryptoStream = new CryptoStream(memoryStream,
+                      encrypt ? rijndaelManaged.CreateEncryptor() : rijndaelManaged.CreateDecryptor()
+                      , CryptoStreamMode.Read))
+                  {
+                      byte[] bx = ReadFully(cryptoStream);
+                      return bx;
+                  }
+              }
+              catch (Exception e)
+              {
+                  Console.WriteLine("A Cryptographic error occurred: {0}", e.Message);
+                  return null;
+              }
+          }*/
         public static byte[] ReadFully(Stream input)
         {
             byte[] buffer = new byte[16 * 1024];
@@ -766,24 +767,13 @@ namespace XPloit.Modules.Auxiliary.Local
 
             return BitConverter.ToUInt16(bUshort, 0);
         }*/
-        static byte[] ConvertToByteArray(string cad)
-        {
-            cad = cad.Trim();
-            string[] bx = cad.Split(new char[] { ':', ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
-            byte[] ret = new byte[bx.Length];
-
-            for (int x = 0; x < ret.Length; x++)
-                ret[x] = (byte)Convert.ToInt32(bx[x], 16);
-
-            return ret;
-        }
         public bool PreRun()
         {
-            Salt = ConvertToByteArray(HexSalt);
+            Salt = HexHelper.FromHexString(HexSalt);
 
-            Nonce = ConvertToByteArray(HexNonce);
-            InputBuffer = ConvertToByteArray(HexInputBuffer);
-            Mac = ConvertToByteArray(HexMac);
+            Nonce = HexHelper.FromHexString(HexNonce);
+            InputBuffer = HexHelper.FromHexString(HexInputBuffer);
+            Mac = HexHelper.FromHexString(HexMac);
 
             // VALORES REQUERIDOS PARA EL CRACK DEL TEST #123456#
             //Salt = ConvertToByteArray("33 b1 76 41 46 2c 04 5d 3e 55 db d9 c3 43 60 44");

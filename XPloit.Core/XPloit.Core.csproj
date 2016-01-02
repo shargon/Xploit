@@ -81,6 +81,7 @@
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Command\Interfaces\IAutoCompleteSource.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
+    <Compile Include="Helpers\SystemHelper.cs" />
     <Compile Include="Interfaces\ICommandLayer.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
