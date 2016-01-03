@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Globalization;
 using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
@@ -6,6 +8,7 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core
 {
+    [TypeConverter(typeof(Module.ModuleTypeConverter))]
     public class Module : IModule
     {
         /// <summary>
@@ -77,6 +80,44 @@ namespace XPloit.Core
                     Payload = payloads[0];
                     Payload.SetIO(io);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Implicit conversion
+        /// </summary>
+        /// <param name="input">Input</param>
+        public static implicit operator Module(string input)
+        {
+            return ModuleCollection.Current.GetByFullPath(input, true);
+        }
+
+        public class ModuleTypeConverter : TypeConverter
+        {
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                if (sourceType == typeof(string))
+                    return true;
+
+                return base.CanConvertFrom(context, sourceType);
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+            {
+                if (value is string)
+                {
+                    return (Module)value.ToString();
+                }
+
+                return base.ConvertFrom(context, culture, value);
+            }
+
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {
+                if (destinationType == typeof(string))
+                    return ((Module)value).FullPath;
+
+                return base.ConvertTo(context, culture, value, destinationType);
             }
         }
     }

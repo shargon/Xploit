@@ -30,6 +30,10 @@ namespace XPloit.Core.Helpers
         {
             if (!string.IsNullOrEmpty(input))
             {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    type = type.GenericTypeArguments[0];
+                }
                 if (type.IsEnum)
                 {
                     string[] f = Enum.GetNames(type);
@@ -158,7 +162,7 @@ namespace XPloit.Core.Helpers
                 if (type == _IPEndPointType)
                 {
                     string[] si = input.Trim().Split(',');
-                    
+
                     if (si.Length < 2) return null;
 
                     IPAddress ip;

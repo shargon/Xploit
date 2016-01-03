@@ -1,5 +1,4 @@
 ﻿using XPloit.Core;
-using XPloit.Core.Helpers;
 
 namespace XPloit.Modules.Nops.Php
 {

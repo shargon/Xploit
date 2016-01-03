@@ -161,6 +161,9 @@ namespace XPloit.Core.Listeners
             cmd.Add(new string[] { "jobs" }, cmdJobs, Lang.Get("Man_Jobs"));
             cmd.Add(new string[] { "load" }, cmdLoad, Lang.Get("Man_Load"));
 
+            cmd.Add(new string[] { "rerun", "rexploit" }, cmdReRun, Lang.Get("Man_ReRun"));
+            cmd.Add(new string[] { "rcheck" }, cmdRCheck, Lang.Get("Man_RCheck"));
+
             //_Command.Add(new string[] { "search" }, null, Lang.Get("Man_Search"));
             //_Command.Add(new string[] { "info" }, null, Lang.Get("Man_Info"));
 
@@ -325,6 +328,20 @@ namespace XPloit.Core.Listeners
             {
                 WriteError(e.Message);
             }
+        }
+        public void cmdRCheck(string args)
+        {
+            if (!CheckModule(false)) return;
+
+            cmdReload(args);
+            cmdCheck(args);
+        }
+        public void cmdReRun(string args)
+        {
+            if (!CheckModule(false)) return;
+
+            cmdReload(args);
+            cmdRun(args);
         }
         public void cmdReload(string args)
         {

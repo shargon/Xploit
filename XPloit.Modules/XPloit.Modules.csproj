@@ -44,6 +44,7 @@
     <Compile Include="Auxiliary\Local\AuxiliaryInvisibleSocksProxy.cs" />
     <Compile Include="Auxiliary\Local\AuxiliarySniffer.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryNFC.cs" />
+    <Compile Include="Auxiliary\Local\AuxiliarySysKill.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryWordListGenerator.cs" />
     <Compile Include="BuildLink.cs" />
     <Compile Include="Encoders\String\Base64Encoder.cs" />
@@ -55,10 +56,8 @@
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerWMI.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryBruteForce.cs" />
-    <Compile Include="Auxiliary\Local\AuxiliarySys.cs" />
+    <Compile Include="Auxiliary\Local\AuxiliarySysRun.cs" />
     <Compile Include="Encoders\String\JsonDecoder.cs" />
-    <Compile Include="Payloads\Multi\ProcessKillPayload.cs" />
-    <Compile Include="Payloads\Multi\ProcessStartPayload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Auxiliary\Remote\" />
+    <Folder Include="Payloads\Multi\" />
     <Folder Include="Payloads\Remote\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

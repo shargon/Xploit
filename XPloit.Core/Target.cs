@@ -7,9 +7,6 @@ namespace XPloit.Core
     public class Target
     {
         Dictionary<string, object> _Variables;
-        private EPlatform ePlatform;
-        private string p1;
-        private object[] p2;
 
         /// <summary>
         /// Id
@@ -23,10 +20,6 @@ namespace XPloit.Core
         /// Platform
         /// </summary>
         public EPlatform Platform { get; set; }
-        /// <summary>
-        /// Variables
-        /// </summary>
-        public Dictionary<string, object> Variables { get { return _Variables; } }
         /// <summary>
         /// Get Variable value
         /// </summary>
