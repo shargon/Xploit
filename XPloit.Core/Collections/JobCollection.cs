@@ -31,6 +31,8 @@ namespace XPloit.Core.Collections
         /// <param name="item">Job</param>
         internal void Add(Job item)
         {
+            if (item == null) return;
+
             item.Id = _Id;
             _InternalList.Add(item);
             _Id++;

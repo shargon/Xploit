@@ -8,32 +8,29 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core
 {
-    [TypeConverter(typeof(Payload.PayloadTypeConverter))]
-    public class Payload : IModule
+    [TypeConverter(typeof(Nop.NopTypeConverter))]
+    public class Nop : IModule
     {
         /// <summary>
         /// ModuleType
         /// </summary>
-        internal override EModuleType ModuleType { get { return EModuleType.Payload; } }
+        internal override EModuleType ModuleType { get { return EModuleType.Nop; } }
         /// <summary>
         /// Encoding value
         /// </summary>
         public virtual Encoding Encoding { get { return Encoding.UTF8; } }
         /// <summary>
-        /// Payload value
+        /// Nop value
         /// </summary>
-        public virtual byte[] Value { get { return null; } }
+        public virtual byte[] Get(int size) { return null; }
         /// <summary>
-        /// PayloadString value
+        /// String value
         /// </summary>
-        public string StringValue
+        public string GetString(int size)
         {
-            get
-            {
-                byte[] va = Value;
-                if (va == null) return null;
-                return this.Encoding.GetString(va);
-            }
+            byte[] va = Get(size);
+            if (va == null) return null;
+            return this.Encoding.GetString(va);
         }
         /// <summary>
         /// References
@@ -44,12 +41,12 @@ namespace XPloit.Core
         /// Implicit conversion
         /// </summary>
         /// <param name="input">Input</param>
-        public static implicit operator Payload(string input)
+        public static implicit operator Nop(string input)
         {
-            return PayloadCollection.Current.GetByFullPath(input, true);
+            return NopCollection.Current.GetByFullPath(input, true);
         }
 
-        public class PayloadTypeConverter : TypeConverter
+        public class NopTypeConverter : TypeConverter
         {
             public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
             {
@@ -63,7 +60,7 @@ namespace XPloit.Core
             {
                 if (value is string)
                 {
-                    return (Payload)value.ToString();
+                    return (Nop)value.ToString();
                 }
 
                 return base.ConvertFrom(context, culture, value);
@@ -72,7 +69,7 @@ namespace XPloit.Core
             public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
             {
                 if (destinationType == typeof(string))
-                    return ((Payload)value).FullPath;
+                    return ((Nop)value).FullPath;
 
                 return base.ConvertTo(context, culture, value, destinationType);
             }

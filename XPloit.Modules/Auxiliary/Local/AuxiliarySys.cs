@@ -3,7 +3,7 @@ using System.Diagnostics;
 using XPloit.Core;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
-using XPloit.Core.PayloadRequirements;
+using XPloit.Core.Requirements.Payloads;
 using XPloit.Modules.Payloads.Multi;
 
 namespace XPloit.Modules.Auxiliary.Local

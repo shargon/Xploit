@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using XPloit.Core.Multi;
 
-namespace XPloit.Core.Configs
+namespace XPloit.Core.Sockets.Configs
 {
     public class ListenSocketConfig : ClientSocketConfig
     {

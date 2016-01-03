@@ -62,6 +62,8 @@ namespace XPloit.Core
         /// <param name="obj">Object for dispose</param>
         public static Job Create(IModule module, IJobable obj)
         {
+            if (module == null || obj == null) return null;
+
             Job j = new Job(obj, module.FullPath);
             // Append to global list
             JobCollection.Current.Add(j);

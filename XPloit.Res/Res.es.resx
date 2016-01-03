@@ -380,4 +380,7 @@ Load all modules from selected file</value>
   <data name="Type" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="Nops" xml:space="preserve">
+    <value>Nops</value>
+  </data>
 </root>

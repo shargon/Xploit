@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
-using XPloit.Core.PayloadRequirements;
+using XPloit.Core.Requirements.Payloads;
 
 namespace XPloit.Modules.Auxiliary.Local
 {

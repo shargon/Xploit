@@ -3,31 +3,31 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Collections
 {
-    public class PayloadCollection : IModuleCollection<Payload>
+    public class NopCollection : IModuleCollection<Nop>
     {
-        static PayloadCollection _Current = null;
+        static NopCollection _Current = null;
 
         /// <summary>
         /// Current Payloads
         /// </summary>
-        public static PayloadCollection Current
+        public static NopCollection Current
         {
             get
             {
                 if (_Current == null)
                 {
-                    _Current = new PayloadCollection();
+                    _Current = new NopCollection();
                     _Current.Load();
                 }
                 return _Current;
             }
         }
 
-        public Payload[] GetPayloadAvailables(IPayloadRequirements req)
+        public Nop[] GetPayloadAvailables(INopRequirements req)
         {
-            if (req == null) return new Payload[] { };
-            List<Payload> ls = new List<Payload>();
-            foreach (Payload p in PayloadCollection.Current)
+            if (req == null) return new Nop[] { };
+            List<Nop> ls = new List<Nop>();
+            foreach (Nop p in NopCollection.Current)
             {
                 if (!req.IsAllowed(p)) continue;
                 ls.Add(p);

@@ -10,7 +10,7 @@ using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
-using XPloit.Core.PayloadRequirements;
+using XPloit.Core.Requirements.Payloads;
 using XPloit.Res;
 
 namespace XPloit.Core.Listeners
@@ -65,7 +65,7 @@ namespace XPloit.Core.Listeners
                         {
                             Target[] t = _Current.Targets;
                             if (t != null && t.Length > 1) yield return "Target";
-                            if (_Current.PayloadRequirements != null && !(_Current.PayloadRequirements is NoPayloadRequired))
+                            if (_Current.PayloadRequirements != null)
                                 yield return "Payload";
 
                             if (_Current.Payload != null)
@@ -91,11 +91,11 @@ namespace XPloit.Core.Listeners
                                 case "payload":
                                     {
                                         IPayloadRequirements req = _Current.PayloadRequirements;
-                                        if (req != null && !(req is NoPayloadRequired))
+                                        if (req != null)
                                         {
                                             foreach (Payload p in PayloadCollection.Current)
                                             {
-                                                if (!req.IsAllowedPayload(p)) continue;
+                                                if (!req.IsAllowed(p)) continue;
                                                 yield return p.FullPath;
                                             }
                                         }
@@ -254,6 +254,7 @@ namespace XPloit.Core.Listeners
             tb.AddRow(Lang.Get("Modules"), ModuleCollection.Current.Count.ToString());
             tb.AddRow(Lang.Get("Encoders"), EncoderCollection.Current.Count.ToString());
             tb.AddRow(Lang.Get("Payloads"), PayloadCollection.Current.Count.ToString());
+            tb.AddRow(Lang.Get("Nops"), NopCollection.Current.Count.ToString());
 
             _IO.WriteLine(tb.Output());
         }
@@ -372,6 +373,7 @@ namespace XPloit.Core.Listeners
             tb.AddRow(Lang.Get("Modules"), ModuleCollection.Current.Load().ToString())[1].Align = CommandTableCol.EAlign.Right;
             tb.AddRow(Lang.Get("Payloads"), PayloadCollection.Current.Load().ToString())[1].Align = CommandTableCol.EAlign.Right;
             tb.AddRow(Lang.Get("Encoders"), EncoderCollection.Current.Load().ToString())[1].Align = CommandTableCol.EAlign.Right;
+            tb.AddRow(Lang.Get("Nops"), NopCollection.Current.Load().ToString())[1].Align = CommandTableCol.EAlign.Right;
 
             tb.OutputColored(_IO);
             _IO.WriteLine("");
@@ -510,7 +512,7 @@ namespace XPloit.Core.Listeners
                             {
                                 case 0:
                                     {
-                                        if (_Current.PayloadRequirements != null && !(_Current.PayloadRequirements is NoPayloadRequired))
+                                        if (_Current.PayloadRequirements != null)
                                         {
                                             pis = ReflectionHelper.GetProperties(_Current, "Payload");
                                             hasX0 = pis != null && pis.Length > 0;

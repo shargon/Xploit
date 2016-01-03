@@ -1,9 +1,9 @@
-﻿using XPloit.Core.Configs;
-using XPloit.Core.Multi;
+﻿using XPloit.Core.Multi;
+using XPloit.Core.Sockets.Configs;
 
 namespace XPloit
 {
-    public class Config
+    class Config
     {
         /// <summary>
         /// Config socket server

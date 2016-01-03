@@ -5,5 +5,6 @@
         Payload,
         Encoder,
         Exploit,
+        Nop
     }
 }

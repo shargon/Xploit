@@ -46,12 +46,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ConfigurableProperty.cs" />
     <Compile Include="Attributes\SerializableBSONReferenceAttribute.cs" />
+    <Compile Include="Attributes\ConfigurableProperty.cs" />
     <Compile Include="Collections\EncoderCollection.cs" />
     <Compile Include="Collections\JobCollection.cs" />
     <Compile Include="Collections\IModuleCollection.cs" />
     <Compile Include="Collections\ModuleCollection.cs" />
+    <Compile Include="Collections\NopCollection.cs" />
     <Compile Include="Collections\PayloadCollection.cs" />
     <Compile Include="Command\CommandMenu.cs" />
     <Compile Include="Command\CommandMenuItem.cs" />
@@ -60,8 +61,6 @@
     <Compile Include="Command\CommandTableRow.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />
-    <Compile Include="Configs\ClientSocketConfig.cs" />
-    <Compile Include="Configs\ListenSocketConfig.cs" />
     <Compile Include="Enums\ECheck.cs" />
     <Compile Include="Enums\EModuleType.cs" />
     <Compile Include="Extensions\StringComparisonExtensions.cs" />
@@ -86,12 +85,14 @@
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
     <Compile Include="Command\ConsoleCommand.cs" />
+    <Compile Include="Interfaces\INopRequirements.cs" />
     <Compile Include="Multi\StreamSpeedLimit.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="Interfaces\IListener.cs" />
     <Compile Include="Interfaces\IPayloadRequirements.cs" />
+    <Compile Include="Nop.cs" />
     <Compile Include="Payload.cs" />
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Listeners\CommandListener.cs" />
@@ -99,8 +100,9 @@
     <Compile Include="Multi\DomainUser.cs" />
     <Compile Include="Multi\IPFilter.cs" />
     <Compile Include="Multi\Password.cs" />
-    <Compile Include="PayloadRequirements\NoPayloadRequired.cs" />
-    <Compile Include="PayloadRequirements\InterfacePayload.cs" />
+    <Compile Include="Requirements\Nops\InterfaceNop.cs" />
+    <Compile Include="Requirements\Nops\UniqueNop.cs" />
+    <Compile Include="Requirements\Payloads\InterfacePayload.cs" />
     <Compile Include="Reference.cs" />
     <Compile Include="Sniffer\IPacket.cs" />
     <Compile Include="Sniffer\IPHeader.cs" />
@@ -110,6 +112,8 @@
     <Compile Include="Sniffer\TcpHeader.cs" />
     <Compile Include="Sniffer\TcpStream.cs" />
     <Compile Include="Sniffer\UdpHeader.cs" />
+    <Compile Include="Sockets\Configs\ClientSocketConfig.cs" />
+    <Compile Include="Sockets\Configs\ListenSocketConfig.cs" />
     <Compile Include="Sockets\Proxy\AuthMethod.cs" />
     <Compile Include="Sockets\Proxy\AuthNone.cs" />
     <Compile Include="Sockets\Proxy\AuthUserPass.cs" />
@@ -121,8 +125,8 @@
     <Compile Include="Sockets\Proxy\SocksHandler.cs" />
     <Compile Include="Target.cs" />
     <Compile Include="Multi\User.cs" />
-    <Compile Include="PayloadRequirements\UniquePayload.cs" />
-    <Compile Include="PayloadRequirements\BufferOverflowPayload.cs" />
+    <Compile Include="Requirements\Payloads\UniquePayload.cs" />
+    <Compile Include="Requirements\Payloads\BufferOverflowPayload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sockets\Enums\EDissconnectReason.cs" />
     <Compile Include="Sockets\Enums\EXPloitSocketMsg.cs" />
@@ -151,6 +155,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,9 +1,9 @@
 ﻿using System;
 using XPloit.Core.Interfaces;
 
-namespace XPloit.Core.PayloadRequirements
+namespace XPloit.Core.Requirements.Nops
 {
-    public class UniquePayload : IPayloadRequirements
+    public class UniqueNop : INopRequirements
     {
         Type[] _Types;
 
@@ -15,11 +15,11 @@ namespace XPloit.Core.PayloadRequirements
         /// Constructor
         /// </summary>
         /// <param name="types">Types</param>
-        public UniquePayload(params Type[] types) { _Types = types; }
+        public UniqueNop(params Type[] types) { _Types = types; }
 
-        public bool IsAllowedPayload(Payload payload)
+        public bool IsAllowed(Nop nop)
         {
-            Type t2 = payload.GetType();
+            Type t2 = nop.GetType();
             foreach (Type t in _Types)
                 if (t == t2) return true;
             return false;

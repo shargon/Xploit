@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Text;
-using XPloit.Core.Configs;
 using XPloit.Core.Helpers.Crypt;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Multi;
 using XPloit.Core.Sockets;
+using XPloit.Core.Sockets.Configs;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
 using XPloit.Core.Sockets.Protocols;

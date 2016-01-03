@@ -3,7 +3,7 @@ using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
-using XPloit.Core.PayloadRequirements;
+using XPloit.Core.Requirements.Payloads;
 
 namespace XPloit.Core.Interfaces
 {
@@ -212,7 +212,7 @@ namespace XPloit.Core.Interfaces
 
                 if (m.Payload == null)
                 {
-                    if (m.PayloadRequirements != null && !(m.PayloadRequirements is NoPayloadRequired))
+                    if (m.PayloadRequirements != null)
                     {
                         propertyName = "Payload";
                         return false;

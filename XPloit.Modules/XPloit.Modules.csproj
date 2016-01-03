@@ -49,6 +49,7 @@
     <Compile Include="Encoders\String\Base64Encoder.cs" />
     <Compile Include="Encoders\String\Base64Decoder.cs" />
     <Compile Include="Encoders\String\JsonEncoder.cs" />
+    <Compile Include="Nops\Php\PhpNop.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerDisLocker.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />

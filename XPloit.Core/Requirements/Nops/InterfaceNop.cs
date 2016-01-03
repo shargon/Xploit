@@ -1,9 +1,9 @@
 ﻿using System;
 using XPloit.Core.Interfaces;
 
-namespace XPloit.Core.PayloadRequirements
+namespace XPloit.Core.Requirements.Nops
 {
-    public class InterfacePayload : IPayloadRequirements
+    public class InterfaceNop : INopRequirements
     {
         Type _Type;
 
@@ -15,11 +15,11 @@ namespace XPloit.Core.PayloadRequirements
         /// Constructor
         /// </summary>
         /// <param name="type">Type</param>
-        public InterfacePayload(Type type) { _Type = type; }
+        public InterfaceNop(Type type) { _Type = type; }
 
-        public bool IsAllowedPayload(Payload payload)
+        public bool IsAllowed(Nop nop)
         {
-            return _Type.IsAssignableFrom(payload.GetType());
+            return _Type.IsAssignableFrom(nop.GetType());
         }
     }
 }

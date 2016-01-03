@@ -1,6 +1,6 @@
 ﻿using XPloit.Core.Interfaces;
 
-namespace XPloit.Core.PayloadRequirements
+namespace XPloit.Core.Requirements.Payloads
 {
     public class BufferOverflowPayload : IPayloadRequirements
     {
@@ -8,7 +8,7 @@ namespace XPloit.Core.PayloadRequirements
         public char[] BadChars { get; set; }
         public int StackAdjustment { get; set; }
 
-        public bool IsAllowedPayload(Payload payload)
+        public bool IsAllowed(Payload payload)
         {
             return false;
         }

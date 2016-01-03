@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="payload">Payload</param>
         /// <returns>Return true if payload its allowed</returns>
-        bool IsAllowedPayload(Payload payload);
+        bool IsAllowed(Payload payload);
     }
 }
