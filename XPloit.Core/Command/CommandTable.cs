@@ -12,6 +12,7 @@ namespace XPloit.Core.Command
         List<CommandTableRow> rows = new List<CommandTableRow>();
         List<int> colLength = new List<int>();
 
+        public int Count { get { return rows.Count; } }
         public int GetLength(int index) { return colLength[index]; }
         public CommandTable() { Separator = "  "; }
         public CommandTable(String separator) : this() { Separator = separator; }
@@ -44,7 +45,6 @@ namespace XPloit.Core.Command
                 row.Add(new CommandTableCol(ix, row) { Value = str });
                 if (ix == ommitFieldInLength) sl = 0;
                 ix++;
-
 
                 if (colLength.Count >= row.Count)
                 {

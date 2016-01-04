@@ -17,7 +17,6 @@ namespace XPloit.Modules.Auxiliary.Local
         public override string Description { get { return "Generate a wordList"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override bool IsRemote { get { return false; } }
         public override string Path { get { return "Auxiliary/Local"; } }
         public override string Name { get { return "WordListGenerator"; } }
         #endregion
@@ -27,6 +26,21 @@ namespace XPloit.Modules.Auxiliary.Local
         public string File { get; set; }
         #endregion
 
+        class check
+        {
+            public string Input;
+            public BruteForceAllowedChars.EMixCase MixCase;
+
+            public check(string input) { Input = input; }
+            public check(string input, BruteForceAllowedChars.EMixCase mix) { Input = input; MixCase = mix; }
+
+            public BruteForceAllowedChars[] Get()
+            {
+                if (MixCase == BruteForceAllowedChars.EMixCase.None) return new BruteForceAllowedChars[] { new BruteForceAllowedChars(Input) };
+                return BruteForceAllowedChars.SplitWordMixed(Input, MixCase);
+            }
+        }
+
         public override bool Run()
         {
             DictinaryGenCracker caction = null;
@@ -34,66 +48,60 @@ namespace XPloit.Modules.Auxiliary.Local
             catch
             {
                 if (caction != null) caction.Dispose();
+                WriteError("Cant open file '" + File + "'");
                 return false;
             }
             finally { }
 
             // TODO: Read the properties
 
-            int gen = 0;
+            List<check[]> checks = new List<check[]>();
+            checks.Add(new check[] { new check(""), new check("#*") });
+            checks.Add(new check[] { new check("word1", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word2", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word3", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word4", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word5", BruteForceAllowedChars.EMixCase.OnlyFirst) });
+            checks.Add(new check[] { new check(""), new check("#*") });
+            checks.Add(new check[] { new check("word1", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word2", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word3", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word4", BruteForceAllowedChars.EMixCase.OnlyFirst), new check("word5", BruteForceAllowedChars.EMixCase.OnlyFirst) });
+            checks.Add(new check[] { new check(""), new check("#*") });
 
-            string[] asep1 = new string[] { "", "#*" };
-            string[] asep2 = new string[] { "word1", "word2", "word3", "word4", "word5", "word6", "word7" };
-            string[] asep3 = new string[] { "", "#*" };
-            string[] asep4 = new string[] { "word1", "word2", "word3", "word4", "word5", "word6", "word7" };
-            string[] asep5 = new string[] { "", "#*" };
+            // Copy one slot peer array
+            List<BruteForceAllowedChars[]> chList = new List<BruteForceAllowedChars[]>();
+            foreach (check[] c in checks) chList.Add(null);
 
-            foreach (string sep1 in asep1)
-            {
-                BruteForceAllowedChars a1 = null;
-                if (!string.IsNullOrEmpty(sep1)) a1 = new BruteForceAllowedChars(sep1);
-
-                foreach (string word1 in asep2)
-                {
-                    BruteForceAllowedChars[] a2 = null;
-                    if (!string.IsNullOrEmpty(word1)) a2 = BruteForceAllowedChars.SplitWordMixed(word1, BruteForceAllowedChars.EMixCase.OnlyFirst);
-
-                    foreach (string sep2 in asep3)
-                    {
-                        BruteForceAllowedChars a3 = null;
-                        if (!string.IsNullOrEmpty(sep2)) a3 = new BruteForceAllowedChars(sep2);
-
-                        foreach (string word2 in asep4)
-                        {
-                            BruteForceAllowedChars[] a4 = null;
-                            if (!string.IsNullOrEmpty(word2)) a4 = BruteForceAllowedChars.SplitWordMixed(word2, BruteForceAllowedChars.EMixCase.OnlyFirst);
-
-                            foreach (string sep3 in asep5)
-                            {
-                                BruteForceAllowedChars a5 = null;
-                                if (!string.IsNullOrEmpty(sep3)) a5 = new BruteForceAllowedChars(sep3);
-
-                                List<BruteForceAllowedChars> ch = new List<BruteForceAllowedChars>();
-
-                                if (a1 != null) ch.Add(a1);
-                                if (a2 != null) ch.AddRange(a2);
-                                if (a3 != null) ch.Add(a3);
-                                if (a4 != null) ch.AddRange(a4);
-                                if (a5 != null) ch.Add(a5);
-
-                                int itry2 = BruteForce.Run(ch.ToArray(), "", "", 1, caction);
-                                gen += itry2;
-                            }
-                        }
-                    }
-                }
-            }
+            int gen = DoRecursive(checks, chList, 0, checks.Count - 1, 0, caction);
 
             WriteInfo("Generated file successful ", gen.ToString(), ConsoleColor.Green);
             caction.Dispose();
             return true;
         }
 
+        int DoRecursive(List<check[]> checks, List<BruteForceAllowedChars[]> chList, int index, int count, int ret, DictinaryGenCracker caction)
+        {
+            check[] current = checks[index];
+            bool isLast = index == count;
+
+            foreach (check c in current)
+            {
+                // Set current
+                if (!string.IsNullOrEmpty(c.Input)) chList[index] = c.Get();
+                else chList[index] = null;
+
+                if (isLast)
+                {
+                    // Recall all
+                    List<BruteForceAllowedChars> ch = new List<BruteForceAllowedChars>();
+
+                    foreach (BruteForceAllowedChars[] a1 in chList)
+                        if (a1 != null) ch.AddRange(a1);
+
+                    ret += BruteForce.Run(ch.ToArray(), "", "", 1, caction);
+                }
+                else
+                {
+                    ret += DoRecursive(checks, chList, index + 1, count, 0, caction);
+                }
+            }
+
+            return ret;
+        }
 
         class DictinaryGenCracker : IBruteForceAction, IDisposable
         {

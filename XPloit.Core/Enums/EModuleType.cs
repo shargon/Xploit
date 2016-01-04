@@ -2,9 +2,10 @@
 {
     public enum EModuleType
     {
+        None,
         Payload,
         Encoder,
-        Exploit,
+        Module,
         Nop
     }
 }

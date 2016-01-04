@@ -9,14 +9,12 @@ namespace XPloit.Modules.Nops.Php
         public override string Name { get { return "PhpNop"; } }
         public override string Path { get { return "Nops/Php"; } }
 
-        public override byte[] Get(int size)
+        public override bool Fill(byte[] buffer, int index, int length)
         {
-            byte[] ret = new byte[size];
+            for (; index < length; index++)
+                buffer[index] = (byte)' ';
 
-            for (int x = 0; x < size; x++)
-                ret[x] = (byte)' ';
-
-            return ret;
+            return true;
         }
     }
 }

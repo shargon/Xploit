@@ -27,7 +27,7 @@ namespace XPloit.Core.Collections
 
             if (_TypeT == typeof(Encoder)) _Type = EModuleType.Encoder;
             else if (_TypeT == typeof(Payload)) _Type = EModuleType.Payload;
-            else if (_TypeT == typeof(Module)) _Type = EModuleType.Exploit;
+            else if (_TypeT == typeof(Module)) _Type = EModuleType.Module;
         }
 
         public int IndexOf(T item) { return _InternalList.IndexOf(item); }
@@ -81,7 +81,20 @@ namespace XPloit.Core.Collections
 
             return Count - hay;
         }
-
+        /// <summary>
+        /// Search
+        /// </summary>
+        /// <param name="pars">Params</param>
+        public IEnumerable<T> Search(string[] pars)
+        {
+            foreach (T m in _InternalList)
+            {
+                if (m.AreInThisSearch(pars))
+                {
+                    yield return m;
+                }
+            }
+        }
         /// <summary>
         /// Get module by fullPath
         /// </summary>

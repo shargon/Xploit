@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,8 +14,8 @@ namespace XPloit.Modules.Auxiliary.Local
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack MySql sniffed with WireShark Credentials"; } }
-        public override string Path { get { return "Local/BruteForce"; } }
-        public override string Name { get { return "BruteForceMySQLWireshark"; } }
+        public override string Path { get { return "Payload/Local/BruteForce"; } }
+        public override string Name { get { return "MySQLWireshark"; } }
         public override Reference[] References
         {
             get
@@ -52,50 +51,55 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         public bool AllowMultipleOk { get { return false; } }
+
+        byte[] bseed = null, bhash = null;
+
         public bool CheckPassword(string password)
         {
-            byte[] current = codec.GetBytes(password);
+            byte[] current = Encoding.GetBytes(password);
 
-            byte[] firstHash = shap.ComputeHash(current, 0, current.Length);
-            byte[] secondHash = shap.ComputeHash(firstHash, 0, 20);
+            byte[] input = new byte[40], firstHash, finalHash;
+            using (SHA1Managed shap = new SHA1Managed())
+            {
+                firstHash = shap.ComputeHash(current, 0, current.Length);
+                byte[] secondHash = shap.ComputeHash(firstHash, 0, 20);
 
-            Array.Copy(bseed, 0, input, 0, 20);
-            Array.Copy(secondHash, 0, input, 20, 20);
+                Array.Copy(bseed, 0, input, 0, 20);
+                Array.Copy(secondHash, 0, input, 20, 20);
 
-            byte[] finalHash = shap.ComputeHash(input, 0, 40);
+                finalHash = shap.ComputeHash(input, 0, 40);
+            }
+
             for (int i = 0; i < 20; i++)
             {
-                if ((byte)(finalHash[i] ^ firstHash[i]) != bhash[i]) return false;
+                if ((byte)(finalHash[i] ^ firstHash[i]) != bhash[i]) 
+                    return false;
                 //if ((finalHash[i] ^ firstHash[i]) != ihash[i]) return false;
             }
             return true;
         }
 
-        string Hash, Seed, DBUser;
-        byte[] bseed = null, bhash = null, input = new byte[40];
-        //static int[] ihash = null;
-        Encoding codec = Encoding.Default;
-        SHA1Managed shap = new SHA1Managed();
+        public override Encoding Encoding { get { return Encoding.Default; } }
 
         public bool PreRun()
         {
-            DBUser = null;
-            Hash = null;
-            Seed = null;
+            string DBUser = null;
+            string Hash = null;
+            string Seed = null;
 
             TcpStream dump = TcpStream.FromFile(WireSharkTCPStreamFile);
-            crack(dump[0].Data, dump[1].Data);
+            crack(dump[0].Data, dump[1].Data, out Hash, out Seed, out DBUser);
 
             if (!string.IsNullOrEmpty(DBUser))
                 WriteInfo("User found", DBUser, ConsoleColor.Green);
 
             string _sh = HexToString(Hash, true);
 
-            byte[] bhash_all = codec.GetBytes(_sh);
+            byte[] bhash_all = Encoding.GetBytes(_sh);
             if (bhash_all.Length != 21) return false;
-            
+
             string _seed = HexToString(Seed, true);
-            bseed = codec.GetBytes(_seed);
+            bseed = Encoding.GetBytes(_seed);
             bhash = new byte[bhash_all.Length - 1];
             Array.Copy(bhash_all, 1, bhash, 0, bhash.Length);
             //ihash = new int[bhash.Length];
@@ -119,7 +123,7 @@ namespace XPloit.Modules.Auxiliary.Local
         }
         public void PostRun() { }
 
-        public void crack(byte[] receive, byte[] send)
+        public void crack(byte[] receive, byte[] send, out string Hash, out string Seed, out string DBUser)
         {
             Hash = ""; Seed = ""; DBUser = "";
             if (receive == null) return;
@@ -175,7 +179,7 @@ namespace XPloit.Modules.Auxiliary.Local
                         //         candidate_hash2=sha1(hash_stage1)
                         //         check(candidate_hash2==hash_stage2)                            
                         Seed = StringToHex(encryptionSeed, true);
-                        Hash = StringToHex(hash1, true);
+                        Hash = StringToHex(hash1.Substring(0, 21), true);
                         DBUser = user;
                     }
                 }

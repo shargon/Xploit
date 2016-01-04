@@ -85,6 +85,7 @@
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
     <Compile Include="Command\ConsoleCommand.cs" />
+    <Compile Include="Interfaces\IEncoderRequirements.cs" />
     <Compile Include="Interfaces\INopRequirements.cs" />
     <Compile Include="Multi\StreamSpeedLimit.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
@@ -100,6 +101,8 @@
     <Compile Include="Multi\DomainUser.cs" />
     <Compile Include="Multi\IPFilter.cs" />
     <Compile Include="Multi\Password.cs" />
+    <Compile Include="Requirements\Encoders\InterfaceEncoder.cs" />
+    <Compile Include="Requirements\Encoders\UniqueEncoder.cs" />
     <Compile Include="Requirements\Nops\InterfaceNop.cs" />
     <Compile Include="Requirements\Nops\UniqueNop.cs" />
     <Compile Include="Requirements\Payloads\InterfacePayload.cs" />

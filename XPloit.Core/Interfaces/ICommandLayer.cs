@@ -16,6 +16,11 @@ namespace XPloit.Core.Interfaces
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource source);
         string ReadPassword(PromptDelegate prompt);
 
+        // Sound
+
+
+        void Beep();
+
         // Colors
 
         void SetForeColor(ConsoleColor color);

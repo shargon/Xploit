@@ -15,8 +15,8 @@ namespace XPloit.Modules.Auxiliary.Local
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive"; } }
-        public override string Path { get { return "Local/BruteForce"; } }
-        public override string Name { get { return "BruteForceBitLockerRaw"; } }
+        public override string Path { get { return "Payload/Local/BruteForce"; } }
+        public override string Name { get { return "BitLockerRaw"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://github.com/Aorimn/dislocker") }; } }
         #endregion
 

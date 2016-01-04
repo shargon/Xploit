@@ -63,6 +63,10 @@ namespace XPloit.Core.Command
         /// <param name="c">Char</param>
         public void Write(char c) { Write(c.ToString()); }
         /// <summary>
+        /// Beep
+        /// </summary>
+        public void Beep() { Console.Beep(); }
+        /// <summary>
         /// Write
         /// </summary>
         /// <param name="line">Line</param>

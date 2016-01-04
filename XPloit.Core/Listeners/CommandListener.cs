@@ -10,7 +10,6 @@ using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
-using XPloit.Core.Requirements.Payloads;
 using XPloit.Res;
 
 namespace XPloit.Core.Listeners
@@ -19,8 +18,8 @@ namespace XPloit.Core.Listeners
     {
         ICommandLayer _IO = null;
         CommandMenu _Command = null;
-        Module _CurrentGlobal = null;
-        Module _Current = null;
+        IModule _CurrentGlobal = null;
+        IModule _Current = null;
         bool _IsStarted;
 
         #region IAutoCompleteSource
@@ -45,14 +44,15 @@ namespace XPloit.Core.Listeners
                     }
                 case "use":
                     {
-                        foreach (Module e in ModuleCollection.Current) yield return e.FullPath;
+                        foreach (IModule e in ModuleCollection.Current) yield return e.FullPath;
+                        foreach (IModule e in PayloadCollection.Current) yield return e.FullPath;
                         break;
                     }
                 case "show":
                     {
                         if (arguments == null || arguments.Length <= 1)
                         {
-                            foreach (string e in new string[] { "options", "config", "payloads", "targets" }) yield return e;
+                            foreach (string e in new string[] { "options", "config", "payloads", "targets", "info" }) yield return e;
                         }
                         break;
                     }
@@ -61,15 +61,20 @@ namespace XPloit.Core.Listeners
                     {
                         if (_Current == null) break;
 
+                        Module curM = _Current.ModuleType == EModuleType.Module ? (Module)_Current : null;
+
                         if (arguments == null || arguments.Length <= 1)
                         {
-                            Target[] t = _Current.Targets;
-                            if (t != null && t.Length > 1) yield return "Target";
-                            if (_Current.PayloadRequirements != null)
-                                yield return "Payload";
+                            if (curM != null)
+                            {
+                                Target[] t = curM.Targets;
+                                if (t != null && t.Length > 1) yield return "Target";
+                                if (curM.PayloadRequirements != null)
+                                    yield return "Payload";
 
-                            if (_Current.Payload != null)
-                                foreach (PropertyInfo pi in ReflectionHelper.GetProperties(_Current.Payload, true, true, true)) yield return pi.Name;
+                                if (curM.Payload != null)
+                                    foreach (PropertyInfo pi in ReflectionHelper.GetProperties(curM.Payload, true, true, true)) yield return pi.Name;
+                            }
 
                             foreach (PropertyInfo pi in ReflectionHelper.GetProperties(_Current, true, true, true)) yield return pi.Name;
                         }
@@ -80,7 +85,7 @@ namespace XPloit.Core.Listeners
                             {
                                 case "target":
                                     {
-                                        Target[] ts = _Current.Targets;
+                                        Target[] ts = curM == null ? null : curM.Targets;
                                         if (ts != null)
                                         {
                                             foreach (Target t in ts)
@@ -90,7 +95,7 @@ namespace XPloit.Core.Listeners
                                     }
                                 case "payload":
                                     {
-                                        IPayloadRequirements req = _Current.PayloadRequirements;
+                                        IPayloadRequirements req = curM == null ? null : curM.PayloadRequirements;
                                         if (req != null)
                                         {
                                             foreach (Payload p in PayloadCollection.Current)
@@ -106,7 +111,8 @@ namespace XPloit.Core.Listeners
                                         // By property value
                                         PropertyInfo[] pi = null;
 
-                                        if (_Current.Payload != null) pi = ReflectionHelper.GetProperties(_Current.Payload, pname);
+                                        if (curM != null && curM.Payload != null) pi = ReflectionHelper.GetProperties(curM.Payload, pname);
+
                                         if (pi == null || pi.Length == 0) pi = ReflectionHelper.GetProperties(_Current, pname);
                                         if (pi != null && pi.Length > 0)
                                         {
@@ -140,7 +146,7 @@ namespace XPloit.Core.Listeners
         /// </summary>
         public CommandListener(ICommandLayer command)
         {
-            CommandMenu cmd = new CommandMenu(command, this);
+            CommandMenu cmd = new CommandMenu(command, this, OnPrompt);
             _IO = command;
 
             cmd.Add(new string[] { "banner" }, cmdBanner, Lang.Get("Man_Banner"));
@@ -163,19 +169,45 @@ namespace XPloit.Core.Listeners
 
             cmd.Add(new string[] { "rerun", "rexploit" }, cmdReRun, Lang.Get("Man_ReRun"));
             cmd.Add(new string[] { "rcheck" }, cmdRCheck, Lang.Get("Man_RCheck"));
+            cmd.Add(new string[] { "info" }, cmdInfo, Lang.Get("Man_Info"));
 
-            //_Command.Add(new string[] { "search" }, null, Lang.Get("Man_Search"));
-            //_Command.Add(new string[] { "info" }, null, Lang.Get("Man_Info"));
-
+            cmd.Add(new string[] { "search" }, cmdSearch, Lang.Get("Man_Search"));
             _Command = cmd;
         }
+        void OnPrompt(ICommandLayer sender)
+        {
+            sender.SetForeColor(ConsoleColor.Green);
 
-        bool CheckModule(bool checkRequieredProperties)
+            if (_Current != null)
+            {
+                sender.SetForeColor(ConsoleColor.DarkGreen);
+                sender.Write(Lang.Get(_Current.ModuleType.ToString()) + "(");
+                sender.SetForeColor(ConsoleColor.Green);
+                sender.Write(_Current.Name);
+                sender.SetForeColor(ConsoleColor.DarkGreen);
+                sender.Write(")");
+                sender.SetForeColor(ConsoleColor.Green);
+                sender.Write("> ");
+            }
+            else sender.Write("> ");
+
+            sender.SetForeColor(ConsoleColor.White);
+        }
+        bool CheckModule(bool checkRequieredProperties, EModuleType expected)
         {
             if (_Current == null)
             {
                 WriteError(Lang.Get("Require_Module"));
                 return false;
+            }
+
+            if (expected != EModuleType.None)
+            {
+                if (_Current.ModuleType != expected)
+                {
+                    WriteError(Lang.Get("Require_Module_Type", expected.ToString()));
+                    return false;
+                }
             }
 
             string propertyName;
@@ -192,7 +224,7 @@ namespace XPloit.Core.Listeners
         public void cmdCD(string args)
         {
             _Current = null;
-            _Command.PromptCharacter = "> ";
+            //_Command.PromptCharacter = "> ";
         }
         public void cmdJobs(string args)
         {
@@ -269,12 +301,12 @@ namespace XPloit.Core.Listeners
         }
         public void cmdCheck(string args)
         {
-            if (!CheckModule(true)) return;
+            if (!CheckModule(true, EModuleType.Module)) return;
             args = args.Trim();
 
             try
             {
-                switch (_Current.Check())
+                switch (((Module)_Current).Check())
                 {
                     case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
                     case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
@@ -289,12 +321,12 @@ namespace XPloit.Core.Listeners
         }
         public void cmdRun(string args)
         {
-            if (!CheckModule(true)) return;
+            if (!CheckModule(true, EModuleType.Module)) return;
             args = args.Trim();
 
             try
             {
-                if (!_Current.Run())
+                if (!((Module)_Current).Run())
                     _Current.WriteError(Lang.Get("Run_Error"));
             }
             catch (Exception e)
@@ -331,14 +363,14 @@ namespace XPloit.Core.Listeners
         }
         public void cmdRCheck(string args)
         {
-            if (!CheckModule(false)) return;
+            if (!CheckModule(false, EModuleType.Module)) return;
 
             cmdReload(args);
             cmdCheck(args);
         }
         public void cmdReRun(string args)
         {
-            if (!CheckModule(false)) return;
+            if (!CheckModule(false, EModuleType.Module)) return;
 
             cmdReload(args);
             cmdRun(args);
@@ -346,7 +378,7 @@ namespace XPloit.Core.Listeners
         public void cmdReload(string args)
         {
             // Todo comentar en Res.res los comandos y acabar del set para abajo
-            if (!CheckModule(false)) return;
+            if (!CheckModule(false, EModuleType.None)) return;
 
             _IO.AddInput("use " + _Current.FullPath);
             WriteInfo(Lang.Get("Reloaded_Module", _Current.FullPath), Lang.Get("Ok"), ConsoleColor.Green);
@@ -433,7 +465,7 @@ namespace XPloit.Core.Listeners
         public void cmdSetG(string args) { cmdSet(args, true); }
         public void cmdSet(string args, bool global)
         {
-            if (!CheckModule(false)) return;
+            if (!CheckModule(false, EModuleType.None)) return;
             args = args.Trim();
 
             string[] prop = ArgumentHelper.ArrayFromCommandLine(args);
@@ -452,75 +484,145 @@ namespace XPloit.Core.Listeners
                 if (global) _CurrentGlobal.SetProperty(prop[0], prop[1]);
             }
         }
+        public void cmdInfo(string args)
+        {
+            if (!CheckModule(false, EModuleType.None)) return;
+            args = args.Trim().ToLowerInvariant();
+
+            Module curM = _Current.ModuleType == EModuleType.Module ? (Module)_Current : null;
+
+            CommandTable tb = new CommandTable();
+
+            tb.AddRow(Lang.Get("Path"), _Current.Path, "")[0].ForeColor = ConsoleColor.DarkGray;
+            tb.AddRow(Lang.Get("Name"), _Current.Name, "")[0].ForeColor = ConsoleColor.DarkGray;
+
+            tb.AddRow("", "", "");
+
+            if (!string.IsNullOrEmpty(_Current.Author))
+            {
+                CommandTableRow row = tb.AddRow(1, Lang.Get("Author"), _Current.Author, "");
+                row[0].ForeColor = ConsoleColor.DarkGray;
+                row[1].Align = CommandTableCol.EAlign.None;
+                row[2].Align = CommandTableCol.EAlign.None;
+            }
+
+            if (curM != null)
+            {
+                if (curM.DisclosureDate != DateTime.MinValue) tb.AddRow(Lang.Get("DisclosureDate"), curM.DisclosureDate.ToString(), "")[0].ForeColor = ConsoleColor.DarkGray;
+                tb.AddRow(Lang.Get("IsLocal"), curM.IsLocal.ToString(), "")[0].ForeColor = ConsoleColor.DarkGray;
+                tb.AddRow(Lang.Get("IsRemote"), curM.IsRemote.ToString(), "")[0].ForeColor = ConsoleColor.DarkGray;
+
+                if (curM.References != null && curM.References.Length > 0)
+                {
+                    tb.AddRow("", "", "");
+
+                    StringBuilder sb = new StringBuilder();
+                    foreach (Reference r in curM.References)
+                    {
+                        if (r == null) continue;
+                        sb.AppendLine(r.Type.ToString() + " - " + r.Value);
+                    }
+
+                    foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("References"), sb.ToString(), ""))
+                    {
+                        row[0].ForeColor = ConsoleColor.DarkGray;
+                        row[1].Align = CommandTableCol.EAlign.None;
+                        row[2].Align = CommandTableCol.EAlign.None;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(_Current.Description))
+            {
+                foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("Description"), _Current.Description, ""))
+                {
+                    row[0].ForeColor = ConsoleColor.DarkGray;
+                    row[1].Align = CommandTableCol.EAlign.None;
+                    row[2].Align = CommandTableCol.EAlign.None;
+                }
+            }
+            tb.OutputColored(_IO);
+        }
+        public void cmdSearch(string args)
+        {
+            args = args.Trim().ToLowerInvariant();
+
+
+            string[] pars = ArgumentHelper.ArrayFromCommandLine(args);
+            if (pars != null && pars.Length > 0)
+            {
+                CommandTable tb = new CommandTable();
+
+                bool primera1 = false;
+                foreach (Module m in ModuleCollection.Current.Search(pars))
+                {
+                    if (!primera1)
+                    {
+                        if (tb.Count > 0) tb.AddRow("", "", "");
+                        CommandTableRow row = tb.AddRow(Lang.Get("Type"), Lang.Get("Path"), Lang.Get("Disclosure"));
+                        tb.AddRow(row.MakeSeparator());
+                        tb.AddRow("", "", "");
+                        primera1 = true;
+                    }
+
+                    tb.AddRow(Lang.Get("Modules"), m.FullPath, m.DisclosureDate.ToShortDateString());
+                }
+                bool primera2 = false;
+                foreach (IModule m in PayloadCollection.Current.Search(pars))
+                {
+                    if (!primera2)
+                    {
+                        if (tb.Count > 0) tb.AddRow("", "", "");
+                        CommandTableRow row = tb.AddRow(Lang.Get("Type"), Lang.Get("Path"), "");
+                        tb.AddRow(row.MakeSeparator());
+                        tb.AddRow("", "", "");
+                        primera2 = true;
+                    }
+
+                    tb.AddRow(Lang.Get("Payload"), m.FullPath, "");
+                }
+
+                if (primera1 || primera2)
+                    tb.OutputColored(_IO);
+                else
+                    WriteInfo(Lang.Get("Nothing_To_Show"));
+            }
+            else
+            {
+                WriteInfo(Lang.Get("Be_More_Specific"));
+            }
+        }
         public void cmdShow(string args)
         {
-            // Todo comentar en Res.res los comandos y acabar del set para abajo
-            if (!CheckModule(false)) return;
+            if (!CheckModule(false, EModuleType.None)) return;
             args = args.Trim().ToLowerInvariant();
+
+            Module curM = _Current.ModuleType == EModuleType.Module ? (Module)_Current : null;
 
             switch (args)
             {
                 case "":
+                case "info": { cmdInfo(args); break; }
                 case "options":
                 case "config":
                     {
                         // set target id
-                        Target[] ps = _Current.Targets;
-                        if (ps != null)
+                        Target[] ps = null;
+
+                        if (curM != null)
                         {
-                            int ix = 0;
-                            foreach (Target t in ps) { t.Id = ix; ix++; }
+                            ps = curM.Targets;
+                            if (ps != null)
+                            {
+                                int ix = 0;
+                                foreach (Target t in ps) { t.Id = ix; ix++; }
+                            }
                         }
 
                         CommandTable tb = new CommandTable();
 
-                        tb.AddRow(Lang.Get("Path"), _Current.Path, "");
-                        tb.AddRow(Lang.Get("Name"), _Current.Name, "");
-
-                        tb.AddRow("", "", "");
-                        tb.AddSeparator(3, '*');
-                        tb.AddRow("", "", "");
-
-                        if (!string.IsNullOrEmpty(_Current.Author))
-                        {
-                            CommandTableRow row = tb.AddRow(1, Lang.Get("Author"), _Current.Author, "");
-                            row[1].Align = CommandTableCol.EAlign.None;
-                            row[2].Align = CommandTableCol.EAlign.None;
-                        }
-                        if (!string.IsNullOrEmpty(_Current.Description))
-                        {
-                            foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("Description"), _Current.Description, ""))
-                            {
-                                row[1].Align = CommandTableCol.EAlign.None;
-                                row[2].Align = CommandTableCol.EAlign.None;
-                            }
-                        }
-                        if (_Current.DisclosureDate != DateTime.MinValue) tb.AddRow(Lang.Get("DisclosureDate"), _Current.DisclosureDate.ToString(), "");
-                        tb.AddRow(Lang.Get("IsLocal"), _Current.IsLocal.ToString(), "");
-                        tb.AddRow(Lang.Get("IsRemote"), _Current.IsRemote.ToString(), "");
-
-                        if (_Current.References != null && _Current.References.Length > 0)
-                        {
-                            tb.AddRow("", "", "");
-
-                            StringBuilder sb = new StringBuilder();
-                            foreach (Reference r in _Current.References)
-                            {
-                                if (r == null) continue;
-                                sb.AppendLine(r.Type.ToString() + " - " + r.Value);
-                            }
-
-                            foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("References"), sb.ToString(), ""))
-                            {
-                                row[1].Align = CommandTableCol.EAlign.None;
-                                row[2].Align = CommandTableCol.EAlign.None;
-                            }
-                        }
-
-                        bool fistAll = true;
-                        bool hasX0 = false;
-                        bool hasX2 = false;
-                        for (int x = 0; x <= 3; x++)
+                        string title = "";
+                        for (int x = 0; x <= 2; x++)
                         {
                             PropertyInfo[] pis = null;
 
@@ -529,38 +631,47 @@ namespace XPloit.Core.Listeners
                             {
                                 case 0:
                                     {
-                                        if (_Current.PayloadRequirements != null)
-                                        {
-                                            pis = ReflectionHelper.GetProperties(_Current, "Payload");
-                                            hasX0 = pis != null && pis.Length > 0;
-                                        }
+                                        if (_Current.ModuleType == EModuleType.Payload)
+                                            title = Lang.Get("Payload_Options", _Current.FullPath);
+                                        else
+                                            title = Lang.Get("Module_Options", _Current.FullPath);
+
+                                        pis = ReflectionHelper.GetProperties(_Current, true, true, true);
                                         break;
                                     }
                                 case 1:
                                     {
-                                        Target[] t = _Current.Targets;
-                                        if (t != null && t.Length > 1)
+                                        title = Lang.Get("Current_Target");
+                                        if (ps != null && ps.Length > 1)
                                             pis = ReflectionHelper.GetProperties(_Current, "Target");
                                         break;
                                     }
                                 case 2:
                                     {
-                                        pis = ReflectionHelper.GetProperties(_Current, true, true, true);
-                                        hasX2 = pis != null && pis.Length > 0;
-                                        break;
-                                    }
-                                case 3:
-                                    {
-                                        pv = _Current.Payload;
-                                        if (_Current.Payload == null) pis = null;
-                                        else pis = ReflectionHelper.GetProperties(_Current.Payload, true, true, true);
+                                        if (curM != null)
+                                        {
+                                            if (curM.Payload != null)
+                                            {
+                                                pv = curM.Payload;
+                                                pis = ReflectionHelper.GetProperties(curM.Payload, true, true, true);
+                                                title = Lang.Get("Payload_Options", curM.Payload.FullPath);
+                                            }
+                                            else
+                                            {
+                                                if (curM.PayloadRequirements != null)
+                                                {
+                                                    pis = ReflectionHelper.GetProperties(_Current, "Payload");
+                                                    title = Lang.Get("Selected_Payload");
+                                                }
+                                            }
+                                        }
                                         break;
                                     }
                             }
 
                             if (pis != null)
                             {
-                                bool primera = (x != 1 || !hasX0);
+                                bool primera = true;// (x != 1 || !hasX0);
                                 foreach (PropertyInfo pi in pis)
                                 {
                                     ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
@@ -569,18 +680,14 @@ namespace XPloit.Core.Listeners
 
                                     if (primera)
                                     {
-                                        if (x == 3 && hasX2)
-                                        {
-                                            tb.AddRow("", "", "");
-                                        }
-                                        else
-                                        {
-                                            tb.AddRow("", "", "");
-                                            tb.AddSeparator(3, fistAll ? '*' : '.');
-                                            tb.AddRow("", "", "");
-                                        }
+                                        if (tb.Count > 0) tb.AddRow("", "", "");
+                                        CommandTableRow row = tb.AddRow(0, title, "", "");
+                                        tb.AddRow("", "", "");
+
+                                        row[0].Align = CommandTableCol.EAlign.None;
+                                        row[1].Align = CommandTableCol.EAlign.None;
+                                        row[2].Align = CommandTableCol.EAlign.None;
                                         primera = false;
-                                        fistAll = false;
                                     }
 
                                     object val = pi.GetValue(pv);
@@ -630,7 +737,7 @@ namespace XPloit.Core.Listeners
                     }
                 case "payloads":
                     {
-                        Payload[] ps = PayloadCollection.Current.GetPayloadAvailables(_Current.PayloadRequirements);
+                        Payload[] ps = curM == null ? null : PayloadCollection.Current.GetPayloadAvailables(curM.PayloadRequirements);
                         if (ps == null || ps.Length == 0)
                             WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
@@ -648,7 +755,7 @@ namespace XPloit.Core.Listeners
                     }
                 case "targets":
                     {
-                        Target[] ps = _Current.Targets;
+                        Target[] ps = curM == null ? null : curM.Targets;
                         if (ps == null || ps.Length <= 1)
                             WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
@@ -687,11 +794,19 @@ namespace XPloit.Core.Listeners
             else
             {
                 args = args.Trim();
-                _CurrentGlobal = ModuleCollection.Current.GetByFullPath(args, false);
+
+                _CurrentGlobal = null;
+                if (_CurrentGlobal == null) _CurrentGlobal = ModuleCollection.Current.GetByFullPath(args, false);
+                if (_CurrentGlobal == null) _CurrentGlobal = PayloadCollection.Current.GetByFullPath(args, false);
+
                 if (_CurrentGlobal != null)
                 {
-                    _Current = (Module)ReflectionHelper.Clone(_CurrentGlobal, true);
-                    _Current.Prepare(_IO);
+                    _Current = (IModule)ReflectionHelper.Clone(_CurrentGlobal, true);
+
+                    if (_Current != null && _Current is Module)
+                    {
+                        ((Module)_Current).Prepare(_IO);
+                    }
                 }
                 else
                 {
@@ -700,10 +815,10 @@ namespace XPloit.Core.Listeners
             }
 
             if (_Current == null) WriteError(Lang.Get(string.IsNullOrEmpty(args) ? "Command_Incomplete" : "Module_Not_Found", args));
-            else
-            {
-                _Command.PromptCharacter = _Current.Name + "> ";
-            }
+            //else
+            //{
+            //    _Command.PromptCharacter = _Current.Name + "> ";
+            //}
         }
         #endregion
 

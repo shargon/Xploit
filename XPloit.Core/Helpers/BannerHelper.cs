@@ -13,12 +13,84 @@ namespace XPloit.Core.Helpers
         {
             Random r = new Random();
 
-            switch (r.Next(3))
+            switch (r.Next(7))
             {
                 case 0: GetStarWarsBanner(command); break;
                 case 1: GetWolfBanner(command); break;
+                case 2: GetSimple1Banner(command); break;
+                case 3: GetBatmanBanner(command); break;
+                case 4: GetDarthVader(command); break;
+                case 5: GetVespino(command); break;
                 default: GetNyanCatBanner(command); break;
             }
+        }
+
+        public static void GetSimple1Banner(ICommandLayer command)
+        {
+            command.WriteLine(" |  |   _   |  |   _   _    _ _    _     |_   _     \\/   _   |   _   °  |_ ");
+            command.WriteLine(" |/\\|  (/_  |  |  (_  (_)  | | |  (/_    |_  (_)    /\\  |_)  |  (_)  |  |_ ");
+        }
+
+        public static void GetVespino(ICommandLayer command)
+        {
+            command.WriteLine("                                       _                 ");
+            command.WriteLine("                                    ,-~ |                ");
+            command.WriteLine("       ________________          o==]___|                ");
+            command.WriteLine("      |                |            \\ \\      BE QUICKLY");
+            command.WriteLine("      |________________|            /\\ \\               ");
+            command.WriteLine(" __  /  _,-----._      )           |  \\ \\.             ");
+            command.WriteLine("|_||/_-~         `.   /()          |  /|]_|_____         ");
+            command.WriteLine("  |//              \\ |              \\/ /_-~     ~-_    ");
+            command.WriteLine("  //________________||              / //___________\\    ");
+            command.WriteLine(" //__|______________| \\____________/ //___/-\\ \\~-_    ");
+            command.WriteLine("((_________________/_-o___________/_//___/  /\\,\\  \\   ");
+            command.WriteLine(" |__/(  ((====)o===--~~                 (  ( (o/)  )     ");
+            command.WriteLine("      \\  ``==' /                         \\  `--'  /    ");
+            command.WriteLine("       `-.__,-'                           `-.__,-'       ");
+        }
+        public static void GetDarthVader(ICommandLayer command)
+        {
+            command.WriteLine("         _.-'~~~~~~`-._                               ");
+            command.WriteLine("        /      ||      \\                             ");
+            command.WriteLine("       /       ||       \\    \"LUCK, IM YOUR FATHER\"");
+            command.WriteLine("      |        ||        |                            ");
+            command.WriteLine("      | _______||_______ |                            ");
+            command.WriteLine("      |/ ----- \\/ ----- \\|                          ");
+            command.WriteLine("     /  (     )  (     )  \\                          ");
+            command.WriteLine("    / \\  ----- () -----  / \\                        ");
+            command.WriteLine("   /   \\      /||\\      /   \\                      ");
+            command.WriteLine("  /     \\    /||||\\    /     \\                     ");
+            command.WriteLine(" /       \\  /||||||\\  /       \\                    ");
+            command.WriteLine("/_        \\o========o/        _\\                    ");
+            command.WriteLine("  `--...__|`-._  _.-'|__...--'                        ");
+            command.WriteLine("          |    `'    |                                ");
+        }
+
+        public static void GetBatmanBanner(ICommandLayer command)
+        {
+            command.WriteLine("          |\\_|\\         ");
+            command.WriteLine("          | a_a\\        ");
+            command.WriteLine("          | | \"]        ");
+            command.WriteLine("      ____| '-\\___      ");
+            command.WriteLine("     /.----.___.-'\\     ");
+            command.WriteLine("    //        _    \\    ");
+            command.WriteLine("   //   .-. (~v~) /|    ");
+            command.WriteLine("  |'|  /\\:  .--  / \\    ");
+            command.WriteLine(" // |-/  \\_/____/\\/~|   ");
+            command.WriteLine("|/  \\ |  []_|_|_] \\ |   ");
+            command.WriteLine("| \\  | \\ |___   _\\ ]_}  ");
+            command.WriteLine("| |  '-' /   '.'  |     ");
+            command.WriteLine("| |     /    /|:  |     ");
+            command.WriteLine("| |     |   / |:  /\\    ");
+            command.WriteLine("| |     /  /  |  /  \\   ");
+            command.WriteLine("| |    |  /  /  |    \\  ");
+            command.WriteLine("\\ |    |/\\/  |/|/\\    \\ ");
+            command.WriteLine(" \\|\\ |\\|  |  | / /\\/\\__\\");
+            command.WriteLine("  \\ \\| | /   | |__      ");
+            command.WriteLine("       / |   |____)     ");
+            command.WriteLine("       |_/              ");
+            command.WriteLine("                        ");
+            command.WriteLine("  I YOUR SUPERHERO      ");
         }
 
         public static void GetStarWarsBanner(ICommandLayer command)

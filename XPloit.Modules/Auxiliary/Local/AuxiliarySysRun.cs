@@ -14,7 +14,6 @@ namespace XPloit.Modules.Auxiliary.Local
         public override string Description { get { return "Execute a system command in local machine"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override bool IsRemote { get { return false; } }
         public override string Path { get { return "Auxiliary/Local"; } }
         public override string Name { get { return "SystemRun"; } }
         public override Reference[] References

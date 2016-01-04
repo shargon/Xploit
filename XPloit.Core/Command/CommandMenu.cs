@@ -21,12 +21,11 @@ namespace XPloit.Core.Command
     {
         bool _Quit;
         PromptDelegate Prompt = null;
-        ConsoleColor _PromptColor = ConsoleColor.Green;
         IAutoCompleteSource _AutoCompleteSource = null;
 
-        ConsoleColor _ClientColor = ConsoleColor.White;
         //ConsoleColor _ServerColor = ConsoleColor.DarkGray;
-
+        ConsoleColor _PromptColor = ConsoleColor.Green;
+        ConsoleColor _ClientColor = ConsoleColor.White;
 
         /// <summary>
         /// PromptCharacter
@@ -43,7 +42,7 @@ namespace XPloit.Core.Command
         /// </list>
         /// </para>
         /// </summary>
-        public CommandMenu(ICommandLayer io, IAutoCompleteSource autoCompleteSource, string[] selector = null)
+        public CommandMenu(ICommandLayer io, IAutoCompleteSource autoCompleteSource, PromptDelegate prompt, string[] selector = null)
             : base(selector)
         {
             _IO = io;
@@ -56,7 +55,7 @@ namespace XPloit.Core.Command
             }
 
             PromptCharacter = "> ";
-            Prompt = OnPrompt;
+            Prompt = prompt == null ? OnPrompt : prompt;
         }
         void OnPrompt(ICommandLayer sender)
         {

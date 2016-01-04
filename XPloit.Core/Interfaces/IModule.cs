@@ -78,6 +78,11 @@ namespace XPloit.Core.Interfaces
                 _IO.WriteLine("]");
             }
         }
+        public void Beep()
+        {
+            if (_IO == null) return;
+            _IO.Beep();
+        }
         #endregion
 
         /// <summary>
@@ -115,7 +120,7 @@ namespace XPloit.Core.Interfaces
         ///// <summary>
         /// Type
         /// </summary>
-        internal virtual EModuleType ModuleType { get { return EModuleType.Exploit; } }
+        internal virtual EModuleType ModuleType { get { return EModuleType.Module; } }
 
         public override string ToString() { return FullPath; }
 
@@ -146,6 +151,7 @@ namespace XPloit.Core.Interfaces
                             {
                                 int ix = (int)ConvertHelper.ConvertTo(value.ToString(), typeof(int));
                                 m.Target = m.Targets[ix];
+                                m.Target.Id = ix;
                                 return true;
                             }
                             catch
@@ -175,6 +181,23 @@ namespace XPloit.Core.Interfaces
             {
                 return ReflectionHelper.SetProperty(this, propertyName, value);
             }
+        }
+        /// <summary>
+        /// Return true if are in this query
+        /// </summary>
+        /// <param name="query">Query</param>
+        public bool AreInThisSearch(string[] query)
+        {
+            if (query == null || query.Length == 0) return true;
+
+            string search = FullPath + " " + Description + " " + Author;
+
+            foreach (string a in query)
+            {
+                if (search.IndexOf(a, StringComparison.InvariantCultureIgnoreCase) < 0) return false;
+            }
+
+            return true;
         }
         /// <summary>
         /// Check Required Properties

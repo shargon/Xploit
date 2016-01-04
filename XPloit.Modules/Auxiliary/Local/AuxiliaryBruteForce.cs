@@ -26,7 +26,6 @@ namespace XPloit.Modules.Auxiliary.Local
         public override string Description { get { return "Local Brute force by wordlist"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override bool IsRemote { get { return false; } }
         public override IPayloadRequirements PayloadRequirements { get { return new InterfacePayload(typeof(ICheckPassword)); } }
         #endregion
 
@@ -138,6 +137,7 @@ namespace XPloit.Modules.Auxiliary.Local
                             found = true;
 
                             WriteInfo("Password Found! ", w, ConsoleColor.Green);
+                            Beep();
 
                             cts.Cancel();
                             return;
@@ -146,10 +146,7 @@ namespace XPloit.Modules.Auxiliary.Local
                         po.CancellationToken.ThrowIfCancellationRequested();
                     });
             }
-            catch
-            {
-
-            }
+            catch { }
             finally
             {
                 cts.Dispose();

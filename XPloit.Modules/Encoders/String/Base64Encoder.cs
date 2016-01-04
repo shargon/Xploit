@@ -20,10 +20,10 @@ namespace XPloit.Modules.Encoders.String
         /// </summary>
         /// <param name="input">Input</param>
         /// <returns>Return object</returns>
-        public override object Run(Payload payload)
+        public override byte[] Run(Payload payload)
         {
             if (payload == null) return null;
-            return Convert.ToBase64String(payload.Value);
+            return payload.Encoding.GetBytes(Convert.ToBase64String(payload.Value));
         }
     }
 }

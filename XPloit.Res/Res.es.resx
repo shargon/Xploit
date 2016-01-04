@@ -235,6 +235,7 @@ Show available information for the current module
   Available options:
   
   config/options - Displays the config for current module
+  info           - Display info of the current module
   payloads       - Display available payloads for the current module
   targets        - Display available targets for the current module</value>
   </data>
@@ -298,7 +299,7 @@ Check the current module</value>
 Run the current module</value>
   </data>
   <data name="Man_Search" xml:space="preserve">
-    <value>search [command] [query]
+    <value>search [query]
 
 Search a module in the loaded modules</value>
   </data>
@@ -392,5 +393,37 @@ Reload the current module and check them</value>
     <value>rerun/rexploit
 
 Reload the current module and execute them</value>
+  </data>
+  <data name="Encoder" xml:space="preserve">
+    <value>Encoder</value>
+  </data>
+  <data name="Nop" xml:space="preserve">
+    <value>Nop</value>
+  </data>
+  <data name="Require_Module_Type" xml:space="preserve">
+    <value>This command its only for '%0' type</value>
+  </data>
+  <data name="Man_Info" xml:space="preserve">
+    <value>info
+
+Show info of the current module</value>
+  </data>
+  <data name="Current_Target" xml:space="preserve">
+    <value>Current Target</value>
+  </data>
+  <data name="Module_Options" xml:space="preserve">
+    <value>Module options (%0)</value>
+  </data>
+  <data name="Payload_Options" xml:space="preserve">
+    <value>Payload options (%0)</value>
+  </data>
+  <data name="Selected_Payload" xml:space="preserve">
+    <value>Selected Payload</value>
+  </data>
+  <data name="Be_More_Specific" xml:space="preserve">
+    <value>Be more specific</value>
+  </data>
+  <data name="Disclosure" xml:space="preserve">
+    <value>Disclosure</value>
   </data>
 </root>

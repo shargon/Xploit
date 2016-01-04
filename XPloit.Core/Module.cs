@@ -14,7 +14,7 @@ namespace XPloit.Core
         /// <summary>
         /// ModuleType
         /// </summary>
-        internal override EModuleType ModuleType { get { return EModuleType.Payload; } }
+        internal override EModuleType ModuleType { get { return EModuleType.Module; } }
         /// <summary>
         /// IsLocal
         /// </summary>

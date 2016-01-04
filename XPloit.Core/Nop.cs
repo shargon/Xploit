@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
@@ -16,26 +15,22 @@ namespace XPloit.Core
         /// </summary>
         internal override EModuleType ModuleType { get { return EModuleType.Nop; } }
         /// <summary>
-        /// Encoding value
-        /// </summary>
-        public virtual Encoding Encoding { get { return Encoding.UTF8; } }
-        /// <summary>
-        /// Nop value
-        /// </summary>
-        public virtual byte[] Get(int size) { return null; }
-        /// <summary>
-        /// String value
-        /// </summary>
-        public string GetString(int size)
-        {
-            byte[] va = Get(size);
-            if (va == null) return null;
-            return this.Encoding.GetString(va);
-        }
-        /// <summary>
         /// References
         /// </summary>
         public virtual Reference[] References { get { return null; } }
+
+
+        /// <summary>
+        /// Fill the nop
+        /// </summary>
+        /// <param name="buffer">Data</param>
+        /// <param name="index">Index</param>
+        /// <param name="length">Length</param>
+        /// <returns>Return true if nop its filled</returns>
+        public virtual bool Fill(byte[] buffer, int index, int length)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Implicit conversion

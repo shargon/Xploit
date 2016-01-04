@@ -48,16 +48,12 @@
     <Compile Include="Auxiliary\Local\AuxiliaryWordListGenerator.cs" />
     <Compile Include="BuildLink.cs" />
     <Compile Include="Encoders\String\Base64Encoder.cs" />
-    <Compile Include="Encoders\String\Base64Decoder.cs" />
-    <Compile Include="Encoders\String\JsonEncoder.cs" />
     <Compile Include="Nops\Php\PhpNop.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
-    <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerDisLocker.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
-    <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerWMI.cs" />
+    <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerAPI.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryBruteForce.cs" />
     <Compile Include="Auxiliary\Local\AuxiliarySysRun.cs" />
-    <Compile Include="Encoders\String\JsonDecoder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

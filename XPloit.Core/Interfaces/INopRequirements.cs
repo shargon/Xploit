@@ -3,10 +3,10 @@
     public interface INopRequirements
     {
         /// <summary>
-        /// Retursn if its allowed
+        /// Retursn if nop its allowed
         /// </summary>
-        /// <param name="nop">Nop</param>
-        /// <returns>Return true if nop its allowed</returns>
-        bool IsAllowed(Nop nop);
+        /// <param name="obj">Object</param>
+        /// <returns>Return true if its allowed</returns>
+        bool IsAllowed(Nop obj);
     }
 }

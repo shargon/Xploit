@@ -19,7 +19,7 @@ namespace XPloit.Core
         /// </summary>
         /// <param name="payload">Payload</param>
         /// <returns>Return encoded payload</returns>
-        public virtual object Run(Payload payload) { throw (new NotImplementedException()); }
+        public virtual byte[] Run(Payload payload) { throw (new NotImplementedException()); }
 
         /// <summary>
         /// Implicit conversion
