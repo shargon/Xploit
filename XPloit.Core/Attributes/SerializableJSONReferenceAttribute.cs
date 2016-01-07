@@ -35,10 +35,14 @@ namespace XPloit.Core.Attributes
             all[header_length] = (byte)type;
             return all;
         }
-        public virtual IXPloitSocketMsg Deserialize(Type type, byte[] data, int index, int length)
+        public virtual IXPloitSocketMsg Deserialize(Type type, Encoding codec, byte[] data, int index, int length)
         {
             using (MemoryStream ms = new MemoryStream(data, index, length))
-            using (StreamReader sr = new StreamReader(ms))
+                return Deserialize(type, codec, ms);
+        }
+        public virtual IXPloitSocketMsg Deserialize(Type type, Encoding codec, Stream stream)
+        {
+            using (StreamReader sr = new StreamReader(stream, codec))
             using (JsonTextReader read = new JsonTextReader(sr))
                 return (IXPloitSocketMsg)Serializer.Deserialize(read, type);
         }

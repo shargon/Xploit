@@ -151,6 +151,8 @@
     <Compile Include="Sockets\XPloitSocket.cs" />
     <Compile Include="Sockets\XPloitSocketClient.cs" />
     <Compile Include="Variable.cs" />
+    <Compile Include="VerbalExpressions\VerbalExpressions.cs" />
+    <Compile Include="VerbalExpressions\CommonRegex.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">

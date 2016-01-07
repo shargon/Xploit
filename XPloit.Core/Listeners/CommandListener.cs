@@ -128,6 +128,13 @@ namespace XPloit.Core.Listeners
                                                     foreach (string name in Enum.GetNames(pi[0].PropertyType))
                                                         yield return name;
                                                 }
+                                                else
+                                                {
+                                                    if (pi[0].PropertyType == typeof(string))
+                                                    {
+                                                        // TODO: archivos o carpetas
+                                                    }
+                                                }
                                             }
                                         }
                                         break;
@@ -172,6 +179,7 @@ namespace XPloit.Core.Listeners
             cmd.Add(new string[] { "info" }, cmdInfo, Lang.Get("Man_Info"));
 
             cmd.Add(new string[] { "search" }, cmdSearch, Lang.Get("Man_Search"));
+            cmd.Add(new string[] { "ifcheckrun" }, cmdIfCheckRun, Lang.Get("Man_IfCheckRun"));
             _Command = cmd;
         }
         void OnPrompt(ICommandLayer sender)
@@ -299,10 +307,28 @@ namespace XPloit.Core.Listeners
             BannerHelper.GetRandomBanner(_IO);
             _IO.WriteLine("");
         }
-        public void cmdCheck(string args)
+        public void cmdRun(string args) { RunModule(); }
+        public void cmdCheck(string args) { CheckModule(); }
+        public void cmdIfCheckRun(string args) { if (CheckModule()) cmdRun(args); }
+        public bool RunModule()
         {
-            if (!CheckModule(true, EModuleType.Module)) return;
-            args = args.Trim();
+            if (!CheckModule(true, EModuleType.Module)) return false;
+
+            try
+            {
+                if (((Module)_Current).Run()) return true;
+
+                _Current.WriteError(Lang.Get("Run_Error"));
+            }
+            catch (Exception e)
+            {
+                _Current.WriteError(e.Message);
+            }
+            return false;
+        }
+        public bool CheckModule()
+        {
+            if (!CheckModule(true, EModuleType.Module)) return false;
 
             try
             {
@@ -311,28 +337,14 @@ namespace XPloit.Core.Listeners
                     case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
                     case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
                     case ECheck.NotSure: _Current.WriteInfo(Lang.Get("Check_NotSure")); break;
-                    case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); break;
+                    case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); return true;
                 }
             }
             catch (Exception e)
             {
                 _Current.WriteError(e.Message);
             }
-        }
-        public void cmdRun(string args)
-        {
-            if (!CheckModule(true, EModuleType.Module)) return;
-            args = args.Trim();
-
-            try
-            {
-                if (!((Module)_Current).Run())
-                    _Current.WriteError(Lang.Get("Run_Error"));
-            }
-            catch (Exception e)
-            {
-                _Current.WriteError(e.Message);
-            }
+            return false;
         }
         public void cmdKill(string args)
         {

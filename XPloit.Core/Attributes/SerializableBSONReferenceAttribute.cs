@@ -28,7 +28,7 @@ namespace XPloit.Core.Attributes
                 return ms.ToArray();
             }
         }
-        public override IXPloitSocketMsg Deserialize(Type type, byte[] data, int index, int length)
+        public override IXPloitSocketMsg Deserialize(Type type, Encoding codec, byte[] data, int index, int length)
         {
             using (MemoryStream ms = new MemoryStream(data, index, length))
             using (BsonReader read = new BsonReader(ms))

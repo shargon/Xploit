@@ -175,6 +175,12 @@ namespace XPloit.Core.Sockets.Protocols
                                 ms.Write(bxfData, 0, msgLength);
                             }
 
+                            if (_Crypt == null)
+                            {
+                                ms.Seek(0, SeekOrigin.Begin);
+                                return IXPloitSocketMsg.Deserialize(_Codec, ms);
+                            }
+
                             bxfData = ms.ToArray();
                             msgLength = bxfData.Length;
                         }

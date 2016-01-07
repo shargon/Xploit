@@ -426,4 +426,9 @@ Show info of the current module</value>
   <data name="Disclosure" xml:space="preserve">
     <value>Disclosure</value>
   </data>
+  <data name="Man_IfCheckRun" xml:space="preserve">
+    <value>ifcheckrun
+
+Check the module, and if its works, then run it</value>
+  </data>
 </root>

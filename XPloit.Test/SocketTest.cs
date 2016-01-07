@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using XPloit.Core.Sockets;
-using XPloit.Core.Sockets.Protocols;
-using XPloit.Core.Sockets.Messages;
-using System.Threading;
-using XPloit.Core.Sockets.Interfaces;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Text;
-using System.Collections.Generic;
+using System.Threading;
+using XPloit.Core.Sockets;
+using XPloit.Core.Sockets.Interfaces;
+using XPloit.Core.Sockets.Messages;
+using XPloit.Core.Sockets.Protocols;
 
 namespace XPloit.Test
 {
@@ -47,7 +46,7 @@ namespace XPloit.Test
         {
             cl.Send(new XPloitMsgLogin()
             {
-                Domain = "250bytes".PadLeft(250, ' '),
+                Domain = "250bytes".PadLeft(200, ' '),
                 User = "server Long message :)",
                 Password = "Password toClient"
             });

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using XPloit.Core.Attributes;
@@ -67,7 +68,31 @@ namespace XPloit.Core.Sockets.Interfaces
                 }
             }
 
-            return tp.Deserialize(tp.Type, data, index + 1, length - 1);
+            return tp.Deserialize(tp.Type, codec, data, index + 1, length - 1);
+        }
+        /// <summary>
+        /// Genera un TCP SocketManager del array de bytes de los datos solicitados
+        /// </summary>
+        /// <param name="codec">Codec para la obtención</param>
+        /// <param name="stream">Stream</param>
+        /// <returns>Devuelve la clase TCPSocketMsgManager</returns>
+        public static IXPloitSocketMsg Deserialize(Encoding codec, Stream stream)
+        {
+            byte type = (byte)stream.ReadByte();
+
+            SerializableJSONReferenceAttribute tp;
+            if (!_Cache.TryGetValue(type, out tp))
+            {
+                //no está en cache
+                EXPloitSocketMsg e = (EXPloitSocketMsg)type;
+                tp = e.GetAttribute<SerializableJSONReferenceAttribute>();
+                lock (_Cache)
+                {
+                    _Cache.Add(type, tp);
+                }
+            }
+
+            return tp.Deserialize(tp.Type, codec, stream);
         }
     }
 }
