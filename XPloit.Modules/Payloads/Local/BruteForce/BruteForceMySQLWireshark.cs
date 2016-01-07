@@ -102,23 +102,7 @@ namespace XPloit.Modules.Auxiliary.Local
             bseed = Encoding.GetBytes(_seed);
             bhash = new byte[bhash_all.Length - 1];
             Array.Copy(bhash_all, 1, bhash, 0, bhash.Length);
-            //ihash = new int[bhash.Length];
-            //for (int x = 0; x < bhash.Length; x++) ihash[x] = bhash[x];
-
-            /*
-                00000000  5b 00 00 00 0a 35 2e 35  2e 33 37 2d 30 75 62 75 [....5.5 .37-0ubu
-                00000010  6e 74 75 30 2e 31 33 2e  31 30 2e 31 00 9b 54 00 ntu0.13. 10.1..T.
-                00000020  00 5a 42 7b 64 63 43 64  4f 00 ff f7 08 02 00 0f .ZB{dcCd O.......
-                00000030  80 15 00 00 00 00 00 00  00 00 00 00 3f 2d 61 25 ........ ....?-a%
-                00000040  33 6d 4d 7a 40 6f 2e 35  00 6d 79 73 71 6c 5f 6e 3mMz@o.5 .mysql_n
-                00000050  61 74 69 76 65 5f 70 61  73 73 77 6f 72 64 00    ative_pa ssword.
-            00000000  4f 00 00 01 85 a6 1f 00  00 00 00 40 08 00 00 00 O....... ...@....
-            00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 ........ ........
-            00000020  00 00 00 00 77 6b 6d 00  14 a6 ff 0e 5d 8d 02 94 ....wkm. ....]...
-            00000030  8e 2a 06 0d 76 36 59 d5  ca c8 16 61 67 6d 79 73 .*..v6Y. ...agmys
-            00000040  71 6c 5f 6e 61 74 69 76  65 5f 70 61 73 73 77 6f ql_nativ e_passwo
-            00000050  72 64 00                                         rd.
-            */
+            
             return true;
         }
         public void PostRun() { }
