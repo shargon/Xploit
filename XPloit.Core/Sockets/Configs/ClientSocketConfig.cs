@@ -20,7 +20,7 @@ namespace XPloit.Core.Sockets.Configs
 
         public override string ToString()
         {
-            return "ListenAddress=" + Address.ToString() + " ListenPort=" + Port.ToString();
+            return "Address=" + Address.ToString() + " Port=" + Port.ToString();
         }
     }
 }
