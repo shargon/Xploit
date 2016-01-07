@@ -34,11 +34,12 @@ namespace XPloit.Core.Sockets
         #region EVENTS
         public delegate void delEventHandler(XPloitSocket sender, object args);
 
+        public delegate void delOnMessage(XPloitSocket sender, XPloitSocketClient client, IXPloitSocketMsg msg);
+        public delegate void delOnDisconnect(XPloitSocket sender, XPloitSocketClient client, EDissconnectReason e);
+        public delegate void delOnConnect(XPloitSocket sender, XPloitSocketClient client);
+
         public delegate bool delIsClient(XPloitSocketClient client, object[] tag);
-        public delegate void delOnDisconnect(XPloitSocket sender, XPloitSocketClient cl, EDissconnectReason e);
-        public delegate void delOnConnect(XPloitSocket sender, XPloitSocketClient cl);
-        public delegate void delOnOverrideTimeout(XPloitSocket sender, XPloitSocketClient cl, CancelEventArgs disconnect);
-        public delegate void delOnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg);
+        public delegate void delOnOverrideTimeout(XPloitSocket sender, XPloitSocketClient client, CancelEventArgs disconnect);
 
         public event delEventHandler OnStart = null;
         public event delEventHandler OnStop = null;
@@ -225,7 +226,7 @@ namespace XPloit.Core.Sockets
                         Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                         s.Connect(_IPEndPoint);
 
-                        _Client = new XPloitSocketClient(this, s, _UseSpeedLimit);
+                        _Client = new XPloitSocketClient(_Protocol, s, _UseSpeedLimit);
                         _Thread = new Thread(new ParameterizedThreadStart(noserver_thread));
                         _Thread.Name = "SOCKET-CLIENT";
 
@@ -268,7 +269,7 @@ namespace XPloit.Core.Sockets
                 while (!cs._IsStopping && c.IsConnected)
                 {
                     //lectura sincrona en este hilo
-                    if (!c.Read(c) && check_time_out && c.HasTimeOut)
+                    if (!cs.Read(c) && check_time_out && c.HasTimeOut)
                     {
                         if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
                         {
@@ -296,7 +297,7 @@ namespace XPloit.Core.Sockets
                     Socket work = hold.EndAccept(ar);
                     if (work.Connected)
                     {
-                        XPloitSocketClient tc = new XPloitSocketClient(this, work, _UseSpeedLimit);
+                        XPloitSocketClient tc = new XPloitSocketClient(_Protocol, work, _UseSpeedLimit);
 
                         if (_IPFilter != null && !_IPFilter.IsAllowed(tc.IPAddress)) tc.Disconnect(EDissconnectReason.Banned);
                         else
@@ -329,7 +330,7 @@ namespace XPloit.Core.Sockets
                     XPloitSocketClient c = cs._Clients[x];
 
                     //lectura sincrona en este hilo
-                    if (!c.Read(c) && check_time_out && c.HasTimeOut)
+                    if (!cs.Read(c) && check_time_out && c.HasTimeOut)
                     {
                         if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
                         {
@@ -343,6 +344,19 @@ namespace XPloit.Core.Sockets
                 }
                 Thread.Sleep(0);
             }
+        }
+
+        bool Read(XPloitSocketClient c)
+        {
+            IXPloitSocketMsg msg = c.Read();
+
+            if (msg != null)
+            {
+                RaiseOnMessage(c, msg);
+                return true;
+            }
+
+            return false;
         }
         #endregion
 
@@ -434,7 +448,7 @@ namespace XPloit.Core.Sockets
             {
                 cl2 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 cl2.Connect(ip, prto);
-                return Add(new XPloitSocketClient(this, cl2, _UseSpeedLimit));
+                return Add(new XPloitSocketClient(_Protocol, cl2, _UseSpeedLimit));
             }
             catch
             {
@@ -449,6 +463,11 @@ namespace XPloit.Core.Sockets
         /// <param name="cl">Client</param>
         bool Add(XPloitSocketClient cl)
         {
+            if (cl == null) return false;
+
+            cl.OnDisconnect += RaiseOnDisconnect;
+            //cl.OnMessage += RaiseOnMessage;
+
             if (!_Protocol.Connect(cl))
             {
                 cl.Disconnect(EDissconnectReason.Protocol);
@@ -485,8 +504,9 @@ namespace XPloit.Core.Sockets
         }
 
         #region RAISES
-        internal void RaiseOnDisconnect(XPloitSocketClient cl, EDissconnectReason dr)
+        void RaiseOnDisconnect(XPloitSocketClient cl, EDissconnectReason dr)
         {
+            if (cl == null) return;
             if (OnDisconnect != null) OnDisconnect(this, cl, dr);
         }
         public void RaiseOnMessage(XPloitSocketClient cl, IXPloitSocketMsg msg)

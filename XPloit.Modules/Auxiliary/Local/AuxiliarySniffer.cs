@@ -5,6 +5,8 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Sniffer;
+using XPloit.Core.Sniffer.Filters;
+using XPloit.Core.Sniffer.Streams;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
@@ -43,7 +45,7 @@ namespace XPloit.Modules.Auxiliary.Local
             if (!SystemHelper.IsAdministrator())
                 WriteError("Require admin rights");
 
-            Sniffer s = new Sniffer(LocalAddress);
+            NetworkSniffer s = new NetworkSniffer(LocalAddress);
             s.OnTcpStream += s_OnTcpStream;
             s.Filter = new SnifferPortFilter(this.LocalPort);
             s.Start();
@@ -54,13 +56,13 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public override ECheck Check()
         {
-            Sniffer s = null;
+            NetworkSniffer s = null;
             try
             {
                 if (!SystemHelper.IsAdministrator())
                     WriteError("Require admin rights");
 
-                s = new Sniffer(LocalAddress);
+                s = new NetworkSniffer(LocalAddress);
                 s.Filter = new SnifferPortFilter(this.LocalPort);
                 s.Start();
 

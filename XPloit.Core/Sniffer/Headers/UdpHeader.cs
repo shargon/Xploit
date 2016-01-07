@@ -1,8 +1,9 @@
 using System.Net;
 using System;
 using System.IO;
+using XPloit.Core.Sniffer.Interfaces;
 
-namespace XPloit.Core.Sniffer
+namespace XPloit.Core.Sniffer.Headers
 {
     public class UdpHeader : IPacket
     {

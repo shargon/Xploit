@@ -1,4 +1,7 @@
-﻿namespace XPloit.Core.Sniffer
+﻿using XPloit.Core.Sniffer.Headers;
+using XPloit.Core.Sniffer.Interfaces;
+
+namespace XPloit.Core.Sniffer.Filters
 {
     public class SnifferPortFilter : ITcpStreamFilter
     {

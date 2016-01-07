@@ -5,78 +5,18 @@ using System.IO;
 using System.Net;
 using System.Text;
 using XPloit.Core.Helpers;
+using XPloit.Core.Sniffer.Enums;
+using XPloit.Core.Sniffer.Headers;
 
-namespace XPloit.Core.Sniffer
+namespace XPloit.Core.Sniffer.Streams
 {
-    public class TcpStream : IEnumerable<TcpStream.Stream>
+    public class TcpStream : IEnumerable<TcpStreamMessage>
     {
-        public enum EEmisor { A, B }
-        public class Stream
-        {
-            EEmisor _Emisor;
-            byte[] _Data;
-            internal int _LastRead = 0;
 
-            /// <summary>
-            /// Data
-            /// </summary>
-            public byte[] Data { get { return _Data; } }
-            /// <summary>
-            /// UTF8-Data
-            /// </summary>
-            public string DataAscii { get { return Encoding.ASCII.GetString(_Data); } }
-            /// <summary>
-            /// HEX-Data
-            /// </summary>
-            public string DataHex
-            {
-                get
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (byte b in _Data)
-                    {
-                        sb.Append(b.ToString("x2"));
-                        sb.Append(" ");
-                    }
+        TcpStreamMessage _Last;
+        List<TcpStreamMessage> _InternalList = new List<TcpStreamMessage>();
 
-                    return sb.ToString().Trim();
-                }
-            }
-            /// <summary>
-            /// IsSend
-            /// </summary>
-            public EEmisor Emisor { get { return _Emisor; } }
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            /// <param name="data">Data</param>
-            /// <param name="emisor">Emisor</param>
-            public Stream(byte[] data, EEmisor emisor)
-            {
-                _Data = data;
-                _Emisor = emisor;
-            }
-            /// <summary>
-            /// Add data to Stream
-            /// </summary>
-            /// <param name="data">Data</param>
-            internal void AddData(byte[] data)
-            {
-                if (data == null) return;
-                int l = _Data.Length;
-                if (l == 0) return;
-
-                Array.Resize(ref _Data, l + data.Length);
-                Array.Copy(data, 0, _Data, l, data.Length);
-            }
-
-            public override string ToString() { return Emisor.ToString() + " (" + _Data.Length.ToString() + ")"; }
-        }
-
-        Stream _Last;
-        List<Stream> _InternalList = new List<Stream>();
-
-        public Stream this[int index]
+        public TcpStreamMessage this[int index]
         {
             get
             {
@@ -87,18 +27,18 @@ namespace XPloit.Core.Sniffer
 
         void Add(TcpHeader packet)
         {
-            if (packet.Flags.HasFlag(TcpFlags.Fin))
+            if (packet.Flags.HasFlag(ETcpFlags.Fin))
                 _IsClossed = true;
 
             if (packet.Data.Length <= 0) return;
 
-            EEmisor emisor =
+            ETcpEmisor emisor =
                 (packet.DestinationPort == _DestinationPort && IPAddress.Equals(packet.IpHeader.DestinationAddress, _DestinationAddress) &&
-                packet.SourcePort == _SourcePort && IPAddress.Equals(packet.IpHeader.SourceAddress, _SourceAddress)) ? EEmisor.A : EEmisor.B;
+                packet.SourcePort == _SourcePort && IPAddress.Equals(packet.IpHeader.SourceAddress, _SourceAddress)) ? ETcpEmisor.A : ETcpEmisor.B;
 
             if (_Last == null)
             {
-                _Last = new Stream(packet.Data, emisor);
+                _Last = new TcpStreamMessage(packet.Data, emisor);
                 _InternalList.Add(_Last);
             }
             else
@@ -109,7 +49,7 @@ namespace XPloit.Core.Sniffer
                 else
                 {
                     // New Packet
-                    _Last = new Stream(packet.Data, emisor);
+                    _Last = new TcpStreamMessage(packet.Data, emisor);
                     _InternalList.Add(_Last);
                 }
             }
@@ -160,7 +100,7 @@ namespace XPloit.Core.Sniffer
         IPAddress _DestinationAddress, _SourceAddress;
 
         public int Count { get { return _InternalList.Count; } }
-        public TcpStream.Stream LastStream { get { return _Last; } }
+        public TcpStreamMessage LastStream { get { return _Last; } }
         public bool IsClossed { get { return _IsClossed; } }
         public ushort DestinationPort { get { return _DestinationPort; } }
         public ushort SourcePort { get { return _SourcePort; } }
@@ -191,7 +131,7 @@ namespace XPloit.Core.Sniffer
             }
         }
 
-        public IEnumerator<Stream> GetEnumerator() { return _InternalList.GetEnumerator(); }
+        public IEnumerator<TcpStreamMessage> GetEnumerator() { return _InternalList.GetEnumerator(); }
         IEnumerator IEnumerable.GetEnumerator() { return _InternalList.GetEnumerator(); }
 
         public override string ToString()
@@ -215,7 +155,7 @@ namespace XPloit.Core.Sniffer
                 {
                     string l = line.TrimStart().Replace(":", "");
 
-                    EEmisor em = line.StartsWith(" ") ? EEmisor.A : EEmisor.B;
+                    ETcpEmisor em = line.StartsWith(" ") ? ETcpEmisor.A : ETcpEmisor.B;
 
                     if (l.Length >= 9 && !l.Substring(0, 8).Contains(" "))
                     {
@@ -231,7 +171,7 @@ namespace XPloit.Core.Sniffer
 
                     if (tcp._Last == null)
                     {
-                        tcp._Last = new Stream(data, em);
+                        tcp._Last = new TcpStreamMessage(data, em);
                         tcp._InternalList.Add(tcp._Last);
                     }
                     else
@@ -242,7 +182,7 @@ namespace XPloit.Core.Sniffer
                         else
                         {
                             // New Packet
-                            tcp._Last = new Stream(data, em);
+                            tcp._Last = new TcpStreamMessage(data, em);
                             tcp._InternalList.Add(tcp._Last);
                         }
                     }
@@ -258,7 +198,7 @@ namespace XPloit.Core.Sniffer
         /// <param name="file">File</param>
         public void DumpToFile(string file)
         {
-            TcpStream.Stream l = _Last;
+            TcpStreamMessage l = _Last;
             if (l == null) return;
 
             int ld = l.Data.Length;
@@ -277,7 +217,7 @@ namespace XPloit.Core.Sniffer
                         sb.AppendLine();
                     }
 
-                    sb.Append((l.Emisor == TcpStream.EEmisor.A ? "    " : ""));
+                    sb.Append((l.Emisor == ETcpEmisor.A ? "    " : ""));
                     sb.Append(x.ToString("x2").PadLeft(8, '0') + "  ");
                 }
                 else

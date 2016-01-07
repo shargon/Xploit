@@ -1,20 +1,11 @@
 using System.Net;
 using System;
 using System.IO;
+using XPloit.Core.Sniffer.Interfaces;
+using XPloit.Core.Sniffer.Enums;
 
-namespace XPloit.Core.Sniffer
+namespace XPloit.Core.Sniffer.Headers
 {
-    [Flags]
-    public enum TcpFlags
-    {
-        Fin = 1,
-        Syn = 2,
-        Rst = 4,
-        Psh = 8,
-        Ack = 16,
-        Urg = 32
-    }
-
     public class TcpHeader : IPacket
     {
         private readonly uint _uiAcknowledgementNumber = 555;
@@ -61,8 +52,8 @@ namespace XPloit.Core.Sniffer
             Data = data;
         }
 
-        public string AcknowledgementNumber { get { return Flags.HasFlag(TcpFlags.Ack) ? _uiAcknowledgementNumber.ToString() : ""; } }
-        public string UrgentPointer { get { return Flags.HasFlag(TcpFlags.Urg) ? _usUrgentPointer.ToString() : ""; } }
-        public TcpFlags Flags { get { return (TcpFlags)(_usDataOffsetAndFlags & 0x3F); } }
+        public string AcknowledgementNumber { get { return Flags.HasFlag(ETcpFlags.Ack) ? _uiAcknowledgementNumber.ToString() : ""; } }
+        public string UrgentPointer { get { return Flags.HasFlag(ETcpFlags.Urg) ? _usUrgentPointer.ToString() : ""; } }
+        public ETcpFlags Flags { get { return (ETcpFlags)(_usDataOffsetAndFlags & 0x3F); } }
     }
 }

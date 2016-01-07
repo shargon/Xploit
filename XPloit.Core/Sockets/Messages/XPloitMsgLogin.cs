@@ -6,6 +6,8 @@ namespace XPloit.Core.Sockets.Messages
 {
     public class XPloitMsgLogin : IXPloitSocketMsg
     {
+        [DataMember(Name = "d")]
+        public string Domain { get; set; }
         [DataMember(Name = "u")]
         public string User { get; set; }
         [DataMember(Name = "p")]

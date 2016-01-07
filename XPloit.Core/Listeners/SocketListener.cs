@@ -57,7 +57,7 @@ namespace XPloit.Core.Listeners
             if (_Config.CryptKey != null && !string.IsNullOrEmpty(_Config.CryptKey.RawPassword))
                 crypt = new AESHelper(_Config.CryptKey.RawPassword, "Made with love ;)", 20000, "**#Int#Vector#**", AESHelper.EKeyLength.Length_256);
 
-            _Socket = new XPloitSocket(new XPloitSocketProtocol(_Codec, crypt, XPloitSocketProtocol.EProtocolMode.None), _Config.Address, _Config.Port, _IsServer)
+            _Socket = new XPloitSocket(new XPloitSocketProtocol(_Codec, crypt, XPloitSocketProtocol.EProtocolMode.UInt16), _Config.Address, _Config.Port, _IsServer)
             {
                 IPFilter = _IPFilter,
                 TimeOut = TimeSpan.Zero
@@ -69,15 +69,14 @@ namespace XPloit.Core.Listeners
             return _Socket.Start();
         }
 
-        void _Socket_OnConnect(XPloitSocket sender, XPloitSocketClient cl)
+        void _Socket_OnConnect(XPloitSocket sender, XPloitSocketClient client)
         {
-            //cl.Tag=new StreamListener(_Codec,null,null,null);
         }
-        void _Socket_OnDisconnect(XPloitSocket sender, XPloitSocketClient cl, EDissconnectReason e)
+        void _Socket_OnDisconnect(XPloitSocket sender, XPloitSocketClient client, EDissconnectReason e)
         {
-
+            
         }
-        void _Socket_OnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg)
+        void _Socket_OnMessage(XPloitSocket sender, XPloitSocketClient client, IXPloitSocketMsg msg)
         {
 
         }

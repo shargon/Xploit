@@ -14,12 +14,10 @@ namespace XPloit.Core.Sockets.Protocols
         AESHelper _Crypt;
         Encoding _Codec;
 
+        const int PartsHeaderLength = 3;
+
         public enum EProtocolMode : byte
         {
-            /// <summary>
-            /// No header is present
-            /// </summary>
-            None = 0,
             /// <summary>
             /// Max 255 - 1 byte
             /// </summary>
@@ -32,10 +30,6 @@ namespace XPloit.Core.Sockets.Protocols
             /// Max 16581375 - 3 bytes
             /// </summary>
             UInt24 = 3,
-            /// <summary>
-            /// Max 2147483647 - 4 bytes
-            /// </summary>
-            Int32 = 4,
         }
 
         EProtocolMode _Mode;
@@ -58,25 +52,12 @@ namespace XPloit.Core.Sockets.Protocols
             _Crypt = crypt;
             _Mode = mode;
 
-            switch (mode)
-            {
-                case EProtocolMode.None:
-                    {
-                        // Header is not present
-                        _MaxLength = 0;
-                        _HeaderLength = 0;
-                        break;
-                    }
-                default:
-                    {
-                        // Header is present
-                        _HeaderLength = (byte)mode;
-                        break;
-                    }
-            }
+            // Header is present
+            _HeaderLength = (byte)mode;
 
             _HeaderPadding = new byte[_HeaderLength];
             _MaxLength = (int)Math.Pow(255, _HeaderLength);
+            WriteLengthInPacket(_HeaderPadding, 0, _MaxLength);
         }
         public XPloitSocketProtocol(Encoding codec, EProtocolMode mode) : this(codec, null, mode) { }
         public XPloitSocketProtocol(AESHelper crypt, EProtocolMode mode) : this(Encoding.UTF8, crypt, mode) { }
@@ -111,35 +92,47 @@ namespace XPloit.Core.Sockets.Protocols
 
             int length = bff.Length;
             if (length == 0) return 0;
-            if (length > _MaxLength) throw (new MaxLengthPacketException());
+
+            if (length >= _MaxLength)
+            {
+                // Dividir en partes mas pequeñas
+                int lengthH = length - _HeaderLength;
+                int maxPacketLength = _MaxLength - _HeaderLength;
+                uint packets = (uint)(lengthH / maxPacketLength);
+                if (lengthH % maxPacketLength != 0) packets++;
+
+                byte[] pak = BitConverterHelper.GetBytesUInt24(packets);
+
+                int write = 0;
+                int index = _HeaderLength;
+
+                int currentLength;
+                byte[] data = new byte[_MaxLength];    // Guid-length
+
+                lock (stream)
+                {
+                    // Header and Parts
+                    stream.Write(_HeaderPadding, 0, _HeaderLength);
+                    stream.Write(pak, 0, PartsHeaderLength);
+
+                    for (int x = 0; x < packets; x++)
+                    {
+                        currentLength = Math.Min(length - index, maxPacketLength);
+                        WriteLengthInPacket(data, 0, currentLength);
+
+                        Array.Copy(bff, index, data, _HeaderLength, currentLength);
+                        index += currentLength;
+
+                        stream.Write(data, 0, currentLength + _HeaderLength);
+                        write += currentLength + _HeaderLength;
+                    }
+                }
+
+                return write;
+            }
 
             // Append length to header
-            switch (_HeaderLength)
-            {
-                case 1:
-                    {
-                        bff[0] = (byte)(length - _HeaderLength);
-                        break;
-                    }
-                case 2:
-                    {
-                        byte[] bft = BitConverterHelper.GetBytesUInt16((ushort)(length - _HeaderLength));
-                        Array.Copy(bft, 0, bff, 0, _HeaderLength);
-                        break;
-                    }
-                case 3:
-                    {
-                        byte[] bft = BitConverterHelper.GetBytesUInt24((uint)(length - _HeaderLength));
-                        Array.Copy(bft, 0, bff, 0, _HeaderLength);
-                        break;
-                    }
-                case 4:
-                    {
-                        byte[] bft = BitConverterHelper.GetBytesInt32(length - _HeaderLength);
-                        Array.Copy(bft, 0, bff, 0, _HeaderLength);
-                        break;
-                    }
-            }
+            WriteLengthInPacket(bff, 0, length - _HeaderLength);
 
             //Log(bff, 0, length, true, cl.Parent.IsServer);
             stream.Write(bff, 0, length);
@@ -151,43 +144,49 @@ namespace XPloit.Core.Sockets.Protocols
             // Comprobar que la cabera es menor que el paquere
             if (stream == null) return null;
 
-            int msgLength = -1;
+            int index = 0, msgLength;
+            byte[] bxfData;
 
-            // Asignamos el tamaño del mensaje
-            switch (_HeaderLength)
+            lock (stream)
             {
-                case 0: { msgLength = 1; break; }
-                case 1: { msgLength = stream.ReadByte(); break; }
-                case 2:
+                msgLength = ReadMessageLength(stream);
+
+                // Control de tamaño máximo
+                if (msgLength >= _MaxLength)
+                {
+                    if (msgLength == _MaxLength)
                     {
-                        byte[] bxf = new byte[_HeaderLength];
-                        ReadFull(stream, bxf, 0, _HeaderLength);
-                        msgLength = (int)BitConverterHelper.ToUInt16(bxf, 0);
-                        break;
+                        // Mensaje partido, parsear
+                        byte[] parts = new byte[PartsHeaderLength];
+                        ReadFull(stream, parts, 0, PartsHeaderLength);
+
+                        uint iparts = BitConverterHelper.ToUInt24(parts, 0);
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            for (int x = 0; x < iparts; x++)
+                            {
+                                // Tamaño
+                                msgLength = ReadMessageLength(stream);
+
+                                bxfData = new byte[msgLength];
+                                ReadFull(stream, bxfData, 0, msgLength);
+
+                                ms.Write(bxfData, 0, msgLength);
+                            }
+
+                            bxfData = ms.ToArray();
+                            msgLength = bxfData.Length;
+                        }
                     }
-                case 3:
-                    {
-                        byte[] bxf = new byte[_HeaderLength];
-                        ReadFull(stream, bxf, 0, _HeaderLength);
-                        msgLength = (int)BitConverterHelper.ToUInt24(bxf, 0);
-                        break;
-                    }
-                case 4:
-                    {
-                        byte[] bxf = new byte[_HeaderLength];
-                        ReadFull(stream, bxf, 0, _HeaderLength);
-                        msgLength = (int)BitConverterHelper.ToInt32(bxf, 0);
-                        break;
-                    }
-                default: throw (new ProtocolException());
+                    else throw (new ProtocolException());
+                }
+                else
+                {
+                    bxfData = new byte[msgLength];
+                    ReadFull(stream, bxfData, 0, msgLength);
+                }
             }
-
-            // Control de tamaño máximo
-            if (msgLength > _MaxLength) throw (new ProtocolException());
-
-            int index = 0;
-            byte[] bxfData = new byte[msgLength];
-            ReadFull(stream, bxfData, 0, msgLength);
 
             //Log(msg, index - 4, length + 4, false, cl.Parent.IsServer);
             if (_Crypt != null)
@@ -202,6 +201,65 @@ namespace XPloit.Core.Sockets.Protocols
             return IXPloitSocketMsg.Deserialize(_Codec, bxfData, index, msgLength);
         }
 
+        #region Helpers
+        void WriteLengthInPacket(byte[] bff, int index, int length)
+        {
+            // Append length to header
+            switch (_HeaderLength)
+            {
+                case 1:
+                    {
+                        bff[index] = (byte)(length);
+                        break;
+                    }
+                case 2:
+                    {
+                        byte[] bft = BitConverterHelper.GetBytesUInt16((ushort)(length));
+                        Array.Copy(bft, 0, bff, index, _HeaderLength);
+                        break;
+                    }
+                case 3:
+                    {
+                        byte[] bft = BitConverterHelper.GetBytesUInt24((uint)(length));
+                        Array.Copy(bft, 0, bff, index, _HeaderLength);
+                        break;
+                    }
+                case 4:
+                    {
+                        byte[] bft = BitConverterHelper.GetBytesInt32(length);
+                        Array.Copy(bft, 0, bff, index, _HeaderLength);
+                        break;
+                    }
+            }
+        }
+        int ReadMessageLength(Stream stream)
+        {
+            // Asignamos el tamaño del mensaje
+            switch (_HeaderLength)
+            {
+                case 1: return stream.ReadByte();
+                case 2:
+                    {
+                        byte[] bxf = new byte[_HeaderLength];
+                        ReadFull(stream, bxf, 0, _HeaderLength);
+                        return BitConverterHelper.ToUInt16(bxf, 0);
+                    }
+                case 3:
+                    {
+                        byte[] bxf = new byte[_HeaderLength];
+                        ReadFull(stream, bxf, 0, _HeaderLength);
+                        return (int)BitConverterHelper.ToUInt24(bxf, 0);
+                    }
+                case 4:
+                    {
+                        byte[] bxf = new byte[_HeaderLength];
+                        ReadFull(stream, bxf, 0, _HeaderLength);
+                        return BitConverterHelper.ToInt32(bxf, 0);
+                    }
+                default: throw (new ProtocolException());
+            }
+        }
+        #endregion
         public bool Connect(XPloitSocketClient client) { return true; }
     }
 }

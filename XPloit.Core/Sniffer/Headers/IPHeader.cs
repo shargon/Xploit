@@ -3,8 +3,9 @@ using System.Net;
 using System;
 using System.IO;
 using System.Net.Sockets;
+using XPloit.Core.Sniffer.Interfaces;
 
-namespace XPloit.Core.Sniffer
+namespace XPloit.Core.Sniffer.Headers
 {
     public enum IPVersion
     {

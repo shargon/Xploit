@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using XPloit.Core.Sniffer.Headers;
+using XPloit.Core.Sniffer.Interfaces;
+using XPloit.Core.Sniffer.Streams;
 
 namespace XPloit.Core.Sniffer
 {
-    public class Sniffer : Job.IJobable
+    public class NetworkSniffer : Job.IJobable
     {
         const ushort BufferLength = 32 * 1024;
         readonly Socket _socket;
@@ -29,7 +31,7 @@ namespace XPloit.Core.Sniffer
         /// Constructor
         /// </summary>
         /// <param name="bindTo">Ip for bind</param>
-        public Sniffer(IPAddress bindTo)
+        public NetworkSniffer(IPAddress bindTo)
         {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
             _socket.Bind(new IPEndPoint(bindTo, 0));

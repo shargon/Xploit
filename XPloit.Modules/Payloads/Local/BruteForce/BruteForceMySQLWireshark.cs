@@ -6,6 +6,7 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Sniffer;
+using XPloit.Core.Sniffer.Streams;
 
 namespace XPloit.Modules.Auxiliary.Local
 {

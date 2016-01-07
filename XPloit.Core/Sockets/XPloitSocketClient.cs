@@ -18,11 +18,8 @@ namespace XPloit.Core.Sockets
         IPEndPoint _IPEndPoint;
         Socket _Socket;
         Stream _Stream;
-        XPloitSocket _Parent;
+        IXPloitSocketProtocol _Protocol;
         bool _HasTimeOut = true;
-
-        //object read_lock = new object();
-        object write_lock = new object();
 
         DateTime _LastRead = DateTime.Now;
         DateTime _lchk_status = DateTime.Now.AddDays(-1);
@@ -31,6 +28,12 @@ namespace XPloit.Core.Sockets
         EDissconnectReason _DisconnectReason = EDissconnectReason.None;
 
         ulong _MsgSend = 0, _MsgReceived = 0;
+
+        public delegate void delOnDisconnect(XPloitSocketClient sender, EDissconnectReason e);
+        public delegate void delOnMessage(XPloitSocketClient sender, IXPloitSocketMsg msg);
+
+        public event delOnDisconnect OnDisconnect;
+        public event delOnMessage OnMessage;
         #endregion
 
         #region Properties
@@ -84,9 +87,9 @@ namespace XPloit.Core.Sockets
         /// </summary>
         public object Tag { get { return _Tag; } set { _Tag = value; } }
         /// <summary>
-        /// Padre del cliente
+        /// Protocol
         /// </summary>
-        public XPloitSocket Parent { get { return _Parent; } }
+        public IXPloitSocketProtocol Protocol { get { return _Protocol; } }
         /// <summary>
         /// IPEndPoint del cliente
         /// </summary>
@@ -176,37 +179,42 @@ namespace XPloit.Core.Sockets
         public static int DefaultBufferLength { get { return _dfbl; } set { _dfbl = value; } }
         #endregion
 
-        internal XPloitSocketClient(XPloitSocket parent, Socket tc, bool speedLimit)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="protocol">Protocol</param>
+        /// <param name="socket">Socket</param>
+        /// <param name="speedLimit">Use speedLimit</param>
+        public XPloitSocketClient(IXPloitSocketProtocol protocol, Socket socket, bool speedLimit)
         {
-            _Parent = parent;
+            _Protocol = protocol;
 
-            _LocalEndPoint = tc.LocalEndPoint;
-            _RemoteEndPoint = tc.RemoteEndPoint;
+            _LocalEndPoint = socket.LocalEndPoint;
+            _RemoteEndPoint = socket.RemoteEndPoint;
 
-            tc.NoDelay = true;
-            tc.Blocking = true;
-            tc.DontFragment = true;
-            tc.SendTimeout = 0;
-            tc.ReceiveBufferSize = 0;
-            tc.SendBufferSize = 0;
-            tc.ReceiveTimeout = 0;
+            socket.NoDelay = true;
+            socket.Blocking = true;
+            socket.DontFragment = true;
+            socket.SendTimeout = 0;
+            socket.ReceiveBufferSize = 0;
+            socket.SendBufferSize = 0;
+            socket.ReceiveTimeout = 0;
 
             try
             {
-                tc.SendBufferSize = _dfbl;
-                tc.ReceiveBufferSize = _dfbl;
+                socket.SendBufferSize = _dfbl;
+                socket.ReceiveBufferSize = _dfbl;
 
-                if (speedLimit) _Stream = new StreamSpeedLimit(new NetworkStream(tc), StreamSpeedLimit.Infinite);
-                else _Stream = new NetworkStream(tc);
+                if (speedLimit) _Stream = new StreamSpeedLimit(new NetworkStream(socket), StreamSpeedLimit.Infinite);
+                else _Stream = new NetworkStream(socket);
 
-                _IPEndPoint = ((IPEndPoint)tc.RemoteEndPoint);
+                _IPEndPoint = ((IPEndPoint)socket.RemoteEndPoint);
             }
             catch { }
 
-            _Socket = tc;
+            _Socket = socket;
             var = new Dictionary<string, object>();
         }
-        
         /// <summary>
         /// Realiza la desconexión del cliente
         /// </summary>
@@ -239,19 +247,9 @@ namespace XPloit.Core.Sockets
             if (disok)
             {
                 _DisconnectReason = dr;
-                _Parent.RaiseOnDisconnect(this, dr);
+                if (OnDisconnect != null)
+                    OnDisconnect(this, dr);
             }
-        }
-        /// <summary>
-        /// Ejecuta el envio del mensaje para el cliente en cuestión
-        /// </summary>
-        /// <param name="msg">Mensaje a enviar</param>
-        public void RaiseOnMessage(IXPloitSocketMsg msg)
-        {
-            if (_Parent == null) return;
-
-            _MsgReceived++;
-            _Parent.RaiseOnMessage(this, msg);
         }
         /// <summary>
         /// Envia los mensajes al cliente en cuestión
@@ -260,51 +258,61 @@ namespace XPloit.Core.Sockets
         /// <returns>Devuelve el número de bytes enviados</returns>
         public int Send(params IXPloitSocketMsg[] msg)
         {
-            if (_Parent == null || msg == null) return 0;
+            if (_Protocol == null || msg == null) return 0;
 
             int ret = 0;
             try
             {
-                lock (write_lock)
+                foreach (IXPloitSocketMsg mx in msg)
                 {
-                    foreach (IXPloitSocketMsg mx in msg)
-                    {
-                        ret += _Parent.Protocol.Send(mx, _Stream);
-                        _MsgSend++;
-                    }
-                    _Stream.Flush();
+                    ret += _Protocol.Send(mx, _Stream);
+                    _MsgSend++;
                 }
+                _Stream.Flush();
             }
             catch { Disconnect(EDissconnectReason.Error); }
 
             return ret;
         }
         /// <summary>
-        /// Lee del socket y lo suma al buffer
+        /// Lee el mensaje o devuelve null si no hay
         /// </summary>
-        /// <param name="client">Client</param>
-        /// <returns>Bytes leidos</returns>
-        internal bool Read(XPloitSocketClient client)
+        public IXPloitSocketMsg Read()
         {
-            if (_Stream == null) return false;
+            if (_Stream == null) return null;
 
             try
             {
                 if (_Socket.Available > 0)
                 {
-                    IXPloitSocketMsg msg = _Parent.Protocol.Read(_Stream);
+                    IXPloitSocketMsg msg = _Protocol.Read(_Stream);
                     _LastRead = DateTime.Now;
+                    _MsgReceived++;
 
-                    if (msg != null) RaiseOnMessage(msg);
-                    return true;
+                    if (OnMessage != null)
+                        OnMessage(this, msg);
+
+                    return msg;
                 }
             }
             catch
             {
-                client.Disconnect(EDissconnectReason.Error);
-                return false;
+                Disconnect(EDissconnectReason.Error);
+                return null;
             }
-            return false;
+            return null;
+        }
+        /// <summary>
+        /// Lee el mensaje
+        /// </summary>
+        public IXPloitSocketMsg ReadOrWait()
+        {
+            IXPloitSocketMsg msg;
+
+            do msg = Read();
+            while (msg == null);
+
+            return msg;
         }
         /// <summary>
         /// Liberación de recursos

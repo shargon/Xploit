@@ -17,8 +17,10 @@ namespace XPloit.Test
         [TestMethod]
         public void TestSocketProtocol()
         {
-            using (XPloitSocket client = new XPloitSocket(new XPloitSocketProtocol(Encoding.UTF8, XPloitSocketProtocol.EProtocolMode.Int32), "127.0.0.1:77") { TimeOut = TimeSpan.Zero })
-            using (XPloitSocket server = new XPloitSocket(new XPloitSocketProtocol(Encoding.UTF8, XPloitSocketProtocol.EProtocolMode.Int32), 77) { TimeOut = TimeSpan.Zero })
+            XPloitSocketProtocol proto = new XPloitSocketProtocol(Encoding.UTF8, XPloitSocketProtocol.EProtocolMode.Byte);
+
+            using (XPloitSocket server = new XPloitSocket(proto, 77) { TimeOut = TimeSpan.Zero })
+            using (XPloitSocket client = new XPloitSocket(proto, "127.0.0.1:77") { TimeOut = TimeSpan.Zero })
             {
                 server.OnConnect += s_OnConnect;
                 server.OnMessage += s_OnMessage;
@@ -34,7 +36,7 @@ namespace XPloit.Test
         void client_OnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg)
         {
             // Client receive message
-            cl.Send(new XPloitMsgLogin() { User = "client", Password = "toServer" });
+            cl.Send(new XPloitMsgLogin() { Domain = "?", User = "client", Password = "toServer" });
         }
         void s_OnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg)
         {
@@ -43,7 +45,12 @@ namespace XPloit.Test
         }
         void s_OnConnect(XPloitSocket sender, XPloitSocketClient cl)
         {
-            cl.Send(new XPloitMsgLogin() { User = "server", Password = "toClient" });
+            cl.Send(new XPloitMsgLogin()
+            {
+                Domain = "250bytes".PadLeft(250, ' '),
+                User = "server Long message :)",
+                Password = "Password toClient"
+            });
         }
 
 
