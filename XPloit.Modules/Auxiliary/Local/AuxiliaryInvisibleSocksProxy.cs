@@ -61,9 +61,9 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public override bool Run()
         {
-            int version = Convert.ToInt32(Target["Version"]);
+            byte version = Convert.ToByte(Target["Version"]);
 
-            TcpForwarder tcp = new TcpForwarder(this, ProxyEndPoint, 4, ProxyUser, ProxyPassword);
+            TcpForwarder tcp = new TcpForwarder(this, ProxyEndPoint, version, ProxyUser, ProxyPassword);
             try
             {
                 tcp.Start(new IPEndPoint(IPAddress.Any, LocalPort), RemoteEndPoint);
