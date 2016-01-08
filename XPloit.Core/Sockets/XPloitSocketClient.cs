@@ -24,8 +24,9 @@ namespace XPloit.Core.Sockets
         DateTime _LastRead = DateTime.Now;
         DateTime _lchk_status = DateTime.Now.AddDays(-1);
         EndPoint _LocalEndPoint, _RemoteEndPoint;
-        Dictionary<string, object> var = null;
+        Dictionary<string, object> _Variables = null;
         EDissconnectReason _DisconnectReason = EDissconnectReason.None;
+        Dictionary<Guid, IXPloitSocketMsg> _Actions = new Dictionary<Guid, IXPloitSocketMsg>();
 
         ulong _MsgSend = 0, _MsgReceived = 0;
 
@@ -140,9 +141,9 @@ namespace XPloit.Core.Sockets
         /// <returns>Devuelve true si tiene la variable</returns>
         public bool HasVariable(string name)
         {
-            lock (var)
+            lock (_Variables)
             {
-                if (var.ContainsKey(name)) return true;
+                if (_Variables.ContainsKey(name)) return true;
             }
             return false;
         }
@@ -155,21 +156,21 @@ namespace XPloit.Core.Sockets
         {
             get
             {
-                lock (var)
+                lock (_Variables)
                 {
-                    if (var.ContainsKey(name)) return var[name];
+                    if (_Variables.ContainsKey(name)) return _Variables[name];
                 }
                 return null;
             }
             set
             {
-                lock (var)
+                lock (_Variables)
                 {
-                    if (var.ContainsKey(name))
+                    if (_Variables.ContainsKey(name))
                     {
-                        if (value == null) var.Remove(name); else var[name] = value;
+                        if (value == null) _Variables.Remove(name); else _Variables[name] = value;
                     }
-                    else var.Add(name, value);
+                    else _Variables.Add(name, value);
                 }
             }
         }
@@ -213,7 +214,7 @@ namespace XPloit.Core.Sockets
             catch { }
 
             _Socket = socket;
-            var = new Dictionary<string, object>();
+            _Variables = new Dictionary<string, object>();
         }
         /// <summary>
         /// Realiza la desconexión del cliente
@@ -275,6 +276,23 @@ namespace XPloit.Core.Sockets
             return ret;
         }
         /// <summary>
+        /// Envia el mensaje y devuelve una respuesta, Este método nunca hay que llamarlo desde el hilo del Socket
+        /// </summary>
+        /// <param name="msg">Mensaje</param>
+        public IXPloitSocketMsg SendAndWait(IXPloitSocketMsg msg)
+        {
+            Guid wait = msg.Id;
+            if (Send(msg) <= 0) return null;
+
+            IXPloitSocketMsg msgRet;
+            while (!_Actions.TryGetValue(wait, out msgRet))
+            {
+                //Read();
+                Thread.Sleep(0);
+            }
+            return msgRet;
+        }
+        /// <summary>
         /// Lee el mensaje o devuelve null si no hay
         /// </summary>
         public IXPloitSocketMsg Read()
@@ -283,24 +301,30 @@ namespace XPloit.Core.Sockets
 
             try
             {
-                if (_Socket.Available > 0)
+                if (_Socket.Available <= 0) return null;
+
+                IXPloitSocketMsg msg = _Protocol.Read(_Stream);
+                _LastRead = DateTime.Now;
+
+                if (msg == null) return null;
+                _MsgReceived++;
+
+                if (!Guid.Equals(msg.InResponseTo, Guid.Empty))
                 {
-                    IXPloitSocketMsg msg = _Protocol.Read(_Stream);
-                    _LastRead = DateTime.Now;
-                    _MsgReceived++;
-
-                    if (OnMessage != null)
-                        OnMessage(this, msg);
-
-                    return msg;
+                    _Actions.Add(msg.InResponseTo, msg);
+                    return null;
                 }
+
+                if (OnMessage != null)
+                    OnMessage(this, msg);
+
+                return msg;
             }
             catch
             {
                 Disconnect(EDissconnectReason.Error);
                 return null;
             }
-            return null;
         }
         /// <summary>
         /// Lee el mensaje

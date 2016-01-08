@@ -21,37 +21,36 @@ namespace XPloit.Test
             using (XPloitSocket server = new XPloitSocket(proto, 77) { TimeOut = TimeSpan.Zero })
             using (XPloitSocket client = new XPloitSocket(proto, "127.0.0.1:77") { TimeOut = TimeSpan.Zero })
             {
-                server.OnConnect += s_OnConnect;
                 server.OnMessage += s_OnMessage;
                 server.Start();
 
                 client.OnMessage += client_OnMessage;
                 client.Start();
 
+                IXPloitSocketMsg ret = server.Clients[0].SendAndWait(new XPloitMsgLogin()
+                {
+                    Domain = "2500bytes".PadLeft(2000, ' '),
+                    User = "server Long message :)",
+                    Password = "Password toClient"
+                });
+
+                if (ret != null)
+                {
+                    isover = true;
+                }
                 while (!isover) Thread.Sleep(1);
             }
         }
-
         void client_OnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg)
         {
             // Client receive message
-            cl.Send(new XPloitMsgLogin() { Domain = "?", User = "client", Password = "toServer" });
+            cl.Send(new XPloitMsgLogin() { Domain = "?", User = "client", Password = "toServer", InResponseTo = msg.Id });
         }
         void s_OnMessage(XPloitSocket sender, XPloitSocketClient cl, IXPloitSocketMsg msg)
         {
             // Server receive msg
             isover = true;
         }
-        void s_OnConnect(XPloitSocket sender, XPloitSocketClient cl)
-        {
-            cl.Send(new XPloitMsgLogin()
-            {
-                Domain = "250bytes".PadLeft(200, ' '),
-                User = "server Long message :)",
-                Password = "Password toClient"
-            });
-        }
-
 
         [TestMethod]
         public void TestTelnetProtocol()

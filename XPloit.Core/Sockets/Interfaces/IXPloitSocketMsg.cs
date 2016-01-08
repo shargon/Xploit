@@ -16,14 +16,26 @@ namespace XPloit.Core.Sockets.Interfaces
         /// Especifica el tipo de la clase
         /// </summary>
         public virtual EXPloitSocketMsg Type { get { throw (new Exception("ERROR")); } }
-
+        /// <summary>
+        /// Message Id
+        /// </summary>
+        [DataMember(Name = "i")]
+        public Guid Id { get; internal set; }
+        /// <summary>
+        /// Response Id
+        /// </summary>
+        [DataMember(Name = "r")]
+        public Guid InResponseTo { get; set; }
         //Variable para acelerar la reflexión
         static Dictionary<byte, SerializableJSONReferenceAttribute> _Cache = new Dictionary<byte, SerializableJSONReferenceAttribute>();
         /// <summary>
         /// Protected constructor
         /// </summary>
-        protected IXPloitSocketMsg() { }
-
+        protected IXPloitSocketMsg()
+        {
+            Id = Guid.NewGuid();
+            InResponseTo = Guid.Empty;
+        }
         /// <summary>
         /// Obtiene el array de bytes de la clase actual
         /// </summary>

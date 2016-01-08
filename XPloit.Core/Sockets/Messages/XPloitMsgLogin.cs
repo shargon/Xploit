@@ -13,9 +13,6 @@ namespace XPloit.Core.Sockets.Messages
         [DataMember(Name = "p")]
         public string Password { get; set; }
 
-        public XPloitMsgLogin()
-        {
-        }
         public override EXPloitSocketMsg Type { get { return EXPloitSocketMsg.Login; } }
     }
 }

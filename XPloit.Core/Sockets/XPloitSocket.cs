@@ -262,14 +262,14 @@ namespace XPloit.Core.Sockets
         {
             XPloitSocket cs = (XPloitSocket)o;
             XPloitSocketClient c = cs._Client;
-            bool check_time_out = cs._TimeOut != TimeSpan.Zero;
+            bool checkTimeOut = cs._TimeOut != TimeSpan.Zero;
 
             try
             {
                 while (!cs._IsStopping && c.IsConnected)
                 {
                     //lectura sincrona en este hilo
-                    if (!cs.Read(c) && check_time_out && c.HasTimeOut)
+                    if (!cs.Read(c) && checkTimeOut && c.HasTimeOut)
                     {
                         if (DateTime.Now - c.LastRead > cs._TimeOut && !cs.RaiseOnTimeOut(c))
                         {

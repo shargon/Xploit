@@ -9,9 +9,6 @@ namespace XPloit.Core.Sockets.Messages
         [DataMember(Name = "d")]
         public byte[] Data { get; set; }
 
-        public XPloitMsgByteArray()
-        {
-        }
         public override EXPloitSocketMsg Type { get { return EXPloitSocketMsg.ByteArray; } }
     }
 }

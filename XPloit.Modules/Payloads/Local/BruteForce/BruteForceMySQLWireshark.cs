@@ -5,7 +5,6 @@ using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Sniffer;
 using XPloit.Core.Sniffer.Streams;
 
 namespace XPloit.Modules.Auxiliary.Local
@@ -47,8 +46,8 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "WireShark TCPDump file")]
-        public string WireSharkTCPStreamFile { get; set; }
+        [ConfigurableProperty(Required = true, Description = "WireShark TCPStream file")]
+        public string TCPStreamFile { get; set; }
         #endregion
 
         public bool AllowMultipleOk { get { return false; } }
@@ -73,7 +72,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
             for (int i = 0; i < 20; i++)
             {
-                if ((byte)(finalHash[i] ^ firstHash[i]) != bhash[i]) 
+                if ((byte)(finalHash[i] ^ firstHash[i]) != bhash[i])
                     return false;
                 //if ((finalHash[i] ^ firstHash[i]) != ihash[i]) return false;
             }
@@ -88,7 +87,7 @@ namespace XPloit.Modules.Auxiliary.Local
             string Hash = null;
             string Seed = null;
 
-            TcpStream dump = TcpStream.FromFile(WireSharkTCPStreamFile);
+            TcpStream dump = TcpStream.FromFile(TCPStreamFile);
             crack(dump[0].Data, dump[1].Data, out Hash, out Seed, out DBUser);
 
             if (!string.IsNullOrEmpty(DBUser))
@@ -103,7 +102,7 @@ namespace XPloit.Modules.Auxiliary.Local
             bseed = Encoding.GetBytes(_seed);
             bhash = new byte[bhash_all.Length - 1];
             Array.Copy(bhash_all, 1, bhash, 0, bhash.Length);
-            
+
             return true;
         }
         public void PostRun() { }

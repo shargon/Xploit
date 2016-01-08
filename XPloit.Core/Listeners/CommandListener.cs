@@ -133,6 +133,69 @@ namespace XPloit.Core.Listeners
                                                     if (pi[0].PropertyType == typeof(string))
                                                     {
                                                         // TODO: archivos o carpetas
+                                                        string path = arguments[1];
+
+                                                        if (!string.IsNullOrEmpty(path))
+                                                        {
+                                                            string pathl = path.ToLowerInvariant();
+
+                                                            bool allowFolders =
+                                                                pi[0].Name.ToLowerInvariant().Contains("folder") ||
+                                                                pi[0].Name.ToLowerInvariant().Contains("directory") ||
+                                                                pi[0].Name.ToLowerInvariant().Contains("path");
+
+                                                            bool allowFiles = !allowFolders;
+                                                            if (allowFiles) allowFolders = true;
+
+                                                            if (Directory.Exists(path))
+                                                            {
+                                                                if (allowFiles)
+                                                                    foreach (string dir in Directory.GetFiles(path)) yield return dir;
+                                                                if (allowFolders)
+                                                                    foreach (string dir in Directory.GetDirectories(path)) yield return dir;
+                                                            }
+                                                            else
+                                                            {
+                                                                bool isWindows = SystemHelper.IsWindows;
+                                                                string path2 = Path.GetDirectoryName(path);
+
+                                                                if (!string.IsNullOrEmpty(path2))
+                                                                {
+                                                                    if (allowFiles)
+                                                                        foreach (string dir in Directory.GetFiles(path2))
+                                                                        {
+                                                                            if (isWindows)
+                                                                            {
+                                                                                if (!dir.ToLowerInvariant().StartsWith(pathl)) continue;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                if (!dir.StartsWith(path)) continue;
+                                                                            }
+                                                                            yield return dir;
+                                                                        }
+                                                                    foreach (string dir in Directory.GetDirectories(path2))
+                                                                    {
+                                                                        if (isWindows)
+                                                                        {
+                                                                            if (!dir.ToLowerInvariant().StartsWith(pathl)) continue;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if (!dir.StartsWith(path)) continue;
+                                                                        }
+
+                                                                        if (allowFolders)
+                                                                            foreach (string d in Directory.GetDirectories(dir)) yield return d;
+                                                                        if (allowFiles)
+                                                                            foreach (string d in Directory.GetFiles(dir)) yield return d;
+
+                                                                        if (allowFolders)
+                                                                            yield return dir;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
