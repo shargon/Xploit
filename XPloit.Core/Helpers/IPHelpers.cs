@@ -52,7 +52,7 @@ namespace XPloit.Core.Helpers
 
             try
             {
-                IPAddress[] hostIPs = Dns.GetHostAddresses(Dns.GetHostName());
+                IPAddress[] hostIPs = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
 
                 foreach (IPAddress hostIP in hostIPs)
                     if (hostIP.Equals(ip)) return true;

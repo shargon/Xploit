@@ -10,13 +10,22 @@ namespace XPloit.Core.Helpers.Crypt
         RijndaelManaged symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC };
         ICryptoTransform encryptor, decryptor;
 
+        public interface IAESConfig
+        {
+            string AesIV { get; }
+            string AesPassword { get; }
+            int AesIterations { get; }
+            AESHelper.EKeyLength AesKeyLength { get; }
+            string AesRGBSalt { get; }
+        }
+
         public enum EKeyLength
         {
             Length_128 = 128,
             Length_192 = 192,
             Length_256 = 256
         }
-
+        public AESHelper(IAESConfig config) : this(config.AesPassword, config.AesRGBSalt, config.AesIterations, config.AesIV, config.AesKeyLength) { }
         /// <summary>
         /// Clase de encriptación
         /// </summary>
@@ -44,45 +53,46 @@ namespace XPloit.Core.Helpers.Crypt
             encryptor = symmetricKey.CreateEncryptor(keyBytes, InitialVectorBytes);
             decryptor = symmetricKey.CreateDecryptor(keyBytes, InitialVectorBytes);
         }
-        /// <summary>
-        /// Clase de encriptación compatible con PHP
-        /// </summary>
-        /// <param name="keyString">Clave</param>
-        /// <param name="vectorInicial">Un texto o número de 16 bytes (16 caracteres)</param>
-        public AESHelper(string keyString, string vectorInicial, EKeyLength keyLength)
-        {
-            //if (keyString.Length != (int)keyLength / 8)
-            //{
-            //    int t = (int)keyLength / 8;
-            //    if (keyString.Length < t) keyString = keyString.PadLeft(t, '0');
-            //    else keyString = keyString.Substring(0, t);
-            //}
+        ///// <summary>
+        ///// Clase de encriptación compatible con PHP
+        ///// </summary>
+        ///// <param name="keyString">Clave</param>
+        ///// <param name="vectorInicial">Un texto o número de 16 bytes (16 caracteres)</param>
+        //public AESHelper(string keyString, string vectorInicial, EKeyLength keyLength)
+        //{
+        //    //if (keyString.Length != (int)keyLength / 8)
+        //    //{
+        //    //    int t = (int)keyLength / 8;
+        //    //    if (keyString.Length < t) keyString = keyString.PadLeft(t, '0');
+        //    //    else keyString = keyString.Substring(0, t);
+        //    //}
 
-            //if (vectorInicial.Length != 16)
-            //{
-            //    if (vectorInicial.Length < 16) vectorInicial = vectorInicial.PadLeft(16, '0');
-            //    else vectorInicial = vectorInicial.Substring(0, 16);
-            //}
+        //    //if (vectorInicial.Length != 16)
+        //    //{
+        //    //    if (vectorInicial.Length < 16) vectorInicial = vectorInicial.PadLeft(16, '0');
+        //    //    else vectorInicial = vectorInicial.Substring(0, 16);
+        //    //}
 
-            //Encoding encoding = Encoding.ASCII;
-            Encoding encoding = new UTF8Encoding();
-            byte[] Key = encoding.GetBytes(keyString);
-            byte[] IV = encoding.GetBytes(vectorInicial);
+        //    //Encoding encoding = Encoding.ASCII;
+        //    Encoding encoding = new UTF8Encoding();
+        //    byte[] Key = encoding.GetBytes(keyString);
+        //    byte[] IV = encoding.GetBytes(vectorInicial);
 
-            symmetricKey.Padding = PaddingMode.PKCS7;
-            symmetricKey.Mode = CipherMode.CBC;
-            symmetricKey.KeySize = (int)keyLength;
-            symmetricKey.BlockSize = (int)keyLength;
-            symmetricKey.Key = Key;
-            symmetricKey.IV = IV;
-            symmetricKey.Padding = PaddingMode.PKCS7;
+        //    symmetricKey.Padding = PaddingMode.PKCS7;
+        //    symmetricKey.Mode = CipherMode.CBC;
+        //    symmetricKey.KeySize = (int)keyLength;
+        //    symmetricKey.BlockSize = (int)keyLength;
+        //    symmetricKey.Key = Key;
+        //    symmetricKey.IV = IV;
+        //    symmetricKey.Padding = PaddingMode.PKCS7;
 
-            encryptor = symmetricKey.CreateEncryptor(Key, IV);
-            decryptor = symmetricKey.CreateDecryptor(Key, IV);
-        }
+        //    encryptor = symmetricKey.CreateEncryptor(Key, IV);
+        //    decryptor = symmetricKey.CreateDecryptor(Key, IV);
+        //}
 
-        public byte[] Encrypt(byte[] data) { return Encrypt(data, null); }
-        public byte[] Encrypt(byte[] data, byte[] header)
+        public byte[] Encrypt(byte[] data) { return Encrypt(data, 0, data.Length, null); }
+        public byte[] Encrypt(byte[] data, byte[] header) { return Encrypt(data, 0, data.Length, header); }
+        public byte[] Encrypt(byte[] data, int index, int length, byte[] header)
         {
             byte[] cipherTextBytes = null;
             try
@@ -94,7 +104,7 @@ namespace XPloit.Core.Helpers.Crypt
 
                     using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
-                        cs.Write(data, 0, data.Length);
+                        cs.Write(data, index, length);
                         cs.FlushFinalBlock();
                     }
 
@@ -198,6 +208,15 @@ namespace XPloit.Core.Helpers.Crypt
             catch { }
             result_length = -1;
             return false;
+        }
+        /// <summary>
+        /// Check if its OK
+        /// </summary>
+        /// <param name="cfg">Config</param>
+        public static bool IsConfigured(IAESConfig cfg)
+        {
+            if (cfg == null) return false;
+            return !string.IsNullOrEmpty(cfg.AesPassword) && !string.IsNullOrEmpty(cfg.AesIV) && !string.IsNullOrEmpty(cfg.AesRGBSalt);
         }
     }
 }

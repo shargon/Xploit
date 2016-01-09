@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using System;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -127,6 +128,18 @@ namespace XPloit.Core.Helpers
             StringBuilder sb = new StringBuilder();
             for (int x = 0; x < iterations; x++) sb.Append(input);
             return sb.ToString();
+        }
+        /// <summary>
+        /// Returns if the input match with the pattern (*.midomain.???)
+        /// </summary>
+        /// <param name="pattern">Patter</param>
+        /// <param name="input">Input</param>
+        public static bool Like(string pattern, string input)
+        {
+            if (string.IsNullOrEmpty(pattern)) return false;
+            if (string.IsNullOrEmpty(input)) return false;
+
+            return Operators.LikeString(input, pattern, Microsoft.VisualBasic.CompareMethod.Text);
         }
     }
 }

@@ -56,6 +56,112 @@ namespace XPloit.Core.Command
 
             PromptCharacter = "> ";
         }
+        string _LastPercent = null;
+        double _ProgressVal = 0, _ProgressMax = 0;
+        int _ProgressX = -1, _ProgressY = -1;
+        public bool IsInProgress { get { return _ProgressX >= 0 && _ProgressY >= 0; } }
+
+        public void WriteProgress(double value)
+        {
+            _ProgressVal = value;
+
+            if (value > _ProgressMax) value = _ProgressMax;
+            double percent = (value * 100.0) / _ProgressMax;
+
+            string lp = percent.ToString("0.0 '%'");
+            if (lp == _LastPercent) return;
+            _LastPercent = lp;
+
+            Console.SetCursorPosition(_ProgressX, _ProgressY);
+            int ip = (int)percent / 10;
+
+            ConsoleColor last = _LastFore;
+            SetForeColor(last);
+            Write("[");
+
+            if (ip > 0)
+            {
+                if (ip >= 8) SetForeColor(ConsoleColor.Green);
+                else if (ip >= 6) SetForeColor(ConsoleColor.DarkGreen);
+                else if (ip >= 4) SetForeColor(ConsoleColor.DarkYellow);
+                else SetForeColor(ConsoleColor.Red);
+
+                Write("#".PadLeft(ip, '#'));
+            }
+            if (ip < 10)
+            {
+                Write(" ".PadLeft(10 - ip, ' '));
+            }
+
+            SetForeColor(last);
+            Write("] " + _LastPercent);
+            SetForeColor(last);
+        }
+        public void EndProgress()
+        {
+            WriteProgress(_ProgressMax);
+
+            _ProgressX = -1;
+            _ProgressY = -1;
+            _LastPercent = null;
+
+            WriteLine("");
+        }
+        public void StartProgress(double max)
+        {
+            _LastPercent = null;
+
+            WriteStart("%", ConsoleColor.Yellow);
+
+            _ProgressMax = max;
+            _ProgressX = Console.CursorLeft;
+            _ProgressY = Console.CursorTop;
+
+            WriteProgress(0);
+        }
+        void WriteStart(string ch, ConsoleColor color)
+        {
+            SetForeColor(ConsoleColor.Gray);
+            Write("[");
+            SetForeColor(color);
+            Write(ch);
+            SetForeColor(ConsoleColor.Gray);
+            Write("] ");
+        }
+        public void WriteError(string error)
+        {
+            if (string.IsNullOrEmpty(error)) error = "";
+            else error = error.Trim();
+
+            WriteStart("!", ConsoleColor.Red);
+            SetForeColor(ConsoleColor.Red);
+            WriteLine(error.Replace("\n", "\n    "));
+        }
+        public void WriteInfo(string info)
+        {
+            if (string.IsNullOrEmpty(info)) info = "";
+            else info = info.Trim();
+
+            WriteStart("*", ConsoleColor.Cyan);
+            WriteLine(info.Replace("\n", "\n    "));
+        }
+        public void WriteInfo(string info, string colorText, ConsoleColor color)
+        {
+            if (string.IsNullOrEmpty(info)) info = "";
+            else info = info.Trim();
+
+            WriteStart("*", ConsoleColor.Cyan);
+            Write(info);
+
+            if (!string.IsNullOrEmpty(colorText))
+            {
+                Write(" ... [");
+                SetForeColor(color);
+                Write(colorText);
+                SetForeColor(ConsoleColor.Gray);
+                WriteLine("]");
+            }
+        }
         public void Clear() { Console.Clear(); }
         /// <summary>
         /// Write a char

@@ -131,7 +131,7 @@ namespace XPloit.Core.Sockets.Proxy
             if (port <= 0 || port > 65535)
                 throw new ArgumentException("Invalid port.");
             if (this.ProtocolType != ProtocolType.Tcp || ProxyType == ProxyTypes.None || ProxyEndPoint == null)
-                base.Connect(new IPEndPoint(Dns.Resolve(host).AddressList[0], port));
+                base.Connect(new IPEndPoint(System.Net.Dns.Resolve(host).AddressList[0], port));
             else
             {
                 base.Connect(ProxyEndPoint);
@@ -246,7 +246,7 @@ namespace XPloit.Core.Sockets.Proxy
         {
             try
             {
-                Dns.BeginResolve(host, new AsyncCallback(this.OnResolved), this);
+                System.Net.Dns.BeginResolve(host, new AsyncCallback(this.OnResolved), this);
                 return new IAsyncProxyResult();
             }
             catch
@@ -262,7 +262,7 @@ namespace XPloit.Core.Sockets.Proxy
         {
             try
             {
-                IPHostEntry dns = Dns.EndResolve(asyncResult);
+                IPHostEntry dns = System.Net.Dns.EndResolve(asyncResult);
                 base.BeginConnect(new IPEndPoint(dns.AddressList[0], RemotePort), new AsyncCallback(this.OnConnect), State);
             }
             catch (Exception e)

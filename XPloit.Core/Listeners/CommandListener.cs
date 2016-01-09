@@ -269,7 +269,7 @@ namespace XPloit.Core.Listeners
         {
             if (_Current == null)
             {
-                WriteError(Lang.Get("Require_Module"));
+                _IO.WriteError(Lang.Get("Require_Module"));
                 return false;
             }
 
@@ -277,7 +277,7 @@ namespace XPloit.Core.Listeners
             {
                 if (_Current.ModuleType != expected)
                 {
-                    WriteError(Lang.Get("Require_Module_Type", expected.ToString()));
+                    _IO.WriteError(Lang.Get("Require_Module_Type", expected.ToString()));
                     return false;
                 }
             }
@@ -302,7 +302,7 @@ namespace XPloit.Core.Listeners
         {
             if (JobCollection.Current.Count <= 0)
             {
-                WriteInfo(Lang.Get("Nothing_To_Show"));
+                _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
                 return;
             }
 
@@ -418,23 +418,23 @@ namespace XPloit.Core.Listeners
             {
                 if (string.IsNullOrEmpty(args))
                 {
-                    WriteError(Lang.Get("Incorrect_Command_Usage"));
+                    _IO.WriteError(Lang.Get("Incorrect_Command_Usage"));
                     return;
                 }
 
                 int job = (int)ConvertHelper.ConvertTo(args, typeof(int));
                 if (JobCollection.Current.Kill(job))
                 {
-                    WriteInfo(Lang.Get("Kill_Job"), Lang.Get("Ok"), ConsoleColor.Green);
+                    _IO.WriteInfo(Lang.Get("Kill_Job"), Lang.Get("Ok"), ConsoleColor.Green);
                 }
                 else
                 {
-                    WriteInfo(Lang.Get("Kill_Job"), Lang.Get("Error"), ConsoleColor.Red);
+                    _IO.WriteInfo(Lang.Get("Kill_Job"), Lang.Get("Error"), ConsoleColor.Red);
                 }
             }
             catch (Exception e)
             {
-                WriteError(e.Message);
+                _IO.WriteError(e.Message);
             }
         }
         public void cmdRCheck(string args)
@@ -457,19 +457,19 @@ namespace XPloit.Core.Listeners
             if (!CheckModule(false, EModuleType.None)) return;
 
             _IO.AddInput("use " + _Current.FullPath);
-            WriteInfo(Lang.Get("Reloaded_Module", _Current.FullPath), Lang.Get("Ok"), ConsoleColor.Green);
+            _IO.WriteInfo(Lang.Get("Reloaded_Module", _Current.FullPath), Lang.Get("Ok"), ConsoleColor.Green);
         }
         public void cmdLoad(string args)
         {
             if (string.IsNullOrEmpty(args))
             {
-                WriteError(Lang.Get("Incorrect_Command_Usage"));
+                _IO.WriteError(Lang.Get("Incorrect_Command_Usage"));
                 return;
             }
             args = args.Trim();
             if (!File.Exists(args))
             {
-                WriteError(Lang.Get("File_Not_Exists", args));
+                _IO.WriteError(Lang.Get("File_Not_Exists", args));
                 return;
             }
 
@@ -507,13 +507,13 @@ namespace XPloit.Core.Listeners
         {
             if (string.IsNullOrEmpty(args))
             {
-                WriteError(Lang.Get("Incorrect_Command_Usage"));
+                _IO.WriteError(Lang.Get("Incorrect_Command_Usage"));
                 return;
             }
             args = args.Trim();
             if (!File.Exists(args))
             {
-                WriteError(Lang.Get("File_Not_Exists", args));
+                _IO.WriteError(Lang.Get("File_Not_Exists", args));
                 return;
             }
             try
@@ -545,19 +545,21 @@ namespace XPloit.Core.Listeners
             args = args.Trim();
 
             string[] prop = ArgumentHelper.ArrayFromCommandLine(args);
-            if (prop == null || prop.Length != 2)
+            if (prop == null || (prop.Length != 2 && prop.Length != 1))
             {
-                WriteError(Lang.Get("Incorrect_Command_Usage"));
+                _IO.WriteError(Lang.Get("Incorrect_Command_Usage"));
                 return;
             }
 
-            if (!_Current.SetProperty(prop[0], prop[1]))
+            object val = prop.Length == 2 ? prop[1] : null;
+
+            if (!_Current.SetProperty(prop[0], val))
             {
-                WriteError(Lang.Get("Error_Converting_Value"));
+                _IO.WriteError(Lang.Get("Error_Converting_Value"));
             }
             else
             {
-                if (global) _CurrentGlobal.SetProperty(prop[0], prop[1]);
+                if (global) _CurrentGlobal.SetProperty(prop[0], val);
             }
         }
         public void cmdInfo(string args)
@@ -661,11 +663,11 @@ namespace XPloit.Core.Listeners
                 if (primera1 || primera2)
                     tb.OutputColored(_IO);
                 else
-                    WriteInfo(Lang.Get("Nothing_To_Show"));
+                    _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
             }
             else
             {
-                WriteInfo(Lang.Get("Be_More_Specific"));
+                _IO.WriteInfo(Lang.Get("Be_More_Specific"));
             }
         }
         public void cmdShow(string args)
@@ -815,7 +817,7 @@ namespace XPloit.Core.Listeners
                     {
                         Payload[] ps = curM == null ? null : PayloadCollection.Current.GetPayloadAvailables(curM.PayloadRequirements);
                         if (ps == null || ps.Length == 0)
-                            WriteInfo(Lang.Get("Nothing_To_Show"));
+                            _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
                         {
                             CommandTable tb = new CommandTable();
@@ -833,7 +835,7 @@ namespace XPloit.Core.Listeners
                     {
                         Target[] ps = curM == null ? null : curM.Targets;
                         if (ps == null || ps.Length <= 1)
-                            WriteInfo(Lang.Get("Nothing_To_Show"));
+                            _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
                         {
                             CommandTable tb = new CommandTable();
@@ -854,7 +856,7 @@ namespace XPloit.Core.Listeners
                 default:
                     {
                         // incorrect use
-                        WriteError(Lang.Get("Incorrect_Command_Usage"));
+                        _IO.WriteError(Lang.Get("Incorrect_Command_Usage"));
                         _IO.AddInput("help show");
                         break;
                     }
@@ -890,66 +892,11 @@ namespace XPloit.Core.Listeners
                 }
             }
 
-            if (_Current == null) WriteError(Lang.Get(string.IsNullOrEmpty(args) ? "Command_Incomplete" : "Module_Not_Found", args));
+            if (_Current == null) _IO.WriteError(Lang.Get(string.IsNullOrEmpty(args) ? "Command_Incomplete" : "Module_Not_Found", args));
             //else
             //{
             //    _Command.PromptCharacter = _Current.Name + "> ";
             //}
-        }
-        #endregion
-
-        #region Log methods
-        void WriteStart(string ch, ConsoleColor color)
-        {
-            if (_IO == null) return;
-
-            _IO.SetForeColor(ConsoleColor.Gray);
-            _IO.Write("[");
-            _IO.SetForeColor(color);
-            _IO.Write(ch);
-            _IO.SetForeColor(ConsoleColor.Gray);
-            _IO.Write("] ");
-
-        }
-        public void WriteError(string error)
-        {
-            if (_IO == null) return;
-
-            if (string.IsNullOrEmpty(error)) error = "";
-            else error = error.Trim();
-
-            WriteStart("!", ConsoleColor.Red);
-            _IO.SetForeColor(ConsoleColor.Red);
-            _IO.WriteLine(error.Replace("\n", "\n    "));
-        }
-        public void WriteInfo(string info)
-        {
-            if (_IO == null) return;
-
-            if (string.IsNullOrEmpty(info)) info = "";
-            else info = info.Trim();
-
-            WriteStart("*", ConsoleColor.Cyan);
-            _IO.WriteLine(info.Replace("\n", "\n    "));
-        }
-        public void WriteInfo(string info, string colorText, ConsoleColor color)
-        {
-            if (_IO == null) return;
-
-            if (string.IsNullOrEmpty(info)) info = "";
-            else info = info.Trim();
-
-            WriteStart("*", ConsoleColor.Cyan);
-            _IO.Write(info);
-
-            if (!string.IsNullOrEmpty(colorText))
-            {
-                _IO.Write(" ... [");
-                _IO.SetForeColor(color);
-                _IO.Write(colorText);
-                _IO.SetForeColor(ConsoleColor.Gray);
-                _IO.WriteLine("]");
-            }
         }
         #endregion
 

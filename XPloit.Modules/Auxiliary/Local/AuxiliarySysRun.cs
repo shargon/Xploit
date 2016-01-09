@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security;
+using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -47,6 +48,8 @@ namespace XPloit.Modules.Auxiliary.Local
         public bool UseShellExecute { get; set; }
         [ConfigurableProperty(Description = "Windows verb")]
         public string Verb { get; set; }
+        [ConfigurableProperty(Description = "Return output")]
+        public bool ReturnOutput { get; set; }
         [ConfigurableProperty(Description = "Process Window Style")]
         public ProcessWindowStyle ProcessWindowStyle { get; set; }
         #endregion
@@ -63,6 +66,7 @@ namespace XPloit.Modules.Auxiliary.Local
             UserName = null;
             Domain = null;
 
+            ReturnOutput = false;
             CreateWindow = false;
             UseShellExecute = false;
             Verb = null;
@@ -83,6 +87,12 @@ namespace XPloit.Modules.Auxiliary.Local
                 WindowStyle = (ProcessWindowStyle)this.ProcessWindowStyle,
             };
 
+            if (ReturnOutput)
+            {
+                pi.RedirectStandardOutput = true;
+                pi.RedirectStandardError = true;
+            }
+
             if (!string.IsNullOrEmpty(this.Password))
             {
                 pi.Password = new SecureString();
@@ -92,19 +102,44 @@ namespace XPloit.Modules.Auxiliary.Local
 
             return pi;
         }
-
         public override bool Run()
         {
+            StringBuilder output = new StringBuilder();
+            StringBuilder error = new StringBuilder();
+
             ProcessStartInfo info = GetProcessStartInfo();
             if (info == null) return false;
 
             using (Process pr = new Process())
             {
                 pr.StartInfo = info;
+                pr.EnableRaisingEvents = true;
+                pr.OutputDataReceived += (object e, DataReceivedEventArgs outLine) =>
+                {
+                    output.AppendLine(outLine.Data);
+                };
+                pr.ErrorDataReceived += (object e, DataReceivedEventArgs outLine) =>
+                {
+                    error.AppendLine(outLine.Data);
+                };
 
                 if (pr.Start())
                 {
                     WriteInfo("Executed in pid ", pr.Id.ToString(), ConsoleColor.Green);
+
+                    if (ReturnOutput)
+                    {
+                        pr.BeginOutputReadLine();
+                        pr.BeginErrorReadLine();
+                        pr.WaitForExit();
+
+                        if (error.ToString().Trim().Length > 0)
+                            WriteError("Error" + Environment.NewLine + error.ToString().Trim());
+
+                        if (output.ToString().Trim().Length > 0)
+                            WriteInfo("Output" + Environment.NewLine + output.ToString().Trim());
+                    }
+
                     return true;
                 }
                 return false;

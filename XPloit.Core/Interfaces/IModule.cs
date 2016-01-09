@@ -3,7 +3,6 @@ using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
-using XPloit.Core.Requirements.Payloads;
 
 namespace XPloit.Core.Interfaces
 {
@@ -26,57 +25,43 @@ namespace XPloit.Core.Interfaces
         }
 
         #region Log methods
-        void WriteStart(string ch, ConsoleColor color)
+        public bool IsInProgress
+        {
+            get
+            {
+                if (_IO == null) return false;
+                return _IO.IsInProgress;
+            }
+        }
+        public void WriteProgress(double value)
         {
             if (_IO == null) return;
-
-            _IO.SetForeColor(ConsoleColor.Gray);
-            _IO.Write("[");
-            _IO.SetForeColor(color);
-            _IO.Write(ch);
-            _IO.SetForeColor(ConsoleColor.Gray);
-            _IO.Write("] ");
-
+            _IO.WriteProgress(value);
+        }
+        public void EndProgress()
+        {
+            if (_IO == null) return;
+            _IO.EndProgress();
+        }
+        public void StartProgress(double max)
+        {
+            if (_IO == null) return;
+            _IO.StartProgress(max);
         }
         public void WriteError(string error)
         {
             if (_IO == null) return;
-
-            if (string.IsNullOrEmpty(error)) error = "";
-            else error = error.Trim();
-
-            WriteStart("!", ConsoleColor.Red);
-            _IO.SetForeColor(ConsoleColor.Red);
-            _IO.WriteLine(error.Replace("\n", "\n    "));
+            _IO.WriteError(error);
         }
         public void WriteInfo(string info)
         {
             if (_IO == null) return;
-
-            if (string.IsNullOrEmpty(info)) info = "";
-            else info = info.Trim();
-
-            WriteStart("*", ConsoleColor.Cyan);
-            _IO.WriteLine(info.Replace("\n", "\n    "));
+            _IO.WriteInfo(info);
         }
         public void WriteInfo(string info, string colorText, ConsoleColor color)
         {
             if (_IO == null) return;
-
-            if (string.IsNullOrEmpty(info)) info = "";
-            else info = info.Trim();
-
-            WriteStart("*", ConsoleColor.Cyan);
-            _IO.Write(info);
-
-            if (!string.IsNullOrEmpty(colorText))
-            {
-                _IO.Write(" ... [");
-                _IO.SetForeColor(color);
-                _IO.Write(colorText);
-                _IO.SetForeColor(ConsoleColor.Gray);
-                _IO.WriteLine("]");
-            }
+            _IO.WriteInfo(info, colorText, color);
         }
         public void Beep()
         {

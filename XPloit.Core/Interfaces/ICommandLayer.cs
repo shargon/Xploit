@@ -16,6 +16,19 @@ namespace XPloit.Core.Interfaces
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource source);
         string ReadPassword(PromptDelegate prompt);
 
+        // Helpers
+
+        void WriteError(string error);
+        void WriteInfo(string info);
+        void WriteInfo(string info, string colorText, ConsoleColor color);
+
+        // Progress
+
+        bool IsInProgress { get; }
+        void WriteProgress(double value);
+        void EndProgress();
+        void StartProgress(double max);
+
         // Sound
 
 
