@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Net;
 
 namespace XPloit.Core.Helpers
@@ -23,6 +24,8 @@ namespace XPloit.Core.Helpers
         static Type _DateTimeType = typeof(DateTime);
         static Type _IPAddressType = typeof(IPAddress);
         static Type _IPEndPointType = typeof(IPEndPoint);
+        static Type _FileInfoType = typeof(FileInfo);
+        static Type _DirectoryInfoType = typeof(DirectoryInfo);
 
         static Type _IListType = typeof(IList);
 
@@ -159,6 +162,9 @@ namespace XPloit.Core.Helpers
                     if (!IPAddress.TryParse(input.Trim(), out r)) return IPAddress.Any;
                     return r;
                 }
+                if (type == _FileInfoType) return new FileInfo(input);
+                if (type == _DirectoryInfoType) return new DirectoryInfo(input);
+
                 if (type == _IPEndPointType)
                 {
                     string[] si = input.Trim().Split(',');

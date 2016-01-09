@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using XPloit.Core;
 using XPloit.Core.Attributes;
@@ -37,13 +38,15 @@ namespace XPloit.Modules.Auxiliary.Local
         [ConfigurableProperty(Required = true, Description = "Address for binding")]
         public IPAddress LocalAddress { get; set; }
         [ConfigurableProperty(Required = true, Description = "Directory for creating TcpStream files")]
-        public string DumpFolder { get; set; }
+        public DirectoryInfo DumpFolder { get; set; }
         #endregion
 
         public override bool Run()
         {
             if (!SystemHelper.IsAdministrator())
                 WriteError("Require admin rights");
+
+            if (!DumpFolder.Exists) return false;
 
             NetworkSniffer s = new NetworkSniffer(LocalAddress);
             s.OnTcpStream += s_OnTcpStream;
@@ -62,6 +65,12 @@ namespace XPloit.Modules.Auxiliary.Local
                 if (!SystemHelper.IsAdministrator())
                     WriteError("Require admin rights");
 
+                if (!DumpFolder.Exists)
+                {
+                    WriteError("DumpFolder must exists"); 
+                    return ECheck.Error;
+                }
+
                 s = new NetworkSniffer(LocalAddress);
                 s.Filter = new SnifferPortFilter(this.LocalPort);
                 s.Start();
@@ -79,7 +88,7 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             if (stream == null) return;
 
-            stream.DumpToFile(DumpFolder + System.IO.Path.DirectorySeparatorChar +
+            stream.DumpToFile(DumpFolder.FullName + System.IO.Path.DirectorySeparatorChar +
                 stream.Source.ToString().Replace(":", ",") + " - " +
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }

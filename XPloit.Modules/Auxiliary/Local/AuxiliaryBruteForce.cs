@@ -35,7 +35,7 @@ namespace XPloit.Modules.Auxiliary.Local
         [ConfigurableProperty(Required = true, Description = "Read lines number per block")]
         public int ReadBlock { get; set; }
         [ConfigurableProperty(Required = true, Description = "Wordlist file")]
-        public string WordList { get; set; }
+        public FileInfo WordListFile { get; set; }
         [ConfigurableProperty(Required = true, Description = "Save state for next call")]
         public bool SaveState { get; set; }
         #endregion
@@ -57,11 +57,13 @@ namespace XPloit.Modules.Auxiliary.Local
 
             try
             {
+                if (!WordListFile.Exists) return false;
+
                 int readBlock = Math.Max(1, ReadBlock);
                 int threads = Math.Max(1, Threads);
                 bool save = SaveState;
 
-                using (StreamReader reader = new StreamReader(WordList))
+                using (StreamReader reader = new StreamReader(WordListFile.FullName))
                 {
                     string[] toCrack = new string[readBlock];
                     int index = 0;

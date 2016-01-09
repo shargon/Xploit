@@ -77,8 +77,9 @@ namespace XPloit.Core
                 Payload[] payloads = PayloadCollection.Current.GetPayloadAvailables(PayloadRequirements);
                 if (payloads != null && payloads.Length == 1)
                 {
-                    Payload = payloads[0];
-                    Payload.SetIO(io);
+                    //Payload = payloads[0];
+                    SetProperty("Payload", payloads[0]);
+                    //Payload.SetIO(io);
                 }
             }
         }

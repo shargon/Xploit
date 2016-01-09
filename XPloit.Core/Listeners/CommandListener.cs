@@ -116,23 +116,23 @@ namespace XPloit.Core.Listeners
                                         if (pi == null || pi.Length == 0) pi = ReflectionHelper.GetProperties(_Current, pname);
                                         if (pi != null && pi.Length > 0)
                                         {
-                                            if (pi[0].PropertyType == typeof(bool))
+                                            Type tp = pi[0].PropertyType;
+                                            if (tp == typeof(bool))
                                             {
                                                 yield return "true";
                                                 yield return "false";
                                             }
                                             else
                                             {
-                                                if (pi[0].PropertyType.IsEnum)
+                                                if (tp.IsEnum)
                                                 {
                                                     foreach (string name in Enum.GetNames(pi[0].PropertyType))
                                                         yield return name;
                                                 }
                                                 else
                                                 {
-                                                    if (pi[0].PropertyType == typeof(string))
+                                                    if (/*tp == typeof(string) ||*/ tp == typeof(FileInfo) || tp == typeof(DirectoryInfo))
                                                     {
-                                                        // TODO: archivos o carpetas
                                                         string path = arguments[1];
 
                                                         if (!string.IsNullOrEmpty(path))
@@ -140,9 +140,10 @@ namespace XPloit.Core.Listeners
                                                             string pathl = path.ToLowerInvariant();
 
                                                             bool allowFolders =
+                                                                tp == typeof(DirectoryInfo) /*||
                                                                 pi[0].Name.ToLowerInvariant().Contains("folder") ||
                                                                 pi[0].Name.ToLowerInvariant().Contains("directory") ||
-                                                                pi[0].Name.ToLowerInvariant().Contains("path");
+                                                                pi[0].Name.ToLowerInvariant().Contains("path")*/;
 
                                                             bool allowFiles = !allowFolders;
                                                             if (allowFiles) allowFolders = true;

@@ -23,7 +23,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
         #region Properties
         [ConfigurableProperty(Required = true, Description = "File where is write the word list")]
-        public string File { get; set; }
+        public FileInfo File { get; set; }
         #endregion
 
         class check
@@ -44,7 +44,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public override bool Run()
         {
             DictinaryGenCracker caction = null;
-            try { caction = new DictinaryGenCracker(File); }
+            try { caction = new DictinaryGenCracker(File.FullName); }
             catch
             {
                 if (caction != null) caction.Dispose();

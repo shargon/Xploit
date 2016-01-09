@@ -130,7 +130,7 @@ namespace XPloit.Core.Interfaces
         public IModule Clone() { return (IModule)ReflectionHelper.Clone(this, true); }
 
         /// <summary>
-        /// Set property Value
+        /// Establece la propiedad del módulo, si el modulo y el payload tienen el mismo nombre la intentan establecer de los dos
         /// </summary>
         /// <param name="propertyName">Property</param>
         /// <param name="value">Value</param>
@@ -138,6 +138,8 @@ namespace XPloit.Core.Interfaces
         public bool SetProperty(string propertyName, object value)
         {
             if (string.IsNullOrEmpty(propertyName)) return false;
+
+            bool ret = false;
 
             if (this is Module)
             {
@@ -164,23 +166,26 @@ namespace XPloit.Core.Interfaces
                 if (m.Payload != null)
                 {
                     if (m.Payload.SetProperty(propertyName, value))
-                        return true;
+                        ret = true;
                 }
 
-                bool dv = ReflectionHelper.SetProperty(this, propertyName, value);
-
-                if (dv && string.Compare(propertyName, "Payload", true) == 0)
+                if (ReflectionHelper.SetProperty(this, propertyName, value))
                 {
-                    if (m.Payload != null)
+                    ret = true;
+                    if (string.Compare(propertyName, "Payload", true) == 0 && m.Payload != null)
+                    {
+                        // Prepare payload for this module
                         m.Payload.SetIO(_IO);
+                    }
                 }
-
-                return dv;
             }
             else
             {
-                return ReflectionHelper.SetProperty(this, propertyName, value);
+                if (ReflectionHelper.SetProperty(this, propertyName, value))
+                    ret = true;
             }
+
+            return ret;
         }
         /// <summary>
         /// Return true if are in this query

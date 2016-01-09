@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using XPloit.Core.Attributes;
@@ -34,6 +35,7 @@ namespace XPloit.Core.Helpers
                     else
                     {
                         pi[0].SetValue(obj, value);
+                        return true;
                     }
                 }
                 return false;
@@ -114,7 +116,9 @@ namespace XPloit.Core.Helpers
                             pi.PropertyType != typeof(IPAddress) &&
                             pi.PropertyType != typeof(IPEndPoint) &&
                             pi.PropertyType != typeof(TimeSpan) &&
-                            pi.PropertyType != typeof(DateTime)
+                            pi.PropertyType != typeof(DateTime) &&
+                            pi.PropertyType != typeof(DirectoryInfo) &&
+                            pi.PropertyType != typeof(FileInfo)
                             )
                             continue;
                     }
