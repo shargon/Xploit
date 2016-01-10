@@ -17,6 +17,8 @@ namespace XPloit.Core.Requirements.Payloads
         /// <param name="types">Types</param>
         public UniquePayload(params Type[] types) { _Types = types; }
 
+        public bool ItsRequired() { return true; }
+
         public bool IsAllowed(Payload payload)
         {
             Type t2 = payload.GetType();

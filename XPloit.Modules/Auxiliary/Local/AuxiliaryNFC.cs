@@ -30,7 +30,7 @@ namespace XPloit.Modules.Auxiliary.Local
             {
                 return new Target[]
                 {
-                    new Target(EPlatform.RFID ,"Mifare-1K", new Variable("Sectors",12) )
+                    new Target(EPlatform.RFID ,EArquitecture.None, "Mifare-1K", new Variable("Sectors",12) )
                 };
             }
         }

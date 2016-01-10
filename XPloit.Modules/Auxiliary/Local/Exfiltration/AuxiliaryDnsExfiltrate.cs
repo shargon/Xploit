@@ -35,12 +35,12 @@ namespace XPloit.Modules.Auxiliary.Local
             {
                 return new Target[]
                 {
-                    new Target(EPlatform.None,"Id Incremental (1byte)"  ,new Variable("Size", 1)),
-                    new Target(EPlatform.None,"Id Incremental (2bytes)" ,new Variable("Size", 2)),
-                    new Target(EPlatform.None,"Id Incremental (4bytes)" ,new Variable("Size", 4)),
-                    new Target(EPlatform.None,"Id Incremental (8bytes)" ,new Variable("Size", 8)),
+                    new Target("Id Incremental (1byte)"  ,new Variable("Size", 1)),
+                    new Target("Id Incremental (2bytes)" ,new Variable("Size", 2)),
+                    new Target("Id Incremental (4bytes)" ,new Variable("Size", 4)),
+                    new Target("Id Incremental (8bytes)" ,new Variable("Size", 8)),
 
-                    new Target(EPlatform.None,"Id by Timestamp (8bytes)",new Variable("Size",-1)),
+                    new Target("Id by Timestamp (8bytes)",new Variable("Size",-1)),
                 };
             }
         }

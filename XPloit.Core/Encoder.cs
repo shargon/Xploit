@@ -17,9 +17,10 @@ namespace XPloit.Core
         /// <summary>
         /// Runt
         /// </summary>
+        /// <param name="target">Target</param>
         /// <param name="payload">Payload</param>
         /// <returns>Return encoded payload</returns>
-        public virtual byte[] Run(Payload payload) { throw (new NotImplementedException()); }
+        public virtual byte[] Run(Target target, Payload payload) { throw (new NotImplementedException()); }
 
         /// <summary>
         /// Implicit conversion

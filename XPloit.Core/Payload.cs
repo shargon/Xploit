@@ -17,25 +17,18 @@ namespace XPloit.Core
         /// </summary>
         internal override EModuleType ModuleType { get { return EModuleType.Payload; } }
         /// <summary>
-        /// Encoding value
+        /// Platform
         /// </summary>
-        public virtual Encoding Encoding { get { return Encoding.UTF8; } }
+        public virtual EPlatform Platform { get { return EPlatform.None; } }
+        /// <summary>
+        /// Arquitecture
+        /// </summary>
+        public virtual EArquitecture Arquitecture { get { return EArquitecture.None; } }
         /// <summary>
         /// Payload value
         /// </summary>
-        public virtual byte[] Value { get { return null; } }
-        /// <summary>
-        /// PayloadString value
-        /// </summary>
-        public string StringValue
-        {
-            get
-            {
-                byte[] va = Value;
-                if (va == null) return null;
-                return this.Encoding.GetString(va);
-            }
-        }
+        /// <param name="target">Target</param>
+        public virtual byte[] GetValue(Target target) { return null; }
         /// <summary>
         /// References
         /// </summary>

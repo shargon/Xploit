@@ -38,7 +38,7 @@ namespace XPloit
 
             // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
             // \"CryptKey=#Crypt0M3#\" 
-            Config cfg = ArgumentHelper.Parse<Config>("\"Resource=d:\\temp\\console.txt\" \"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
+            Config cfg = ArgumentHelper.Parse<Config>(args);// ("\"Resource=d:\\temp\\console.txt\" \"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
 
             // Run file
             if (!string.IsNullOrEmpty(cfg.Resource))

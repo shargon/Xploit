@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auxiliary\Local\AuxiliaryTestPayload.cs" />
     <Compile Include="Auxiliary\Local\Steganography\AuxiliarySteganographyImage.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\AuxiliaryDnsExfiltrateParser.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\AuxiliaryDnsExfiltrate.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerAPI.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryBruteForce.cs" />
     <Compile Include="Auxiliary\Local\AuxiliarySysRun.cs" />
+    <Compile Include="Payloads\Multi\Windows\x86\PayloadX86WindowsMessageBox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Auxiliary\Remote\" />
-    <Folder Include="Payloads\Multi\" />
     <Folder Include="Payloads\Remote\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

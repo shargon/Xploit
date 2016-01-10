@@ -11,6 +11,8 @@ namespace XPloit.Modules.Auxiliary.Local
 {
     public class BruteForceMySQLWireshark : Payload, AuxiliaryBruteForce.ICheckPassword
     {
+        Encoding _Codec = Encoding.Default;
+
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack MySql sniffed with WireShark Credentials"; } }
@@ -56,7 +58,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
         public bool CheckPassword(string password)
         {
-            byte[] current = Encoding.GetBytes(password);
+            byte[] current = _Codec.GetBytes(password);
 
             byte[] input = new byte[40], firstHash, finalHash;
             using (SHA1Managed shap = new SHA1Managed())
@@ -79,8 +81,6 @@ namespace XPloit.Modules.Auxiliary.Local
             return true;
         }
 
-        public override Encoding Encoding { get { return Encoding.Default; } }
-
         public bool PreRun()
         {
             string DBUser = null;
@@ -95,11 +95,11 @@ namespace XPloit.Modules.Auxiliary.Local
 
             string _sh = HexToString(Hash, true);
 
-            byte[] bhash_all = Encoding.GetBytes(_sh);
+            byte[] bhash_all = _Codec.GetBytes(_sh);
             if (bhash_all.Length != 21) return false;
 
             string _seed = HexToString(Seed, true);
-            bseed = Encoding.GetBytes(_seed);
+            bseed = _Codec.GetBytes(_seed);
             bhash = new byte[bhash_all.Length - 1];
             Array.Copy(bhash_all, 1, bhash, 0, bhash.Length);
 
@@ -116,7 +116,7 @@ namespace XPloit.Modules.Auxiliary.Local
             try
             {
                 MemoryStream ms = new MemoryStream(receive);
-                MySqlStream stream = new MySqlStream(ms, Encoding.Default);
+                MySqlStream stream = new MySqlStream(ms, _Codec);
 
                 // read off the welcome packet and parse out it's values
                 stream.OpenPacket();
@@ -144,7 +144,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
                 if (version.isAtLeast(4, 1, 1))
                 {
-                    string msg = Encoding.Default.GetString(send);
+                    string msg = _Codec.GetString(send);
                     int i = msg.IndexOf("\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
                     if (i != -1)
                     {

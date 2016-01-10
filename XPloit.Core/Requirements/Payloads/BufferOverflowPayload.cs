@@ -8,9 +8,12 @@ namespace XPloit.Core.Requirements.Payloads
         public char[] BadChars { get; set; }
         public int StackAdjustment { get; set; }
 
+
         public bool IsAllowed(Payload payload)
         {
             return false;
         }
+
+        public bool ItsRequired() { return true; }
     }
 }

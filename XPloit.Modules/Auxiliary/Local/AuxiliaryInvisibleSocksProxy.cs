@@ -26,8 +26,8 @@ namespace XPloit.Modules.Auxiliary.Local
             {
                 return new Target[]
                 {
-                    new Target(EPlatform.None ,"Socks4", new Variable("Version",4) ),
-                    new Target(EPlatform.None ,"Socks5" , new Variable("Version",4)  ),
+                    new Target("Socks4", new Variable("Version",4) ),
+                    new Target("Socks5" , new Variable("Version",4)  ),
                 };
             }
         }

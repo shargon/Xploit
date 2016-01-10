@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Command;
@@ -96,7 +97,7 @@ namespace XPloit.Core.Listeners
                                 case "payload":
                                     {
                                         IPayloadRequirements req = curM == null ? null : curM.PayloadRequirements;
-                                        if (req != null)
+                                        if (req != null && req.ItsRequired())
                                         {
                                             foreach (Payload p in PayloadCollection.Current)
                                             {
@@ -380,15 +381,32 @@ namespace XPloit.Core.Listeners
 
             try
             {
-                if (((Module)_Current).Run()) return true;
+                Thread th = new Thread(new ThreadStart(runModule));
+                th.Name = "RUN " + _Current.FullPath;
+                th.IsBackground = true;
+                th.Start();
+                th.Join();
 
-                _Current.WriteError(Lang.Get("Run_Error"));
+                //if (((Module)_Current).Run()) return true;
+                //_Current.WriteError(Lang.Get("Run_Error"));
             }
             catch (Exception e)
             {
                 _Current.WriteError(e.Message);
             }
             return false;
+        }
+        void runModule()
+        {
+            try
+            {
+                if (((Module)_Current).Run()) return;
+                _Current.WriteError(Lang.Get("Run_Error"));
+            }
+            catch (Exception e)
+            {
+                _Current.WriteError(e.Message);
+            }
         }
         public bool CheckModule()
         {
@@ -736,7 +754,7 @@ namespace XPloit.Core.Listeners
                                             }
                                             else
                                             {
-                                                if (curM.PayloadRequirements != null)
+                                                if (curM.PayloadRequirements != null && curM.PayloadRequirements.ItsRequired())
                                                 {
                                                     pis = ReflectionHelper.GetProperties(_Current, "Payload");
                                                     title = Lang.Get("Selected_Payload");

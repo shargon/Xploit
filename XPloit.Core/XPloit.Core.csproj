@@ -62,6 +62,10 @@
     <Compile Include="Command\CommandTableRow.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />
+    <Compile Include="Enums\EArquitecture.cs" />
+    <Compile Include="Enums\EExitFunc.cs" />
+    <Compile Include="Extensions\ArrayExtension.cs" />
+    <Compile Include="Helpers\AsmHelper.cs" />
     <Compile Include="Helpers\BaseEncodingHelper.cs" />
     <Compile Include="Dns\DnsClient.cs" />
     <Compile Include="Dns\DnsClientAsyncState.cs" />
@@ -168,6 +172,7 @@
     <Compile Include="Helpers\CounterHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
+    <Compile Include="Requirements\Payloads\SpecifyPlatformRequired.cs" />
     <Compile Include="Sockets\UdpListener.cs" />
     <Compile Include="Dns\Spf\SenderIDRecord.cs" />
     <Compile Include="Dns\Spf\SenderIDScope.cs" />
@@ -284,7 +289,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interfaces\Payloads\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -225,7 +225,7 @@ namespace XPloit.Core.Interfaces
 
                 if (m.Payload == null)
                 {
-                    if (m.PayloadRequirements != null)
+                    if (m.PayloadRequirements != null && m.PayloadRequirements.ItsRequired())
                     {
                         propertyName = "Payload";
                         return false;

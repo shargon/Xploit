@@ -8,5 +8,9 @@
         /// <param name="obj">Object</param>
         /// <returns>Return true if its allowed</returns>
         bool IsAllowed(Payload obj);
+        /// <summary>
+        /// Return true if requirePayload
+        /// </summary>
+        bool ItsRequired();
     }
 }

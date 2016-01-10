@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Text;
 using XPloit.Core;
 
 namespace XPloit.Modules.Encoders.String
 {
-    public class Base64Encoder : Encoder
+    public class Base64Encoder : XPloit.Core.Encoder
     {
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Encode byte[] to base64 string"; } }
@@ -18,12 +19,13 @@ namespace XPloit.Modules.Encoders.String
         /// <summary>
         /// Encode
         /// </summary>
-        /// <param name="input">Input</param>
-        /// <returns>Return object</returns>
-        public override byte[] Run(Payload payload)
+        /// <param name="target">Target</param>
+        /// <param name="payload">Payload</param>
+        public override byte[] Run(Target target, Payload payload)
         {
             if (payload == null) return null;
-            return payload.Encoding.GetBytes(Convert.ToBase64String(payload.Value));
+
+            return Encoding.Default.GetBytes(Convert.ToBase64String(payload.GetValue(target)));
         }
     }
 }

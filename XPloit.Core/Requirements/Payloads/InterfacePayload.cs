@@ -17,6 +17,8 @@ namespace XPloit.Core.Requirements.Payloads
         /// <param name="type">Type</param>
         public InterfacePayload(Type type) { _Type = type; }
 
+        public bool ItsRequired() { return true; }
+
         public bool IsAllowed(Payload payload)
         {
             return _Type.IsAssignableFrom(payload.GetType());

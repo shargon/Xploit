@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Specialized;
 using XPloit.Core.Enums;
 
 namespace XPloit.Core
@@ -20,6 +19,10 @@ namespace XPloit.Core
         /// Platform
         /// </summary>
         public EPlatform Platform { get; set; }
+        /// <summary>
+        /// Arquitecture
+        /// </summary>
+        public EArquitecture Arquitecture { get; set; }
         /// <summary>
         /// Get Variable value
         /// </summary>
@@ -44,13 +47,23 @@ namespace XPloit.Core
         /// Constructor
         /// </summary>
         /// <param name="name">Name</param>
-        /// <param name="platform">Platform</param>
         /// <param name="variables">Variables</param>
-        public Target(EPlatform platform, string name, params Variable[] variables)
+        public Target(string name, params Variable[] variables)
+            : this(EPlatform.None, EArquitecture.None, name, variables)
+        { }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="platform">Platform</param>
+        /// <param name="arq">Arquitecture</param>
+        /// <param name="name">Name</param>
+        /// <param name="variables">Variables</param>
+        public Target(EPlatform platform, EArquitecture arq, string name, params Variable[] variables)
             : this()
         {
             Name = name;
             Platform = platform;
+            Arquitecture = arq;
 
             if (variables == null) return;
 

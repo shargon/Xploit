@@ -5,6 +5,7 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Requirements.Payloads;
 
 namespace XPloit.Core
 {
@@ -48,7 +49,7 @@ namespace XPloit.Core
         /// <summary>
         /// Payload Requirements
         /// </summary>
-        public virtual IPayloadRequirements PayloadRequirements { get { return null; } }
+        public virtual IPayloadRequirements PayloadRequirements { get { return new SpecifyPlatformRequired(this); } }
         /// <summary>
         /// Run Method
         /// </summary>

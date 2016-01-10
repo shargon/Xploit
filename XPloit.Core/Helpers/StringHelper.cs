@@ -145,7 +145,6 @@ namespace XPloit.Core.Helpers
         /// Convert to Kb, Mb ...
         /// </summary>
         /// <param name="bytes">Bytes to convert</param>
-        /// <returns></returns>
         public static string Convert2Kb(long bytes)
         {
             if (bytes < 1024) return bytes.ToString() + " b";
