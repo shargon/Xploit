@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
-using XPloit.Core.Helpers.Crypt;
+using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Multi;
 using XPloit.Core.Sockets;
@@ -55,7 +55,7 @@ namespace XPloit.Core.Listeners
 
             AESHelper crypt = null;
             if (_Config.CryptKey != null && !string.IsNullOrEmpty(_Config.CryptKey.RawPassword))
-                crypt = new AESHelper(_Config.CryptKey.RawPassword, "Made with love ;)", 20000, "**#Int#Vector#**", AESHelper.EKeyLength.Length_256);
+                crypt = new AESHelper(_Config.CryptKey.RawPassword, "Made with love ;)", 20000, "**#Int#Vector#**", AESHelper.EKeyLength.Length256);
 
             _Socket = new XPloitSocket(new XPloitSocketProtocol(_Codec, crypt, XPloitSocketProtocol.EProtocolMode.UInt16), _Config.Address, _Config.Port, _IsServer)
             {

@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace XPloit.Core.Helpers.Crypt
+namespace XPloit.Core.Helpers
 {
     public class AESHelper
     {
@@ -21,11 +21,21 @@ namespace XPloit.Core.Helpers.Crypt
 
         public enum EKeyLength
         {
-            Length_128 = 128,
-            Length_192 = 192,
-            Length_256 = 256
+            Length128 = 128,
+            Length192 = 192,
+            Length256 = 256
         }
-        public AESHelper(IAESConfig config) : this(config.AesPassword, config.AesRGBSalt, config.AesIterations, config.AesIV, config.AesKeyLength) { }
+        /// <summary>
+        /// Create a AESHelper by interface
+        /// </summary>
+        /// <param name="cfg">Config</param>
+        public static AESHelper Create(IAESConfig cfg)
+        {
+            if (IsConfigured(cfg)) return new AESHelper(cfg);
+            return null;
+        }
+
+        private AESHelper(IAESConfig config) : this(config.AesPassword, config.AesRGBSalt, config.AesIterations, config.AesIV, config.AesKeyLength) { }
         /// <summary>
         /// Clase de encriptación
         /// </summary>

@@ -7,7 +7,6 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Dns;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
-using XPloit.Core.Helpers.Crypt;
 
 namespace XPloit.Modules.Auxiliary.Local
 {
@@ -73,7 +72,7 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             DnsServer = null;
             AesIterations = 1000;
-            AesKeyLength = AESHelper.EKeyLength.Length_256;
+            AesKeyLength = AESHelper.EKeyLength.Length256;
             AesRGBSalt = null;
         }
 
@@ -101,14 +100,9 @@ namespace XPloit.Modules.Auxiliary.Local
             byte[] data = new byte[63 / 2]; // hex 2 bytes per byte
             Array.Copy(g, data, g.Length);
 
-            AESHelper aes = null;
-
-            if (AESHelper.IsConfigured(this))
-            {
-                aes = new AESHelper(this);
-                WriteInfo("Using AES Encryption");
-            }
-            else WriteError("Send in RawMode");
+            AESHelper aes = AESHelper.Create(this);
+            if (aes != null) WriteInfo("Using AES Encryption");
+            else WriteError("Send in RawMode (without any Encryption)");
 
             WriteInfo("Start sending file ...");
 

@@ -186,7 +186,7 @@
     <Compile Include="Enums\EModuleType.cs" />
     <Compile Include="Extensions\StringComparisonExtensions.cs" />
     <Compile Include="Helpers\BannerHelper.cs" />
-    <Compile Include="Helpers\Crypt\AESHelper.cs" />
+    <Compile Include="Helpers\AESHelper.cs" />
     <Compile Include="Attributes\SerializableJSONReferenceAttribute.cs" />
     <Compile Include="Enums\EPlatform.cs" />
     <Compile Include="Enums\EReferenceType.cs" />

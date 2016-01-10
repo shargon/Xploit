@@ -141,5 +141,18 @@ namespace XPloit.Core.Helpers
 
             return Operators.LikeString(input, pattern, Microsoft.VisualBasic.CompareMethod.Text);
         }
+        /// <summary>
+        /// Convert to Kb, Mb ...
+        /// </summary>
+        /// <param name="bytes">Bytes to convert</param>
+        /// <returns></returns>
+        public static string Convert2Kb(long bytes)
+        {
+            if (bytes < 1024) return bytes.ToString() + " b";
+            if (bytes < 1024 * 1024) return (bytes / (1024.0)).ToString("0.00") + " Kb";
+            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024.0 * 1024.0)).ToString("0.00") + " Mb";
+            if (bytes < 1024 * 1024 * 1024 * 1024.0) return (bytes / (1024.0 * 1024.0 * 1024.0)).ToString("0.00") + " Gb";
+            return (bytes / (1024.0 * 1024.0 * 1024.0 * 1024.0)).ToString("0.00") + " Tb";
+        }
     }
 }

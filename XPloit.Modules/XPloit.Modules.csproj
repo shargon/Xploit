@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,8 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Auxiliary\Local\AuxiliaryDnsExfiltrateParser.cs" />
-    <Compile Include="Auxiliary\Local\AuxiliaryDnsExfiltrate.cs" />
+    <Compile Include="Auxiliary\Local\Steganography\AuxiliarySteganographyImage.cs" />
+    <Compile Include="Auxiliary\Local\Exfiltration\AuxiliaryDnsExfiltrateParser.cs" />
+    <Compile Include="Auxiliary\Local\Exfiltration\AuxiliaryDnsExfiltrate.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryInvisibleSocksProxy.cs" />
     <Compile Include="Auxiliary\Local\AuxiliaryDnsServer.cs" />
     <Compile Include="Auxiliary\Local\AuxiliarySniffer.cs" />

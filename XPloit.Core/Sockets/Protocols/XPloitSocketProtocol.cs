@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using XPloit.Core.Helpers;
-using XPloit.Core.Helpers.Crypt;
 using XPloit.Core.Sockets.Interfaces;
 using XPloit.Core.Sockets.Exceptions;
 using System.IO;

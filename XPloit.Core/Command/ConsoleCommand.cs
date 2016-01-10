@@ -56,7 +56,7 @@ namespace XPloit.Core.Command
 
             PromptCharacter = "> ";
         }
-        string _LastPercent = null;
+        int _LastPercent = -1;
         double _ProgressVal = 0, _ProgressMax = 0;
         int _ProgressX = -1, _ProgressY = -1;
         public bool IsInProgress { get { return _ProgressX >= 0 && _ProgressY >= 0; } }
@@ -68,8 +68,9 @@ namespace XPloit.Core.Command
             if (value > _ProgressMax) value = _ProgressMax;
             double percent = (value * 100.0) / _ProgressMax;
 
-            string lp = percent.ToString("0.0 '%'");
-            if (lp == _LastPercent) return;
+            int lp = (int)(percent * 10);
+            if (lp == _LastPercent)
+                return;
             _LastPercent = lp;
 
             Console.SetCursorPosition(_ProgressX, _ProgressY);
@@ -94,7 +95,7 @@ namespace XPloit.Core.Command
             }
 
             SetForeColor(last);
-            Write("] " + _LastPercent);
+            Write("] " + percent.ToString("0.0 '%'"));
             SetForeColor(last);
         }
         public void EndProgress()
@@ -103,13 +104,13 @@ namespace XPloit.Core.Command
 
             _ProgressX = -1;
             _ProgressY = -1;
-            _LastPercent = null;
+            _LastPercent = -1;
 
             WriteLine("");
         }
         public void StartProgress(double max)
         {
-            _LastPercent = null;
+            _LastPercent = -1;
 
             WriteStart("%", ConsoleColor.Yellow);
 

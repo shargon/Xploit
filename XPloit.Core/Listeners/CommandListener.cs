@@ -160,7 +160,7 @@ namespace XPloit.Core.Listeners
                                                                 bool isWindows = SystemHelper.IsWindows;
                                                                 string path2 = Path.GetDirectoryName(path);
 
-                                                                if (!string.IsNullOrEmpty(path2))
+                                                                if (!string.IsNullOrEmpty(path2) && Directory.Exists(path2))
                                                                 {
                                                                     if (allowFiles)
                                                                         foreach (string dir in Directory.GetFiles(path2))

@@ -6,7 +6,6 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
-using XPloit.Core.Helpers.Crypt;
 using XPloit.Core.VerbalExpressions;
 
 namespace XPloit.Modules.Auxiliary.Local
@@ -58,7 +57,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public AuxiliaryDnsExfiltrateParser()
         {
             AesIterations = 1000;
-            AesKeyLength = AESHelper.EKeyLength.Length_256;
+            AesKeyLength = AESHelper.EKeyLength.Length256;
             AesRGBSalt = null;
 
             RegexData = new VerbalExpressions().Find("\t").Something().Find("\t").ToString();
@@ -100,13 +99,9 @@ namespace XPloit.Modules.Auxiliary.Local
             if (!File.Exists) return false;
             if (!OutFolder.Exists) return false;
 
-            AESHelper aes = null;
-            if (AESHelper.IsConfigured(this))
-            {
-                aes = new AESHelper(this);
-                WriteInfo("Using AES Encryption");
-            }
-            else WriteError("Read in RawMode");
+            AESHelper aes = AESHelper.Create(this);
+            if (aes != null) WriteInfo("Using AES Encryption");
+            else WriteError("Read in RawMode (without any Encryption)");
 
             WriteInfo("Start reading file ...");
             Dictionary<string, List<packet>> dic = new Dictionary<string, List<packet>>();
