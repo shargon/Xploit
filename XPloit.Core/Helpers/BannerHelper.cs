@@ -90,7 +90,7 @@ namespace XPloit.Core.Helpers
             command.WriteLine("       / |   |____)     ");
             command.WriteLine("       |_/              ");
             command.WriteLine("                        ");
-            command.WriteLine("  I YOUR SUPERHERO      ");
+            command.WriteLine("  IM YOUR SUPERHERO     ");
         }
 
         public static void GetStarWarsBanner(ICommandLayer command)
