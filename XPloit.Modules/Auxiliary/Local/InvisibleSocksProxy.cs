@@ -9,17 +9,15 @@ using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Sockets.Proxy;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliaryInvisibleSocksProxy : Module
+    public class InvisibleSocksProxy : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Invisible socks proxy"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "InvisibleSocksProxy"; } }
         public override Target[] Targets
         {
             get
@@ -47,7 +45,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public string ProxyPassword { get; set; }
         #endregion
 
-        public AuxiliaryInvisibleSocksProxy()
+        public InvisibleSocksProxy()
         {
             ProxyEndPoint = new IPEndPoint(IPAddress.Loopback, 9050);
             LocalPort = 10000;
@@ -83,12 +81,12 @@ namespace XPloit.Modules.Auxiliary.Local
             Socket MainSocket = null;
             IPEndPoint ProxySocket = null;
             byte bSocketType = 0;
-            AuxiliaryInvisibleSocksProxy _Module;
+            InvisibleSocksProxy _Module;
             string _User, _Password;
 
-            public TcpForwarder(AuxiliaryInvisibleSocksProxy m, IPEndPoint proxy_socket, byte socket_type, string user, string password) :
+            public TcpForwarder(InvisibleSocksProxy m, IPEndPoint proxy_socket, byte socket_type, string user, string password) :
                 this(m, proxy_socket, socket_type, false, user, password) { }
-            TcpForwarder(AuxiliaryInvisibleSocksProxy m, IPEndPoint proxy_socket, byte socket_type, bool this_is_socks, string user, string password)
+            TcpForwarder(InvisibleSocksProxy m, IPEndPoint proxy_socket, byte socket_type, bool this_is_socks, string user, string password)
             {
                 _Module = m;
                 _User = user;

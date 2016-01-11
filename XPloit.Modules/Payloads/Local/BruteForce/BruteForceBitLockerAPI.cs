@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auxiliary.Local;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
@@ -7,15 +8,13 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Payloads.Local.BruteForce
 {
-    public class BruteForceBitLockerAPI : Payload, AuxiliaryBruteForce.ICheckPassword
+    public class BruteForceBitLockerAPI : Payload, WordListBruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive calling windows API"; } }
-        public override string Path { get { return "Payload/Local/BruteForce"; } }
-        public override string Name { get { return "BitLockerAPI"; } }
         public override Reference[] References
         {
             get

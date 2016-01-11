@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auxiliary.Local;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -7,17 +8,15 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Sniffer.Streams;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Payloads.Local.BruteForce
 {
-    public class BruteForceMySQLWireshark : Payload, AuxiliaryBruteForce.ICheckPassword
+    public class BruteForceMySQLWireshark : Payload, WordListBruteForce.ICheckPassword
     {
         Encoding _Codec = Encoding.Default;
 
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack MySql sniffed with WireShark Credentials"; } }
-        public override string Path { get { return "Payload/Local/BruteForce"; } }
-        public override string Name { get { return "MySQLWireshark"; } }
         public override Reference[] References
         {
             get
@@ -48,8 +47,9 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         #region Properties
+        [FileRequireExists]
         [ConfigurableProperty(Required = true, Description = "WireShark TCPStream file")]
-        public string TCPStreamFile { get; set; }
+        public FileInfo TCPStreamFile { get; set; }
         #endregion
 
         public bool AllowMultipleOk { get { return false; } }
@@ -87,7 +87,8 @@ namespace XPloit.Modules.Auxiliary.Local
             string Hash = null;
             string Seed = null;
 
-            TcpStream dump = TcpStream.FromFile(TCPStreamFile);
+            TcpStream dump = TcpStream.FromFile(TCPStreamFile.FullName);
+            if (dump.Count < 2) return false;
             crack(dump[0].Data, dump[1].Data, out Hash, out Seed, out DBUser);
 
             if (!string.IsNullOrEmpty(DBUser))

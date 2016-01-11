@@ -8,17 +8,15 @@ using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.VerbalExpressions;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local.Exfiltration
 {
-    public class AuxiliaryDnsExfiltrateParser : Module, AESHelper.IAESConfig
+    public class DnsExfiltrateParser : Module, AESHelper.IAESConfig
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "DNS-Exfiltration file parser"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local/Exfiltration"; } }
-        public override string Name { get { return "DnsExfiltrateParser"; } }
         public override Reference[] References
         {
             get
@@ -32,6 +30,7 @@ namespace XPloit.Modules.Auxiliary.Local
         #endregion
 
         #region Properties
+        [FileRequireExists]
         [ConfigurableProperty(Required = true, Description = "File for parse")]
         public FileInfo File { get; set; }
         [ConfigurableProperty(Required = true, Description = "Folder where write the files")]
@@ -54,7 +53,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public string AesRGBSalt { get; set; }
         #endregion
 
-        public AuxiliaryDnsExfiltrateParser()
+        public DnsExfiltrateParser()
         {
             AesIterations = 1000;
             AesKeyLength = AESHelper.EKeyLength.Length256;

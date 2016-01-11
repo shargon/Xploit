@@ -8,17 +8,15 @@ using XPloit.Core.Dns;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local.Exfiltration
 {
-    public class AuxiliaryDnsExfiltrate : Module, AESHelper.IAESConfig
+    public class DnsExfiltrate : Module, AESHelper.IAESConfig
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "DNS-Exfiltration send"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local/Exfiltration"; } }
-        public override string Name { get { return "DnsExfiltrate"; } }
         public override Reference[] References
         {
             get
@@ -50,6 +48,7 @@ namespace XPloit.Modules.Auxiliary.Local
         [ConfigurableProperty(Description = "Address of dns server (NULL for use default)")]
         public IPAddress DnsServer { get; set; }
         [ConfigurableProperty(Required = true, Description = "File for exfiltrate")]
+        [FileRequireExists]
         public FileInfo File { get; set; }
         [ConfigurableProperty(Required = true, Description = "Domain name for exfiltration")]
         public string DomainName { get; set; }
@@ -68,7 +67,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public string AesRGBSalt { get; set; }
         #endregion
 
-        public AuxiliaryDnsExfiltrate()
+        public DnsExfiltrate()
         {
             DnsServer = null;
             AesIterations = 1000;

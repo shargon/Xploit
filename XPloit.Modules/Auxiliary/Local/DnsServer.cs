@@ -9,17 +9,15 @@ using XPloit.Core.Dns.DnsRecord;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliaryDnsServer : Module
+    public class DnsServer : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "DNS-Server"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "DnsServer"; } }
         public override Reference[] References
         {
             get
@@ -48,7 +46,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public string LogPattern { get; set; }
         #endregion
 
-        public AuxiliaryDnsServer()
+        public DnsServer()
         {
             LocalAddress = IPAddress.Any;
             ReplicateAnswer = true;
@@ -59,7 +57,7 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             if (!DumpFolder.Exists) return false;
 
-            DnsServer server = new DnsServer(LocalAddress, 10, 10, ProcessQuery);
+            XPloit.Core.Dns.DnsServer server = new XPloit.Core.Dns.DnsServer(LocalAddress, 10, 10, ProcessQuery);
             server.Start();
 
             CreateJob(server);
@@ -70,7 +68,7 @@ namespace XPloit.Modules.Auxiliary.Local
         {
             try
             {
-                if (!SystemHelper.IsAvailableTcpPort(DnsServer.DNS_PORT))
+                if (!SystemHelper.IsAvailableTcpPort(XPloit.Core.Dns.DnsServer.DNS_PORT))
                 {
                     WriteError("Cant open port");
                     return ECheck.Error;

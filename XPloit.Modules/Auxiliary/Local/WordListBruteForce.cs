@@ -7,9 +7,9 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Requirements.Payloads;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliaryBruteForce : Module
+    public class WordListBruteForce : Module
     {
         public interface ICheckPassword
         {
@@ -20,8 +20,6 @@ namespace XPloit.Modules.Auxiliary.Local
         }
 
         #region Configure
-        public override string Name { get { return "WordListBruteForce"; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Local Brute force by wordlist"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
@@ -34,13 +32,14 @@ namespace XPloit.Modules.Auxiliary.Local
         public int Threads { get; set; }
         [ConfigurableProperty(Required = true, Description = "Read lines number per block")]
         public int ReadBlock { get; set; }
+        [FileRequireExists]
         [ConfigurableProperty(Required = true, Description = "Wordlist file")]
         public FileInfo WordListFile { get; set; }
         [ConfigurableProperty(Required = true, Description = "Save state for next call")]
         public bool SaveState { get; set; }
         #endregion
 
-        public AuxiliaryBruteForce()
+        public WordListBruteForce()
         {
             ReadBlock = 1000;
             Threads = 5;

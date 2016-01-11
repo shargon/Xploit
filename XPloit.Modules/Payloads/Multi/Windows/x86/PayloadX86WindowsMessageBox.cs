@@ -4,15 +4,13 @@ using XPloit.Core.Enums;
 using XPloit.Core.Extensions;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Payloads.Multi.Windows.x86
+namespace Payloads.Multi.Windows.x86
 {
     public class PayloadX86WindowsMessageBox : Payload
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Show MessageBox"; } }
-        public override string Path { get { return "Payload/Multi/Windows/x86"; } }
-        public override string Name { get { return "WindowsMessageBox"; } }
         public override EArquitecture Arquitecture { get { return EArquitecture.x86; } }
         public override EPlatform Platform { get { return EPlatform.Windows; } }
         #endregion

@@ -4,17 +4,15 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliarySysKill : Module
+    public class SysKill : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Kill a process in local machine"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "SystemKill"; } }
         public override Reference[] References
         {
             get
@@ -33,6 +31,14 @@ namespace XPloit.Modules.Auxiliary.Local
         public int? PID { get; set; }
         #endregion
 
+        public override ECheck Check()
+        {
+            Process pr = Process.GetProcessById(PID.Value);
+            if (pr == null) return ECheck.Error;
+            pr.Dispose();
+            return ECheck.Ok;
+        }
+
         public override bool Run()
         {
             WriteInfo("Search process ...");
@@ -46,6 +52,7 @@ namespace XPloit.Modules.Auxiliary.Local
 
             WriteInfo("Trying kill process");
             pr.Kill();
+            pr.Dispose();
             WriteInfo("Killed process " + PID.ToString());
 
             return true;

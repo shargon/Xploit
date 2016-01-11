@@ -47,7 +47,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\SerializableBSONReferenceAttribute.cs" />
+    <Compile Include="Attributes\FileRequireExists.cs" />
+    <Compile Include="Attributes\IntrusiveCheck.cs" />
+    <Compile Include="Attributes\SerializableBSONReference.cs" />
     <Compile Include="Attributes\ConfigurableProperty.cs" />
     <Compile Include="Collections\EncoderCollection.cs" />
     <Compile Include="Collections\JobCollection.cs" />
@@ -172,6 +174,7 @@
     <Compile Include="Helpers\CounterHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
+    <Compile Include="Helpers\TorExitNoteHelper.cs" />
     <Compile Include="Requirements\Payloads\SpecifyPlatformRequired.cs" />
     <Compile Include="Sockets\UdpListener.cs" />
     <Compile Include="Dns\Spf\SenderIDRecord.cs" />
@@ -192,7 +195,7 @@
     <Compile Include="Extensions\StringComparisonExtensions.cs" />
     <Compile Include="Helpers\BannerHelper.cs" />
     <Compile Include="Helpers\AESHelper.cs" />
-    <Compile Include="Attributes\SerializableJSONReferenceAttribute.cs" />
+    <Compile Include="Attributes\SerializableJSONReference.cs" />
     <Compile Include="Enums\EPlatform.cs" />
     <Compile Include="Enums\EReferenceType.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />

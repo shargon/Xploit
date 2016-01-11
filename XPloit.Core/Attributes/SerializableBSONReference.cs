@@ -7,13 +7,13 @@ using XPloit.Core.Sockets.Interfaces;
 
 namespace XPloit.Core.Attributes
 {
-    public class SerializableBSONReferenceAttribute : SerializableJSONReferenceAttribute
+    public class SerializableBSONReference : SerializableJSONReference
     {
         /// <summary>
         /// Contructor
         /// </summary>
         /// <param name="type">Tipo de clase de referencia</param>
-        public SerializableBSONReferenceAttribute(Type type) : base(type) { }
+        public SerializableBSONReference(Type type) : base(type) { }
         public override byte[] Serialize(Encoding codec, EXPloitSocketMsg type, IXPloitSocketMsg msg, byte[] header)
         {
             using (MemoryStream ms = new MemoryStream())

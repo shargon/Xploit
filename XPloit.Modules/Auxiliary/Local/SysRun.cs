@@ -6,17 +6,15 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliarySysRun : Module
+    public class SysRun : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Execute a system command in local machine"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "SystemRun"; } }
         public override Reference[] References
         {
             get
@@ -57,7 +55,7 @@ namespace XPloit.Modules.Auxiliary.Local
         /// <summary>
         /// Constructor
         /// </summary>
-        public AuxiliarySysRun()
+        public SysRun()
         {
             // Default variables
             Arguments = null;

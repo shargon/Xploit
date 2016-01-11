@@ -283,10 +283,10 @@ namespace XPloit.Core.Listeners
                 }
             }
 
-            string propertyName;
-            if (checkRequieredProperties && !_Current.CheckRequiredProperties(out propertyName))
+            string error;
+            if (checkRequieredProperties && !_Current.CheckRequiredProperties(out error))
             {
-                _Current.WriteInfo(Lang.Get("Require_Set_Property", propertyName));
+                _Current.WriteInfo(error);
                 return false;
             }
             return true;
@@ -414,7 +414,17 @@ namespace XPloit.Core.Listeners
 
             try
             {
-                switch (((Module)_Current).Check())
+                Module m = (Module)_Current;
+
+                if (m.IsCheckIntrusive())
+                {
+                    _IO.WriteInfo(Lang.Get("Can_Be_Intrusive"));
+                    string line = _IO.ReadLine(null, null);
+                    if (!(bool)ConvertHelper.ConvertTo(line, typeof(bool)))
+                        return false;
+                }
+
+                switch (m.Check())
                 {
                     case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
                     case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;

@@ -8,9 +8,9 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local.Steganography
 {
-    public class AuxiliarySteganographyImage : Module, AESHelper.IAESConfig
+    public class SteganographyImage : Module, AESHelper.IAESConfig
     {
         public enum EMode { Read, Write };
 
@@ -19,8 +19,6 @@ namespace XPloit.Modules.Auxiliary.Local
         public override string Description { get { return "Steganography by Image generator/parser (in PNG)\nHave two modes:\n - Write: Destroy original message file\n - Read : Read the image and write the secret file in LocalFileWrite"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local/Steganography"; } }
-        public override string Name { get { return "Image"; } }
         public override Reference[] References
         {
             get
@@ -38,9 +36,9 @@ namespace XPloit.Modules.Auxiliary.Local
         public EMode Mode { get; set; }
         [ConfigurableProperty(Required = true, Description = "File for read")]
         public FileInfo LocalFileWrite { get; set; }
+        [FileRequireExists]
         [ConfigurableProperty(Required = true, Description = "File for write")]
         public FileInfo LocalFileRead { get; set; }
-
         [ConfigurableProperty(Description = "IV for AES encryption")]
         public string AesIV { get; set; }
         [ConfigurableProperty(Description = "Password for AES encryption")]
@@ -53,7 +51,7 @@ namespace XPloit.Modules.Auxiliary.Local
         public string AesRGBSalt { get; set; }
         #endregion
 
-        public AuxiliarySteganographyImage()
+        public SteganographyImage()
         {
             Mode = EMode.Write;
             AesIterations = 1000;

@@ -1,13 +1,18 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
+using XPloit.Res;
 
 namespace XPloit.Core.Interfaces
 {
     public class IModule
     {
+        string _Name = null, _Path = null;
+        string _FullPath = null;
+
         ICommandLayer _IO;
 
         internal ICommandLayer IO { get { return _IO; } }
@@ -81,33 +86,29 @@ namespace XPloit.Core.Interfaces
         /// <summary>
         /// Name
         /// </summary>
-        public virtual string Name { get { return null; } }
+        public string Name { get { return _Name; } }
         /// <summary>
         /// Path
         /// </summary>
-        public virtual string Path { get { return null; } }
+        public string Path { get { return _Path; } }
         /// <summary>
         /// Return full path
         /// </summary>
-        public string FullPath
-        {
-            get
-            {
-                string p = Path;
-                string n = Name;
-
-                if (!string.IsNullOrEmpty(p)) p = p.Trim('/') + "/"; else p = "";
-                if (string.IsNullOrEmpty(n)) n = "";
-
-                return p + n;
-            }
-        }
+        public string FullPath { get { return _FullPath; } }
         ///// <summary>
         /// Type
         /// </summary>
         internal virtual EModuleType ModuleType { get { return EModuleType.Module; } }
 
         public override string ToString() { return FullPath; }
+
+        public IModule()
+        {
+            Type t = GetType();
+            _Path = t.Namespace.Replace(".", "/");
+            _Name = t.Name;
+            _FullPath = _Path + "/" + _Name;
+        }
 
         /// <summary>
         /// Clone current module
@@ -139,6 +140,11 @@ namespace XPloit.Core.Interfaces
                                 int ix = (int)ConvertHelper.ConvertTo(value.ToString(), typeof(int));
                                 m.Target = m.Targets[ix];
                                 m.Target.Id = ix;
+
+                                // Check if the Payload still valid
+                                if (m.Payload != null && m.PayloadRequirements != null && !m.PayloadRequirements.IsAllowed(m.Payload))
+                                    m.Payload = null;
+
                                 return true;
                             }
                             catch
@@ -192,11 +198,14 @@ namespace XPloit.Core.Interfaces
         /// <summary>
         /// Check Required Properties
         /// </summary>
-        /// <param name="propertyName">Variable for capture property fail</param>
+        /// <param name="error">Variable for capture the error fail</param>
         /// <returns>Return true if OK, false if not</returns>
-        public bool CheckRequiredProperties(out string propertyName)
+        public bool CheckRequiredProperties(out string error)
         {
-            propertyName = null;
+            error = null;
+
+            Type fileInfoType = typeof(FileInfo);
+            Type dirInfoType = typeof(DirectoryInfo);
 
             foreach (PropertyInfo pi in ReflectionHelper.GetProperties(this, true, true, true))
             {
@@ -204,11 +213,26 @@ namespace XPloit.Core.Interfaces
                 if (c == null)
                     continue;
 
-                if (!c.Required) continue;
-                if (pi.GetValue(this) == null)
+                object val = pi.GetValue(this);
+
+                if (val == null)
                 {
-                    propertyName = pi.Name;
+                    if (!c.Required) continue;
+
+                    error = Lang.Get("Require_Set_Property", pi.Name);
                     return false;
+                }
+                else
+                {
+                    if (pi.PropertyType == fileInfoType)
+                    {
+                        FileRequireExists c2 = pi.GetCustomAttribute<FileRequireExists>();
+                        if (!c2.IsValid(val))
+                        {
+                            error = Lang.Get("File_Defined_Not_Exists", pi.Name);
+                            return false;
+                        }
+                    }
                 }
             }
 
@@ -219,7 +243,7 @@ namespace XPloit.Core.Interfaces
 
                 if (m.Target == null)
                 {
-                    propertyName = "Target";
+                    error = Lang.Get("Require_Set_Property", "Target");
                     return false;
                 }
 
@@ -227,7 +251,7 @@ namespace XPloit.Core.Interfaces
                 {
                     if (m.PayloadRequirements != null && m.PayloadRequirements.ItsRequired())
                     {
-                        propertyName = "Payload";
+                        error = Lang.Get("Require_Set_Property", "Payload");
                         return false;
                     }
                 }
@@ -239,11 +263,26 @@ namespace XPloit.Core.Interfaces
                         if (c == null)
                             continue;
 
-                        if (!c.Required) continue;
-                        if (pi.GetValue(m.Payload) == null)
+                        object val = pi.GetValue(m.Payload);
+
+                        if (val == null)
                         {
-                            propertyName = pi.Name;
+                            if (!c.Required) continue;
+
+                            error = Lang.Get("Require_Set_Property", pi.Name);
                             return false;
+                        }
+                        else
+                        {
+                            if (pi.PropertyType == fileInfoType)
+                            {
+                                FileRequireExists c2 = pi.GetCustomAttribute<FileRequireExists>();
+                                if (!c2.IsValid(val))
+                                {
+                                    error = Lang.Get("File_Defined_Not_Exists", pi.Name);
+                                    return false;
+                                }
+                            }
                         }
                     }
             }

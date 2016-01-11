@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
@@ -121,6 +122,14 @@ namespace XPloit.Core
 
                 return base.ConvertTo(context, culture, value, destinationType);
             }
+        }
+
+        /// <summary>
+        /// Return true if Check is Intrusive
+        /// </summary>
+        public bool IsCheckIntrusive()
+        {
+            return GetType().GetMethod("Check").GetCustomAttribute<IntrusiveCheck>() != null;
         }
     }
 }

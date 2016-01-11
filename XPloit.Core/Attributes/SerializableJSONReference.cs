@@ -8,7 +8,7 @@ using XPloit.Core.Sockets.Interfaces;
 
 namespace XPloit.Core.Attributes
 {
-    public class SerializableJSONReferenceAttribute : Attribute
+    public class SerializableJSONReference : Attribute
     {
         protected static JsonSerializer Serializer = new JsonSerializer();
         Type _Type;
@@ -21,7 +21,7 @@ namespace XPloit.Core.Attributes
         /// Contructor
         /// </summary>
         /// <param name="type">Tipo de clase de referencia</param>
-        public SerializableJSONReferenceAttribute(Type type) { _Type = type; }
+        public SerializableJSONReference(Type type) { _Type = type; }
 
         public virtual byte[] Serialize(Encoding codec, EXPloitSocketMsg type, IXPloitSocketMsg msg, byte[] header)
         {

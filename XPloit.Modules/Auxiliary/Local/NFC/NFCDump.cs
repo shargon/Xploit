@@ -3,17 +3,15 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local.NFC
 {
-    public class AuxiliaryNFC : Module
+    public class NFCDump : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "NFC Restore system"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "NFC"; } }
         public override Reference[] References
         {
             get

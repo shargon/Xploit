@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auxiliary.Local;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -8,15 +9,13 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Payloads.Local.BruteForce
 {
-    public class BruteForceBitLockerRaw : Payload, AuxiliaryBruteForce.ICheckPassword
+    public class BruteForceBitLockerRaw : Payload, WordListBruteForce.ICheckPassword
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Crack Bitlocker drive"; } }
-        public override string Path { get { return "Payload/Local/BruteForce"; } }
-        public override string Name { get { return "BitLockerRaw"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://github.com/Aorimn/dislocker") }; } }
         #endregion
 

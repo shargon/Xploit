@@ -307,7 +307,7 @@ Search a module in the loaded modules</value>
     <value>Its required to set the property %0 (use set %0 &lt;value&gt;)</value>
   </data>
   <data name="Check_CantCheck" xml:space="preserve">
-    <value>This module havent check</value>
+    <value>This module haven't check</value>
   </data>
   <data name="Check_NotSure" xml:space="preserve">
     <value>Im not sure if the check was successful or not ... :S</value>
@@ -430,5 +430,11 @@ Show info of the current module</value>
     <value>ifcheckrun
 
 Check the module, and if its works, then run it</value>
+  </data>
+  <data name="Can_Be_Intrusive" xml:space="preserve">
+    <value>This check can be intrusive, Continue? [Yes/No]</value>
+  </data>
+  <data name="File_Defined_Not_Exists" xml:space="preserve">
+    <value>File defined in %0 not exists</value>
   </data>
 </root>

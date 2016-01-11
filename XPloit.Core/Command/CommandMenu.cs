@@ -78,9 +78,12 @@ namespace XPloit.Core.Command
             _Quit = false;
             while (!_Quit)
             {
-                string input = IO.ReadLine(Prompt, _AutoCompleteSource);
-                ExecuteChild(input);
+                ExecuteChild(ReadLine());
             }
+        }
+        string ReadLine()
+        {
+            return IO.ReadLine(Prompt, _AutoCompleteSource);
         }
         public void Quit() { _Quit = true; }
     }

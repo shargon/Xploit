@@ -8,17 +8,15 @@ using System.Threading.Tasks;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliaryWordListGenerator : Module
+    public class WordListGenerator : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Generate a wordList"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "WordListGenerator"; } }
         #endregion
 
         #region Properties

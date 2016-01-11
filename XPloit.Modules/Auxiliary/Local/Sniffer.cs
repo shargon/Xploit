@@ -9,17 +9,15 @@ using XPloit.Core.Sniffer;
 using XPloit.Core.Sniffer.Filters;
 using XPloit.Core.Sniffer.Streams;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliarySniffer : Module
+    public class Sniffer : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "TCP Sniffer to file"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "Sniffer"; } }
         public override Reference[] References
         {
             get

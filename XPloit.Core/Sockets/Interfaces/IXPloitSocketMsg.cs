@@ -27,7 +27,7 @@ namespace XPloit.Core.Sockets.Interfaces
         [DataMember(Name = "r")]
         public Guid InResponseTo { get; set; }
         //Variable para acelerar la reflexión
-        static Dictionary<byte, SerializableJSONReferenceAttribute> _Cache = new Dictionary<byte, SerializableJSONReferenceAttribute>();
+        static Dictionary<byte, SerializableJSONReference> _Cache = new Dictionary<byte, SerializableJSONReference>();
         /// <summary>
         /// Protected constructor
         /// </summary>
@@ -44,13 +44,13 @@ namespace XPloit.Core.Sockets.Interfaces
         /// <returns>Devuelve el Array de Bytes de la clase actual</returns>
         public byte[] Serialize(Encoding codec, byte[] header)
         {
-            SerializableJSONReferenceAttribute tp;
+            SerializableJSONReference tp;
             EXPloitSocketMsg type = this.Type;
 
             if (!_Cache.TryGetValue((byte)type, out tp))
             {
                 //no está en cache
-                tp = type.GetAttribute<SerializableJSONReferenceAttribute>();
+                tp = type.GetAttribute<SerializableJSONReference>();
                 lock (_Cache) { _Cache.Add((byte)type, tp); }
             }
 
@@ -68,12 +68,12 @@ namespace XPloit.Core.Sockets.Interfaces
         {
             byte type = data[index];
 
-            SerializableJSONReferenceAttribute tp;
+            SerializableJSONReference tp;
             if (!_Cache.TryGetValue(type, out tp))
             {
                 //no está en cache
                 EXPloitSocketMsg e = (EXPloitSocketMsg)type;
-                tp = e.GetAttribute<SerializableJSONReferenceAttribute>();
+                tp = e.GetAttribute<SerializableJSONReference>();
                 lock (_Cache)
                 {
                     _Cache.Add(type, tp);
@@ -92,12 +92,12 @@ namespace XPloit.Core.Sockets.Interfaces
         {
             byte type = (byte)stream.ReadByte();
 
-            SerializableJSONReferenceAttribute tp;
+            SerializableJSONReference tp;
             if (!_Cache.TryGetValue(type, out tp))
             {
                 //no está en cache
                 EXPloitSocketMsg e = (EXPloitSocketMsg)type;
-                tp = e.GetAttribute<SerializableJSONReferenceAttribute>();
+                tp = e.GetAttribute<SerializableJSONReference>();
                 lock (_Cache)
                 {
                     _Cache.Add(type, tp);

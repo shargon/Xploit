@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
-namespace XPloit.Modules.Auxiliary.Local
+namespace Auxiliary.Local
 {
-    public class AuxiliaryTestPayload : Module
+    public class TestPayload : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "NFC Restore system"; } }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
-        public override string Path { get { return "Auxiliary/Local"; } }
-        public override string Name { get { return "TestPayload"; } }
         public override Target[] Targets
         {
             get
@@ -52,6 +51,11 @@ namespace XPloit.Modules.Auxiliary.Local
             }
         }
 
+        [IntrusiveCheck]
+        public override ECheck Check()
+        {
+            return base.Check();
+        }
         public override bool Run()
         {
             Target t = this.Target;
