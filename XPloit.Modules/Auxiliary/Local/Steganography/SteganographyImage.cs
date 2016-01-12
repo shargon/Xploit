@@ -355,7 +355,7 @@ namespace Auxiliary.Local.Steganography
         }
         int CalculateMaxLength(int width, int height)
         {
-            int binary = (width * 3) * (height * 3);
+            int binary = (width * height) *3; // 101 -> 3 binary per pixel
             return (binary / 8); // -> 8 digitos 1 byte
         }
         string GetSize(long totalSize)
