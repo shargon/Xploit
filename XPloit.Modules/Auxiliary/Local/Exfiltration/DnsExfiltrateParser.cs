@@ -78,20 +78,27 @@ namespace Auxiliary.Local.Exfiltration
 
             if (string.IsNullOrEmpty(line)) return false;
 
-            Match m = Regex.Match(line, RegexData);
-            if (m == null || !m.Success) return false;
+            try
+            {
+                Match m = Regex.Match(line, RegexData);
+                if (m == null || !m.Success) return false;
 
-            string dom;
-            string data = m.Value.Trim();
-            StringHelper.Split(data, '.', out data, out dom);
-            fileId = data.Substring(0, FileIdLength);
+                string dom;
+                string data = m.Value.Trim();
+                StringHelper.Split(data, '.', out data, out dom);
+                fileId = data.Substring(0, FileIdLength);
 
-            if (string.IsNullOrEmpty(fileId)) return false;
-            int packetNum = BitConverterHelper.ToInt32(HexHelper.FromHexString(data.Substring(FileIdLength, 8)), 0);
+                if (string.IsNullOrEmpty(fileId)) return false;
 
-            packet = new packet() { Data = HexHelper.FromHexString(data.Remove(0, FileIdLength + 8)), Order = packetNum };
 
-            return true;
+                int packetNum = BitConverterHelper.ToInt32(HexHelper.FromHexString(data.Substring(FileIdLength, 8)), 0);
+                packet = new packet() { Data = HexHelper.FromHexString(data.Remove(0, FileIdLength + 8)), Order = packetNum };
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
         public override bool Run()
         {
