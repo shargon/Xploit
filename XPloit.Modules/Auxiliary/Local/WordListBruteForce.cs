@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Multi;
 using XPloit.Core.Requirements.Payloads;
 
 namespace Auxiliary.Local
@@ -15,7 +16,6 @@ namespace Auxiliary.Local
         {
             bool PreRun();
             void PostRun();
-            bool AllowMultipleOk { get; }
             bool CheckPassword(string password);
         }
 
@@ -35,14 +35,15 @@ namespace Auxiliary.Local
         [FileRequireExists]
         [ConfigurableProperty(Required = true, Description = "Wordlist file")]
         public FileInfo WordListFile { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Save state for next call")]
-        public bool SaveState { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Line in the WordListFile for start")]
+        public int StartAtLine { get; set; }
         #endregion
 
         public WordListBruteForce()
         {
             ReadBlock = 1000;
             Threads = 5;
+            StartAtLine = 0;
         }
 
         public override bool Run()
@@ -54,16 +55,24 @@ namespace Auxiliary.Local
                 return false;
             }
 
+            bool found = false;
+
             try
             {
                 if (!WordListFile.Exists) return false;
 
                 int readBlock = Math.Max(1, ReadBlock);
                 int threads = Math.Max(1, Threads);
-                bool save = SaveState;
+                bool save = true;
 
-                using (StreamReader reader = new StreamReader(WordListFile.FullName))
+                using (StreamLineReader reader = new StreamLineReader(File.OpenRead(WordListFile.FullName)))
                 {
+                    WriteInfo("Start counting file");
+                    int hay = reader.GetCount(StartAtLine);
+
+                    WriteInfo("Total lines", hay.ToString(), ConsoleColor.Green);
+                    StartProgress(Math.Max(0, hay - StartAtLine));
+
                     string[] toCrack = new string[readBlock];
                     int index = 0;
 
@@ -77,31 +86,30 @@ namespace Auxiliary.Local
                         if (index == readBlock)
                         {
                             // Crack
-                            if (Crack(toCrack, 0, index, threads, check, check.AllowMultipleOk))
+                            if (Crack(toCrack, 0, index, threads, check))
                             {
                                 index = 0;
-
-                                if (!check.AllowMultipleOk) break;
+                                found = true;
+                                break;
                             }
                             else index = 0;
-                            if (save)
-                            {
-                                // Write position
-                            }
+
+                            if (save) StartAtLine = reader.CurrentLine;
+                            WriteProgress(reader.CurrentLine);
                         }
                     }
 
                     if (index != 0)
                     {
                         // Sobras
-                        if (Crack(toCrack, 0, index, threads, check, check.AllowMultipleOk))
+                        if (Crack(toCrack, 0, index, threads, check))
                         {
                             index = 0;
+                            found = true;
                         }
-                        if (save)
-                        {
-                            // End
-                        }
+
+                        if (save) StartAtLine = reader.CurrentLine;
+                        WriteProgress(reader.CurrentLine);
                     }
                 }
             }
@@ -111,48 +119,67 @@ namespace Auxiliary.Local
             }
             finally
             {
+                EndProgress();
                 check.PostRun();
             }
 
-            return true;
+            return found;
         }
 
-        bool Crack(string[] toCrack, int index, int length, int threads, ICheckPassword check, bool allowMultipleOk)
+        bool Crack(string[] toCrack, int index, int length, int threads, ICheckPassword check)
         {
-            bool found = false;
-
-            CancellationTokenSource cts = new CancellationTokenSource();
-
-            try
+            if (threads <= 1)
             {
-                // Use ParallelOptions instance to store the CancellationToken
-                ParallelOptions po = new ParallelOptions();
-                po.CancellationToken = cts.Token;
-                po.MaxDegreeOfParallelism = threads;
-
-                ParallelLoopResult res = Parallel.For(index, index + length, x =>
+                for (int x = index, max = index + length; x < max; x++)
+                {
+                    string w = toCrack[x];
+                    if (check.CheckPassword(w))
                     {
-                        string w = toCrack[x];
-                        if (check.CheckPassword(w))
-                        {
-                            found = true;
+                        EndProgress();
+                        WriteInfo("Password Found! ", w, ConsoleColor.Green);
+                        Beep();
 
-                            WriteInfo("Password Found! ", w, ConsoleColor.Green);
-                            Beep();
+                        return true;
+                    }
+                }
 
-                            cts.Cancel();
-                            return;
-                        }
-
-                        po.CancellationToken.ThrowIfCancellationRequested();
-                    });
+                return false;
             }
-            catch { }
-            finally
+            else
             {
-                cts.Dispose();
+                bool found = false;
+                CancellationTokenSource cts = new CancellationTokenSource();
+
+                try
+                {
+                    // Use ParallelOptions instance to store the CancellationToken
+                    ParallelOptions po = new ParallelOptions();
+                    po.CancellationToken = cts.Token;
+                    po.MaxDegreeOfParallelism = threads;
+
+                    ParallelLoopResult res = Parallel.For(index, index + length, x =>
+                        {
+                            string w = toCrack[x];
+                            if (check.CheckPassword(w))
+                            {
+                                found = true;
+
+                                EndProgress();
+                                WriteInfo("Password Found! ", w, ConsoleColor.Green);
+                                Beep();
+
+                                cts.Cancel();
+                                return;
+                            }
+
+                            po.CancellationToken.ThrowIfCancellationRequested();
+                        });
+                }
+                catch { }
+                finally { cts.Dispose(); }
+
+                return found;
             }
-            return found;
         }
     }
 }

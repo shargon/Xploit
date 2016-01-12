@@ -7,6 +7,7 @@ using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Sniffer;
 using XPloit.Core.Sniffer.Filters;
+using XPloit.Core.Sniffer.Interfaces;
 using XPloit.Core.Sniffer.Streams;
 
 namespace Auxiliary.Local
@@ -33,6 +34,8 @@ namespace Auxiliary.Local
         #region Properties
         [ConfigurableProperty(Required = true, Description = "Sniff this port")]
         public ushort LocalPort { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Sniff only the Tor Request")]
+        public bool OnlyTorRequest { get; set; }
         [ConfigurableProperty(Required = true, Description = "Address for binding")]
         public IPAddress LocalAddress { get; set; }
         [ConfigurableProperty(Required = true, Description = "Directory for creating TcpStream files")]
@@ -46,9 +49,14 @@ namespace Auxiliary.Local
 
             if (!DumpFolder.Exists) return false;
 
+            if (OnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
+
             NetworkSniffer s = new NetworkSniffer(LocalAddress);
             s.OnTcpStream += s_OnTcpStream;
-            s.Filter = new SnifferPortFilter(this.LocalPort);
+            s.Filters = OnlyTorRequest ?
+                 new ITcpStreamFilter[] { new SnifferPortFilter(LocalPort), new SnifferTorFilter() }
+                :
+                 new ITcpStreamFilter[] { new SnifferPortFilter(LocalPort) };
             s.Start();
 
             CreateJob(s);
@@ -65,12 +73,18 @@ namespace Auxiliary.Local
 
                 if (!DumpFolder.Exists)
                 {
-                    WriteError("DumpFolder must exists"); 
+                    WriteError("DumpFolder must exists");
                     return ECheck.Error;
                 }
 
+                if (OnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
+
                 s = new NetworkSniffer(LocalAddress);
-                s.Filter = new SnifferPortFilter(this.LocalPort);
+                s.Filters = OnlyTorRequest ?
+                 new ITcpStreamFilter[] { new SnifferPortFilter(LocalPort), new SnifferTorFilter() }
+                :
+                 new ITcpStreamFilter[] { new SnifferPortFilter(LocalPort) };
+
                 s.Start();
 
                 return ECheck.Ok;

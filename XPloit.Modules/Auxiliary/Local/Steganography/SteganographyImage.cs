@@ -119,14 +119,15 @@ namespace Auxiliary.Local.Steganography
                             WriteInfo("Start writing image");
                             StartProgress(width * height);
 
+                            Random rd = new Random(Environment.TickCount);
                             byte r, g, b;
                             int index = 0, current = 0;
                             for (int x = 0; x < width; x++)
                                 for (int y = 0; y < height; y++)
                                 {
-                                    r = GetBinary(sb, ref index, sbl);
-                                    g = GetBinary(sb, ref index, sbl);
-                                    b = GetBinary(sb, ref index, sbl);
+                                    r = GetBinary(rd, sb, ref index, sbl);
+                                    g = GetBinary(rd, sb, ref index, sbl);
+                                    b = GetBinary(rd, sb, ref index, sbl);
 
                                     Color clr = img.GetPixel(x, y);
 
@@ -306,10 +307,16 @@ namespace Auxiliary.Local.Steganography
             b = 0;
             return false;
         }
-        byte GetBinary(char[] sb, ref int index, int l)
+        byte GetBinary(Random r, char[] sb, ref int index, int l)
         {
             if (index >= l)
-                return (byte)0;
+            {
+                // More than data, could be random
+                if (r.Next(0, 100) < 50)
+                    return (byte)0;
+                else
+                    return (byte)1;
+            }
 
             index++;
             return (byte)(sb[index - 1] == '1' ? 1 : 0);
@@ -355,7 +362,7 @@ namespace Auxiliary.Local.Steganography
         }
         int CalculateMaxLength(int width, int height)
         {
-            int binary = (width * height) *3; // 101 -> 3 binary per pixel
+            int binary = (width * height) * 3; // 101 -> 3 binary per pixel
             return (binary / 8); // -> 8 digitos 1 byte
         }
         string GetSize(long totalSize)

@@ -61,7 +61,6 @@ namespace Payloads.Local.BruteForce
             FVE_E_PROTECTOR_NOT_FOUND = 2150694963
         }
 
-        public bool AllowMultipleOk { get { return false; } }
         public bool CheckPassword(string password)
         {
             if (_Item == null)

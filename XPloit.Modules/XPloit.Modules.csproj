@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auxiliary\Local\DetectTorExitNode.cs" />
     <Compile Include="Auxiliary\Local\TestPayload.cs" />
     <Compile Include="Auxiliary\Local\Steganography\SteganographyImage.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\DnsExfiltrateParser.cs" />

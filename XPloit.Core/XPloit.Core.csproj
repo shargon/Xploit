@@ -175,8 +175,11 @@
     <Compile Include="Helpers\CounterHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
-    <Compile Include="Helpers\TorExitNoteHelper.cs" />
+    <Compile Include="Helpers\IniHelper.cs" />
+    <Compile Include="Helpers\TorHelper.cs" />
+    <Compile Include="Multi\StreamLineReader.cs" />
     <Compile Include="Requirements\Payloads\SpecifyPlatformRequired.cs" />
+    <Compile Include="Sniffer\Filters\SnifferTorFilter.cs" />
     <Compile Include="Sockets\UdpListener.cs" />
     <Compile Include="Dns\Spf\SenderIDRecord.cs" />
     <Compile Include="Dns\Spf\SenderIDScope.cs" />

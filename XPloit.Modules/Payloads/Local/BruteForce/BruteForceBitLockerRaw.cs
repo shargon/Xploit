@@ -757,7 +757,6 @@ namespace Payloads.Local.BruteForce
         }
         #endregion
 
-        public bool AllowMultipleOk { get { return false; } }
         /*
         public ushort ReadUShort(byte[] data, int index)
         {

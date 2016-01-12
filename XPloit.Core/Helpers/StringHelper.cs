@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic.CompilerServices;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -140,6 +141,22 @@ namespace XPloit.Core.Helpers
             if (string.IsNullOrEmpty(input)) return false;
 
             return Operators.LikeString(input, pattern, Microsoft.VisualBasic.CompareMethod.Text);
+        }
+        /// <summary>
+        /// Replace a string with the current variables example {Year} -> current Year
+        /// </summary>
+        /// <param name="variables">Variables</param>
+        /// <param name="input">Input</param>
+        public static string ReplaceVariables(Dictionary<string, string> variables, string input)
+        {
+            if (variables != null && input != null)
+                foreach (string k in variables.Keys)
+                {
+                    if (input.Contains(k)) 
+                        input = input.Replace(k, variables[k]);
+                }
+
+            return input;
         }
         /// <summary>
         /// Convert to Kb, Mb ...

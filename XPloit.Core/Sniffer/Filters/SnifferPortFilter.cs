@@ -22,5 +22,6 @@ namespace XPloit.Core.Sniffer.Filters
         {
             _Port = port;
         }
+        public override string ToString() { return _Port.ToString(); }
     }
 }

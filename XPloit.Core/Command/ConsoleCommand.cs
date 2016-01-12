@@ -63,10 +63,12 @@ namespace XPloit.Core.Command
 
         public void WriteProgress(double value)
         {
+            if (!IsInProgress) return;
+
             _ProgressVal = value;
 
             if (value > _ProgressMax) value = _ProgressMax;
-            double percent = (value * 100.0) / _ProgressMax;
+            double percent = _ProgressMax == 0 ? 0 : (value * 100.0) / _ProgressMax;
 
             int lp = (int)(percent * 10);
             if (lp == _LastPercent)
@@ -100,6 +102,8 @@ namespace XPloit.Core.Command
         }
         public void EndProgress()
         {
+            if (!IsInProgress) return;
+
             WriteProgress(_ProgressMax);
 
             _ProgressX = -1;
@@ -122,6 +126,12 @@ namespace XPloit.Core.Command
         }
         void WriteStart(string ch, ConsoleColor color)
         {
+            if (IsInProgress)
+            {
+                EndProgress();
+                return;
+            }
+
             SetForeColor(ConsoleColor.Gray);
             Write("[");
             SetForeColor(color);

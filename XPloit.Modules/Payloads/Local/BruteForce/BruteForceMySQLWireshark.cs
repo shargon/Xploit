@@ -52,7 +52,6 @@ namespace Payloads.Local.BruteForce
         public FileInfo TCPStreamFile { get; set; }
         #endregion
 
-        public bool AllowMultipleOk { get { return false; } }
 
         byte[] bseed = null, bhash = null;
 

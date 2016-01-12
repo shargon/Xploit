@@ -159,7 +159,14 @@ namespace XPloit.Core.Helpers
                 if (type == _IPAddressType)
                 {
                     IPAddress r;
-                    if (!IPAddress.TryParse(input.Trim(), out r)) return IPAddress.Any;
+                    if (!IPAddress.TryParse(input.Trim(), out r))
+                    {
+                        IPHostEntry entry = System.Net.Dns.GetHostEntry(input.Trim());
+                        if (entry != null && entry.AddressList != null && entry.AddressList.Length > 0)
+                            r = entry.AddressList[0];
+
+                        if (r == null) return IPAddress.Any;
+                    }
                     return r;
                 }
                 if (type == _FileInfoType) return new FileInfo(input);
@@ -172,7 +179,14 @@ namespace XPloit.Core.Helpers
                     if (si.Length < 2) return null;
 
                     IPAddress ip;
-                    if (!IPAddress.TryParse(si[0], out ip)) return null;
+                    if (!IPAddress.TryParse(si[0], out ip))
+                    {
+                        IPHostEntry entry = System.Net.Dns.GetHostEntry(si[0]);
+                        if (entry != null && entry.AddressList != null && entry.AddressList.Length > 0)
+                            ip = entry.AddressList[0];
+
+                        if (ip == null) ip = IPAddress.Any;
+                    }
 
                     ushort port;
                     if (!ushort.TryParse(si[1], out port)) return null;

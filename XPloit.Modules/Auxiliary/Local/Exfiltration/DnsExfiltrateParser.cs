@@ -36,8 +36,11 @@ namespace Auxiliary.Local.Exfiltration
         [ConfigurableProperty(Required = true, Description = "Folder where write the files")]
         public DirectoryInfo OutFolder { get; set; }
 
-        [ConfigurableProperty(Required = true, Description = "Length of fileId")]
-        public int FileIdLength { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Length of File Id (2 for 1 byte in Hex)")]
+        public int PacketFileIdLength { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Length of Packet Num (8 for 4bytes in Hex)")]
+        public int PacketNumLength { get; set; }
+
         [ConfigurableProperty(Required = true, Description = "Regex for Data")]
         public string RegexData { get; set; }
 
@@ -60,7 +63,8 @@ namespace Auxiliary.Local.Exfiltration
             AesRGBSalt = null;
 
             RegexData = new VerbalExpressions().Find("\t").Something().Find("\t").ToString();
-            FileIdLength = 2;
+            PacketFileIdLength = 2;
+            PacketNumLength = 0;
         }
 
         class packet
@@ -71,7 +75,7 @@ namespace Auxiliary.Local.Exfiltration
 
         int sortPacket(packet a, packet b) { return a.Order.CompareTo(b.Order); }
 
-        bool parse(string line, out string fileId, out packet packet)
+        bool parse(string line, int filedIdLength, int packetNumLength, out string fileId, out packet packet)
         {
             fileId = "";
             packet = null;
@@ -86,13 +90,20 @@ namespace Auxiliary.Local.Exfiltration
                 string dom;
                 string data = m.Value.Trim();
                 StringHelper.Split(data, '.', out data, out dom);
-                fileId = data.Substring(0, FileIdLength);
 
-                if (string.IsNullOrEmpty(fileId)) return false;
+                if (filedIdLength > 0)
+                {
+                    fileId = data.Substring(0, filedIdLength);
+                    if (string.IsNullOrEmpty(fileId)) return false;
+                }
 
+                int packetNum = 0;
+                if (packetNumLength > 0)
+                {
+                    packetNum = BitConverterHelper.ToInt32(HexHelper.FromHexString(data.Substring(filedIdLength, packetNumLength)), 0);
+                }
 
-                int packetNum = BitConverterHelper.ToInt32(HexHelper.FromHexString(data.Substring(FileIdLength, 8)), 0);
-                packet = new packet() { Data = HexHelper.FromHexString(data.Remove(0, FileIdLength + 8)), Order = packetNum };
+                packet = new packet() { Data = HexHelper.FromHexString(data.Remove(0, filedIdLength + packetNumLength)), Order = packetNum };
                 return true;
             }
             catch
@@ -121,7 +132,7 @@ namespace Auxiliary.Local.Exfiltration
                     string fileId;
                     packet packet;
 
-                    if (!parse(line, out fileId, out packet)) continue;
+                    if (!parse(line, PacketFileIdLength, PacketNumLength, out fileId, out packet)) continue;
 
                     if (dic.ContainsKey(fileId))
                     {

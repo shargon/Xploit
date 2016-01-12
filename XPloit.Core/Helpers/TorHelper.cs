@@ -5,7 +5,7 @@ using System.Net;
 
 namespace XPloit.Core.Helpers
 {
-    class TorExitNoteHelper
+    public class TorHelper
     {
         // https://www.torproject.org/projects/tordnsel.html.en
         // https://check.torproject.org/exit-addresses
@@ -58,6 +58,8 @@ namespace XPloit.Core.Helpers
             public override string ToString() { return _ExitNodeId + " - " + _ExitAddressString; }
         }
 
+        static string _LastHeader = null;
+        static DateTime _Last = DateTime.MinValue;
         static ExitNode[] _ExitNodes = null;
         /// <summary>
         /// Nodos de salida
@@ -66,7 +68,7 @@ namespace XPloit.Core.Helpers
         {
             get
             {
-                if (_ExitNodes == null) UpdateTorExitNodeList();
+                if (_ExitNodes == null) UpdateTorExitNodeList(false);
                 return _ExitNodes;
             }
         }
@@ -113,15 +115,51 @@ namespace XPloit.Core.Helpers
         /// <summary>
         /// Actualiza la lista de Nodos de Tor
         /// </summary>
+        /// <param name="ifExpired">True for check only if 10 minutes passed</param>
         /// <returns>Devuelve el número de nodos de salida</returns>
-        public static int UpdateTorExitNodeList()
+        public static int UpdateTorExitNodeList(bool ifExpired)
         {
+            DateTime now = DateTime.Now;
+            if (ifExpired && _ExitNodes != null)
+            {
+                if ((now - _Last).TotalMinutes < 10) return _ExitNodes.Length;
+            }
+            _Last = now;
             List<ExitNode> ls = new List<ExitNode>();
             try
             {
                 using (WebClient wb = new WebClient())
                 {
-                    string[] dv = wb.DownloadString("https://check.torproject.org/exit-addresses").Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (!string.IsNullOrEmpty(_LastHeader))
+                    {
+                        wb.Headers.Add(HttpRequestHeader.IfNoneMatch, _LastHeader);
+                    }
+
+                    string[] dv = null;
+                    try
+                    {
+                        dv = wb.DownloadString("https://check.torproject.org/exit-addresses").Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    }
+                    catch (WebException e)
+                    {
+                        if (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotModified)
+                            return _ExitNodes.Length;
+                        
+                        throw (e);
+                    }
+                    catch (Exception e)
+                    {
+                        throw (e);
+                    }
+
+                    string tag = wb.ResponseHeaders.Get("ETag");
+
+                    if (!string.IsNullOrEmpty(tag))
+                    {
+                        if (_ExitNodes != null && tag == _LastHeader)
+                            return _ExitNodes.Length;
+                        _LastHeader = tag;
+                    }
 
                     string exitNodeId = null;
                     DateTime published = DateTime.MinValue;
@@ -164,7 +202,10 @@ namespace XPloit.Core.Helpers
                     }
                 }
             }
-            catch { }
+            catch
+            {
+
+            }
 
             _ExitNodes = ls.ToArray();
             return _ExitNodes.Length;

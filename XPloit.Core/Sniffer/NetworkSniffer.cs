@@ -19,13 +19,13 @@ namespace XPloit.Core.Sniffer
         public event delPacket OnPacket;
         public event delTcpStream OnTcpStream;
 
-        ITcpStreamFilter _Filter = null;
+        ITcpStreamFilter[] _Filters = null;
         List<TcpStream> _TcpStreams = new List<TcpStream>();
 
         /// <summary>
         /// Filter
         /// </summary>
-        public ITcpStreamFilter Filter { get { return _Filter; } set { _Filter = value; } }
+        public ITcpStreamFilter[] Filters { get { return _Filters; } set { _Filters = value; } }
 
         /// <summary>
         /// Constructor
@@ -77,7 +77,7 @@ namespace XPloit.Core.Sniffer
             {
                 TcpHeader tcp = (TcpHeader)packet;
 
-                if ((_Filter == null || _Filter.AllowTcpPacket(tcp)))
+                if (AllowTcpPacket(tcp))
                 {
                     TcpStream stream = TcpStream.GetStream(_TcpStreams, tcp);
                     if (stream != null)
@@ -90,6 +90,15 @@ namespace XPloit.Core.Sniffer
             }
 
             Receive();
+        }
+        bool AllowTcpPacket(TcpHeader tcp)
+        {
+            if (_Filters == null) return true;
+            foreach (ITcpStreamFilter filter in _Filters)
+            {
+                if (!filter.AllowTcpPacket(tcp)) return false;
+            }
+            return true;
         }
         /// <summary>
         /// Liberación de recursos
