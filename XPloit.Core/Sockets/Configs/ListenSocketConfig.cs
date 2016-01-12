@@ -1,5 +1,4 @@
-﻿using System.Net;
-using XPloit.Core.Multi;
+﻿using XPloit.Core.Sniffer.Filters;
 
 namespace XPloit.Core.Sockets.Configs
 {

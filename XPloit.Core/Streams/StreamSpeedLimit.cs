@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 
-namespace XPloit.Core.Multi
+namespace XPloit.Core.Streams
 {
     /// <summary>
     /// Class for streaming data with throttling support.

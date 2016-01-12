@@ -12,7 +12,7 @@ namespace XPloit.Core.Sniffer.Filters
         /// </summary>
         public ushort Port { get { return _Port; } }
 
-        public bool AllowTcpPacket(TcpHeader packet) { return packet.DestinationPort == Port || packet.SourcePort == Port; }
+        public bool IsAllowed(TcpHeader packet) { return packet.DestinationPort == Port || packet.SourcePort == Port; }
 
         /// <summary>
         /// Constructor

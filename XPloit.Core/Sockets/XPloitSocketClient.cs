@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using XPloit.Core.Multi;
+using XPloit.Core.Streams;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
 

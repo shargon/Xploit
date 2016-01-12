@@ -177,7 +177,7 @@
     <Compile Include="Extensions\IPAddressExtension.cs" />
     <Compile Include="Helpers\IniHelper.cs" />
     <Compile Include="Helpers\TorHelper.cs" />
-    <Compile Include="Multi\StreamLineReader.cs" />
+    <Compile Include="Streams\StreamLineReader.cs" />
     <Compile Include="Requirements\Payloads\SpecifyPlatformRequired.cs" />
     <Compile Include="Sniffer\Filters\SnifferTorFilter.cs" />
     <Compile Include="Sockets\UdpListener.cs" />
@@ -220,7 +220,7 @@
     <Compile Include="Command\ConsoleCommand.cs" />
     <Compile Include="Interfaces\IEncoderRequirements.cs" />
     <Compile Include="Interfaces\INopRequirements.cs" />
-    <Compile Include="Multi\StreamSpeedLimit.cs" />
+    <Compile Include="Streams\StreamSpeedLimit.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Job.cs" />
@@ -231,9 +231,7 @@
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Listeners\CommandListener.cs" />
     <Compile Include="Listeners\SocketListener.cs" />
-    <Compile Include="Multi\DomainUser.cs" />
-    <Compile Include="Multi\IPFilter.cs" />
-    <Compile Include="Multi\Password.cs" />
+    <Compile Include="Sniffer\Filters\IPFilter.cs" />
     <Compile Include="Requirements\Encoders\InterfaceEncoder.cs" />
     <Compile Include="Requirements\Encoders\UniqueEncoder.cs" />
     <Compile Include="Requirements\Nops\InterfaceNop.cs" />
@@ -263,7 +261,6 @@
     <Compile Include="Sockets\Proxy\Socks5Handler.cs" />
     <Compile Include="Sockets\Proxy\SocksHandler.cs" />
     <Compile Include="Target.cs" />
-    <Compile Include="Multi\User.cs" />
     <Compile Include="Requirements\Payloads\UniquePayload.cs" />
     <Compile Include="Requirements\Payloads\BufferOverflowPayload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

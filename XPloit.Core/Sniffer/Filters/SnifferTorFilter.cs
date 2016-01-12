@@ -6,7 +6,7 @@ namespace XPloit.Core.Sniffer.Filters
 {
     public class SnifferTorFilter : ITcpStreamFilter
     {
-        public bool AllowTcpPacket(TcpHeader packet)
+        public bool IsAllowed(TcpHeader packet)
         {
             TorHelper.UpdateTorExitNodeList(true);
 

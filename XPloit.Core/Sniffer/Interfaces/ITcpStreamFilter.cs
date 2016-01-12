@@ -4,6 +4,6 @@ namespace XPloit.Core.Sniffer.Interfaces
 {
     public interface ITcpStreamFilter
     {
-        bool AllowTcpPacket(TcpHeader packet);
+        bool IsAllowed(TcpHeader packet);
     }
 }

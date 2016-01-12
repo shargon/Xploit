@@ -96,7 +96,7 @@ namespace XPloit.Core.Sniffer
             if (_Filters == null) return true;
             foreach (ITcpStreamFilter filter in _Filters)
             {
-                if (!filter.AllowTcpPacket(tcp)) return false;
+                if (!filter.IsAllowed(tcp)) return false;
             }
             return true;
         }

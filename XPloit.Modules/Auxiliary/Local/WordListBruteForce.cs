@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
-using XPloit.Core.Multi;
+using XPloit.Core.Streams;
 using XPloit.Core.Requirements.Payloads;
 
 namespace Auxiliary.Local

@@ -1,5 +1,4 @@
-﻿using XPloit.Core.Multi;
-using XPloit.Core.Sockets.Configs;
+﻿using XPloit.Core.Sockets.Configs;
 
 namespace XPloit
 {
@@ -14,12 +13,8 @@ namespace XPloit
         /// </summary>
         public ClientSocketConfig Connect { get; set; }
         /// <summary>
-        /// User
+        /// File for replay command
         /// </summary>
-        public User User { get; set; }
-        /// <summary>
-        /// File for run command
-        /// </summary>
-        public string Resource { get; set; }
+        public string Replay { get; set; }
     }
 }

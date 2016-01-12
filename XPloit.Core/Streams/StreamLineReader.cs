@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace XPloit.Core.Multi
+namespace XPloit.Core.Streams
 {
     public class StreamLineReader : IDisposable
     {

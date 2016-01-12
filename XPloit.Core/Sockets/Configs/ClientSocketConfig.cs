@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using XPloit.Core.Multi;
+using XPloit.Core.Streams;
 
 namespace XPloit.Core.Sockets.Configs
 {
@@ -16,7 +16,7 @@ namespace XPloit.Core.Sockets.Configs
         /// <summary>
         /// CryptPassword
         /// </summary>
-        public Password CryptKey { get; set; }
+        public string CryptKey { get; set; }
 
         public override string ToString()
         {

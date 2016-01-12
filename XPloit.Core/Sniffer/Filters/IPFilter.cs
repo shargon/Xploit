@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using XPloit.Core.Sniffer.Headers;
+using XPloit.Core.Sniffer.Interfaces;
 
-namespace XPloit.Core.Multi
+namespace XPloit.Core.Sniffer.Filters
 {
-    public class IPFilter
+    public class IPFilter : ITcpStreamFilter
     {
         /// <summary>
         /// Not allowed ips
@@ -13,6 +15,13 @@ namespace XPloit.Core.Multi
         /// Not allowed ips
         /// </summary>
         public List<IPAddress> OnlyAllowed { get; set; }
+
+        public bool IsAllowed(TcpHeader packet)
+        {
+            if (IsAllowed(packet.IpHeader.SourceAddress)) return true;
+            if (IsAllowed(packet.IpHeader.DestinationAddress)) return true;
+            return false;
+        }
 
         /// <summary>
         /// Check if ip its allowed
