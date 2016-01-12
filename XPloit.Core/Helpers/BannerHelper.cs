@@ -52,7 +52,7 @@ namespace XPloit.Core.Helpers
         {
             command.WriteLine("         _.-'~~~~~~`-._                               ");
             command.WriteLine("        /      ||      \\                             ");
-            command.WriteLine("       /       ||       \\    \"LUCK, IM YOUR FATHER\"");
+            command.WriteLine("       /       ||       \\    \"LUKE, IM YOUR FATHER\"");
             command.WriteLine("      |        ||        |                            ");
             command.WriteLine("      | _______||_______ |                            ");
             command.WriteLine("      |/ ----- \\/ ----- \\|                          ");
