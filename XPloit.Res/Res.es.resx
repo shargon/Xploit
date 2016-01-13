@@ -437,4 +437,10 @@ Check the module, and if its works, then run it</value>
   <data name="File_Defined_Not_Exists" xml:space="preserve">
     <value>File defined in %0 not exists</value>
   </data>
+  <data name="Folder_Required_Ask" xml:space="preserve">
+    <value>The selected folder '%0' not exist, do yo want create?  [Yes/No]</value>
+  </data>
+  <data name="Folder_Required" xml:space="preserve">
+    <value>Folder '%0' must exists</value>
+  </data>
 </root>

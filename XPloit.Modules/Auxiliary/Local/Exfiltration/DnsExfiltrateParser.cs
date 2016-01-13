@@ -15,8 +15,6 @@ namespace Auxiliary.Local.Exfiltration
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "DNS-Exfiltration file parser"; } }
-        public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
-        public override bool IsLocal { get { return true; } }
         public override Reference[] References
         {
             get

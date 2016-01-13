@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
 namespace XPloit.Core.Helpers
@@ -64,10 +65,17 @@ namespace XPloit.Core.Helpers
             ip = null;
             if (string.IsNullOrEmpty(cad) || cad.Length < 3) return false;
 
-            string[] ar = cad.Split(':');
+            string[] ar = cad.Split(',');
             if (ar.Length > 2) return false;
 
-            if (!IPAddress.TryParse(ar[0], out ip)) return false;
+            if (!IPAddress.TryParse(ar[0], out ip))
+            {
+                IPHostEntry entry = System.Net.Dns.GetHostEntry(ar[0].Trim());
+                if (entry != null && entry.AddressList != null && entry.AddressList.Length > 0)
+                    ip = entry.AddressList[0];
+
+                if (ip == null) return false;
+            }
             if (ar.Length == 2)
             {
                 ushort dprto = prto;

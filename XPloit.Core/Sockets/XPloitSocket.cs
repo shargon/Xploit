@@ -373,9 +373,7 @@ namespace XPloit.Core.Sockets
             ushort port = DEFAULT_PORT;
             IPAddress host = null;
             if (!IPHelper.ParseIpPort(hostAndPort, out host, ref port))
-            {
                 throw (new ArgumentNullException("Host"));
-            }
 
             _Protocol = protocol;
             _IPEndPoint = new IPEndPoint(host, port);

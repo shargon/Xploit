@@ -24,8 +24,6 @@ namespace Auxiliary.Local.Exfiltration
                     "   PacketNumber -> 4 bytes, disable in 'SendPacketOrder'";
             }
         }
-        public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
-        public override bool IsLocal { get { return true; } }
         public override Reference[] References
         {
             get

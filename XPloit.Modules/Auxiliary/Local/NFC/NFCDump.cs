@@ -10,8 +10,6 @@ namespace Auxiliary.Local.NFC
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "NFC Restore system"; } }
-        public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
-        public override bool IsLocal { get { return true; } }
         public override Reference[] References
         {
             get

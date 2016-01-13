@@ -12,8 +12,6 @@ namespace Auxiliary.Local
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "Check if a ip its a Tor exit node"; } }
-        public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
-        public override bool IsLocal { get { return true; } }
         public override Reference[] References
         {
             get { return new Reference[] { new Reference(EReferenceType.URL, "https://check.torproject.org/exit-addresses") }; }

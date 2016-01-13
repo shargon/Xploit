@@ -16,8 +16,6 @@ namespace Auxiliary.Local
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
         public override string Description { get { return "DNS-Server"; } }
-        public override DateTime DisclosureDate { get { return DateTime.MinValue; } }
-        public override bool IsLocal { get { return true; } }
         public override Reference[] References
         {
             get

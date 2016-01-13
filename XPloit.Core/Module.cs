@@ -18,14 +18,6 @@ namespace XPloit.Core
         /// </summary>
         internal override EModuleType ModuleType { get { return EModuleType.Module; } }
         /// <summary>
-        /// IsLocal
-        /// </summary>
-        public virtual bool IsLocal { get { return false; } }
-        /// <summary>
-        /// IsRemote
-        /// </summary>
-        public virtual bool IsRemote { get { return false; } }
-        /// <summary>
         /// References
         /// </summary>
         public virtual Reference[] References { get { return null; } }

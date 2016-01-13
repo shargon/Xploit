@@ -284,7 +284,7 @@ namespace XPloit.Core.Listeners
             }
 
             string error;
-            if (checkRequieredProperties && !_Current.CheckRequiredProperties(out error))
+            if (checkRequieredProperties && !_Current.CheckRequiredProperties(_IO, out error))
             {
                 _Current.WriteInfo(error);
                 return false;
@@ -308,7 +308,6 @@ namespace XPloit.Core.Listeners
             }
 
             CommandTable tb = new CommandTable();
-
             _IO.WriteLine("");
 
             tb.AddRow(tb.AddRow(Lang.Get("Id"), Lang.Get("Status"), Lang.Get("Module")).MakeSeparator());
@@ -615,8 +614,6 @@ namespace XPloit.Core.Listeners
             if (curM != null)
             {
                 if (curM.DisclosureDate != DateTime.MinValue) tb.AddRow(Lang.Get("DisclosureDate"), curM.DisclosureDate.ToString(), "")[0].ForeColor = ConsoleColor.DarkGray;
-                tb.AddRow(Lang.Get("IsLocal"), curM.IsLocal.ToString(), "")[0].ForeColor = ConsoleColor.DarkGray;
-                tb.AddRow(Lang.Get("IsRemote"), curM.IsRemote.ToString(), "")[0].ForeColor = ConsoleColor.DarkGray;
 
                 if (curM.References != null && curM.References.Length > 0)
                 {

@@ -198,22 +198,23 @@ namespace XPloit.Core.Interfaces
         /// <summary>
         /// Check Required Properties
         /// </summary>
+        /// <param name="obj">Object to check</param>
+        /// <param name="cmd">Command</param>
         /// <param name="error">Variable for capture the error fail</param>
         /// <returns>Return true if OK, false if not</returns>
-        public bool CheckRequiredProperties(out string error)
+        public static bool CheckRequiredProperties(object obj, ICommandLayer cmd, out string error)
         {
             error = null;
-
             Type fileInfoType = typeof(FileInfo);
             Type dirInfoType = typeof(DirectoryInfo);
 
-            foreach (PropertyInfo pi in ReflectionHelper.GetProperties(this, true, true, true))
+            foreach (PropertyInfo pi in ReflectionHelper.GetProperties(obj, true, true, true))
             {
                 ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
                 if (c == null)
                     continue;
 
-                object val = pi.GetValue(this);
+                object val = pi.GetValue(obj);
 
                 if (val == null)
                 {
@@ -227,14 +228,56 @@ namespace XPloit.Core.Interfaces
                     if (pi.PropertyType == fileInfoType)
                     {
                         FileRequireExists c2 = pi.GetCustomAttribute<FileRequireExists>();
-                        if (c2!=null && !c2.IsValid(val))
+                        if (c2 != null && !c2.IsValid(val))
                         {
                             error = Lang.Get("File_Defined_Not_Exists", pi.Name);
                             return false;
                         }
                     }
+                    else
+                    {
+                        if (pi.PropertyType == dirInfoType)
+                        {
+                            // Check directory
+                            DirectoryInfo di = (DirectoryInfo)val;
+                            di.Refresh();
+                            if (!di.Exists)
+                            {
+                                if (cmd == null)
+                                {
+                                    // Por si acaso
+                                    error = Lang.Get("Folder_Required", di.FullName);
+                                    return false;
+                                }
+
+                                cmd.WriteLine(Lang.Get("Folder_Required_Ask", di.FullName));
+                                if (!(bool)ConvertHelper.ConvertTo(cmd.ReadLine(null, null), typeof(bool)))
+                                {
+                                    error = Lang.Get("Folder_Required", di.FullName);
+                                    return false;
+                                }
+
+                                try { di.Create(); }
+                                catch (Exception e) { cmd.WriteError(e.ToString()); }
+                            }
+                        }
+                    }
                 }
             }
+
+            return error == null;
+        }
+        /// <summary>
+        /// Check Required Properties
+        /// </summary>
+        /// <param name="cmd">Command</param>
+        /// <param name="error">Variable for capture the error fail</param>
+        /// <returns>Return true if OK, false if not</returns>
+        public bool CheckRequiredProperties(ICommandLayer cmd, out string error)
+        {
+            error = null;
+
+            if (!CheckRequiredProperties(this, cmd, out error)) return false;
 
             if (this is Module)
             {
@@ -255,36 +298,10 @@ namespace XPloit.Core.Interfaces
                         return false;
                     }
                 }
-
-                if (m.Payload != null)
-                    foreach (PropertyInfo pi in ReflectionHelper.GetProperties(m.Payload, true, true, true))
-                    {
-                        ConfigurableProperty c = pi.GetCustomAttribute<ConfigurableProperty>();
-                        if (c == null)
-                            continue;
-
-                        object val = pi.GetValue(m.Payload);
-
-                        if (val == null)
-                        {
-                            if (!c.Required) continue;
-
-                            error = Lang.Get("Require_Set_Property", pi.Name);
-                            return false;
-                        }
-                        else
-                        {
-                            if (pi.PropertyType == fileInfoType)
-                            {
-                                FileRequireExists c2 = pi.GetCustomAttribute<FileRequireExists>();
-                                if (c2!=null && !c2.IsValid(val))
-                                {
-                                    error = Lang.Get("File_Defined_Not_Exists", pi.Name);
-                                    return false;
-                                }
-                            }
-                        }
-                    }
+                else
+                {
+                    if (!CheckRequiredProperties(m.Payload, cmd, out error)) return false;
+                }
             }
 
             return true;
