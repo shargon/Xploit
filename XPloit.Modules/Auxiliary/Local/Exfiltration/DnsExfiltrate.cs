@@ -118,7 +118,7 @@ namespace Auxiliary.Local.Exfiltration
             if (aes != null) WriteInfo("Using AES Encryption");
             else WriteError("Send in RawMode (without any Encryption)");
 
-            WriteInfo("Start sending file ...");
+            WriteInfo("Start sending file", HexHelper.Buffer2Hex(g, 0, g.Length), ConsoleColor.Green);
 
             byte[] crypted = null;
 
