@@ -44,12 +44,17 @@ namespace XPloit.Core.Helpers
         /// Check if its avaiable tcp port
         /// </summary>
         /// <param name="port">Port</param>
-        public static bool IsAvailableTcpPort(ushort port)
+        public static bool IsAvailableTcpPort(ushort port) { return IsAvailableTcpPort(new IPEndPoint(IPAddress.Any, port)); }
+        /// <summary>
+        /// Check if its avaiable tcp port
+        /// </summary>
+        /// <param name="point">IPEndPoint</param>
+        public static bool IsAvailableTcpPort(IPEndPoint point)
         {
             TcpListener tcp = null;
             try
             {
-                tcp = new TcpListener(IPAddress.Any, port);
+                tcp = new TcpListener(point);
                 tcp.Start();
 
                 return true;
@@ -63,6 +68,36 @@ namespace XPloit.Core.Helpers
                 if (tcp != null)
                 {
                     tcp.Stop();
+                }
+            }
+        }
+        /// <summary>
+        /// Check if its avaiable udp port
+        /// </summary>
+        /// <param name="port">Port</param>
+        public static bool IsAvailableUdpPort(ushort port) { return IsAvailableUdpPort(new IPEndPoint(IPAddress.Any, port)); }
+        /// <summary>
+        /// Check if its avaiable udp port
+        /// </summary>
+        /// <param name="point">IPEndPoint</param>
+        public static bool IsAvailableUdpPort(IPEndPoint point)
+        {
+            UdpClient udp = null;
+            try
+            {
+                udp = new UdpClient(point);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                if (udp != null)
+                {
+                    udp.Close();
                 }
             }
         }
