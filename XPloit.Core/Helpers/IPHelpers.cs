@@ -5,7 +5,12 @@ namespace XPloit.Core.Helpers
 {
     public class IPHelper
     {
-        public static bool SearchIP(string cad, out string ip)
+        /// <summary>
+        /// Search a IPv4 in the string
+        /// </summary>
+        /// <param name="cad">Input</param>
+        /// <param name="ip">Return IPAddress</param>
+        public static bool SearchIPv4(string cad, out string ip)
         {
             ip = "";
             string pat = @"((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
@@ -16,6 +21,36 @@ namespace XPloit.Core.Helpers
                 break;
             }
             return !string.IsNullOrEmpty(ip);
+        }
+        /// <summary>
+        /// Check if Ip its Private
+        /// </summary>
+        /// <param name="ip">IP Address</param>
+        public static bool IsPrivate(IPAddress ip)
+        {
+            switch (ip.AddressFamily)
+            {
+                case AddressFamily.InterNetwork:
+                    {
+                        // The private address ranges are defined in RFC1918. They are:
+                        //   - 10.0.0.0 - 10.255.255.255 (10/8 prefix)
+                        //   - 172.16.0.0 - 172.31.255.255 (172.16/12 prefix)
+                        //   - 192.168.0.0 - 192.168.255.255 (192.168/16 prefix)
+
+                        byte[] iaryIPAddress = ip.GetAddressBytes();
+                        if (iaryIPAddress[0] == 10 || (iaryIPAddress[0] == 192 && iaryIPAddress[1] == 168) || (iaryIPAddress[0] == 172 && (iaryIPAddress[1] >= 16 && iaryIPAddress[1] <= 31)))
+                            return true;
+
+                        // IP Address is "probably" public. This doesn't catch some VPN ranges like OpenVPN and Hamachi.
+                        return false;
+                    }
+                case AddressFamily.InterNetworkV6:
+                    {
+                        // Haven't NAT
+                        return false;
+                    }
+            }
+            return false;
         }
         /// <summary>
         /// Parsea una cadena para separarla entre ip y puerto
@@ -46,7 +81,7 @@ namespace XPloit.Core.Helpers
         /// </summary>
         /// <param name="ip">Ip</param>
         /// <returns>Devuelve true si es una ip local</returns>
-        public static bool IsOwnIpAddress(IPAddress ip)
+        public static bool IsLocalHost(IPAddress ip)
         {
             if (IPAddress.IsLoopback(ip)) return true;
 
