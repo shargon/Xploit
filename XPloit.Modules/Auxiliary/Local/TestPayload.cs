@@ -50,12 +50,6 @@ namespace Auxiliary.Local
                 //Console.WriteLine(ptr());
             }
         }
-
-        [IntrusiveCheck]
-        public override ECheck Check()
-        {
-            return base.Check();
-        }
         public override bool Run()
         {
             Target t = this.Target;
