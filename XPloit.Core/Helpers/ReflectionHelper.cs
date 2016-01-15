@@ -10,6 +10,21 @@ namespace XPloit.Core.Helpers
     public class ReflectionHelper
     {
         /// <summary>
+        /// Return the property value of one object
+        /// </summary>
+        /// <param name="obj">Object</param>
+        /// <param name="propertyName">Property</param>
+        public static object GetPropertyValue(object obj, string propertyName)
+        {
+            Type type = obj.GetType();
+            if (type == null) return null;
+
+            PropertyInfo func = type.GetProperty(propertyName);
+            if (func != null) return func.GetValue(obj, null);
+
+            return null;
+        }
+        /// <summary>
         /// Set property Value
         /// </summary>
         /// <param name="obj">Object</param>
