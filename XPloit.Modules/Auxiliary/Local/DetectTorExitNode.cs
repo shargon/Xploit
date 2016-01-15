@@ -23,15 +23,7 @@ namespace Auxiliary.Local
         public IPAddress RemoteIp { get; set; }
         #endregion
 
-        public override bool Run()
-        {
-            WriteInfo("Updating tor exit node list", TorHelper.UpdateTorExitNodeList(false).ToString(), ConsoleColor.Green);
-
-            bool res = TorHelper.IsTorExitNode(RemoteIp);
-            WriteInfo("Check tor exit node '" + RemoteIp.ToString() + "' results", res ? "EXIT-NODE DETECTED!" : "NOT LISTED", res ? ConsoleColor.Red : ConsoleColor.Green);
-
-            return true;
-        }
+        public override bool Run() { return Check()==ECheck.Ok; }
         public override ECheck Check()
         {
             WriteInfo("Updating tor exit node list", TorHelper.UpdateTorExitNodeList(false).ToString(), ConsoleColor.Green);
