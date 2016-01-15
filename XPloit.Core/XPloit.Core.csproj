@@ -44,6 +44,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -52,6 +53,9 @@
     <Compile Include="Attributes\IntrusiveCheck.cs" />
     <Compile Include="Attributes\SerializableBSONReference.cs" />
     <Compile Include="Attributes\ConfigurableProperty.cs" />
+    <Compile Include="BruteForce\BruteForce.cs" />
+    <Compile Include="BruteForce\BruteForceAllowedChars.cs" />
+    <Compile Include="BruteForce\BruteForceStep.cs" />
     <Compile Include="Collections\EncoderCollection.cs" />
     <Compile Include="Collections\JobCollection.cs" />
     <Compile Include="Collections\IModuleCollection.cs" />
@@ -172,11 +176,17 @@
     <Compile Include="Dns\TSig\TSigAlgorithm.cs" />
     <Compile Include="Dns\TSig\TSigAlgorithmHelper.cs" />
     <Compile Include="Dns\TSig\TSigRecord.cs" />
+    <Compile Include="Helpers\CompressHelper.cs" />
     <Compile Include="Helpers\CounterHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
+    <Compile Include="Helpers\FileDetectionHelper.cs" />
     <Compile Include="Helpers\IniHelper.cs" />
+    <Compile Include="Helpers\LatchHelper.cs" />
+    <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Helpers\TorHelper.cs" />
+    <Compile Include="NotificationCenter.cs" />
+    <Compile Include="Sockets\TcpForwarder.cs" />
     <Compile Include="Streams\StreamLineReader.cs" />
     <Compile Include="Requirements\Payloads\SpecifyPlatformRequired.cs" />
     <Compile Include="Sniffer\Filters\SnifferTorFilter.cs" />

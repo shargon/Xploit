@@ -244,7 +244,8 @@ namespace XPloit.Core.Listeners
             cmd.Add(new string[] { "info" }, cmdInfo, Lang.Get("Man_Info"));
 
             cmd.Add(new string[] { "search" }, cmdSearch, Lang.Get("Man_Search"));
-            cmd.Add(new string[] { "ifcheckrun" }, cmdIfCheckRun, Lang.Get("Man_IfCheckRun"));
+            cmd.Add(new string[] { "ifcheck" }, cmdIfCheck, Lang.Get("Man_IfCheck"));
+            cmd.Add(new string[] { "ifnocheck" }, cmdIfNoCheck, Lang.Get("Man_IfNoCheck"));
             _Command = cmd;
         }
         void OnPrompt(ICommandLayer sender)
@@ -373,7 +374,8 @@ namespace XPloit.Core.Listeners
         }
         public void cmdRun(string args) { RunModule(); }
         public void cmdCheck(string args) { CheckModule(); }
-        public void cmdIfCheckRun(string args) { if (CheckModule()) cmdRun(args); }
+        public void cmdIfCheck(string args) { if (CheckModule()) _IO.AddInput(args); }
+        public void cmdIfNoCheck(string args) { if (!CheckModule()) _IO.AddInput(args); }
         public bool RunModule()
         {
             if (!CheckModule(true, EModuleType.Module)) return false;

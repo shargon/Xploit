@@ -426,10 +426,10 @@ Show info of the current module</value>
   <data name="Disclosure" xml:space="preserve">
     <value>Disclosure</value>
   </data>
-  <data name="Man_IfCheckRun" xml:space="preserve">
-    <value>ifcheckrun
+  <data name="Man_IfCheck" xml:space="preserve">
+    <value>ifcheck &lt;command&gt;
 
-Check the module, and if its works, then run it</value>
+Check the module, and if works, then run the command</value>
   </data>
   <data name="Can_Be_Intrusive" xml:space="preserve">
     <value>This check can be intrusive, Continue? [Yes/No]</value>
@@ -442,5 +442,10 @@ Check the module, and if its works, then run it</value>
   </data>
   <data name="Folder_Required" xml:space="preserve">
     <value>Folder '%0' must exists</value>
+  </data>
+  <data name="Man_IfNoCheck" xml:space="preserve">
+    <value>ifnocheck &lt;command&gt;
+
+Check the module, and if not works, then run the command</value>
   </data>
 </root>

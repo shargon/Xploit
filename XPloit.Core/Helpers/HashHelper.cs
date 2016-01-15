@@ -16,13 +16,14 @@ namespace XPloit.Core.Helpers
         {
             if (codec != null && !string.IsNullOrEmpty(cad))
             {
-                _Raw = HashRaw(type, codec.GetBytes(cad));
+                byte[] raw = codec.GetBytes(cad);
+                _Raw = HashRaw(type, raw, 0, raw.Length);
                 _Hex = HexHelper.Buffer2Hex(_Raw);
             }
         }
         public HashHelper(EHashType type, byte[] bx)
         {
-            _Raw = HashRaw(type, bx);
+            _Raw = HashRaw(type, bx, 0, bx.Length);
             _Hex = HexHelper.Buffer2Hex(_Raw);
         }
 
@@ -34,11 +35,15 @@ namespace XPloit.Core.Helpers
         {
             if (string.IsNullOrEmpty(cad)) return null;
 
-            byte[] raw = HashRaw(type, codec.GetBytes(cad));
+            byte[] raw = codec.GetBytes(cad);
+            raw = HashRaw(type, raw, 0, raw.Length);
             return HexHelper.Buffer2Hex(raw);
         }
-        public static string HashHex(EHashType type, byte[] bs) { return HexHelper.Buffer2Hex(HashRaw(type, bs)); }
-        public static byte[] HashRaw(EHashType type, byte[] bs)
+        public static string HashHex(EHashType type, byte[] bs, int index, int length)
+        {
+            return HexHelper.Buffer2Hex(HashRaw(type, bs, index, length));
+        }
+        public static byte[] HashRaw(EHashType type, byte[] bs, int index, int length)
         {
             if (bs == null) return null;
 
@@ -52,7 +57,7 @@ namespace XPloit.Core.Helpers
                 case EHashType.Sha512: cmd5 = new SHA512CryptoServiceProvider(); break;
             }
 
-            bs = cmd5.ComputeHash(bs);
+            bs = cmd5.ComputeHash(bs, index, length);
             cmd5.Dispose();
             return bs;
         }

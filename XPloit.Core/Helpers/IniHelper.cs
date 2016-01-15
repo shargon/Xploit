@@ -7,7 +7,7 @@ namespace XPloit.Core.Helpers
 {
     public class IniHelper
     {
-        bool _toLowerCase;
+        bool _SectionsToLowerCase;
         Dictionary<string, Section> _Sec = new Dictionary<string, Section>();
 
         class Section
@@ -49,9 +49,18 @@ namespace XPloit.Core.Helpers
                 _Name = toLowerCase ? name.ToLowerInvariant() : name;
                 _Items = new Dictionary<string, string>();
             }
-            internal void Add(string name, string value, bool toLowerCase)
+            internal void Add(string line, bool splitVariables, bool sectionsToLowerCase)
             {
-                _Items.Add(toLowerCase ? name.ToLowerInvariant() : name, value);
+                if (!splitVariables)
+                {
+                    _Items.Add(line, "");
+                    return;
+                }
+                string iz, dr;
+                StringHelper.Split(line, '=', out iz, out dr);
+                iz = (sectionsToLowerCase ? iz.ToLowerInvariant() : iz).Trim();
+
+                _Items.Add(iz, dr);
             }
         }
 
@@ -65,7 +74,7 @@ namespace XPloit.Core.Helpers
         /// <param name="section">Sección</param>
         public IEnumerable<string> GetVariables(string section)
         {
-            if (_toLowerCase) section = section.ToLowerInvariant();
+            if (_SectionsToLowerCase) section = section.ToLowerInvariant();
 
             Section s;
             if (!_Sec.TryGetValue(section, out s)) return null;
@@ -90,7 +99,7 @@ namespace XPloit.Core.Helpers
         {
             get
             {
-                if (_toLowerCase)
+                if (_SectionsToLowerCase)
                 {
                     section = section.ToLowerInvariant();
                     name = name.ToLowerInvariant();
@@ -98,7 +107,7 @@ namespace XPloit.Core.Helpers
 
                 Section s;
                 if (!_Sec.TryGetValue(section, out s)) return defaultValue;
-                return s[name, defaultValue, _toLowerCase];
+                return s[name, defaultValue, _SectionsToLowerCase];
             }
         }
 
@@ -107,10 +116,12 @@ namespace XPloit.Core.Helpers
         /// </summary>
         /// <param name="file">Archivo</param>
         /// <param name="variables">variables</param>
-        /// <param name="toLowerCase">Convertir variables a lowerCase</param>
-        public IniHelper(string file, bool toLowerCase)
+        /// <param name="sectionsToLowerCase">Convertir variables a lowerCase</param>
+        /// <param name="trimLines">Trim Lines</param>
+        /// <param name="splitVariables">True para convertir variable=value en variables, false para usar la linea entera</param>
+        public IniHelper(string file, bool sectionsToLowerCase, bool trimLines, bool splitVariables)
         {
-            _toLowerCase = toLowerCase;
+            _SectionsToLowerCase = sectionsToLowerCase;
             string files = File.ReadAllText(file, Encoding.UTF8);
 
             //if (variables.Count>0)
@@ -122,15 +133,15 @@ namespace XPloit.Core.Helpers
             bool primera = true;
             Section step = new Section("", false);
 
-            foreach (string sl in files.Split('\n'))
+            foreach (string sl in files.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                string line = sl.Trim();
+                string line = trimLines ? sl.Trim() : sl;
                 if (string.IsNullOrEmpty(line) || line.StartsWith("#") || line.StartsWith("//")) continue;
 
                 if (line.StartsWith("[") && line.EndsWith("]"))
                 {
                     primera = false;
-                    step = new Section(line.Substring(1, line.Length - 2), toLowerCase);
+                    step = new Section(line.Substring(1, line.Length - 2), sectionsToLowerCase);
                     try
                     {
                         _Sec.Add(step.Name, step);
@@ -148,17 +159,13 @@ namespace XPloit.Core.Helpers
                     _Sec.Add(step.Name, step);
                 }
 
-                string iz, dr;
-                StringHelper.Split(line, '=', out iz, out dr);
-                iz = toLowerCase ? iz.Trim().ToLowerInvariant() : iz.Trim();
-
                 try
                 {
-                    step.Add(iz, dr, toLowerCase);
+                    step.Add(line, splitVariables, sectionsToLowerCase);
                 }
                 catch
                 {
-                    throw (new Exception("Duplicate key '" + step.Name + "." + iz + "'"));
+                    throw (new Exception("Duplicate key in line '" + line + "'"));
                 }
             }
         }

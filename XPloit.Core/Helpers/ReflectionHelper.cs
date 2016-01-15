@@ -73,6 +73,27 @@ namespace XPloit.Core.Helpers
             return null;
         }
         /// <summary>
+        /// Dispose object if its viable
+        /// </summary>
+        /// <param name="obj">Object</param>
+        public static bool FreeObject(object obj)
+        {
+            if (obj == null) return false;
+            if (obj is IDisposable)
+            {
+                try
+                {
+                    ((IDisposable)obj).Dispose();
+                }
+                catch
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
         /// Set property Value
         /// </summary>
         /// <param name="obj">Object</param>
