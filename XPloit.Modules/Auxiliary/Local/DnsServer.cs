@@ -90,11 +90,10 @@ namespace Auxiliary.Local
 
             if (query != null)
             {
-                bool replicate = ReplicateAnswer;
-
                 bool has_answer = false;
                 foreach (DnsQuestion question in query.Questions)
                 {
+                    bool replicate = ReplicateAnswer;
                     if (StringHelper.Like(LogPattern, question.Name))
                     {
                         string path = DumpFolder.FullName + System.IO.Path.DirectorySeparatorChar + DateTime.Now.ToString("yyyy-MM-dd") + ".log";
@@ -106,7 +105,6 @@ namespace Auxiliary.Local
                         lock (this) { File.AppendAllLines(path, lines); }
 
                         if (!LogReplicate) replicate = false;
-                        else replicate = true;
                     }
 
                     if (replicate)
