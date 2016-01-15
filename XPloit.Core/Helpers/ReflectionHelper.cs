@@ -10,6 +10,54 @@ namespace XPloit.Core.Helpers
     public class ReflectionHelper
     {
         /// <summary>
+        /// Get the selected static delegate
+        /// </summary>
+        /// <typeparam name="TDelegate">Delegate type</typeparam>
+        /// <param name="type">Type</param>
+        /// <param name="method">Method</param>
+        public static Delegate GetStaticDelegate<TDelegate>(Type type, string method)
+        {
+            if (type == null) return null;
+
+            Type[] types = GetTypesOfDelegate<TDelegate>();
+            MethodInfo func = type.GetMethod(method, types);
+            if (func != null) return Delegate.CreateDelegate(typeof(TDelegate), func);
+            return null;
+        }
+        /// <summary>
+        /// Get the selected delegate from object
+        /// </summary>
+        /// <typeparam name="TDelegate">Delegate type</typeparam>
+        /// <param name="instance">Instance</param>
+        /// <param name="method">Method</param>
+        public static Delegate GetDelegate<TDelegate>(object instance, string method)
+        {
+            if (instance == null)
+                return null;
+
+            Type type = instance.GetType();
+
+            Type[] types = GetTypesOfDelegate<TDelegate>();
+            MethodInfo func = type.GetMethod(method, types);
+            if (func != null) return Delegate.CreateDelegate(typeof(TDelegate), instance, func);
+
+            return null;
+        }
+        /// <summary>
+        /// Returns the types from delegate
+        /// </summary>
+        static Type[] GetTypesOfDelegate<TDelegate>()
+        {
+            Type type = typeof(TDelegate);
+            MethodInfo mInfos = type.GetMethod("Invoke");
+
+            ParameterInfo[] pi = mInfos.GetParameters();
+            Type[] tp = new Type[pi.Length];
+            for (int x = 0, m = tp.Length; x < m; x++)
+                tp[x] = pi[x].ParameterType;
+            return tp;
+        }
+        /// <summary>
         /// Return the property value of one object
         /// </summary>
         /// <param name="obj">Object</param>
