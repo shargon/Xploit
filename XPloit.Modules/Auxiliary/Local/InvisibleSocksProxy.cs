@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -33,7 +34,7 @@ namespace Auxiliary.Local
         [ConfigurableProperty(Required = true, Description = "Connect to")]
         public IPEndPoint RemoteEndPoint { get; set; }
 
-        [ConfigurableProperty(Required = true, Description = "Proxy")]
+        [ConfigurableProperty(Description = "Proxy")]
         public IPEndPoint ProxyEndPoint { get; set; }
         [ConfigurableProperty(Description = "Proxy user")]
         public string ProxyUser { get; set; }
@@ -92,7 +93,7 @@ namespace Auxiliary.Local
                     return false;
                 }
 
-                ScriptHelper script = ScriptHelper.Create(FilterFile.FullName);
+                ScriptHelper script = ScriptHelper.Create(FilterFile.FullName, false);
                 filterObject = script.CreateNewInstance();
 
                 s = (TcpForwarder.delDataFilter)ReflectionHelper.GetDelegate<TcpForwarder.delDataFilter>(filterObject, "OnSend");
@@ -105,11 +106,7 @@ namespace Auxiliary.Local
             TcpForwarder tcp = null;
             try
             {
-                tcp = new TcpForwarder(ProxyEndPoint, version, ProxyUser, ProxyPassword)
-                {
-                    FilterSend = s,
-                    FilterReceive = r
-                };
+                tcp = new TcpForwarder(ProxyEndPoint, version, ProxyUser, ProxyPassword, s, r);
 
                 tcp.OnConnect += Tcp_OnConnect;
                 tcp.OnEror += Tcp_OnEror;
@@ -125,6 +122,7 @@ namespace Auxiliary.Local
 
             return CreateJob(tcp) != null;
         }
+
         void Tcp_OnEror(object sender, EndPoint endPoint) { WriteError("Error connecting to " + endPoint); }
         void Tcp_OnConnect(object sender, EndPoint endPoint) { WriteInfo("Connected: " + endPoint.ToString()); }
     }

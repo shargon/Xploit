@@ -9,7 +9,7 @@ namespace XPloit.Core.Sockets
 {
     public class TcpForwarder : Job.IJobable
     {
-        class State
+        class State : IDisposable
         {
             public bool IsSend;
             public Socket SourceSocket;
@@ -22,6 +22,16 @@ namespace XPloit.Core.Sockets
                 SourceSocket = source;
                 DestinationSocket = destination;
                 Buffer = new byte[8192];
+            }
+            /// <summary>
+            /// Free resources
+            /// </summary>
+            public void Dispose()
+            {
+                if (SourceSocket != null)
+                    SourceSocket.Dispose();
+                if (DestinationSocket != null)
+                    DestinationSocket.Dispose();
             }
         }
 
@@ -43,11 +53,11 @@ namespace XPloit.Core.Sockets
         /// <summary>
         /// Filter for send
         /// </summary>
-        public delDataFilter FilterSend { get { return _OnSend; } set { _OnSend = value; } }
+        public delDataFilter FilterSend { get { return _OnSend; } }
         /// <summary>
         /// Filter for receive
         /// </summary>
-        public delDataFilter FilterReceive { get { return _OnReceive; } set { _OnReceive = value; } }
+        public delDataFilter FilterReceive { get { return _OnReceive; } }
 
         /// <summary>
         /// Constructor
@@ -56,13 +66,15 @@ namespace XPloit.Core.Sockets
         /// <param name="socketType">Socket Type</param>
         /// <param name="user">User</param>
         /// <param name="password">Password</param>
-        public TcpForwarder(IPEndPoint proxySocket, byte socketType, string user, string password) :
-            this(proxySocket, socketType, false, user, password)
+        public TcpForwarder(IPEndPoint proxySocket, byte socketType, string user, string password, delDataFilter onSend, delDataFilter onReceive) :
+            this(proxySocket, socketType, false, user, password, onSend, onReceive)
         { }
-        TcpForwarder(IPEndPoint proxySocket, byte socketType, bool thisIsSocks, string user, string password)
+        TcpForwarder(IPEndPoint proxySocket, byte socketType, bool thisIsSocks, string user, string password, delDataFilter onSend, delDataFilter onReceive)
         {
             _User = user;
             _Password = password;
+            _OnSend = onSend;
+            _OnReceive = onReceive;
 
             if ((socketType == 4 || socketType == 5) && proxySocket != null)
             {
@@ -114,7 +126,7 @@ namespace XPloit.Core.Sockets
                     if (OnConnect != null)
                         OnConnect(this, source.RemoteEndPoint);
 
-                    TcpForwarder destination = new TcpForwarder(ProxySocket, bSocketType, true, _User, _Password);
+                    TcpForwarder destination = new TcpForwarder(ProxySocket, bSocketType, true, _User, _Password, _OnReceive, _OnSend);
                     socks.Add(destination);
 
                     State state = new State(true, source, destination.MainSocket);
@@ -140,8 +152,10 @@ namespace XPloit.Core.Sockets
             }
             catch
             {
-                if (OnConnect != null)
-                    OnConnect(this, remoteEndpoint);
+                state.Dispose();
+
+                if (OnEror != null)
+                    OnEror(this, remoteEndpoint);
             }
         }
 

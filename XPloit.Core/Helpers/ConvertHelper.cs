@@ -72,6 +72,7 @@ namespace XPloit.Core.Helpers
 
                 // String conversion
                 if (type == _StringType) return input;
+                if (input.Trim().ToLowerInvariant() == "null") return null;
 
                 // Bool
                 if (type == _BoolType)

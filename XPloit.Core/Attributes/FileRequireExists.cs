@@ -15,7 +15,9 @@ namespace XPloit.Core.Attributes
             if (val == null) return true;
             if (val is FileInfo)
             {
-                return ((FileInfo)val).Exists;
+                FileInfo fi = (FileInfo)val;
+                fi.Refresh();
+                return fi.Exists;
             }
             return false;
         }

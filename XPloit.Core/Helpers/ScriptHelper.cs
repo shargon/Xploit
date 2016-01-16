@@ -31,7 +31,7 @@ namespace XPloit.Core.Helpers
             {
                 return Create(File.ReadAllText(fileName));
             }
-            return Create(File.ReadAllBytes(fileName));
+            return Create(File.ReadAllText(fileName));
         }
         /// <summary>
         /// Sample:
