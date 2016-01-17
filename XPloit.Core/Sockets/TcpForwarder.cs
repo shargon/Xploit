@@ -37,7 +37,7 @@ namespace XPloit.Core.Sockets
 
         List<TcpForwarder> socks = new List<TcpForwarder>();
 
-        public delegate void delDataFilter(byte[] data, int index, int length);
+        public delegate void delDataFilter(ref byte[] data,ref int index,ref int length);
         public delegate void delSocketEvent(object sender, EndPoint endPoint);
 
         delDataFilter _OnSend = null, _OnReceive;
@@ -198,22 +198,26 @@ namespace XPloit.Core.Sockets
                 int bytesRead = state.SourceSocket.EndReceive(result);
                 if (bytesRead > 0)
                 {
+                    int index = 0;
+                    byte[] data = state.Buffer;
+
                     if (!state.IsSend)
                     {
                         if (_OnSend != null)
                         {
-                            _OnSend(state.Buffer, 0, bytesRead);
+                            _OnSend(ref data, ref index, ref bytesRead);
                         }
                     }
                     else
                     {
                         if (_OnReceive != null)
                         {
-                            _OnReceive(state.Buffer, 0, bytesRead);
+                            _OnReceive(ref data, ref index, ref bytesRead);
                         }
                     }
 
-                    state.DestinationSocket.Send(state.Buffer, bytesRead, SocketFlags.None);
+                    if (bytesRead > 0)
+                        state.DestinationSocket.Send(data, index, bytesRead, SocketFlags.None);
                 }
 
                 state.SourceSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, 0, OnDataReceive, state);

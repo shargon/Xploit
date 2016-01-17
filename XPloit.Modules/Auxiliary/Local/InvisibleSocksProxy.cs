@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -41,7 +40,7 @@ namespace Auxiliary.Local
         [ConfigurableProperty(Description = "Proxy Password")]
         public string ProxyPassword { get; set; }
         [FileRequireExists]
-        [ConfigurableProperty(Description = "Filter file OnSend/OnReceive(byte[]data,int index,int length)")]
+        [ConfigurableProperty(Description = "Filter file OnSend/OnReceive(ref byte[]data, ref int index, ref int length)")]
         public FileInfo FilterFile { get; set; }
         #endregion
 

@@ -66,7 +66,7 @@ namespace XPloit.Core.Command
             List<string[]> lines = new List<string[]>();
             foreach (string o in cols)
             {
-                string[] step = o.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] step = o.Replace("\r", "").Trim(new char[] { '\n', '\r' }).Split(new char[] { '\r', '\n' }, StringSplitOptions.None);
                 maxLines = Math.Max(step.Length, maxLines);
                 lines.Add(step);
             }
