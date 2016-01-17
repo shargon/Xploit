@@ -553,7 +553,7 @@ namespace XPloit.Core.Listeners
                 foreach (string line in File.ReadAllLines(args))
                 {
                     string ap = line.Trim();
-                    if (string.IsNullOrEmpty(ap)) continue;
+                    if (string.IsNullOrEmpty(ap) || ap.StartsWith("#") || ap.StartsWith("//")) continue;
                     _IO.AddInput(ap);
                 }
 

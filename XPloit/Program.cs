@@ -52,7 +52,7 @@ namespace XPloit
                     foreach (string line in File.ReadAllLines(cfg.Replay))
                     {
                         string ap = line.Trim();
-                        if (string.IsNullOrEmpty(ap)) continue;
+                        if (string.IsNullOrEmpty(ap) || ap.StartsWith("#") || ap.StartsWith("//")) continue;
                         command.AddInput(ap);
                     }
 

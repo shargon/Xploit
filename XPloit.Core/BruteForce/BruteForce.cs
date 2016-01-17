@@ -63,6 +63,8 @@ namespace XPloit.Core.BruteForce
                 allowVacia = true;
             }
 
+            dr = dr.TrimEnd('s', 'S'); // words / chars
+
             if (dr == "" || dr == "c" || dr == "C" || dr.ToUpperInvariant() == "CHAR" || dr.ToUpperInvariant() == "CH4R")
             {
                 bool mix = dr.Contains("4");
