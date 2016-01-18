@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Test", "XPloit.Test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Modules", "XPloit.Modules\XPloit.Modules.csproj", "{E6F76B95-64D6-4986-8B72-B80E2B6C8C98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Core.Rfid", "Xploit.Core.Rfid\Xploit.Core.Rfid.csproj", "{4545CFDE-9EE5-4F1B-B966-D128AF0B9A6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Core.Rfid", "XPloit.Core.Rfid\XPloit.Core.Rfid.csproj", "{4545CFDE-9EE5-4F1B-B966-D128AF0B9A6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -70,9 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xploit.Core.Rfid\Xploit.Core.Rfid.csproj">
+    <ProjectReference Include="..\XPloit.Core.Rfid\XPloit.Core.Rfid.csproj">
       <Project>{4545cfde-9ee5-4f1b-b966-d128af0b9a6e}</Project>
-      <Name>Xploit.Core.Rfid</Name>
+      <Name>XPloit.Core.Rfid</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Core\XPloit.Core.csproj">
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
