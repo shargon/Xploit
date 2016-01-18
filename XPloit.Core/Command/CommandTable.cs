@@ -39,7 +39,7 @@ namespace XPloit.Core.Command
             int ix = 0;
             foreach (string o in cols)
             {
-                string str = o == null ? "" : o.ToString().Trim();
+                string str = o == null ? "" : o.ToString();//.Trim();
                 int sl = str.Length;
 
                 row.Add(new CommandTableCol(ix, row) { Value = str });
@@ -77,7 +77,7 @@ namespace XPloit.Core.Command
                 int ix = 0;
                 foreach (string[] o in lines)
                 {
-                    string str = o == null || o.Length <= x ? "" : o[x].ToString().Trim();
+                    string str = o == null || o.Length <= x ? "" : o[x].ToString();//.Trim();
                     int sl = str.Length;
 
                     row.Add(new CommandTableCol(ix, row) { Value = str });

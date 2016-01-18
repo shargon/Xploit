@@ -843,7 +843,7 @@ namespace XPloit.Core.Listeners
                 case "payloads":
                     {
                         Payload[] ps = curM == null ? null : PayloadCollection.Current.GetPayloadAvailables(curM.PayloadRequirements);
-                        if (ps == null || ps.Length == 0)
+                        if (ps == null || ps.Length <= 0)
                             _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
                         {
@@ -861,7 +861,7 @@ namespace XPloit.Core.Listeners
                 case "targets":
                     {
                         Target[] ps = curM == null ? null : curM.Targets;
-                        if (ps == null || ps.Length <= 1)
+                        if (ps == null || ps.Length <= 0)
                             _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
                         {

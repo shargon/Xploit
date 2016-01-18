@@ -181,10 +181,12 @@
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
     <Compile Include="Helpers\FileDetectionHelper.cs" />
+    <Compile Include="Helpers\FtpHelper.cs" />
     <Compile Include="Helpers\IniHelper.cs" />
     <Compile Include="Helpers\LatchHelper.cs" />
     <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Helpers\TorHelper.cs" />
+    <Compile Include="Interfaces\IProgress.cs" />
     <Compile Include="NotificationCenter.cs" />
     <Compile Include="Sockets\TcpForwarder.cs" />
     <Compile Include="Streams\StreamLineReader.cs" />

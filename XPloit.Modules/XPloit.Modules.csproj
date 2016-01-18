@@ -51,9 +51,10 @@
     <Compile Include="Auxiliary\Local\InvisibleSocksProxy.cs" />
     <Compile Include="Auxiliary\Local\DnsServer.cs" />
     <Compile Include="Auxiliary\Local\Sniffer.cs" />
-    <Compile Include="Auxiliary\Local\NFC\NFCDump.cs" />
+    <Compile Include="Auxiliary\Local\RFID\MifareRestoreClone.cs" />
     <Compile Include="Auxiliary\Local\SysKill.cs" />
     <Compile Include="Auxiliary\Local\WordListGenerator.cs" />
+    <Compile Include="Auxiliary\Multi\Windows\WMIManager.cs" />
     <Compile Include="BuildLink.cs" />
     <Compile Include="Encoders\String\Base64Encoder.cs" />
     <Compile Include="Nops\Php\PhpNop.cs" />
@@ -62,10 +63,17 @@
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerAPI.cs" />
     <Compile Include="Auxiliary\Local\WordListBruteForce.cs" />
     <Compile Include="Auxiliary\Local\SysRun.cs" />
+    <Compile Include="Payloads\Multi\Windows\WMI\Query\Manual.cs" />
+    <Compile Include="Payloads\Multi\Windows\WMI\Query\Auto.cs" />
+    <Compile Include="Payloads\Multi\Windows\WMI\Action\ExecuteProcess.cs" />
     <Compile Include="Payloads\Multi\Windows\x86\PayloadX86WindowsMessageBox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Xploit.Core.Rfid\Xploit.Core.Rfid.csproj">
+      <Project>{4545cfde-9ee5-4f1b-b966-d128af0b9a6e}</Project>
+      <Name>Xploit.Core.Rfid</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XPloit.Core\XPloit.Core.csproj">
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
       <Name>XPloit.Core</Name>

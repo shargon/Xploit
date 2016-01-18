@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using XPloit.Core.Attributes;
+using XPloit.Core.Command;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Res;
@@ -67,6 +68,11 @@ namespace XPloit.Core.Interfaces
         {
             if (_IO == null) return;
             _IO.WriteInfo(info, colorText, color);
+        }
+        public void WriteTable(CommandTable table)
+        {
+            if (_IO == null) return;
+            table.OutputColored(_IO);
         }
         public void Beep()
         {

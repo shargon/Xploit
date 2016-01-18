@@ -6,7 +6,7 @@ namespace XPloit.Core.Interfaces
 {
     public delegate void PromptDelegate(ICommandLayer sender);
 
-    public interface ICommandLayer
+    public interface ICommandLayer : IProgress
     {
         // Input / Output
 
@@ -22,15 +22,7 @@ namespace XPloit.Core.Interfaces
         void WriteInfo(string info);
         void WriteInfo(string info, string colorText, ConsoleColor color);
 
-        // Progress
-
-        bool IsInProgress { get; }
-        void WriteProgress(double value);
-        void EndProgress();
-        void StartProgress(double max);
-
         // Sound
-
 
         void Beep();
 

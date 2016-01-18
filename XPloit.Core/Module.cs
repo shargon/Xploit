@@ -28,7 +28,7 @@ namespace XPloit.Core
         /// <summary>
         /// Targets
         /// </summary>
-        public virtual Target[] Targets { get { return new Target[] { new Target() { Platform = EPlatform.None, Name = "All" } }; } }
+        public virtual Target[] Targets { get { return null; } }
         /// <summary>
         /// Target
         /// </summary>
