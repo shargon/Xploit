@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
+using XPloit.Res;
 
 namespace XPloit.Core.Command
 {
@@ -54,8 +56,39 @@ namespace XPloit.Core.Command
             _Out = Console.Out;
             _In = Console.In;
 
+            Console.CancelKeyPress += Console_CancelKeyPress;
+
             PromptCharacter = "> ";
         }
+
+        Thread _CancelableThread = null;
+
+        /// <summary>
+        /// Get or set the current thread
+        /// </summary>
+        public Thread CancelableThread
+        {
+            get { return _CancelableThread; }
+            set { _CancelableThread = value; }
+        }
+
+        void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            if (_CancelableThread != null)
+            {
+                e.Cancel = true;
+                _CancelableThread.Abort();
+                _CancelableThread = null;
+
+                WriteLine("");
+                WriteError(Lang.Get("Aborting"));
+            }
+            else
+            {
+                // No thread
+            }
+        }
+
         int _LastPercent = -1;
         double _ProgressVal = 0, _ProgressMax = 0;
         int _ProgressX = -1, _ProgressY = -1;
@@ -256,7 +289,7 @@ namespace XPloit.Core.Command
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource autoComplete, bool isPassword)
         {
             Console.CursorVisible = true;
-            for (; ; )
+            for (;;)
             {
                 string input;
                 if (_Frames.Count >= 1)

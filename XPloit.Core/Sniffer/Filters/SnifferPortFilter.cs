@@ -18,10 +18,8 @@ namespace XPloit.Core.Sniffer.Filters
         /// Constructor
         /// </summary>
         /// <param name="port">Port</param>
-        public SnifferPortFilter(ushort port)
-        {
-            _Port = port;
-        }
+        public SnifferPortFilter(ushort port) { _Port = port; }
+
         public override string ToString() { return _Port.ToString(); }
     }
 }

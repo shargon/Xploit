@@ -448,4 +448,7 @@ Check the module, and if works, then run the command</value>
 
 Check the module, and if not works, then run the command</value>
   </data>
+  <data name="Aborting" xml:space="preserve">
+    <value>Aborting ...</value>
+  </data>
 </root>

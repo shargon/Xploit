@@ -17,6 +17,7 @@ namespace XPloit.Core.Listeners
 {
     public class CommandListener : IListener, IAutoCompleteSource
     {
+        int _LastCheck = 0, _LastRun = 0;
         ICommandLayer _IO = null;
         CommandMenu _Command = null;
         IModule _CurrentGlobal = null;
@@ -376,48 +377,74 @@ namespace XPloit.Core.Listeners
         public void cmdCheck(string args) { CheckModule(); }
         public void cmdIfCheck(string args) { if (CheckModule()) _IO.AddInput(args); }
         public void cmdIfNoCheck(string args) { if (!CheckModule()) _IO.AddInput(args); }
+        void runModule(object module)
+        {
+            Module mod = (Module)module;
+            try
+            {
+                Interlocked.Exchange(ref _LastRun, 0);
+                if (mod.Run()) Interlocked.Exchange(ref _LastRun, 1);
+            }
+            catch (Exception e)
+            {
+                mod.WriteError(e.Message);
+            }
+        }
+        void checkModule(object module)
+        {
+            Module mod = (Module)module;
+            try
+            {
+                Interlocked.Exchange(ref _LastCheck, 0);
+                Interlocked.Exchange(ref _LastCheck, (int)mod.Check());
+            }
+            catch (Exception e)
+            {
+                mod.WriteError(e.Message);
+            }
+        }
         public bool RunModule()
         {
             if (!CheckModule(true, EModuleType.Module)) return false;
 
             try
             {
-                Thread th = new Thread(new ThreadStart(runModule));
-                th.Name = "RUN " + _Current.FullPath;
+                _LastRun = 0;
+
+                Module m = (Module)_Current.Clone();
+                m.Prepare(_Current);
+
+                Thread th = _IO.CancelableThread = new Thread(new ParameterizedThreadStart(runModule));
+                th.Name = "RUN " + m.FullPath;
                 th.IsBackground = true;
-                th.Start();
+                th.Start(m);
                 th.Join();
 
-                //if (((Module)_Current).Run()) return true;
-                //_Current.WriteError(Lang.Get("Run_Error"));
+                if (_LastRun == 1) return true;
+
+                // Cancelado?
+                if (_IO.CancelableThread != null)
+                    _Current.WriteError(Lang.Get("Run_Error"));
             }
             catch (Exception e)
             {
                 _Current.WriteError(e.Message);
+            }
+            finally
+            {
+                _IO.CancelableThread = null;
             }
             return false;
-        }
-        void runModule()
-        {
-            try
-            {
-                if (((Module)_Current).Run()) return;
-                _Current.WriteError(Lang.Get("Run_Error"));
-            }
-            catch (Exception e)
-            {
-                _Current.WriteError(e.Message);
-            }
         }
         public bool CheckModule()
         {
             if (!CheckModule(true, EModuleType.Module)) return false;
 
+            _LastCheck = 0;
+
             try
             {
-                Module m = (Module)_Current;
-
-                if (m.IsCheckIntrusive())
+                if (((Module)_Current).IsCheckIntrusive())
                 {
                     _IO.WriteInfo(Lang.Get("Can_Be_Intrusive"));
                     string line = _IO.ReadLine(null, null);
@@ -425,17 +452,32 @@ namespace XPloit.Core.Listeners
                         return false;
                 }
 
-                switch (m.Check())
-                {
-                    case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
-                    case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
-                    case ECheck.NotSure: _Current.WriteInfo(Lang.Get("Check_NotSure")); break;
-                    case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); return true;
-                }
+                Module m = (Module)_Current.Clone();
+                m.Prepare(_Current);
+
+                Thread th = _IO.CancelableThread = new Thread(new ParameterizedThreadStart(checkModule));
+                th.Name = "CHECK " + _Current.FullPath;
+                th.IsBackground = true;
+                th.Start(m);
+                th.Join();
+
+                return (ECheck)_LastCheck == ECheck.Ok;
             }
             catch (Exception e)
             {
                 _Current.WriteError(e.Message);
+            }
+            finally
+            {
+                _IO.CancelableThread = null;
+
+                switch ((ECheck)_LastCheck)
+                {
+                    case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
+                    case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
+                    case ECheck.NotSure: _Current.WriteInfo(Lang.Get("Check_NotSure")); break;
+                    case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); break;
+                }
             }
             return false;
         }

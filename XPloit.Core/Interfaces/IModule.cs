@@ -292,8 +292,12 @@ namespace XPloit.Core.Interfaces
 
                 if (m.Target == null)
                 {
-                    error = Lang.Get("Require_Set_Property", "Target");
-                    return false;
+                    Target[] t = m.Targets;
+                    if (t != null && t.Length > 0)
+                    {
+                        error = Lang.Get("Require_Set_Property", "Target");
+                        return false;
+                    }
                 }
 
                 if (m.Payload == null)

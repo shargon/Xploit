@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using XPloit.Core.Command.Interfaces;
 
 namespace XPloit.Core.Interfaces
@@ -21,6 +22,9 @@ namespace XPloit.Core.Interfaces
         void WriteError(string error);
         void WriteInfo(string info);
         void WriteInfo(string info, string colorText, ConsoleColor color);
+
+        // Cancel
+        Thread CancelableThread { get; set; }
 
         // Sound
 

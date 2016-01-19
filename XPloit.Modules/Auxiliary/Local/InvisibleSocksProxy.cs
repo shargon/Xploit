@@ -52,7 +52,7 @@ namespace Auxiliary.Local
 
         public override ECheck Check()
         {
-            if (SystemHelper.IsAvailableTcpPort(LocalPort)) return ECheck.Ok;
+            if (!SystemHelper.IsAvailableTcpPort(LocalPort)) return ECheck.Error;
 
             if (FilterFile != null)
             {
@@ -62,7 +62,7 @@ namespace Auxiliary.Local
                     return ECheck.Error;
                 }
 
-                ScriptHelper script = ScriptHelper.Create(FilterFile.FullName);
+                ScriptHelper script = ScriptHelper.CreateFromFile(FilterFile.FullName, ScriptHelper.DefaultCoreOptions);
                 object obj = script.CreateNewInstance();
 
                 TcpForwarder.delDataFilter s = (TcpForwarder.delDataFilter)ReflectionHelper.GetDelegate<TcpForwarder.delDataFilter>(obj, "OnSend");
@@ -72,6 +72,8 @@ namespace Auxiliary.Local
 
                 WriteInfo("Filter Send", s == null ? "NULL" : "OK", s == null ? ConsoleColor.Red : ConsoleColor.Green);
                 WriteInfo("Filter Receive", r == null ? "NULL" : "OK", r == null ? ConsoleColor.Red : ConsoleColor.Green);
+
+                return ECheck.Ok;
             }
 
             return ECheck.Error;
@@ -92,7 +94,7 @@ namespace Auxiliary.Local
                     return false;
                 }
 
-                ScriptHelper script = ScriptHelper.Create(FilterFile.FullName, false);
+                ScriptHelper script = ScriptHelper.CreateFromFile(FilterFile.FullName, ScriptHelper.DefaultCoreOptions);
                 filterObject = script.CreateNewInstance();
 
                 s = (TcpForwarder.delDataFilter)ReflectionHelper.GetDelegate<TcpForwarder.delDataFilter>(filterObject, "OnSend");

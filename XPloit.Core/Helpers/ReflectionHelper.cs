@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using XPloit.Core.Attributes;
+using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Helpers
 {
@@ -73,6 +74,30 @@ namespace XPloit.Core.Helpers
             return null;
         }
         /// <summary>
+        /// Copy properties to other object
+        /// </summary>
+        /// <param name="from">From</param>
+        /// <param name="to">To</param>
+        /// <param name="properties">Properties</param>
+        public static int CopyProperties(object from, object to, string[] properties)
+        {
+            PropertyInfo[] pi = GetProperties(from, properties);
+            if (pi == null) return -1;
+
+            int change = 0;
+            foreach (PropertyInfo p in pi)
+            {
+                if (!p.CanRead) continue;
+                if (!p.CanWrite) continue;
+
+                p.SetValue(to, p.GetValue(from));
+                change++;
+            }
+
+            return change;
+        }
+
+        /// <summary>
         /// Dispose object if its viable
         /// </summary>
         /// <param name="obj">Object</param>
@@ -137,23 +162,39 @@ namespace XPloit.Core.Helpers
         public static PropertyInfo[] GetProperties(object obj, params string[] properties)
         {
             if (obj == null) return new PropertyInfo[] { };
+            if (properties == null)
+                return obj.GetType().GetProperties();
 
-            List<PropertyInfo> ls = new List<PropertyInfo>();
-            foreach (PropertyInfo pi in obj.GetType().GetProperties())
+            switch (properties.Length)
             {
-                bool esta = false;
-                foreach (string s in properties)
-                    if (string.Equals(pi.Name, s, StringComparison.InvariantCultureIgnoreCase))
+                case 0: return obj.GetType().GetProperties();
+                case 1:
                     {
-                        esta = true;
-                        break;
+                        PropertyInfo pi = obj.GetType().GetProperty(properties[0]);
+                        if (pi != null) return new PropertyInfo[] { pi };
+                        // incaseSensitive search
+                        goto default;
                     }
-                if (!esta) continue;
+                default:
+                    {
+                        List<PropertyInfo> ls = new List<PropertyInfo>();
+                        foreach (PropertyInfo pi in obj.GetType().GetProperties())
+                        {
+                            bool esta = false;
+                            foreach (string s in properties)
+                                if (string.Equals(pi.Name, s, StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    esta = true;
+                                    break;
+                                }
+                            if (!esta) continue;
 
-                ls.Add(pi);
+                            ls.Add(pi);
+                        }
+                        ls.Sort(Sort);
+                        return ls.ToArray();
+                    }
             }
-            ls.Sort(Sort);
-            return ls.ToArray();
         }
 
         /// <summary>

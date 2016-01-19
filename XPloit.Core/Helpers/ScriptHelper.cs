@@ -10,6 +10,35 @@ namespace XPloit.Core.Helpers
 {
     public class ScriptHelper
     {
+        public class ScriptOptions
+        {
+            /// <summary>
+            /// Include files
+            /// </summary>
+            public string[] IncludeFiles { get; set; }
+            /// <summary>
+            /// Extra Usings
+            /// </summary>
+            public string[] includeUsings { get; set; }
+        }
+
+        /// <summary>
+        /// Default Core options
+        /// </summary>
+        public static ScriptOptions DefaultCoreOptions
+        {
+            get
+            {
+                return new ScriptOptions()
+                {
+                    // Core file
+                    IncludeFiles = new string[] { Assembly.GetExecutingAssembly().Location },
+                    // Using core
+                    includeUsings = new string[] { "XPloit.Core.Helpers", "XPloit.Core.Extensions" }
+                };
+            }
+        }
+
         Type _TypeAsm;
         Assembly _Asm;
         static Dictionary<string, ScriptHelper> _AsmLoaded = new Dictionary<string, ScriptHelper>();
@@ -20,46 +49,20 @@ namespace XPloit.Core.Helpers
         public Type Type { get { return _TypeAsm; } }
 
         /// <summary>
-        /// Sample:
-        ///     GetAssembly("public static void MACRO(DB db,DataSet ds) { /*CODE*/ } ");
+        /// Create a Script from File
         /// </summary>
-        /// <param name="fileName">Assembly file</param>
-        /// <param name="isSource">True if contains source</param>
-        public static ScriptHelper Create(string fileName, bool isSource)
+        /// <param name="fileName">Script file</param>
+        /// <param name="options">Options</param>
+        public static ScriptHelper CreateFromFile(string fileName, ScriptOptions options)
         {
-            if (isSource)
-            {
-                return Create(File.ReadAllText(fileName));
-            }
-            return Create(File.ReadAllText(fileName));
+            return CreateFromString(File.ReadAllText(fileName), options);
         }
         /// <summary>
-        /// Sample:
-        ///     GetAssembly("public static void MACRO(DB db,DataSet ds) { /*CODE*/ } ");
-        /// </summary>
-        /// <param name="data">Assembly data</param>
-        /// <returns></returns>
-        public static ScriptHelper Create(byte[] data)
-        {
-            string hash = HashHelper.HashHex(HashHelper.EHashType.Sha256, data, 0, data.Length);
-
-            ScriptHelper ret;
-            if (_AsmLoaded.TryGetValue(hash, out ret)) return ret;
-
-            Assembly asm = Assembly.Load(data);
-            if (asm == null) return null;
-
-            ret = new ScriptHelper(asm);
-            _AsmLoaded.Add(hash, ret);
-            return ret;
-        }
-        /// <summary>
-        /// Sample:
-        ///     GetAssembly("public static void MACRO(DB db,DataSet ds) { /*CODE*/ } ");
+        /// Create a Script from String
         /// </summary>
         /// <param name="codeOrHash">C# Code or hash</param>
-        /// <returns></returns>
-        public static ScriptHelper Create(string codeOrHash)
+        /// <param name="options">Options</param>
+        public static ScriptHelper CreateFromString(string codeOrHash, ScriptOptions options)
         {
             if (string.IsNullOrEmpty(codeOrHash)) return null;
 
@@ -73,7 +76,7 @@ namespace XPloit.Core.Helpers
             string hash = HashHelper.HashHex(HashHelper.EHashType.Sha256, Encoding.UTF8, codeOrHash);
             if (_AsmLoaded.TryGetValue(hash, out ret)) return ret;
 
-            string[] sasm = new string[]
+            List<string> asms = new List<string>(new string[]
             {
                 "system.dll",
                 "system.xml.dll",
@@ -81,32 +84,46 @@ namespace XPloit.Core.Helpers
                 "system.web.dll",
                 "system.windows.forms.dll",
                 "system.drawing.dll" ,
-            };
+            });
 
-            codeOrHash =
-                "using System;" +
-                "using System.Data;" +
-                "using System.Collections.Generic;" +
-                "using System.Drawing.Imaging;" +
-                "using System.IO;" +
-                "using System.Web;" +
-                "using System.Net;" +
-                "using System.Net.NetworkInformation;" +
-                "using System.IO.Ports;" +
-                "using System.Windows.Forms;" +
-                "using System.Drawing;" +
-                "using System.Text;" +
-                "using System.Xml;" +
-                "using System.Drawing.Printing;" +
-                "using System.Data.OleDb;" +
-                "using System.Data.Odbc;" +
-                "using System.Text.RegularExpressions;" +
-                "using System.ComponentModel;" +
-                "using System.Threading;" +
+            // Append files
+            if (options != null && options.IncludeFiles != null)
+                foreach (string su in options.IncludeFiles)
+                    if (!asms.Contains(su)) asms.Add(su);
 
-                "namespace DummyNamespace{public class DummyClass{public DummyClass(){}" + codeOrHash + "\n}}";
+            List<string> usings = new List<string>();
+            usings.Add("System");
+            usings.Add("System.Data");
+            usings.Add("System.Collections.Generic");
+            usings.Add("System.Drawing.Imaging");
+            usings.Add("System.IO");
+            usings.Add("System.Web");
+            usings.Add("System.Net");
+            usings.Add("System.Net.NetworkInformation");
+            usings.Add("System.IO.Ports");
+            usings.Add("System.Windows.Forms");
+            usings.Add("System.Drawing");
+            usings.Add("System.Text");
+            usings.Add("System.Xml");
+            usings.Add("System.Drawing.Printing");
+            usings.Add("System.Data.OleDb");
+            usings.Add("System.Data.Odbc");
+            usings.Add("System.Text.RegularExpressions");
+            usings.Add("System.ComponentModel");
+            usings.Add("System.Threading");
 
-            Assembly asm = Compile(codeOrHash, sasm);
+            // Append usings
+            if (options != null && options.includeUsings != null)
+                foreach (string su in options.includeUsings)
+                    if (!usings.Contains(su)) usings.Add(su);
+
+            string addUsing = "";
+            foreach (string su in usings)
+                addUsing += "using " + su + ";";
+
+            codeOrHash = addUsing + " namespace DummyNamespace{public class DummyClass{public DummyClass(){}" + codeOrHash + "\n}}";
+
+            Assembly asm = Compile(codeOrHash, asms.ToArray());
             if (asm == null) return null;
 
             ret = new ScriptHelper(asm);

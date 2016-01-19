@@ -5,6 +5,7 @@ using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Requirements.Payloads;
 
@@ -13,6 +14,8 @@ namespace XPloit.Core
     [TypeConverter(typeof(Module.ModuleTypeConverter))]
     public class Module : IModule
     {
+        IModule _Parent = null;
+
         /// <summary>
         /// ModuleType
         /// </summary>
@@ -53,6 +56,28 @@ namespace XPloit.Core
         /// </summary>
         /// <param name="cmd">Command</param>
         public virtual ECheck Check() { return ECheck.CantCheck; }
+        /// <summary>
+        /// Prepare the current module
+        /// </summary>
+        /// <param name="module">Module</param>
+        internal void Prepare(IModule module)
+        {
+            if (module == null) return;
+
+            _Parent = module;
+            Prepare(module.IO);
+        }
+        /// <summary>
+        /// Copy selected properties to parent
+        /// </summary>
+        /// <param name="props">Props</param>
+        public bool CopyPropertiesToActiveModule(params string[] props)
+        {
+            if (_Parent == null) return false;
+
+            ReflectionHelper.CopyProperties(this, _Parent, props);
+            return true;
+        }
         /// <summary>
         /// Prepare the current module
         /// </summary>

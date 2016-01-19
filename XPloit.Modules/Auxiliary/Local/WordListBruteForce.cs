@@ -92,7 +92,11 @@ namespace Auxiliary.Local
                             }
                             else index = 0;
 
-                            if (save) StartAtLine = reader.CurrentLine;
+                            if (save)
+                            {
+                                StartAtLine = reader.CurrentLine;
+                                CopyPropertiesToActiveModule("StartAtLine");
+                            }
                             WriteProgress(reader.CurrentLine);
                         }
                     }
@@ -106,7 +110,11 @@ namespace Auxiliary.Local
                             found = true;
                         }
 
-                        if (save) StartAtLine = reader.CurrentLine;
+                        if (save)
+                        {
+                            StartAtLine = reader.CurrentLine;
+                            CopyPropertiesToActiveModule("StartAtLine");
+                        }
                         WriteProgress(reader.CurrentLine);
                     }
                 }
