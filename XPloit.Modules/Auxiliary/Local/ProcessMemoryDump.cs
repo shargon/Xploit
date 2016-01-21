@@ -27,7 +27,7 @@ namespace Auxiliary.Local
         public string SearchString { get; set; }
         [ConfigurableProperty(Description = "Search mode for string comparison")]
         public StringComparison SearchMode { get; set; }
-        [ConfigurableProperty(Description = "Make this iterations Iterations")]
+        [ConfigurableProperty(Description = "Make this iterations")]
         public int Iterations { get; set; }
         [ConfigurableProperty(Description = "Sleep between iterations")]
         public TimeSpan SleepBetweenIterations { get; set; }
@@ -90,7 +90,7 @@ namespace Auxiliary.Local
                             WriteInfo(ap);
                             break;
                         }
-                        else WriteInfo("Search without result", "FAIL", ConsoleColor.Red);
+                        else WriteInfo("Search without any result");
                     }
                 }
 
