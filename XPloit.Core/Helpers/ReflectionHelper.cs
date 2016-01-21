@@ -172,7 +172,7 @@ namespace XPloit.Core.Helpers
                     {
                         PropertyInfo pi = obj.GetType().GetProperty(properties[0]);
                         if (pi != null) return new PropertyInfo[] { pi };
-                        // incaseSensitive search
+                        // non-case sensitive search
                         goto default;
                     }
                 default:

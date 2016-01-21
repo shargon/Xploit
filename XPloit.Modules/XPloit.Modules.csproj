@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Auxiliary\Local\DetectTorExitNode.cs" />
+    <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
     <Compile Include="Auxiliary\Local\TestPayload.cs" />
     <Compile Include="Auxiliary\Local\Steganography\SteganographyImage.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\DnsExfiltrateParser.cs" />
@@ -52,7 +53,7 @@
     <Compile Include="Auxiliary\Local\DnsServer.cs" />
     <Compile Include="Auxiliary\Local\Sniffer.cs" />
     <Compile Include="Auxiliary\Local\RFID\MifareRestoreClone.cs" />
-    <Compile Include="Auxiliary\Local\SysKill.cs" />
+    <Compile Include="Auxiliary\Local\ProcessKill.cs" />
     <Compile Include="Auxiliary\Local\WordListGenerator.cs" />
     <Compile Include="Auxiliary\Multi\Windows\WMIManager.cs" />
     <Compile Include="BuildLink.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerAPI.cs" />
     <Compile Include="Auxiliary\Local\WordListBruteForce.cs" />
-    <Compile Include="Auxiliary\Local\SysRun.cs" />
+    <Compile Include="Auxiliary\Local\ProcessRun.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Query\Manual.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Query\Auto.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Action\ExecuteProcess.cs" />

@@ -89,7 +89,11 @@ namespace XPloit.Core.Helpers
                 if (type == _TimeSpanType)
                 {
                     TimeSpan r;
-                    if (!TimeSpan.TryParse(input.Trim(), CultureInfo.InvariantCulture, out r)) return TimeSpan.Zero;
+                    if (!TimeSpan.TryParse(input.Trim(), CultureInfo.InvariantCulture, out r))
+                    {
+                        long ms = Convert.ToInt64(MathHelper.Calc(input));
+                        return TimeSpan.FromMilliseconds(ms);
+                    }
                     return r;
                 }
                 if (type == _DateTimeType)

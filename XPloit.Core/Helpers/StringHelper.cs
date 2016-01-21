@@ -175,5 +175,14 @@ namespace XPloit.Core.Helpers
             if (bytes < 1024 * 1024 * 1024 * 1024.0) return (bytes / (1024.0 * 1024.0 * 1024.0)).ToString("0.00") + " Gb";
             return (bytes / (1024.0 * 1024.0 * 1024.0 * 1024.0)).ToString("0.00") + " Tb";
         }
+        /// <summary>
+        /// Convert to Kb, Mb ...
+        /// </summary>
+        /// <param name="bytes">Bytes to convert</param>
+        public static string Convert2KbWithBytes(long bytes)
+        {
+            if (bytes < 1024) return bytes.ToString() + " b";
+            return bytes.ToString() + " b -> " + StringHelper.Convert2Kb(bytes);
+        }
     }
 }

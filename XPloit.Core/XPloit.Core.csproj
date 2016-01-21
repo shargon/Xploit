@@ -72,6 +72,9 @@
     <Compile Include="Enums\EArquitecture.cs" />
     <Compile Include="Enums\EExitFunc.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
+    <Compile Include="Forensics\Interfaces\IProcessMemoryDump.cs" />
+    <Compile Include="Forensics\LinuxProcessMemoryDump.cs" />
+    <Compile Include="Forensics\WindowsProcessMemoryDump.cs" />
     <Compile Include="Helpers\AsmHelper.cs" />
     <Compile Include="Helpers\BaseEncodingHelper.cs" />
     <Compile Include="Dns\DnsClient.cs" />
@@ -184,6 +187,7 @@
     <Compile Include="Helpers\FtpHelper.cs" />
     <Compile Include="Helpers\IniHelper.cs" />
     <Compile Include="Helpers\LatchHelper.cs" />
+    <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Helpers\TorHelper.cs" />
     <Compile Include="Interfaces\IProgress.cs" />

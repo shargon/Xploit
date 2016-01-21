@@ -86,8 +86,8 @@ namespace Auxiliary.Local.Steganography
 
                             int av = CalculateMaxLength(img.Width, img.Height);
 
-                            WriteInfo("Bytes to encode", GetSize(totalSize), ConsoleColor.Green);
-                            WriteInfo("Bytes available", GetSize(av), ConsoleColor.DarkCyan);
+                            WriteInfo("Bytes to encode", StringHelper.Convert2KbWithBytes(totalSize), ConsoleColor.Green);
+                            WriteInfo("Bytes available", StringHelper.Convert2KbWithBytes(av), ConsoleColor.DarkCyan);
 
                             if (totalSize <= av) WriteInfo("Its viable!");
                             else
@@ -182,8 +182,8 @@ namespace Auxiliary.Local.Steganography
                                                 {
                                                     EndProgress();
 
-                                                    WriteInfo("Image maybe contains", GetSize(dataLength), ConsoleColor.Green);
-                                                    WriteError("Max bytes available " + GetSize(av));
+                                                    WriteInfo("Image maybe contains", StringHelper.Convert2KbWithBytes(dataLength), ConsoleColor.Green);
+                                                    WriteError("Max bytes available " + StringHelper.Convert2KbWithBytes(av));
                                                     return false;
                                                 }
 
@@ -210,7 +210,7 @@ namespace Auxiliary.Local.Steganography
 
                             if (aes != null)
                             {
-                                WriteInfo("Start decrypting file", GetSize(data.Length), ConsoleColor.Green);
+                                WriteInfo("Start decrypting file", StringHelper.Convert2KbWithBytes(data.Length), ConsoleColor.Green);
                                 data = aes.Decrypt(data);
                             }
 
@@ -220,7 +220,7 @@ namespace Auxiliary.Local.Steganography
                                 return false;
                             }
 
-                            WriteInfo("Writing output", GetSize(data.Length), ConsoleColor.Green);
+                            WriteInfo("Writing output", StringHelper.Convert2KbWithBytes(data.Length), ConsoleColor.Green);
                             File.WriteAllBytes(LocalFileWrite.FullName, data);
 
                             break;
@@ -260,13 +260,13 @@ namespace Auxiliary.Local.Steganography
                         int totalSize = data.Length + 4;
                         int av = CalculateMaxLength(img.Width, img.Height);
 
-                        WriteInfo("Bytes to encode", GetSize(totalSize), ConsoleColor.Green);
-                        WriteInfo("Bytes available", GetSize(av), ConsoleColor.DarkCyan);
+                        WriteInfo("Bytes to encode", StringHelper.Convert2KbWithBytes(totalSize), ConsoleColor.Green);
+                        WriteInfo("Bytes available", StringHelper.Convert2KbWithBytes(av), ConsoleColor.DarkCyan);
 
                         if (totalSize <= av)
                         {
                             if (totalSize != av)
-                                WriteInfo("You can write more!", GetSize(av - totalSize), ConsoleColor.DarkCyan);
+                                WriteInfo("You can write more!", StringHelper.Convert2KbWithBytes(av - totalSize), ConsoleColor.DarkCyan);
                             return ECheck.Ok;
                         }
                         else
@@ -362,11 +362,6 @@ namespace Auxiliary.Local.Steganography
         {
             int binary = (width * height) * 3; // 101 -> 3 binary per pixel
             return (binary / 8); // -> 8 digitos 1 byte
-        }
-        string GetSize(long totalSize)
-        {
-            if (totalSize < 1024) return totalSize.ToString() + " b";
-            return totalSize.ToString() + " b -> " + StringHelper.Convert2Kb(totalSize);
         }
     }
 }

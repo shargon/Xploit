@@ -6,7 +6,7 @@ using XPloit.Core.Enums;
 
 namespace Auxiliary.Local
 {
-    public class SysKill : Module
+    public class ProcessKill : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }

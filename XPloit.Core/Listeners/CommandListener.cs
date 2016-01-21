@@ -409,7 +409,7 @@ namespace XPloit.Core.Listeners
 
             try
             {
-                _LastRun = 0;
+                Interlocked.Exchange(ref _LastRun, 0);
 
                 Module m = (Module)_Current.Clone();
                 m.Prepare(_Current);
@@ -440,7 +440,7 @@ namespace XPloit.Core.Listeners
         {
             if (!CheckModule(true, EModuleType.Module)) return false;
 
-            _LastCheck = 0;
+            Interlocked.Exchange(ref _LastCheck, 0);
 
             try
             {

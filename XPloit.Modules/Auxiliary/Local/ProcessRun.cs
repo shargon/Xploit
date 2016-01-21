@@ -8,7 +8,7 @@ using XPloit.Core.Enums;
 
 namespace Auxiliary.Local
 {
-    public class SysRun : Module
+    public class ProcessRun : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
@@ -53,7 +53,7 @@ namespace Auxiliary.Local
         /// <summary>
         /// Constructor
         /// </summary>
-        public SysRun()
+        public ProcessRun()
         {
             // Default variables
             Arguments = null;

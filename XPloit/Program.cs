@@ -16,7 +16,7 @@ namespace XPloit
         static int Main(string[] args)
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
-            args = new string[] { "Replay=d:\\temp\\console.txt" };
+            //args = new string[] { "Replay=d:\\temp\\console.txt" };
 
             // Linq to library assembly
             BuildLink.Dummy();
