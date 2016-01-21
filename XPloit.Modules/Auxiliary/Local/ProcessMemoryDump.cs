@@ -30,7 +30,7 @@ namespace Auxiliary.Local
         [ConfigurableProperty(Description = "Make this iterations")]
         public int Iterations { get; set; }
         [ConfigurableProperty(Description = "Sleep between iterations")]
-        public TimeSpan SleepBetweenIterations { get; set; }
+        public TimeSpan IterationSleep { get; set; }
 
         [ConfigurableProperty(Description = "Output data Length")]
         public int OutputDataLength { get; set; }
@@ -42,7 +42,7 @@ namespace Auxiliary.Local
         {
             Iterations = 1;
             SearchMode = StringComparison.InvariantCultureIgnoreCase;
-            SleepBetweenIterations = TimeSpan.FromMilliseconds(1000);
+            IterationSleep = TimeSpan.FromMilliseconds(1000);
             OutputDataLength = 400;
             OutputDataBefore = 200;
         }
@@ -78,11 +78,11 @@ namespace Auxiliary.Local
                     // Search
                     if (!string.IsNullOrEmpty(SearchString))
                     {
-                        string ap = File.ReadAllText(FileDump.FullName);
+                        string ap = File.ReadAllText(FileDump.FullName, Encoding.ASCII);
                         int ix = ap.IndexOf(SearchString, 0, SearchMode);
                         if (ix >= 0)
                         {
-                            WriteInfo("Search found at " + ix.ToString(), "OK", ConsoleColor.Green);
+                            WriteInfo("Search found! ", ix.ToString(), ConsoleColor.Green);
 
                             ap = ap.Remove(0, Math.Max(0, ix - OutputDataBefore));
                             ap = ap.Substring(0, OutputDataLength).Replace("\0", "");
@@ -97,7 +97,7 @@ namespace Auxiliary.Local
                 if (x + 1 < m)
                 {
                     // Not last
-                    Thread.Sleep(SleepBetweenIterations);
+                    Thread.Sleep(IterationSleep);
                 }
             }
             return true;
