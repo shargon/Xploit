@@ -50,7 +50,11 @@ namespace Auxiliary.Local
         public override ECheck Check()
         {
             Process pr = Process.GetProcessById(PID.Value);
-            if (pr == null) return ECheck.Error;
+            if (pr == null)
+            {
+                WriteInfo("Process not found");
+                return ECheck.Error;
+            }
             pr.Dispose();
             return ECheck.Ok;
         }
