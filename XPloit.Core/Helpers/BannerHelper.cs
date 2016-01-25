@@ -1,5 +1,5 @@
 ﻿using System;
-using XPloit.Core.Interfaces;
+using XPloit.Core.Command;
 
 namespace XPloit.Core.Helpers
 {
@@ -9,7 +9,7 @@ namespace XPloit.Core.Helpers
         /// Get a Random banner
         /// </summary>
         /// <param name="command">Command</param>
-        public static void GetRandomBanner(ICommandLayer command)
+        public static void GetRandomBanner(CommandLayer command)
         {
             Random r = new Random();
 
@@ -25,13 +25,13 @@ namespace XPloit.Core.Helpers
             }
         }
 
-        public static void GetSimple1Banner(ICommandLayer command)
+        public static void GetSimple1Banner(CommandLayer command)
         {
             command.WriteLine(" |  |   _   |  |   _   _    _ _    _     |_   _     \\/   _   |   _   °  |_ ");
             command.WriteLine(" |/\\|  (/_  |  |  (_  (_)  | | |  (/_    |_  (_)    /\\  |_)  |  (_)  |  |_ ");
         }
 
-        public static void GetVespino(ICommandLayer command)
+        public static void GetVespino(CommandLayer command)
         {
             command.WriteLine("                                       _                 ");
             command.WriteLine("                                    ,-~ |                ");
@@ -48,7 +48,7 @@ namespace XPloit.Core.Helpers
             command.WriteLine("      \\  ``==' /                         \\  `--'  /    ");
             command.WriteLine("       `-.__,-'                           `-.__,-'       ");
         }
-        public static void GetDarthVader(ICommandLayer command)
+        public static void GetDarthVader(CommandLayer command)
         {
             command.WriteLine("         _.-'~~~~~~`-._                               ");
             command.WriteLine("        /      ||      \\                             ");
@@ -66,7 +66,7 @@ namespace XPloit.Core.Helpers
             command.WriteLine("          |    `'    |                                ");
         }
 
-        public static void GetBatmanBanner(ICommandLayer command)
+        public static void GetBatmanBanner(CommandLayer command)
         {
             command.WriteLine("          |\\_|\\         ");
             command.WriteLine("          | a_a\\        ");
@@ -93,7 +93,7 @@ namespace XPloit.Core.Helpers
             command.WriteLine("  IM YOUR SUPERHERO     ");
         }
 
-        public static void GetStarWarsBanner(ICommandLayer command)
+        public static void GetStarWarsBanner(CommandLayer command)
         {
             command.SetForeColor(ConsoleColor.DarkGray);
             command.WriteLine(@"                                           /~\                            ");
@@ -110,7 +110,7 @@ namespace XPloit.Core.Helpers
             command.WriteLine(@"                      /=\ /=\ /=\         | | |                           ");
             command.WriteLine(@"      ________________[_]_[_]_[_]________/_]_[_\_________________________ ");
         }
-        public static void GetWolfBanner(ICommandLayer command)
+        public static void GetWolfBanner(CommandLayer command)
         {
             command.SetForeColor(ConsoleColor.DarkGray);
             command.WriteLine(" ########################################################################## ");
@@ -134,7 +134,7 @@ namespace XPloit.Core.Helpers
             command.WriteLine(" ##################  /                `                    ; ############## ");
             command.WriteLine(" ################  /                                      ; ############### ");
         }
-        public static void GetNyanCatBanner(ICommandLayer command)
+        public static void GetNyanCatBanner(CommandLayer command)
         {
             //1
             command.SetBackgroundColor(ConsoleColor.DarkBlue);

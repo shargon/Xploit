@@ -18,7 +18,7 @@ namespace XPloit.Core.Listeners
     public class CommandListener : IListener, IAutoCompleteSource
     {
         int _LastCheck = 0, _LastRun = 0;
-        ICommandLayer _IO = null;
+        CommandLayer _IO = null;
         CommandMenu _Command = null;
         IModule _CurrentGlobal = null;
         IModule _Current = null;
@@ -217,7 +217,7 @@ namespace XPloit.Core.Listeners
         /// <summary>
         /// Constructor
         /// </summary>
-        public CommandListener(ICommandLayer command)
+        public CommandListener(CommandLayer command)
         {
             CommandMenu cmd = new CommandMenu(command, this, OnPrompt);
             _IO = command;
@@ -247,9 +247,11 @@ namespace XPloit.Core.Listeners
             cmd.Add(new string[] { "search" }, cmdSearch, Lang.Get("Man_Search"));
             cmd.Add(new string[] { "ifcheck" }, cmdIfCheck, Lang.Get("Man_IfCheck"));
             cmd.Add(new string[] { "ifnocheck" }, cmdIfNoCheck, Lang.Get("Man_IfNoCheck"));
+            cmd.Add(new string[] { "record" }, cmdRecord, Lang.Get("Man_Record"));
+
             _Command = cmd;
         }
-        void OnPrompt(ICommandLayer sender)
+        void OnPrompt(CommandLayer sender)
         {
             sender.SetForeColor(ConsoleColor.Green);
 
@@ -419,14 +421,13 @@ namespace XPloit.Core.Listeners
                 th.IsBackground = true;
                 th.Start(m);
                 th.Join();
-                
-                if (th.ThreadState == System.Threading.ThreadState.Aborted)
-                {
-                    // Check abort
-                    WriteLine("");
-                    WriteError(Lang.Get("Aborting"));
-                }
-                
+
+                //if (th.ThreadState == System.Threading.ThreadState.Aborted)
+                //{
+                //    // Check abort
+                //    _IO.WriteError(Lang.Get("Aborting"));
+                //}
+
                 if (_LastRun == 1) return true;
 
                 // Cancelado?
@@ -467,13 +468,12 @@ namespace XPloit.Core.Listeners
                 th.IsBackground = true;
                 th.Start(m);
                 th.Join();
-                
-                if (th.ThreadState == System.Threading.ThreadState.Aborted)
-                {
-                    // Check abort
-                    WriteLine("");
-                    WriteError(Lang.Get("Aborting"));
-                }
+
+                //if (th.ThreadState == System.Threading.ThreadState.Aborted)
+                //{
+                //    // Check abort
+                //    _IO.WriteError(Lang.Get("Aborting"));
+                //}
 
                 return (ECheck)_LastCheck == ECheck.Ok;
             }
@@ -483,14 +483,16 @@ namespace XPloit.Core.Listeners
             }
             finally
             {
-                _IO.CancelableThread = null;
-
-                switch ((ECheck)_LastCheck)
+                if (_IO.CancelableThread != null)
                 {
-                    case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
-                    case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
-                    case ECheck.NotSure: _Current.WriteInfo(Lang.Get("Check_NotSure")); break;
-                    case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); break;
+                    _IO.CancelableThread = null;
+                    switch ((ECheck)_LastCheck)
+                    {
+                        case ECheck.CantCheck: _Current.WriteInfo(Lang.Get("Check_CantCheck")); break;
+                        case ECheck.Error: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Error"), ConsoleColor.Red); break;
+                        case ECheck.NotSure: _Current.WriteInfo(Lang.Get("Check_NotSure")); break;
+                        case ECheck.Ok: _Current.WriteInfo(Lang.Get("Check_Result"), Lang.Get("Ok"), ConsoleColor.Green); break;
+                    }
                 }
             }
             return false;
@@ -704,10 +706,41 @@ namespace XPloit.Core.Listeners
             }
             tb.OutputColored(_IO);
         }
+        public void cmdRecord(string args)
+        {
+            switch (args.Trim().ToLowerInvariant())
+            {
+                case "stop":
+                    {
+                        // stop record
+                        if (!_IO.IsRecording)
+                            _IO.WriteError(Lang.Get("No_Record"));
+                        else
+                        {
+                            _IO.RecordStop();
+                            _IO.WriteInfo(Lang.Get("Stop_Recording_Successful"));
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        // start record
+                        if (_IO.IsRecording)
+                        {
+                            _IO.RecordStop();
+                            _IO.WriteInfo(Lang.Get("Stop_Recording_Successful"));
+                        }
+
+                        _IO.RecordStart(args);
+                        _IO.WriteInfo(Lang.Get("Start_Recording_Successful"));
+
+                        break;
+                    }
+            }
+        }
         public void cmdSearch(string args)
         {
             args = args.Trim().ToLowerInvariant();
-
 
             string[] pars = ArgumentHelper.ArrayFromCommandLine(args);
             if (pars != null && pars.Length > 0)

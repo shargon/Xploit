@@ -28,8 +28,8 @@ namespace XPloit.Core.Command
 
         StringComparison? _StringComparison;
 
-        internal ICommandLayer _IO;
-        public ICommandLayer IO { get { return _IO; } }
+        internal CommandLayer _IO;
+        public CommandLayer IO { get { return _IO; } }
 
         /// <summary>
         /// Parent of this item, if any.
@@ -305,7 +305,7 @@ namespace XPloit.Core.Command
                         ? Lang.Get("Command_Incomplete")
                         : Lang.Get("Command_Not_Unique", cmd);
 
-                    IO.WriteLine(s + " Candidates: " + string.Join(", ", selectors));
+                    IO.WriteLine(s + " " + Lang.Get("Candidates") + ": " + string.Join(", ", selectors));
                 }
                 return null;
             }
@@ -332,16 +332,9 @@ namespace XPloit.Core.Command
                     if (selectors != null && selectors.Length > 0)
                     {
                         if (selectors.Length == 1)
-                        {
-                            IO.WriteLine("Did you mean \"" + selectors[0] + "\"?");
-                        }
+                            IO.WriteLine(Lang.Get("Did_You_Mean", selectors[0]));
                         else if (selectors.Length <= 5)
-                        {
-                            IO.Write("Did you mean ");
-                            IO.Write(string.Join(", ", selectors.Take(selectors.Length - 1).Select(sug => "\"" + sug + "\"")));
-                            IO.Write(" or \"" + selectors.Last() + "\"?");
-                            IO.WriteLine("");
-                        }
+                            IO.WriteLine(Lang.Get("Did_You_Mean_Or", string.Join(", ", selectors.Take(selectors.Length - 1).Select(sug => "\"" + sug + "\"")), selectors.Last()));
                     }
                 }
             }

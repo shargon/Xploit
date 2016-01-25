@@ -42,7 +42,7 @@ namespace XPloit.Core.Command
         /// </list>
         /// </para>
         /// </summary>
-        public CommandMenu(ICommandLayer io, IAutoCompleteSource autoCompleteSource, PromptDelegate prompt, string[] selector = null)
+        public CommandMenu(CommandLayer io, IAutoCompleteSource autoCompleteSource, PromptDelegate prompt, string[] selector = null)
             : base(selector)
         {
             _IO = io;
@@ -57,7 +57,7 @@ namespace XPloit.Core.Command
             PromptCharacter = "> ";
             Prompt = prompt == null ? OnPrompt : prompt;
         }
-        void OnPrompt(ICommandLayer sender)
+        void OnPrompt(CommandLayer sender)
         {
             sender.SetForeColor(_PromptColor);
             sender.Write(PromptCharacter);

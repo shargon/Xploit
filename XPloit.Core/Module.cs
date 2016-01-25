@@ -6,6 +6,7 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
+using XPloit.Core.Command;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Requirements.Payloads;
 
@@ -81,7 +82,7 @@ namespace XPloit.Core
         /// <summary>
         /// Prepare the current module
         /// </summary>
-        internal void Prepare(ICommandLayer io)
+        internal void Prepare(CommandLayer io)
         {
             SetIO(io);
 

@@ -67,6 +67,7 @@
     <Compile Include="Command\CommandTable.cs" />
     <Compile Include="Command\CommandTableCol.cs" />
     <Compile Include="Command\CommandTableRow.cs" />
+    <Compile Include="Command\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />
     <Compile Include="Enums\EArquitecture.cs" />
@@ -230,10 +231,10 @@
     <Compile Include="Command\Interfaces\IAutoCompleteSource.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Helpers\SystemHelper.cs" />
-    <Compile Include="Interfaces\ICommandLayer.cs" />
+    <Compile Include="Interfaces\IIOCommandLayer.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
-    <Compile Include="Command\ConsoleCommand.cs" />
+    <Compile Include="Command\CommandLayer.cs" />
     <Compile Include="Interfaces\IEncoderRequirements.cs" />
     <Compile Include="Interfaces\INopRequirements.cs" />
     <Compile Include="Streams\StreamSpeedLimit.cs" />
@@ -309,9 +310,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\Payloads\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

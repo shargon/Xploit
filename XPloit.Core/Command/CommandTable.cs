@@ -114,7 +114,7 @@ namespace XPloit.Core.Command
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return rows.GetEnumerator(); }
         #endregion
 
-        public void OutputColored(ICommandLayer io)
+        public void OutputColored(CommandLayer io)
         {
             string separator = Separator;
             foreach (CommandTableRow row in this)

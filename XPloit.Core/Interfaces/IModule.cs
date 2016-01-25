@@ -14,11 +14,11 @@ namespace XPloit.Core.Interfaces
         string _Name = null, _Path = null;
         string _FullPath = null;
 
-        ICommandLayer _IO;
+        CommandLayer _IO;
 
-        internal ICommandLayer IO { get { return _IO; } }
+        internal CommandLayer IO { get { return _IO; } }
 
-        internal void SetIO(ICommandLayer io) { _IO = io; }
+        internal void SetIO(CommandLayer io) { _IO = io; }
 
         /// <summary>
         /// Create a new job
@@ -208,7 +208,7 @@ namespace XPloit.Core.Interfaces
         /// <param name="cmd">Command</param>
         /// <param name="error">Variable for capture the error fail</param>
         /// <returns>Return true if OK, false if not</returns>
-        public static bool CheckRequiredProperties(object obj, ICommandLayer cmd, out string error)
+        public static bool CheckRequiredProperties(object obj, CommandLayer cmd, out string error)
         {
             error = null;
             Type fileInfoType = typeof(FileInfo);
@@ -279,7 +279,7 @@ namespace XPloit.Core.Interfaces
         /// <param name="cmd">Command</param>
         /// <param name="error">Variable for capture the error fail</param>
         /// <returns>Return true if OK, false if not</returns>
-        public bool CheckRequiredProperties(ICommandLayer cmd, out string error)
+        public bool CheckRequiredProperties(CommandLayer cmd, out string error)
         {
             error = null;
 

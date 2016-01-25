@@ -427,7 +427,7 @@ Show info of the current module</value>
     <value>Disclosure</value>
   </data>
   <data name="Man_IfCheck" xml:space="preserve">
-    <value>ifcheck &lt;command&gt;
+    <value>ifcheck [command]
 
 Check the module, and if works, then run the command</value>
   </data>
@@ -444,11 +444,39 @@ Check the module, and if works, then run the command</value>
     <value>Folder '%0' must exists</value>
   </data>
   <data name="Man_IfNoCheck" xml:space="preserve">
-    <value>ifnocheck &lt;command&gt;
+    <value>ifnocheck [command]
 
 Check the module, and if not works, then run the command</value>
   </data>
   <data name="Aborting" xml:space="preserve">
     <value>Aborting ...</value>
+  </data>
+  <data name="Man_Record" xml:space="preserve">
+    <value>record [option]
+
+Start/Stop recording the input to a file
+
+Options:
+
+  stop      Stop the current record
+  &lt;path&gt;    Start a record in this path</value>
+  </data>
+  <data name="No_Record" xml:space="preserve">
+    <value>No active record ...</value>
+  </data>
+  <data name="Stop_Recording_Successful" xml:space="preserve">
+    <value>Stop recording successful</value>
+  </data>
+  <data name="Start_Recording_Successful" xml:space="preserve">
+    <value>Start recording successful</value>
+  </data>
+  <data name="Candidates" xml:space="preserve">
+    <value>Candidates</value>
+  </data>
+  <data name="Did_You_Mean" xml:space="preserve">
+    <value>Did you mean '%0'?</value>
+  </data>
+  <data name="Did_You_Mean_Or" xml:space="preserve">
+    <value>Did you mean '%0' or '%1'?</value>
   </data>
 </root>

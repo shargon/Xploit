@@ -6,15 +6,13 @@ using System.Threading;
 using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
-using XPloit.Res;
 
 namespace XPloit.Core.Command
 {
-    public class ConsoleCommand : ICommandLayer
+    public class CommandLayer : IDisposable
     {
-        Encoding _Codec;
-        TextWriter _Out;
-        TextReader _In;
+        StreamWriter _Log;
+        IIOCommandLayer _IO;
 
         List<string> _Frames = new List<string>();
 
@@ -44,25 +42,24 @@ namespace XPloit.Core.Command
             }
         }
 
+        int _ConsoleX = -1, _ConsoleY = -1;
+        Thread _CancelableThread = null;
         ConsoleColor _LastFore, _LastBack;
         ConsoleColor _PromptColor = ConsoleColor.Green;
         ConsoleColor _InputColor = ConsoleColor.White;
 
+        int _LastPercent = -1;
+        double _ProgressVal = 0, _ProgressMax = 0;
+        bool _ReSendProgress = false;
+
+        /// <summary>
+        /// Propmt char
+        /// </summary>
         public string PromptCharacter { get; set; }
-
-        public ConsoleCommand()
-        {
-            _Codec = Console.OutputEncoding;
-            _Out = Console.Out;
-            _In = Console.In;
-
-            Console.CancelKeyPress += Console_CancelKeyPress;
-
-            PromptCharacter = "> ";
-        }
-
-        Thread _CancelableThread = null;
-
+        /// <summary>
+        /// Return true if record is active
+        /// </summary>
+        public bool IsRecording { get { return _Log != null; } }
         /// <summary>
         /// Get or set the current thread
         /// </summary>
@@ -71,25 +68,44 @@ namespace XPloit.Core.Command
             get { return _CancelableThread; }
             set { _CancelableThread = value; }
         }
+        /// <summary>
+        /// Returns true if are in progress
+        /// </summary>
+        public bool IsInProgress { get { return _ProgressMax > 0; } }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="io">Input/Output</param>
+        public CommandLayer(IIOCommandLayer io)
+        {
+            _IO = io;
+
+            io.CancelKeyPress += Console_CancelKeyPress;
+
+            PromptCharacter = "> ";
+        }
 
         void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             if (_CancelableThread != null)
             {
                 e.Cancel = true;
-                _CancelableThread.Abort();
+                Thread th = _CancelableThread;
                 _CancelableThread = null;
+                th.Abort();
             }
         }
-
-        int _LastPercent = -1;
-        double _ProgressVal = 0, _ProgressMax = 0;
-        int _ProgressX = -1, _ProgressY = -1;
-        public bool IsInProgress { get { return _ProgressX >= 0 && _ProgressY >= 0; } }
-
         public void WriteProgress(double value)
         {
             if (!IsInProgress) return;
+
+            if (_ReSendProgress)
+            {
+                _ReSendProgress = false;
+                _LastPercent = -1;
+                WriteStart("%", ConsoleColor.Yellow);
+                _IO.GetCursorPosition(ref _ConsoleX, ref _ConsoleY);
+            }
 
             _ProgressVal = value;
 
@@ -101,7 +117,7 @@ namespace XPloit.Core.Command
                 return;
             _LastPercent = lp;
 
-            Console.SetCursorPosition(_ProgressX, _ProgressY);
+            _IO.SetCursorPosition(_ConsoleX, _ConsoleY);
             int ip = (int)percent / 10;
 
             ConsoleColor last = _LastFore;
@@ -132,30 +148,25 @@ namespace XPloit.Core.Command
 
             WriteProgress(_ProgressMax);
 
-            _ProgressX = -1;
-            _ProgressY = -1;
+            _ReSendProgress = false;
             _LastPercent = -1;
+            _ProgressMax = -1;
 
             WriteLine("");
         }
         public void StartProgress(double max)
         {
-            _LastPercent = -1;
-
-            WriteStart("%", ConsoleColor.Yellow);
-
+            _ReSendProgress = true;
             _ProgressMax = max;
-            _ProgressX = Console.CursorLeft;
-            _ProgressY = Console.CursorTop;
 
             WriteProgress(0);
         }
         void WriteStart(string ch, ConsoleColor color)
         {
-            if (IsInProgress)
+            if (ch != "%" && IsInProgress)
             {
-                EndProgress();
-                return;
+                _ReSendProgress = true;
+                WriteLine("");
             }
 
             SetForeColor(ConsoleColor.Gray);
@@ -199,46 +210,45 @@ namespace XPloit.Core.Command
                 WriteLine("]");
             }
         }
-        public void Clear() { Console.Clear(); }
+        public void Clear() { _IO.Clear(); }
         /// <summary>
         /// Write a char
         /// </summary>
         /// <param name="c">Char</param>
-        public void Write(char c) { Write(c.ToString()); }
+        public void Write(char c) { _IO.Write(c.ToString()); }
         /// <summary>
         /// Beep
         /// </summary>
-        public void Beep() { Console.Beep(); }
+        public void Beep() { _IO.Beep(); }
         /// <summary>
         /// Write
         /// </summary>
         /// <param name="line">Line</param>
-        public void Write(string line)
-        {
-            if (line != null) _Out.Write(line);
-        }
+        public void Write(string line) { if (line != null) _IO.Write(line); }
         /// <summary>
         /// Write
         /// </summary>
         /// <param name="line">Line</param>
         public void WriteLine(string line)
         {
-            Write(line);
-            Write(Environment.NewLine);
+            if (line == null) line = "";
+            _IO.Write(line + Environment.NewLine);
         }
         public void SetBackgroundColor(ConsoleColor value)
         {
             if (_LastBack == value)
                 return;
+
             _LastBack = value;
-            Console.BackgroundColor = value;
+            _IO.SetBackgroundColor(value);
         }
         public void SetForeColor(ConsoleColor value)
         {
             if (_LastFore == value)
                 return;
+
             _LastFore = value;
-            Console.ForegroundColor = value;
+            _IO.SetForeColor(value);
         }
         /// <summary>
         /// Adds a new input source on top of the input stack.
@@ -258,30 +268,34 @@ namespace XPloit.Core.Command
         /// </summary>
         public void AddInput(string source)
         {
-            if (source == null)
-                throw new ArgumentNullException("source");
-
-            _Frames.Add(source);
+            if (source != null)
+                _Frames.Add(source);
         }
-        void OnPrompt(ICommandLayer sender)
+        void OnPrompt(CommandLayer sender)
         {
             sender.SetForeColor(_PromptColor);
             sender.Write(PromptCharacter);
             sender.SetForeColor(_InputColor);
         }
-        public string InternalReadLine() { return Console.ReadLine(); }
-        public ConsoleKeyInfo ReadKey(bool intercept) { return Console.ReadKey(intercept); }
+        public string InternalReadLine()
+        {
+            string input = _IO.ReadLine();
+
+            WriteLog(input);
+            return input;
+        }
+        public ConsoleKeyInfo ReadKey(bool intercept) { return _IO.ReadKey(intercept); }
         public string ReadPassword(PromptDelegate prompt) { return ReadLine(prompt, null, true); }
         public string ReadLine(PromptDelegate prompt, IAutoCompleteSource autoComplete) { return ReadLine(prompt, autoComplete, false); }
         /// <summary>
         /// Returns the next available line of input.
         /// </summary>
-        /// <param name="prompt">
-        /// String to prompt, or null.
-        /// </param>
+        /// <param name="prompt">Prompt</param>
+        /// <param name="autoComplete">AutoComplete source</param>
+        /// <param name="isPassword">True for hide the input</param>
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource autoComplete, bool isPassword)
         {
-            Console.CursorVisible = true;
+            _IO.SetCursorVisible(true);
             for (;;)
             {
                 string input;
@@ -296,7 +310,7 @@ namespace XPloit.Core.Command
                 {
                     if (prompt != null) prompt(this);
 
-                    if (autoComplete == null) input = InternalReadLine();
+                    if (autoComplete == null && !isPassword) input = InternalReadLine();
                     else
                     {
                         ConsoleKeyInfo myKey;
@@ -307,6 +321,8 @@ namespace XPloit.Core.Command
                             {
                                 case ConsoleKey.Tab:
                                     {
+                                        if (autoComplete == null || isPassword) break;
+
                                         // Check in list
                                         string command;
                                         string word;
@@ -509,8 +525,8 @@ namespace XPloit.Core.Command
                                     {
                                         if (myKey.KeyChar == '\0') break;
 
-                                        Write(myKey.KeyChar.ToString());
                                         input = input + myKey.KeyChar;
+                                        Write(isPassword ? "*" : myKey.KeyChar.ToString());
                                         break;
                                     }
                             }
@@ -524,9 +540,48 @@ namespace XPloit.Core.Command
                 }
 
                 SetForeColor(ConsoleColor.Gray);
-                Console.CursorVisible = false;
-                if (!string.IsNullOrWhiteSpace(input)) return input;
+                _IO.SetCursorVisible(false);
+
+                if (!string.IsNullOrWhiteSpace(input))
+                {
+                    WriteLog(input);
+                    return input;
+                }
             }
         }
+
+        void WriteLog(string input)
+        {
+            if (_Log == null || string.IsNullOrEmpty(input)) return;
+            if (input.ToLowerInvariant().Trim() == "record stop") return;
+
+            _Log.WriteLine(input);
+            _Log.Flush();
+        }
+
+        /// <summary>
+        /// Start record
+        /// </summary>
+        /// <param name="file">File</param>
+        public void RecordStart(string file)
+        {
+            RecordStop();
+            _Log = new StreamWriter(file, true, Encoding.UTF8);
+        }
+        /// <summary>
+        /// Stop record
+        /// </summary>
+        public void RecordStop()
+        {
+            if (_Log != null)
+            {
+                _Log.Dispose();
+                _Log = null;
+            }
+        }
+        /// <summary>
+        /// Free Resources
+        /// </summary>
+        public void Dispose() { RecordStop(); }
     }
 }
