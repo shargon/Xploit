@@ -223,8 +223,8 @@ namespace XPloit.Core.Command
         /// <param name="line">Line</param>
         public void WriteLine(string line)
         {
-            if (line != null) _Out.Write(line);
-            _Out.Write(Environment.NewLine);
+            Write(line);
+            Write(Environment.NewLine);
         }
         public void SetBackgroundColor(ConsoleColor value)
         {
