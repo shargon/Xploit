@@ -59,7 +59,7 @@ namespace XPloit.Core.BruteForce
 
             switch (char.ToUpperInvariant(allow))
             {
-                case 'A': ch.Add('4'); break;
+                case 'A': ch.Add('4'); ch.Add('@'); break;
                 case 'E': ch.Add('3'); break;
                 case 'I': ch.Add('1'); break;
                 case 'O': ch.Add('0'); break;
