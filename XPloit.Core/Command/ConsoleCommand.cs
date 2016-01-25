@@ -79,13 +79,6 @@ namespace XPloit.Core.Command
                 e.Cancel = true;
                 _CancelableThread.Abort();
                 _CancelableThread = null;
-
-                WriteLine("");
-                WriteError(Lang.Get("Aborting"));
-            }
-            else
-            {
-                // No thread
             }
         }
 
