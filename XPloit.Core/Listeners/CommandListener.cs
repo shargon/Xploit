@@ -419,7 +419,14 @@ namespace XPloit.Core.Listeners
                 th.IsBackground = true;
                 th.Start(m);
                 th.Join();
-
+                
+                if (th.ThreadState == System.Threading.ThreadState.Aborted)
+                {
+                    // Check abort
+                    WriteLine("");
+                    WriteError(Lang.Get("Aborting"));
+                }
+                
                 if (_LastRun == 1) return true;
 
                 // Cancelado?
@@ -460,6 +467,13 @@ namespace XPloit.Core.Listeners
                 th.IsBackground = true;
                 th.Start(m);
                 th.Join();
+                
+                if (th.ThreadState == System.Threading.ThreadState.Aborted)
+                {
+                    // Check abort
+                    WriteLine("");
+                    WriteError(Lang.Get("Aborting"));
+                }
 
                 return (ECheck)_LastCheck == ECheck.Ok;
             }
