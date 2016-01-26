@@ -43,6 +43,7 @@ namespace XPloit.Core.Command
         }
 
         int _ConsoleX = -1, _ConsoleY = -1;
+        bool _AllowOutPut = true;
         Thread _CancelableThread = null;
         ConsoleColor _LastFore, _LastBack;
         ConsoleColor _PromptColor = ConsoleColor.Green;
@@ -52,6 +53,14 @@ namespace XPloit.Core.Command
         double _ProgressVal = 0, _ProgressMax = 0;
         bool _ReSendProgress = false;
 
+        /// <summary>
+        /// Set Allow output
+        /// </summary>
+        public bool AllowOutPut
+        {
+            get { return _AllowOutPut; }
+            private set { _AllowOutPut = value; }
+        }
         /// <summary>
         /// Propmt char
         /// </summary>
@@ -98,13 +107,14 @@ namespace XPloit.Core.Command
         public void WriteProgress(double value)
         {
             if (!IsInProgress) return;
+            if (!_AllowOutPut) return;
 
             if (_ReSendProgress)
             {
                 _ReSendProgress = false;
                 _LastPercent = -1;
                 WriteStart("%", ConsoleColor.Yellow);
-                _IO.GetCursorPosition(ref _ConsoleX, ref _ConsoleY);
+                _IO.GetCursorPosition(out _ConsoleX, out _ConsoleY);
             }
 
             _ProgressVal = value;
@@ -117,7 +127,8 @@ namespace XPloit.Core.Command
                 return;
             _LastPercent = lp;
 
-            _IO.SetCursorPosition(_ConsoleX, _ConsoleY);
+            _IO.SetCursorPositionX(_ConsoleX);
+            _IO.SetCursorPositionY(_ConsoleY);
             int ip = (int)percent / 10;
 
             ConsoleColor last = _LastFore;
@@ -163,6 +174,8 @@ namespace XPloit.Core.Command
         }
         void WriteStart(string ch, ConsoleColor color)
         {
+            if (!_AllowOutPut) return;
+
             if (ch != "%" && IsInProgress)
             {
                 _ReSendProgress = true;
@@ -210,42 +223,59 @@ namespace XPloit.Core.Command
                 WriteLine("]");
             }
         }
-        public void Clear() { _IO.Clear(); }
+        public void Clear()
+        {
+            if (!_AllowOutPut) return;
+            _IO.Clear();
+        }
         /// <summary>
         /// Write a char
         /// </summary>
         /// <param name="c">Char</param>
-        public void Write(char c) { _IO.Write(c.ToString()); }
+        public void Write(char c)
+        {
+            if (!_AllowOutPut) return;
+            _IO.Write(c.ToString());
+        }
         /// <summary>
         /// Beep
         /// </summary>
-        public void Beep() { _IO.Beep(); }
+        public void Beep()
+        {
+            if (!_AllowOutPut) return;
+            _IO.Beep();
+        }
         /// <summary>
         /// Write
         /// </summary>
         /// <param name="line">Line</param>
-        public void Write(string line) { if (line != null) _IO.Write(line); }
+        public void Write(string line)
+        {
+            if (!_AllowOutPut) return;
+            if (line != null) _IO.Write(line);
+        }
         /// <summary>
         /// Write
         /// </summary>
         /// <param name="line">Line</param>
         public void WriteLine(string line)
         {
+            if (!_AllowOutPut) return;
             if (line == null) line = "";
             _IO.Write(line + Environment.NewLine);
         }
         public void SetBackgroundColor(ConsoleColor value)
         {
-            if (_LastBack == value)
-                return;
+            if (!_AllowOutPut) return;
+            if (_LastBack == value) return;
 
             _LastBack = value;
             _IO.SetBackgroundColor(value);
         }
         public void SetForeColor(ConsoleColor value)
         {
-            if (_LastFore == value)
-                return;
+            if (!_AllowOutPut) return;
+            if (_LastFore == value) return;
 
             _LastFore = value;
             _IO.SetForeColor(value);
@@ -295,6 +325,7 @@ namespace XPloit.Core.Command
         /// <param name="isPassword">True for hide the input</param>
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource autoComplete, bool isPassword)
         {
+            int index = 0;
             _IO.SetCursorVisible(true);
             for (;;)
             {
@@ -342,23 +373,20 @@ namespace XPloit.Core.Command
                                                 if (!ls.Contains(s)) ls.Add(s);
                                             }
 
+                                        int x, y;
+                                        _IO.GetCursorPosition(out x, out y);
+
                                         // Ver que hacer según el numero de encuentros
+                                        string toWrite = "";
                                         switch (ls.Count)
                                         {
-                                            case 0:
-                                                {
-                                                    // Add space
-                                                    Write(" ");
-                                                    input = input + ' ';
-                                                    break;
-                                                }
+                                            // Add space
+                                            case 0: { toWrite = " "; break; }
                                             case 1:
                                                 {
                                                     // Add input
-                                                    string toWrite = ls[0];
+                                                    toWrite = ls[0];
                                                     toWrite = toWrite.Substring(word.Length) + " ";
-                                                    Write(toWrite);
-                                                    input = input + toWrite;
                                                     break;
                                                 }
                                             default:
@@ -385,50 +413,62 @@ namespace XPloit.Core.Command
                                                         // Relleno
                                                         fInput = fInput.Remove(0, word.Length);
                                                         word += fInput;
-
-                                                        input += fInput;
-                                                        Write(fInput);
+                                                        toWrite = fInput;
                                                     }
-
-                                                    WriteLine("");
-
-                                                    if (ls.Count > 50)
-                                                    {
-                                                        // Check show results
-                                                        WriteLine("Show " + ls.Count.ToString() + " results? [Yes/No/Top]");
-                                                        string s1 = InternalReadLine().ToUpperInvariant();
-
-                                                        // Top signal?
-                                                        if (s1 == "T" || s1 == "TOP")
-                                                            ls.RemoveRange(50, ls.Count - 50);
-                                                        else
-                                                        {
-                                                            // No signal?
-                                                            if (s1 != "Y" && s1 != "YES")
-                                                            {
-                                                                if (prompt != null) prompt(this);
-                                                                Write(input);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    ls.Sort();
-
-                                                    foreach (string s in ls)
-                                                    {
-                                                        SetBackgroundColor(ConsoleColor.Gray);
-                                                        SetForeColor(ConsoleColor.Black);
-                                                        Write(s.Substring(0, word.Length));
-                                                        SetBackgroundColor(ConsoleColor.Black);
-                                                        SetForeColor(ConsoleColor.Gray);
-                                                        WriteLine(s.Substring(word.Length));
-                                                    }
-
-                                                    if (prompt != null) prompt(this);
-                                                    Write(input);
                                                     break;
                                                 }
+                                        }
+
+                                        // Go to end of line
+                                        int mas = input.Length - index;
+                                        input = input + toWrite;
+                                        index = input.Length;
+
+                                        ConsoleMoveRight(ref x, ref y, mas);
+
+                                        if (ls.Count > 1)
+                                        {
+                                            // Auto complete
+                                            WriteLine("");
+                                            if (ls.Count > 50)
+                                            {
+                                                // Check show results
+                                                WriteLine("Show " + ls.Count.ToString() + " results? [Yes/No/Top]");
+                                                string s1 = InternalReadLine().ToUpperInvariant();
+
+                                                // Top signal?
+                                                if (s1 == "T" || s1 == "TOP")
+                                                    ls.RemoveRange(50, ls.Count - 50);
+                                                else
+                                                {
+                                                    // No signal?
+                                                    if (s1 != "Y" && s1 != "YES")
+                                                    {
+                                                        if (prompt != null) prompt(this);
+                                                        Write(input);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            ls.Sort();
+
+                                            foreach (string s in ls)
+                                            {
+                                                SetBackgroundColor(ConsoleColor.Gray);
+                                                SetForeColor(ConsoleColor.Black);
+                                                Write(s.Substring(0, word.Length));
+                                                SetBackgroundColor(ConsoleColor.Black);
+                                                SetForeColor(ConsoleColor.Gray);
+                                                WriteLine(s.Substring(word.Length));
+                                            }
+
+                                            if (prompt != null) prompt(this);
+                                            Write(input);
+                                        }
+                                        else
+                                        {
+                                            Write(toWrite);
                                         }
                                         break;
                                     }
@@ -469,7 +509,6 @@ namespace XPloit.Core.Command
                                 case ConsoleKey.BrowserStop:
                                 case ConsoleKey.Clear:
                                 case ConsoleKey.Help:
-                                case ConsoleKey.Home:
                                 case ConsoleKey.Insert:
                                 case ConsoleKey.LaunchApp1:
                                 case ConsoleKey.LaunchApp2:
@@ -495,25 +534,104 @@ namespace XPloit.Core.Command
                                 case ConsoleKey.Zoom: break;
                                 #endregion
 
-                                case ConsoleKey.Enter:
+                                case ConsoleKey.Enter: { WriteLine(""); break; }
+                                case ConsoleKey.Home:
                                     {
-                                        WriteLine("");
+                                        if (index <= 0) break;
+
+                                        int x, y;
+                                        _IO.GetCursorPosition(out x, out y);
+                                        ConsoleMoveLeft(ref x, ref y, index);
+                                        index = 0;
+                                        break;
+                                    }
+                                case ConsoleKey.End:
+                                    {
+                                        if (input == null || index >= input.Length) break;
+
+                                        int x, y;
+                                        _IO.GetCursorPosition(out x, out y);
+                                        ConsoleMoveRight(ref x, ref y, input.Length - index);
+                                        index = input.Length;
+                                        break;
+                                    }
+                                case ConsoleKey.Delete:
+                                    {
+                                        if (input == null || index >= input.Length) break;
+
+                                        int x, y;
+                                        if (index + 1 == input.Length)
+                                        {
+                                            input = input.Substring(0, input.Length - 1);
+
+                                            Write(" ");
+                                            _IO.GetCursorPosition(out x, out y);
+                                            ConsoleMoveLeft(ref x, ref y, 1);
+                                        }
+                                        else
+                                        {
+                                            input = input.Remove(index, 1);
+
+                                            _IO.GetCursorPosition(out x, out y);
+                                            Write(input.Substring(index) + " ");
+                                            _IO.SetCursorPosition(x, y);
+                                        }
                                         break;
                                     }
                                 case ConsoleKey.Backspace:
                                     {
-                                        if (input.Length > 0)
+                                        if (input == null || index <= 0) break;
+
+                                        int x, y;
+                                        _IO.GetCursorPosition(out x, out y);
+
+                                        if (index == input.Length)
                                         {
                                             input = input.Substring(0, input.Length - 1);
-                                            Write("\b \b");
+
+                                            ConsoleMoveLeft(ref x, ref y, 1);
+                                            Write(" ");
+                                            _IO.GetCursorPosition(out x, out y);
+                                            ConsoleMoveLeft(ref x, ref y, 1);
                                         }
+                                        else
+                                        {
+                                            input = input.Remove(index - 1, 1);
+
+                                            ConsoleMoveLeft(ref x, ref y, 1);
+                                            Write("".PadLeft(input.Length - index + 2));
+                                            _IO.SetCursorPosition(x, y);
+                                            Write(input.Substring(index - 1));
+                                            _IO.SetCursorPosition(x, y);
+                                        }
+
+                                        index--;
+                                        break;
+                                    }
+                                case ConsoleKey.LeftArrow:
+                                    {
+                                        if (input == null || index <= 0) break;
+
+                                        index--;
+                                        int x, y;
+                                        _IO.GetCursorPosition(out x, out y);
+
+                                        ConsoleMoveLeft(ref x, ref y, 1);
+                                        break;
+                                    }
+                                case ConsoleKey.RightArrow:
+                                    {
+                                        if (input == null || index >= input.Length) break;
+
+                                        index++;
+                                        int x, y;
+                                        _IO.GetCursorPosition(out x, out y);
+
+                                        ConsoleMoveRight(ref x, ref y, 1);
                                         break;
                                     }
 
                                 #region ToDO
-                                case ConsoleKey.LeftArrow: { break; }
-                                case ConsoleKey.RightArrow: { break; }
-
                                 case ConsoleKey.PageUp:
                                 case ConsoleKey.UpArrow: { break; }
 
@@ -525,8 +643,26 @@ namespace XPloit.Core.Command
                                     {
                                         if (myKey.KeyChar == '\0') break;
 
-                                        input = input + myKey.KeyChar;
-                                        Write(isPassword ? "*" : myKey.KeyChar.ToString());
+                                        if (input == null) input = "";
+
+                                        if (input.Length == index)
+                                        {
+                                            input = input + myKey.KeyChar;
+                                            Write(isPassword ? "*" : myKey.KeyChar.ToString());
+                                        }
+                                        else
+                                        {
+                                            int antes = input.Length;
+                                            input = input.Insert(index, myKey.KeyChar.ToString());
+
+                                            int x, y;
+                                            _IO.GetCursorPosition(out x, out y);
+                                            Write(isPassword ? "".PadLeft(antes, '*') : input.Substring(index));
+                                            _IO.SetCursorPosition(x, y);
+                                            ConsoleMoveRight(ref x, ref y, 1);
+                                        }
+
+                                        index++;
                                         break;
                                     }
                             }
@@ -547,6 +683,59 @@ namespace XPloit.Core.Command
                     WriteLog(input);
                     return input;
                 }
+            }
+        }
+        void ConsoleMoveLeft(ref int currentX, ref int currentY, int count)
+        {
+            if (count <= 0) return;
+
+            int w, h;
+            _IO.GetConsoleSize(out w, out h);
+
+            while (count > 0)
+            {
+                if (currentX > 0)
+                {
+                    // same line
+                    currentX--;
+                    _IO.SetCursorPositionX(currentX);
+                }
+                else
+                {
+                    if (currentY > 0)
+                    {
+                        currentX = w - 1;
+                        currentY--;
+                        _IO.SetCursorPositionY(currentY);
+                        _IO.SetCursorPositionX(currentX);
+                    }
+                }
+                count--;
+            }
+        }
+        void ConsoleMoveRight(ref int currentX, ref int currentY, int count)
+        {
+            if (count <= 0) return;
+
+            int w, h;
+            _IO.GetConsoleSize(out w, out h);
+
+            while (count > 0)
+            {
+                if (currentX + 1 < w)
+                {
+                    // same line
+                    currentX++;
+                    _IO.SetCursorPositionX(currentX);
+                }
+                else
+                {
+                    currentY++;
+                    currentX = 0;
+                    _IO.SetCursorPositionY(currentY);
+                    _IO.SetCursorPositionX(currentX);
+                }
+                count--;
             }
         }
 

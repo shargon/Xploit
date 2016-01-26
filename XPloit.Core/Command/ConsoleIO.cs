@@ -20,15 +20,18 @@ namespace XPloit.Core.Command
         public ConsoleKeyInfo ReadKey(bool intercept) { return Console.ReadKey(intercept); }
         public string ReadLine() { return Console.ReadLine(); }
         public void SetBackgroundColor(ConsoleColor value) { Console.BackgroundColor = value; }
-        public void SetCursorPosition(int x, int y)
-        {
-            Console.CursorLeft = x;
-            Console.CursorTop = y;
-        }
-        public void GetCursorPosition(ref int x, ref int y)
+        public void SetCursorPosition(int x,int y) { Console.CursorLeft = x; Console.CursorTop = y; }
+        public void SetCursorPositionX(int value) { Console.CursorLeft = value; }
+        public void SetCursorPositionY(int value) { Console.CursorTop = value; }
+        public void GetCursorPosition(out int x, out int y)
         {
             x = Console.CursorLeft;
             y = Console.CursorTop;
+        }
+        public void GetConsoleSize(out int w, out int h)
+        {
+            w = Console.BufferWidth;
+            h = Console.BufferHeight;
         }
         public void Write(string input) { Console.Write(input); }
         public void SetForeColor(ConsoleColor value) { Console.ForegroundColor = value; }

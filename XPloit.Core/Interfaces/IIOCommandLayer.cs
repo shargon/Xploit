@@ -24,8 +24,15 @@ namespace XPloit.Core.Interfaces
 
         void SetForeColor(ConsoleColor color);
         void SetBackgroundColor(ConsoleColor color);
+
+        // Cursor
+
+        void SetCursorPositionX(int value);
+        void SetCursorPositionY(int value);
         void SetCursorPosition(int x, int y);
-        void GetCursorPosition(ref int x,ref  int y);
         void SetCursorVisible(bool visible);
+
+        void GetConsoleSize(out int w, out int h);
+        void GetCursorPosition(out int x, out int y);
     }
 }
