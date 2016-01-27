@@ -7,44 +7,64 @@ namespace XPloit.Core.Listeners.IO
     {
         public enum ECursorMode
         {
-            Visible,
+            /// <summary>
+            /// Hidden cursor
+            /// </summary>
             Hidden,
-            Small
+            /// <summary>
+            /// Small cursor
+            /// </summary>
+            Small,
+            /// <summary>
+            /// Big cursor
+            /// </summary>
+            Visible
         }
+
+        ECursorMode _CursorMode;
+        int _CursorX, _CursorY;
+        int _Width, _Height;
 
         #region Console
         /// <summary>
         /// Console Width
         /// </summary>
-        public int Width { get; set; }
+        public int Width { get { return _Width; } }
         /// <summary>
         /// Console Height
         /// </summary>
-        public int Height { get; set; }
+        public int Height { get { return _Height; } }
         #endregion
 
         #region Cursor
         /// <summary>
         /// Cursor Left
         /// </summary>
-        public int CursorX { get; set; }
+        public int CursorX { get { return _CursorX; } }
         /// <summary>
         /// Cursor Top
         /// </summary>
-        public int CursorY { get; set; }
+        public int CursorY { get { return _CursorY; } }
         /// <summary>
         /// Mode
         /// </summary>
-        public ECursorMode CursorMode { get; set; }
+        public ECursorMode CursorMode { get { return _CursorMode; } }
         #endregion
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ConsoleCursor() { }
+        public ConsoleCursor()
+        {
+            _CursorMode = ECursorMode.Hidden;
+            _CursorX = 0;
+            _CursorY = 0;
+            _Width = 0;
+            _Height = 0;
+        }
 
         /// <summary>
-        /// Constructo from current console
+        /// Constructor from current console
         /// </summary>
         public static ConsoleCursor CreateFromConsole()
         {
@@ -59,12 +79,12 @@ namespace XPloit.Core.Listeners.IO
 
             return new ConsoleCursor()
             {
-                CursorX = Console.CursorLeft,
-                CursorY = Console.CursorTop,
-                CursorMode = mode,
+                _CursorX = Console.CursorLeft,
+                _CursorY = Console.CursorTop,
+                _CursorMode = mode,
 
-                Width = Console.BufferWidth,
-                Height = Console.BufferHeight
+                _Width = Console.BufferWidth,
+                _Height = Console.BufferHeight
             };
         }
         /// <summary>
@@ -80,14 +100,14 @@ namespace XPloit.Core.Listeners.IO
                 if (CursorX > 0)
                 {
                     // same line
-                    CursorX--;
+                    _CursorX--;
                 }
                 else
                 {
                     if (CursorY > 0)
                     {
-                        CursorX = Width - 1;
-                        CursorY--;
+                        _CursorX = Width - 1;
+                        _CursorY--;
                     }
                 }
                 count--;
@@ -106,12 +126,12 @@ namespace XPloit.Core.Listeners.IO
                 if (CursorX + 1 < Width)
                 {
                     // same line
-                    CursorX++;
+                    _CursorX++;
                 }
                 else
                 {
-                    CursorY++;
-                    CursorX = 0;
+                    _CursorY++;
+                    _CursorX = 0;
                 }
                 count--;
             }
@@ -120,7 +140,7 @@ namespace XPloit.Core.Listeners.IO
         /// Update the current io
         /// </summary>
         /// <param name="io">IO</param>
-        public void Update(IIOCommandLayer io)
+        public void Flush(IIOCommandLayer io)
         {
             if (io != null)
                 io.SetCursorPosition(CursorX, CursorY);

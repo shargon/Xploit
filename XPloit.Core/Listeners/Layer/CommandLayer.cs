@@ -44,7 +44,7 @@ namespace XPloit.Core.Listeners.Layer
         }
 
         ConsoleCursor _Position = null;
-        bool _AllowOutPut = true;
+        bool _AllowOutPut = true, _InsertMode = true;
         Thread _CancelableThread = null;
         ConsoleColor _LastFore, _LastBack;
         ConsoleColor _PromptColor = ConsoleColor.Green;
@@ -62,6 +62,10 @@ namespace XPloit.Core.Listeners.Layer
             get { return _AllowOutPut; }
             private set { _AllowOutPut = value; }
         }
+        /// <summary>
+        /// Return Insert Mode
+        /// </summary>
+        public bool InsertMode { get { return _InsertMode; } }
         /// <summary>
         /// Propmt char
         /// </summary>
@@ -128,7 +132,7 @@ namespace XPloit.Core.Listeners.Layer
                 return;
             _LastPercent = lp;
 
-            _Position.Update(_IO);
+            _Position.Flush(_IO);
             int ip = (int)percent / 10;
 
             ConsoleColor last = _LastFore;
@@ -326,7 +330,7 @@ namespace XPloit.Core.Listeners.Layer
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource autoComplete, bool isPassword)
         {
             int index = 0;
-            _IO.SetCursorMode(ConsoleCursor.ECursorMode.Visible);
+            _IO.SetCursorMode(_InsertMode ? ConsoleCursor.ECursorMode.Visible : ConsoleCursor.ECursorMode.Small);
             for (;;)
             {
                 string input;
@@ -341,337 +345,350 @@ namespace XPloit.Core.Listeners.Layer
                 {
                     if (prompt != null) prompt(this);
 
-                    if (autoComplete == null && !isPassword) input = InternalReadLine();
-                    else
+                    ConsoleKeyInfo myKey;
+                    do
                     {
-                        ConsoleKeyInfo myKey;
-                        do
+                        myKey = ReadKey(true);
+                        switch (myKey.Key)
                         {
-                            myKey = ReadKey(true);
-                            switch (myKey.Key)
-                            {
-                                case ConsoleKey.Tab:
-                                    {
-                                        if (autoComplete == null || isPassword) break;
+                            case ConsoleKey.Tab:
+                                {
+                                    if (autoComplete == null || isPassword) break;
 
-                                        // Check in list
-                                        string command;
-                                        string word;
-                                        string[] args;
-                                        GetCommand(input, out word, out command, out args);
+                                    // Check in list
+                                    string command;
+                                    string word;
+                                    string[] args;
+                                    GetCommand(input, out word, out command, out args);
 
-                                        IEnumerable<string> source;
-                                        if (string.IsNullOrEmpty(command)) source = autoComplete.GetCommand();
-                                        else source = autoComplete.GetArgument(command, args);
+                                    IEnumerable<string> source;
+                                    if (string.IsNullOrEmpty(command)) source = autoComplete.GetCommand();
+                                    else source = autoComplete.GetArgument(command, args);
 
-                                        if (source == null) break;
+                                    if (source == null) break;
 
-                                        List<string> ls = new List<string>();
-                                        foreach (string s in source)
-                                            if (word != s && s.StartsWith(word, autoComplete.ComparisonMethod))
-                                            {
-                                                if (!ls.Contains(s)) ls.Add(s);
-                                            }
-
-                                        ConsoleCursor point = _IO.GetCursorPosition();
-
-                                        // Ver que hacer según el numero de encuentros
-                                        string toWrite = "";
-                                        switch (ls.Count)
+                                    List<string> ls = new List<string>();
+                                    foreach (string s in source)
+                                        if (word != s && s.StartsWith(word, autoComplete.ComparisonMethod))
                                         {
-                                            // Add space
-                                            case 0: { toWrite = " "; break; }
-                                            case 1:
-                                                {
-                                                    // Add input
-                                                    toWrite = ls[0];
-                                                    toWrite = toWrite.Substring(word.Length) + " ";
-                                                    break;
-                                                }
-                                            default:
-                                                {
-                                                    // Autocompletar el contenido conjunto
-                                                    string fInput = word;
-                                                    string l = ls[0];
-                                                    while (l.Length > fInput.Length)
-                                                    {
-                                                        string lw = l.Substring(0, fInput.Length + 1);
-
-                                                        bool enTodos = true;
-                                                        foreach (string l2 in ls)
-                                                        {
-                                                            if (l2 == l) continue;
-                                                            if (!l2.StartsWith(lw, autoComplete.ComparisonMethod)) { enTodos = false; break; }
-                                                        }
-                                                        if (!enTodos)
-                                                            break;
-                                                        fInput = lw;
-                                                    }
-                                                    if (fInput != word)
-                                                    {
-                                                        // Relleno
-                                                        fInput = fInput.Remove(0, word.Length);
-                                                        word += fInput;
-                                                        toWrite = fInput;
-                                                    }
-                                                    break;
-                                                }
+                                            if (!ls.Contains(s)) ls.Add(s);
                                         }
 
-                                        // Go to end of line
-                                        int mas = input.Length - index;
-                                        input = input + toWrite;
-                                        index = input.Length;
+                                    ConsoleCursor point = _IO.GetCursorPosition();
 
-                                        point.MoveRight(mas);
-                                        point.Update(_IO);
-
-                                        if (ls.Count > 1)
-                                        {
-                                            // Auto complete
-                                            WriteLine("");
-                                            if (ls.Count > 50)
+                                    // Ver que hacer según el numero de encuentros
+                                    string toWrite = "";
+                                    switch (ls.Count)
+                                    {
+                                        // Add space
+                                        case 0: { toWrite = " "; break; }
+                                        case 1:
                                             {
-                                                // Check show results
-                                                WriteLine("Show " + ls.Count.ToString() + " results? [Yes/No/Top]");
-                                                string s1 = InternalReadLine().ToUpperInvariant();
-
-                                                // Top signal?
-                                                if (s1 == "T" || s1 == "TOP")
-                                                    ls.RemoveRange(50, ls.Count - 50);
-                                                else
+                                                // Add input
+                                                toWrite = ls[0];
+                                                toWrite = toWrite.Substring(word.Length) + " ";
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                // Autocompletar el contenido conjunto
+                                                string fInput = word;
+                                                string l = ls[0];
+                                                while (l.Length > fInput.Length)
                                                 {
-                                                    // No signal?
-                                                    if (s1 != "Y" && s1 != "YES")
+                                                    string lw = l.Substring(0, fInput.Length + 1);
+
+                                                    bool enTodos = true;
+                                                    foreach (string l2 in ls)
                                                     {
-                                                        if (prompt != null) prompt(this);
+                                                        if (l2 == l) continue;
+                                                        if (!l2.StartsWith(lw, autoComplete.ComparisonMethod)) { enTodos = false; break; }
+                                                    }
+                                                    if (!enTodos)
                                                         break;
-                                                    }
+                                                    fInput = lw;
+                                                }
+                                                if (fInput != word)
+                                                {
+                                                    // Relleno
+                                                    fInput = fInput.Remove(0, word.Length);
+                                                    word += fInput;
+                                                    toWrite = fInput;
+                                                }
+                                                break;
+                                            }
+                                    }
+
+                                    // Go to end of line
+                                    int mas = input.Length - index;
+                                    input = input + toWrite;
+                                    index = input.Length;
+
+                                    point.MoveRight(mas);
+                                    point.Flush(_IO);
+
+                                    if (ls.Count > 1)
+                                    {
+                                        // Auto complete
+                                        WriteLine("");
+                                        if (ls.Count > 50)
+                                        {
+                                            // Check show results
+                                            WriteLine("Show " + ls.Count.ToString() + " results? [Yes/No/Top]");
+                                            string s1 = InternalReadLine().ToUpperInvariant();
+
+                                            // Top signal?
+                                            if (s1 == "T" || s1 == "TOP")
+                                                ls.RemoveRange(50, ls.Count - 50);
+                                            else
+                                            {
+                                                // No signal?
+                                                if (s1 != "Y" && s1 != "YES")
+                                                {
+                                                    if (prompt != null) prompt(this);
+                                                    break;
                                                 }
                                             }
-
-                                            ls.Sort();
-
-                                            foreach (string s in ls)
-                                            {
-                                                SetBackgroundColor(ConsoleColor.Gray);
-                                                SetForeColor(ConsoleColor.Black);
-                                                Write(s.Substring(0, word.Length));
-                                                SetBackgroundColor(ConsoleColor.Black);
-                                                SetForeColor(ConsoleColor.Gray);
-                                                WriteLine(s.Substring(word.Length));
-                                            }
-
-                                            if (prompt != null) prompt(this);
-                                            Write(input);
                                         }
-                                        else
+
+                                        ls.Sort();
+
+                                        foreach (string s in ls)
                                         {
-                                            Write(toWrite);
-                                        }
-                                        break;
-                                    }
-
-                                #region NOT USED
-                                case ConsoleKey.F1:
-                                case ConsoleKey.F2:
-                                case ConsoleKey.F3:
-                                case ConsoleKey.F4:
-                                case ConsoleKey.F5:
-                                case ConsoleKey.F6:
-                                case ConsoleKey.F7:
-                                case ConsoleKey.F8:
-                                case ConsoleKey.F9:
-                                case ConsoleKey.F10:
-                                case ConsoleKey.F11:
-                                case ConsoleKey.F12:
-                                case ConsoleKey.F13:
-                                case ConsoleKey.F14:
-                                case ConsoleKey.F15:
-                                case ConsoleKey.F16:
-                                case ConsoleKey.F17:
-                                case ConsoleKey.F18:
-                                case ConsoleKey.F19:
-                                case ConsoleKey.F20:
-                                case ConsoleKey.F21:
-                                case ConsoleKey.F22:
-                                case ConsoleKey.F23:
-                                case ConsoleKey.F24:
-                                case ConsoleKey.Applications:
-                                case ConsoleKey.Attention:
-                                case ConsoleKey.BrowserBack:
-                                case ConsoleKey.BrowserFavorites:
-                                case ConsoleKey.BrowserForward:
-                                case ConsoleKey.BrowserHome:
-                                case ConsoleKey.BrowserRefresh:
-                                case ConsoleKey.BrowserSearch:
-                                case ConsoleKey.BrowserStop:
-                                case ConsoleKey.Clear:
-                                case ConsoleKey.Help:
-                                case ConsoleKey.Insert:
-                                case ConsoleKey.LaunchApp1:
-                                case ConsoleKey.LaunchApp2:
-                                case ConsoleKey.LaunchMail:
-                                case ConsoleKey.LaunchMediaSelect:
-                                case ConsoleKey.MediaNext:
-                                case ConsoleKey.MediaPlay:
-                                case ConsoleKey.MediaPrevious:
-                                case ConsoleKey.MediaStop:
-                                case ConsoleKey.NoName:
-                                case ConsoleKey.Packet:
-                                case ConsoleKey.Pause:
-                                case ConsoleKey.Play:
-                                case ConsoleKey.Print:
-                                case ConsoleKey.PrintScreen:
-                                case ConsoleKey.Process:
-                                case ConsoleKey.RightWindows:
-                                case ConsoleKey.Select:
-                                case ConsoleKey.Sleep:
-                                case ConsoleKey.VolumeDown:
-                                case ConsoleKey.VolumeMute:
-                                case ConsoleKey.VolumeUp:
-                                case ConsoleKey.Zoom: break;
-                                #endregion
-
-                                case ConsoleKey.Enter: { WriteLine(""); break; }
-                                case ConsoleKey.Home:
-                                    {
-                                        if (index <= 0) break;
-
-                                        ConsoleCursor point = _IO.GetCursorPosition();
-                                        point.MoveLeft(index);
-                                        point.Update(_IO);
-
-                                        index = 0;
-                                        break;
-                                    }
-                                case ConsoleKey.End:
-                                    {
-                                        if (input == null || index >= input.Length) break;
-
-                                        ConsoleCursor point = _IO.GetCursorPosition();
-                                        point.MoveRight(input.Length - index);
-                                        point.Update(_IO);
-
-                                        index = input.Length;
-                                        break;
-                                    }
-                                case ConsoleKey.Delete:
-                                    {
-                                        if (input == null || index >= input.Length) break;
-
-                                        if (index + 1 == input.Length)
-                                        {
-                                            input = input.Substring(0, input.Length - 1);
-
-                                            Write(" ");
-
-                                            ConsoleCursor point = _IO.GetCursorPosition();
-                                            point.MoveLeft(1);
-                                            point.Update(_IO);
-                                        }
-                                        else
-                                        {
-                                            input = input.Remove(index, 1);
-
-                                            ConsoleCursor point = _IO.GetCursorPosition();
-                                            Write(input.Substring(index) + " ");
-                                            point.Update(_IO);
-                                        }
-                                        break;
-                                    }
-                                case ConsoleKey.Backspace:
-                                    {
-                                        if (input == null || index <= 0) break;
-
-                                        ConsoleCursor point = _IO.GetCursorPosition();
-
-                                        if (index == input.Length)
-                                        {
-                                            input = input.Substring(0, input.Length - 1);
-
-                                            point.MoveLeft(1);
-                                            point.Update(_IO);
-                                            Write(" ");
-                                            point.Update(_IO);
-                                        }
-                                        else
-                                        {
-                                            input = input.Remove(index - 1, 1);
-
-                                            point.MoveLeft(1);
-                                            Write("".PadLeft(input.Length - index + 2));
-                                            point.Update(_IO);
-                                            Write(input.Substring(index - 1));
-                                            point.Update(_IO);
+                                            SetBackgroundColor(ConsoleColor.Gray);
+                                            SetForeColor(ConsoleColor.Black);
+                                            Write(s.Substring(0, word.Length));
+                                            SetBackgroundColor(ConsoleColor.Black);
+                                            SetForeColor(ConsoleColor.Gray);
+                                            WriteLine(s.Substring(word.Length));
                                         }
 
-                                        index--;
-                                        break;
+                                        if (prompt != null) prompt(this);
+                                        Write(input);
                                     }
-                                case ConsoleKey.LeftArrow:
+                                    else
                                     {
-                                        if (input == null || index <= 0) break;
+                                        Write(toWrite);
+                                    }
+                                    break;
+                                }
 
-                                        index--;
+                            #region NOT USED
+                            case ConsoleKey.F1:
+                            case ConsoleKey.F2:
+                            case ConsoleKey.F3:
+                            case ConsoleKey.F4:
+                            case ConsoleKey.F5:
+                            case ConsoleKey.F6:
+                            case ConsoleKey.F7:
+                            case ConsoleKey.F8:
+                            case ConsoleKey.F9:
+                            case ConsoleKey.F10:
+                            case ConsoleKey.F11:
+                            case ConsoleKey.F12:
+                            case ConsoleKey.F13:
+                            case ConsoleKey.F14:
+                            case ConsoleKey.F15:
+                            case ConsoleKey.F16:
+                            case ConsoleKey.F17:
+                            case ConsoleKey.F18:
+                            case ConsoleKey.F19:
+                            case ConsoleKey.F20:
+                            case ConsoleKey.F21:
+                            case ConsoleKey.F22:
+                            case ConsoleKey.F23:
+                            case ConsoleKey.F24:
+                            case ConsoleKey.Applications:
+                            case ConsoleKey.Attention:
+                            case ConsoleKey.BrowserBack:
+                            case ConsoleKey.BrowserFavorites:
+                            case ConsoleKey.BrowserForward:
+                            case ConsoleKey.BrowserHome:
+                            case ConsoleKey.BrowserRefresh:
+                            case ConsoleKey.BrowserSearch:
+                            case ConsoleKey.BrowserStop:
+                            case ConsoleKey.Clear:
+                            case ConsoleKey.Help:
+                            case ConsoleKey.LaunchApp1:
+                            case ConsoleKey.LaunchApp2:
+                            case ConsoleKey.LaunchMail:
+                            case ConsoleKey.LaunchMediaSelect:
+                            case ConsoleKey.MediaNext:
+                            case ConsoleKey.MediaPlay:
+                            case ConsoleKey.MediaPrevious:
+                            case ConsoleKey.MediaStop:
+                            case ConsoleKey.NoName:
+                            case ConsoleKey.Packet:
+                            case ConsoleKey.Pause:
+                            case ConsoleKey.Play:
+                            case ConsoleKey.Print:
+                            case ConsoleKey.PrintScreen:
+                            case ConsoleKey.Process:
+                            case ConsoleKey.RightWindows:
+                            case ConsoleKey.Select:
+                            case ConsoleKey.Sleep:
+                            case ConsoleKey.VolumeDown:
+                            case ConsoleKey.VolumeMute:
+                            case ConsoleKey.VolumeUp:
+                            case ConsoleKey.Zoom: break;
+                            #endregion
+
+                            case ConsoleKey.Enter: { WriteLine(""); break; }
+                            case ConsoleKey.Insert:
+                                {
+                                    // Tongle insert mode
+                                    _InsertMode = !_InsertMode;
+                                    _IO.SetCursorMode(_InsertMode ? ConsoleCursor.ECursorMode.Visible : ConsoleCursor.ECursorMode.Small);
+                                    break;
+                                }
+                            case ConsoleKey.Home:
+                                {
+                                    if (index <= 0) break;
+
+                                    ConsoleCursor point = _IO.GetCursorPosition();
+                                    point.MoveLeft(index);
+                                    point.Flush(_IO);
+
+                                    index = 0;
+                                    break;
+                                }
+                            case ConsoleKey.End:
+                                {
+                                    if (input == null || index >= input.Length) break;
+
+                                    ConsoleCursor point = _IO.GetCursorPosition();
+                                    point.MoveRight(input.Length - index);
+                                    point.Flush(_IO);
+
+                                    index = input.Length;
+                                    break;
+                                }
+                            case ConsoleKey.Delete:
+                                {
+                                    if (input == null || index >= input.Length) break;
+
+                                    if (index + 1 == input.Length)
+                                    {
+                                        input = input.Substring(0, input.Length - 1);
+
+                                        Write(" ");
+
                                         ConsoleCursor point = _IO.GetCursorPosition();
                                         point.MoveLeft(1);
-                                        point.Update(_IO);
-                                        break;
+                                        point.Flush(_IO);
                                     }
-                                case ConsoleKey.RightArrow:
+                                    else
                                     {
-                                        if (input == null || index >= input.Length) break;
+                                        input = input.Remove(index, 1);
 
-                                        index++;
                                         ConsoleCursor point = _IO.GetCursorPosition();
-                                        point.MoveRight(1);
-                                        point.Update(_IO);
-                                        break;
+                                        Write(input.Substring(index) + " ");
+                                        point.Flush(_IO);
+                                    }
+                                    break;
+                                }
+                            case ConsoleKey.Backspace:
+                                {
+                                    if (input == null || index <= 0) break;
+
+                                    ConsoleCursor point = _IO.GetCursorPosition();
+
+                                    if (index == input.Length)
+                                    {
+                                        input = input.Substring(0, input.Length - 1);
+
+                                        point.MoveLeft(1);
+                                        point.Flush(_IO);
+                                        Write(" ");
+                                        point.Flush(_IO);
+                                    }
+                                    else
+                                    {
+                                        input = input.Remove(index - 1, 1);
+
+                                        point.MoveLeft(1);
+                                        Write("".PadLeft(input.Length - index + 2));
+                                        point.Flush(_IO);
+                                        Write(input.Substring(index - 1));
+                                        point.Flush(_IO);
                                     }
 
-                                #region ToDO
-                                case ConsoleKey.PageUp:
-                                case ConsoleKey.UpArrow: { break; }
+                                    index--;
+                                    break;
+                                }
+                            case ConsoleKey.LeftArrow:
+                                {
+                                    if (input == null || index <= 0) break;
 
-                                case ConsoleKey.DownArrow:
-                                case ConsoleKey.PageDown: { break; }
-                                #endregion
+                                    index--;
+                                    ConsoleCursor point = _IO.GetCursorPosition();
+                                    point.MoveLeft(1);
+                                    point.Flush(_IO);
+                                    break;
+                                }
+                            case ConsoleKey.RightArrow:
+                                {
+                                    if (input == null || index >= input.Length) break;
 
-                                default:
+                                    index++;
+                                    ConsoleCursor point = _IO.GetCursorPosition();
+                                    point.MoveRight(1);
+                                    point.Flush(_IO);
+                                    break;
+                                }
+
+                            #region ToDO
+                            case ConsoleKey.PageUp:
+                            case ConsoleKey.UpArrow: { break; }
+
+                            case ConsoleKey.DownArrow:
+                            case ConsoleKey.PageDown: { break; }
+                            #endregion
+
+                            default:
+                                {
+                                    if (myKey.KeyChar == '\0') break;
+
+                                    if (input == null) input = "";
+
+                                    if (input.Length == index)
                                     {
-                                        if (myKey.KeyChar == '\0') break;
+                                        input = input + myKey.KeyChar;
+                                        Write(isPassword ? "*" : myKey.KeyChar.ToString());
+                                    }
+                                    else
+                                    {
+                                        ConsoleCursor point = _IO.GetCursorPosition();
 
-                                        if (input == null) input = "";
-
-                                        if (input.Length == index)
-                                        {
-                                            input = input + myKey.KeyChar;
-                                            Write(isPassword ? "*" : myKey.KeyChar.ToString());
-                                        }
-                                        else
+                                        if (_InsertMode)
                                         {
                                             int antes = input.Length;
                                             input = input.Insert(index, myKey.KeyChar.ToString());
 
-                                            ConsoleCursor point = _IO.GetCursorPosition();
-
                                             Write(isPassword ? "".PadLeft(antes, '*') : input.Substring(index));
 
-                                            point.Update(_IO);
+                                            point.Flush(_IO);
                                             point.MoveRight(1);
-                                            point.Update(_IO);
+                                            point.Flush(_IO);
                                         }
+                                        else
+                                        {
+                                            char[] array = input.ToCharArray();
+                                            array[index] = myKey.KeyChar;
+                                            input = new string(array);
 
-                                        index++;
-                                        break;
+                                            Write(isPassword ? "*" : myKey.KeyChar.ToString());
+                                        }
                                     }
-                            }
 
-                            continue;
+                                    index++;
+                                    break;
+                                }
                         }
-                        while (myKey.Key != ConsoleKey.Enter);
+
+                        continue;
                     }
+                    while (myKey.Key != ConsoleKey.Enter);
 
                     SetForeColor(ConsoleColor.Gray);
                 }
