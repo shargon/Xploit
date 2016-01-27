@@ -1,5 +1,6 @@
 ﻿using System;
-using XPloit.Core.Command;
+using XPloit.Core.Listeners.IO;
+using XPloit.Core.Listeners.Layer;
 
 namespace XPloit.Core.Interfaces
 {
@@ -27,12 +28,9 @@ namespace XPloit.Core.Interfaces
 
         // Cursor
 
-        void SetCursorPositionX(int value);
-        void SetCursorPositionY(int value);
         void SetCursorPosition(int x, int y);
-        void SetCursorVisible(bool visible);
+        void SetCursorMode(ConsoleCursor.ECursorMode mode);
 
-        void GetConsoleSize(out int w, out int h);
-        void GetCursorPosition(out int x, out int y);
+        ConsoleCursor GetCursorPosition();
     }
 }

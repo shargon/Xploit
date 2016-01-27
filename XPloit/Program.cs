@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using XPloit.Core.Collections;
-using XPloit.Core.Command;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners;
+using XPloit.Core.Listeners.IO;
+using XPloit.Core.Listeners.Layer;
 using XPloit.Modules;
 using XPloit.Res;
 
@@ -27,9 +28,6 @@ namespace XPloit
             using (CommandLayer command = new CommandLayer(new ConsoleIO()))
             {
                 command.AddInput("banner");
-
-                Console.CursorSize = 100;
-                Console.CursorVisible = false;
 
                 command.SetBackgroundColor(ConsoleColor.White);
                 command.SetBackgroundColor(ConsoleColor.Black);

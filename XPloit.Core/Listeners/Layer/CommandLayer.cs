@@ -6,8 +6,9 @@ using System.Threading;
 using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Listeners.IO;
 
-namespace XPloit.Core.Command
+namespace XPloit.Core.Listeners.Layer
 {
     public class CommandLayer : IDisposable
     {
@@ -42,7 +43,7 @@ namespace XPloit.Core.Command
             }
         }
 
-        int _ConsoleX = -1, _ConsoleY = -1;
+        ConsoleCursor _Position = null;
         bool _AllowOutPut = true;
         Thread _CancelableThread = null;
         ConsoleColor _LastFore, _LastBack;
@@ -114,7 +115,7 @@ namespace XPloit.Core.Command
                 _ReSendProgress = false;
                 _LastPercent = -1;
                 WriteStart("%", ConsoleColor.Yellow);
-                _IO.GetCursorPosition(out _ConsoleX, out _ConsoleY);
+                _Position = _IO.GetCursorPosition();
             }
 
             _ProgressVal = value;
@@ -127,8 +128,7 @@ namespace XPloit.Core.Command
                 return;
             _LastPercent = lp;
 
-            _IO.SetCursorPositionX(_ConsoleX);
-            _IO.SetCursorPositionY(_ConsoleY);
+            _Position.Update(_IO);
             int ip = (int)percent / 10;
 
             ConsoleColor last = _LastFore;
@@ -326,7 +326,7 @@ namespace XPloit.Core.Command
         string ReadLine(PromptDelegate prompt, IAutoCompleteSource autoComplete, bool isPassword)
         {
             int index = 0;
-            _IO.SetCursorVisible(true);
+            _IO.SetCursorMode(ConsoleCursor.ECursorMode.Visible);
             for (;;)
             {
                 string input;
@@ -373,8 +373,7 @@ namespace XPloit.Core.Command
                                                 if (!ls.Contains(s)) ls.Add(s);
                                             }
 
-                                        int x, y;
-                                        _IO.GetCursorPosition(out x, out y);
+                                        ConsoleCursor point = _IO.GetCursorPosition();
 
                                         // Ver que hacer según el numero de encuentros
                                         string toWrite = "";
@@ -424,7 +423,8 @@ namespace XPloit.Core.Command
                                         input = input + toWrite;
                                         index = input.Length;
 
-                                        ConsoleMoveRight(ref x, ref y, mas);
+                                        point.MoveRight(mas);
+                                        point.Update(_IO);
 
                                         if (ls.Count > 1)
                                         {
@@ -445,7 +445,6 @@ namespace XPloit.Core.Command
                                                     if (s1 != "Y" && s1 != "YES")
                                                     {
                                                         if (prompt != null) prompt(this);
-                                                        Write(input);
                                                         break;
                                                     }
                                                 }
@@ -539,9 +538,10 @@ namespace XPloit.Core.Command
                                     {
                                         if (index <= 0) break;
 
-                                        int x, y;
-                                        _IO.GetCursorPosition(out x, out y);
-                                        ConsoleMoveLeft(ref x, ref y, index);
+                                        ConsoleCursor point = _IO.GetCursorPosition();
+                                        point.MoveLeft(index);
+                                        point.Update(_IO);
+
                                         index = 0;
                                         break;
                                     }
@@ -549,9 +549,10 @@ namespace XPloit.Core.Command
                                     {
                                         if (input == null || index >= input.Length) break;
 
-                                        int x, y;
-                                        _IO.GetCursorPosition(out x, out y);
-                                        ConsoleMoveRight(ref x, ref y, input.Length - index);
+                                        ConsoleCursor point = _IO.GetCursorPosition();
+                                        point.MoveRight(input.Length - index);
+                                        point.Update(_IO);
+
                                         index = input.Length;
                                         break;
                                     }
@@ -559,22 +560,23 @@ namespace XPloit.Core.Command
                                     {
                                         if (input == null || index >= input.Length) break;
 
-                                        int x, y;
                                         if (index + 1 == input.Length)
                                         {
                                             input = input.Substring(0, input.Length - 1);
 
                                             Write(" ");
-                                            _IO.GetCursorPosition(out x, out y);
-                                            ConsoleMoveLeft(ref x, ref y, 1);
+
+                                            ConsoleCursor point = _IO.GetCursorPosition();
+                                            point.MoveLeft(1);
+                                            point.Update(_IO);
                                         }
                                         else
                                         {
                                             input = input.Remove(index, 1);
 
-                                            _IO.GetCursorPosition(out x, out y);
+                                            ConsoleCursor point = _IO.GetCursorPosition();
                                             Write(input.Substring(index) + " ");
-                                            _IO.SetCursorPosition(x, y);
+                                            point.Update(_IO);
                                         }
                                         break;
                                     }
@@ -582,27 +584,26 @@ namespace XPloit.Core.Command
                                     {
                                         if (input == null || index <= 0) break;
 
-                                        int x, y;
-                                        _IO.GetCursorPosition(out x, out y);
+                                        ConsoleCursor point = _IO.GetCursorPosition();
 
                                         if (index == input.Length)
                                         {
                                             input = input.Substring(0, input.Length - 1);
 
-                                            ConsoleMoveLeft(ref x, ref y, 1);
+                                            point.MoveLeft(1);
+                                            point.Update(_IO);
                                             Write(" ");
-                                            _IO.GetCursorPosition(out x, out y);
-                                            ConsoleMoveLeft(ref x, ref y, 1);
+                                            point.Update(_IO);
                                         }
                                         else
                                         {
                                             input = input.Remove(index - 1, 1);
 
-                                            ConsoleMoveLeft(ref x, ref y, 1);
+                                            point.MoveLeft(1);
                                             Write("".PadLeft(input.Length - index + 2));
-                                            _IO.SetCursorPosition(x, y);
+                                            point.Update(_IO);
                                             Write(input.Substring(index - 1));
-                                            _IO.SetCursorPosition(x, y);
+                                            point.Update(_IO);
                                         }
 
                                         index--;
@@ -613,10 +614,9 @@ namespace XPloit.Core.Command
                                         if (input == null || index <= 0) break;
 
                                         index--;
-                                        int x, y;
-                                        _IO.GetCursorPosition(out x, out y);
-
-                                        ConsoleMoveLeft(ref x, ref y, 1);
+                                        ConsoleCursor point = _IO.GetCursorPosition();
+                                        point.MoveLeft(1);
+                                        point.Update(_IO);
                                         break;
                                     }
                                 case ConsoleKey.RightArrow:
@@ -624,10 +624,9 @@ namespace XPloit.Core.Command
                                         if (input == null || index >= input.Length) break;
 
                                         index++;
-                                        int x, y;
-                                        _IO.GetCursorPosition(out x, out y);
-
-                                        ConsoleMoveRight(ref x, ref y, 1);
+                                        ConsoleCursor point = _IO.GetCursorPosition();
+                                        point.MoveRight(1);
+                                        point.Update(_IO);
                                         break;
                                     }
 
@@ -655,11 +654,13 @@ namespace XPloit.Core.Command
                                             int antes = input.Length;
                                             input = input.Insert(index, myKey.KeyChar.ToString());
 
-                                            int x, y;
-                                            _IO.GetCursorPosition(out x, out y);
+                                            ConsoleCursor point = _IO.GetCursorPosition();
+
                                             Write(isPassword ? "".PadLeft(antes, '*') : input.Substring(index));
-                                            _IO.SetCursorPosition(x, y);
-                                            ConsoleMoveRight(ref x, ref y, 1);
+
+                                            point.Update(_IO);
+                                            point.MoveRight(1);
+                                            point.Update(_IO);
                                         }
 
                                         index++;
@@ -676,7 +677,7 @@ namespace XPloit.Core.Command
                 }
 
                 SetForeColor(ConsoleColor.Gray);
-                _IO.SetCursorVisible(false);
+                _IO.SetCursorMode(ConsoleCursor.ECursorMode.Hidden);
 
                 if (!string.IsNullOrWhiteSpace(input))
                 {
@@ -685,60 +686,6 @@ namespace XPloit.Core.Command
                 }
             }
         }
-        void ConsoleMoveLeft(ref int currentX, ref int currentY, int count)
-        {
-            if (count <= 0) return;
-
-            int w, h;
-            _IO.GetConsoleSize(out w, out h);
-
-            while (count > 0)
-            {
-                if (currentX > 0)
-                {
-                    // same line
-                    currentX--;
-                    _IO.SetCursorPositionX(currentX);
-                }
-                else
-                {
-                    if (currentY > 0)
-                    {
-                        currentX = w - 1;
-                        currentY--;
-                        _IO.SetCursorPositionY(currentY);
-                        _IO.SetCursorPositionX(currentX);
-                    }
-                }
-                count--;
-            }
-        }
-        void ConsoleMoveRight(ref int currentX, ref int currentY, int count)
-        {
-            if (count <= 0) return;
-
-            int w, h;
-            _IO.GetConsoleSize(out w, out h);
-
-            while (count > 0)
-            {
-                if (currentX + 1 < w)
-                {
-                    // same line
-                    currentX++;
-                    _IO.SetCursorPositionX(currentX);
-                }
-                else
-                {
-                    currentY++;
-                    currentX = 0;
-                    _IO.SetCursorPositionY(currentY);
-                    _IO.SetCursorPositionX(currentX);
-                }
-                count--;
-            }
-        }
-
         void WriteLog(string input)
         {
             if (_Log == null || string.IsNullOrEmpty(input)) return;
@@ -747,7 +694,6 @@ namespace XPloit.Core.Command
             _Log.WriteLine(input);
             _Log.Flush();
         }
-
         /// <summary>
         /// Start record
         /// </summary>

@@ -67,7 +67,7 @@
     <Compile Include="Command\CommandTable.cs" />
     <Compile Include="Command\CommandTableCol.cs" />
     <Compile Include="Command\CommandTableRow.cs" />
-    <Compile Include="Command\ConsoleIO.cs" />
+    <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />
     <Compile Include="Enums\EArquitecture.cs" />
@@ -192,6 +192,7 @@
     <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Helpers\TorHelper.cs" />
     <Compile Include="Interfaces\IProgress.cs" />
+    <Compile Include="Listeners\IO\ConsoleCursor.cs" />
     <Compile Include="NotificationCenter.cs" />
     <Compile Include="Sockets\TcpForwarder.cs" />
     <Compile Include="Streams\StreamLineReader.cs" />
@@ -234,7 +235,7 @@
     <Compile Include="Interfaces\IIOCommandLayer.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
-    <Compile Include="Command\CommandLayer.cs" />
+    <Compile Include="Listeners\Layer\CommandLayer.cs" />
     <Compile Include="Interfaces\IEncoderRequirements.cs" />
     <Compile Include="Interfaces\INopRequirements.cs" />
     <Compile Include="Streams\StreamSpeedLimit.cs" />
