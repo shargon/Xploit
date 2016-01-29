@@ -7,13 +7,13 @@ using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Sockets;
 
-namespace Auxiliary.Local
+namespace Auxiliary.Local.Server
 {
-    public class InvisibleSocksProxy : Module
+    public class SocksPortForwarding : Module
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Invisible socks proxy"; } }
+        public override string Description { get { return "Invisible socks port forwarding"; } }
         public override Target[] Targets
         {
             get
@@ -44,7 +44,7 @@ namespace Auxiliary.Local
         public FileInfo FilterFile { get; set; }
         #endregion
 
-        public InvisibleSocksProxy()
+        public SocksPortForwarding()
         {
             ProxyEndPoint = new IPEndPoint(IPAddress.Loopback, 9050);
             LocalPort = 10000;

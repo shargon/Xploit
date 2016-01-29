@@ -479,4 +479,7 @@ Options:
   <data name="Did_You_Mean_Or" xml:space="preserve">
     <value>Did you mean '%0' or '%1'?</value>
   </data>
+  <data name="Show_All_Results" xml:space="preserve">
+    <value>Show %0 results? [Yes/No/Top]"</value>
+  </data>
 </root>

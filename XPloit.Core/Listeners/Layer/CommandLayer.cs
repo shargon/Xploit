@@ -7,6 +7,7 @@ using XPloit.Core.Command.Interfaces;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners.IO;
+using XPloit.Res;
 
 namespace XPloit.Core.Listeners.Layer
 {
@@ -15,7 +16,11 @@ namespace XPloit.Core.Listeners.Layer
         StreamWriter _Log;
         IIOCommandLayer _IO;
 
-        List<string> _Frames = new List<string>();
+        const byte MaxHistoryLength = 10;
+
+        byte _HistoryIndex = 0;
+        List<string> _History = new List<string>();
+        List<string> _ManualInput = new List<string>();
 
         public void GetCommand(string input, out string word, out string command, out string[] args)
         {
@@ -295,15 +300,14 @@ namespace XPloit.Core.Listeners.Layer
                 throw new ArgumentNullException("source");
 
             foreach (string s in source)
-                _Frames.Add(s);
+                AddInput(s);
         }
         /// <summary>
         /// Puts a single line of input on top of the stack.
         /// </summary>
         public void AddInput(string source)
         {
-            if (source != null)
-                _Frames.Add(source);
+            if (!string.IsNullOrEmpty(source)) _ManualInput.Add(source);
         }
         void OnPrompt(CommandLayer sender)
         {
@@ -334,10 +338,10 @@ namespace XPloit.Core.Listeners.Layer
             for (;;)
             {
                 string input;
-                if (_Frames.Count >= 1)
+                if (_ManualInput.Count >= 1)
                 {
-                    input = _Frames[0];
-                    _Frames.RemoveAt(0);
+                    input = _ManualInput[0];
+                    _ManualInput.RemoveAt(0);
                 }
                 else input = null;
 
@@ -434,7 +438,7 @@ namespace XPloit.Core.Listeners.Layer
                                         if (ls.Count > 50)
                                         {
                                             // Check show results
-                                            WriteLine("Show " + ls.Count.ToString() + " results? [Yes/No/Top]");
+                                            WriteLine(Lang.Get("Show_All_Results", ls.Count.ToString()));
                                             string s1 = InternalReadLine().ToUpperInvariant();
 
                                             // Top signal?
@@ -474,6 +478,8 @@ namespace XPloit.Core.Listeners.Layer
                                 }
 
                             #region NOT USED
+                            case ConsoleKey.Clear:
+                            case ConsoleKey.Help:
                             case ConsoleKey.F1:
                             case ConsoleKey.F2:
                             case ConsoleKey.F3:
@@ -507,8 +513,6 @@ namespace XPloit.Core.Listeners.Layer
                             case ConsoleKey.BrowserRefresh:
                             case ConsoleKey.BrowserSearch:
                             case ConsoleKey.BrowserStop:
-                            case ConsoleKey.Clear:
-                            case ConsoleKey.Help:
                             case ConsoleKey.LaunchApp1:
                             case ConsoleKey.LaunchApp2:
                             case ConsoleKey.LaunchMail:
@@ -637,14 +641,40 @@ namespace XPloit.Core.Listeners.Layer
                                     break;
                                 }
 
-                            #region ToDO
                             case ConsoleKey.PageUp:
-                            case ConsoleKey.UpArrow: { break; }
-
+                            case ConsoleKey.UpArrow:
                             case ConsoleKey.DownArrow:
-                            case ConsoleKey.PageDown: { break; }
-                            #endregion
+                            case ConsoleKey.PageDown:
+                                {
+                                    if (_History.Count <= 0) break;
 
+                                    string next = GetHistory(myKey.Key == ConsoleKey.PageUp || myKey.Key == ConsoleKey.UpArrow);
+                                    ConsoleCursor point = _IO.GetCursorPosition();
+
+                                    if (index > 0)
+                                    {
+                                        point.MoveLeft(index);
+                                        point.Flush(_IO);
+                                    }
+
+                                    Write(next);
+
+                                    if (next.Length < index)
+                                    {
+                                        // Undo write move
+                                        point.MoveRight(next.Length);
+
+                                        int append = index - next.Length;
+                                        Write("".PadLeft(append, ' '));
+
+                                        // Restore save point
+                                        point.Flush(_IO);
+                                    }
+
+                                    input = next;
+                                    index = next.Length;
+                                    break;
+                                }
                             default:
                                 {
                                     if (myKey.KeyChar == '\0') break;
@@ -703,13 +733,52 @@ namespace XPloit.Core.Listeners.Layer
                 }
             }
         }
+        /// <summary>
+        /// Get next or previous history command
+        /// </summary>
+        /// <param name="next">True for next, False for previous</param>
+        string GetHistory(bool next)
+        {
+            string cad;
+
+            if (next)
+            {
+                cad = _History[_HistoryIndex];
+
+                if (_HistoryIndex == 0) _HistoryIndex = (byte)(_History.Count - 1);
+                else _HistoryIndex--;
+            }
+            else
+            {
+                if (_HistoryIndex < _History.Count - 1) _HistoryIndex++;
+                else _HistoryIndex = 0;
+
+                cad = _History[_HistoryIndex];
+            }
+
+            return cad;
+        }
+        /// <summary>
+        /// Write log for the user input
+        /// </summary>
+        /// <param name="input">Input</param>
         void WriteLog(string input)
         {
-            if (_Log == null || string.IsNullOrEmpty(input)) return;
-            if (input.ToLowerInvariant().Trim() == "record stop") return;
+            if (string.IsNullOrEmpty(input)) return;
 
-            _Log.WriteLine(input);
-            _Log.Flush();
+            // Save to file
+            if (_Log != null)
+            {
+                if (input.ToLowerInvariant().Trim() == "record stop") return;
+
+                _Log.WriteLine(input);
+                _Log.Flush();
+            }
+
+            // Append to history
+            if (_History.Count >= MaxHistoryLength) _History.RemoveAt(0);
+            _History.Add(input);
+            _HistoryIndex = (byte)(_History.Count - 1);
         }
         /// <summary>
         /// Start record

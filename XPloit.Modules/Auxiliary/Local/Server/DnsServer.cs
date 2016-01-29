@@ -9,7 +9,7 @@ using XPloit.Core.Dns.DnsRecord;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 
-namespace Auxiliary.Local
+namespace Auxiliary.Local.Server
 {
     public class DnsServer : Module
     {

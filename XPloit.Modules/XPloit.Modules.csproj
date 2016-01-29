@@ -49,8 +49,8 @@
     <Compile Include="Auxiliary\Local\Steganography\SteganographyImage.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\DnsExfiltrateParser.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\DnsExfiltrate.cs" />
-    <Compile Include="Auxiliary\Local\InvisibleSocksProxy.cs" />
-    <Compile Include="Auxiliary\Local\DnsServer.cs" />
+    <Compile Include="Auxiliary\Local\Server\SocksPortForwarding.cs" />
+    <Compile Include="Auxiliary\Local\Server\DnsServer.cs" />
     <Compile Include="Auxiliary\Local\Sniffer.cs" />
     <Compile Include="Auxiliary\Local\RFID\MifareRestoreClone.cs" />
     <Compile Include="Auxiliary\Local\ProcessKill.cs" />
