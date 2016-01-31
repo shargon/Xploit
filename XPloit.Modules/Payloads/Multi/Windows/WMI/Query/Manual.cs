@@ -49,5 +49,16 @@ namespace Payloads.Multi.Windows.WMI.Query
             WriteTable(table);
             return true;
         }
+
+        public string GetWmicparams()
+        {
+            // Windows
+            return "\"" + Sql + "\"";
+        }
+
+        public bool ProcessOutPut(string output)
+        {
+            return false;
+        }
     }
 }

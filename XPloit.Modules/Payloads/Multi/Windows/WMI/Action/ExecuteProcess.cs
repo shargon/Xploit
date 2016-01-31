@@ -49,6 +49,37 @@ namespace Payloads.Multi.Windows.WMI.Action
                 }
             }
         }
+
+        public string GetWmicparams()
+        {
+            // Windows
+            return "process call create \"" + CommandLine + "\"";
+        }
+        public bool ProcessOutPut(string output)
+        {
+            /* WINDOWS
+            Ejecutando (Win32_Process)->Create()
+            Ejecución correcta del método.
+            Parámetros de salida:
+            instance of __PARAMETERS
+            {
+                    ProcessId = 5692;
+                    ReturnValue = 0;
+            };
+            */
+            output = output.Replace(" ", "");
+
+            int ix = output.IndexOf("ProcessId=");
+            if (ix != -1 && output.Contains("ReturnValue=0;"))
+            {
+                int ix2 = output.IndexOf(";", ix);
+
+                WriteInfo("Process executed", output.Substring(ix + 10, ix2 - ix - 10), ConsoleColor.Green);
+                return true;
+            }
+
+            return false;
+        }
         #endregion
     }
 }
