@@ -64,6 +64,7 @@
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerAPI.cs" />
     <Compile Include="Auxiliary\Local\WordListBruteForce.cs" />
     <Compile Include="Auxiliary\Local\ProcessRun.cs" />
+    <Compile Include="Payloads\Local\BruteForce\NFC\BruteForceNFCMifare.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Query\Manual.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Query\Auto.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Action\ExecuteProcess.cs" />

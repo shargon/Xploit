@@ -42,8 +42,6 @@ namespace Auxiliary.Local.NFC
         [FileRequireExists()]
         [ConfigurableProperty(Required = true, Description = "File for restore content")]
         public FileInfo File { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Key for login")]
-        public ConfigMifareRead.EKeyNum KeyNum { get; set; }
         [ConfigurableProperty(Required = true, Description = "Key for type for login")]
         public ConfigMifareRead.EKeyType KeyType { get; set; }
         #endregion
@@ -60,7 +58,6 @@ namespace Auxiliary.Local.NFC
         /// </summary>
         public MifareRestoreClone()
         {
-            KeyNum = ConfigMifareRead.EKeyNum.One;
             KeyType = ConfigMifareRead.EKeyType.A;
         }
 
@@ -114,7 +111,7 @@ namespace Auxiliary.Local.NFC
                 }
 
                 WriteInfo("Card id ..........", ic.Id.ToString(), ConsoleColor.Cyan);
-                WriteInfo("Card type ........" , ic.Type.ToString(), ConsoleColor.Cyan);
+                WriteInfo("Card type ........", ic.Type.ToString(), ConsoleColor.Cyan);
 
                 if (!(ic is CardMifare))
                 {
@@ -153,7 +150,7 @@ namespace Auxiliary.Local.NFC
                                 ConfigMifareReadSector sec = cfg.ReadSectors[sector.SectorNum];
                                 sec.Login = new LoginMifareMethod()
                                 {
-                                    KeyNum = KeyNum,
+                                    KeyNum = KeyType == ConfigMifareRead.EKeyType.A ? ConfigMifareRead.EKeyNum.One : ConfigMifareRead.EKeyNum.Zero,
                                     KeyType = KeyType
                                 };
                                 sec.ReadDataBlockEnd = ConfigMifareReadSector.EBlockRange.DataBlock03;

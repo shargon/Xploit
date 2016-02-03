@@ -46,5 +46,13 @@ namespace XPloit.Core.Rfid.DniE
         /// Tipo de tarjeta
         /// </summary>
         public ECardType Type { get { return ECardType.DNIe; } }
+        /// <summary>
+        /// ATR de la tarjeta
+        /// </summary>
+        public byte[] Atr { get; private set; }
+
+        public CardDnie() { }
+
+        public CardDnie(byte[] atr) { Atr = atr; }
     }
 }

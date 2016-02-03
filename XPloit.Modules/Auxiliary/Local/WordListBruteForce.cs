@@ -35,6 +35,8 @@ namespace Auxiliary.Local
         public FileInfo WordListFile { get; set; }
         [ConfigurableProperty(Required = true, Description = "Line in the WordListFile for start")]
         public int StartAtLine { get; set; }
+        [ConfigurableProperty(Required = true, Description = "Save the last line checked")]
+        public bool SaveState { get; set; }
         #endregion
 
         public WordListBruteForce()
@@ -42,6 +44,7 @@ namespace Auxiliary.Local
             ReadBlock = 1000;
             Threads = 5;
             StartAtLine = 0;
+            SaveState = true;
         }
 
         public override bool Run()
@@ -61,7 +64,6 @@ namespace Auxiliary.Local
 
                 int readBlock = Math.Max(1, ReadBlock);
                 int threads = Math.Max(1, Threads);
-                bool save = true;
 
                 using (StreamLineReader reader = new StreamLineReader(File.OpenRead(WordListFile.FullName)))
                 {
@@ -92,7 +94,7 @@ namespace Auxiliary.Local
                             }
                             else index = 0;
 
-                            if (save)
+                            if (SaveState)
                             {
                                 StartAtLine = reader.CurrentLine;
                                 CopyPropertiesToActiveModule("StartAtLine");
@@ -110,7 +112,7 @@ namespace Auxiliary.Local
                             found = true;
                         }
 
-                        if (save)
+                        if (SaveState)
                         {
                             StartAtLine = reader.CurrentLine;
                             CopyPropertiesToActiveModule("StartAtLine");

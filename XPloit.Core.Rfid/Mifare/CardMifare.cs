@@ -21,6 +21,7 @@ namespace Xploit.Core.Rfid.Mifare
             Mini
         }
 
+        bool _Initialized;
         EMifareType _MifareType;
         Sector[] _Sectors;
 
@@ -40,14 +41,26 @@ namespace Xploit.Core.Rfid.Mifare
         /// Sectores
         /// </summary>
         public Sector[] Sectors { get { return _Sectors; } }
+        /// <summary>
+        /// ATR de la tarjeta
+        /// </summary>
+        public byte[] Atr { get; private set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="atr">Atr de la tarjeta</param>
+        public CardMifare(EMifareType type, byte[] atr) : this(type) { Atr = atr; }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="type">Type</param>
         public CardMifare(EMifareType type)
         {
             _MifareType = type;
             _Sectors = null;
+            _Initialized = false;
         }
 
         /// <summary>
@@ -55,6 +68,7 @@ namespace Xploit.Core.Rfid.Mifare
         /// </summary>
         public void InitCard()
         {
+            if (_Initialized) return;
             if (_MifareType == EMifareType.Unknown) return;
 
             switch (_MifareType)
@@ -67,6 +81,7 @@ namespace Xploit.Core.Rfid.Mifare
                         for (byte x = 0; x < max; x++)
                             _Sectors[x] = new Sector(this, x);
 
+                        _Initialized = true;
                         break;
                     }
                 case EMifareType.Classic4K:
@@ -77,6 +92,7 @@ namespace Xploit.Core.Rfid.Mifare
                         for (byte x = 0; x < max; x++)
                             _Sectors[x] = new Sector(this, x);
 
+                        _Initialized = true;
                         break;
                     }
             }
@@ -156,13 +172,12 @@ namespace Xploit.Core.Rfid.Mifare
                 Array.Copy(data, 0, _Data, 0, 16);
                 _IsReaded = true;
             }
-
             /// <summary>
             /// Escribe el el bloque los datos especificados
             /// </summary>
             /// <param name="data">Datos a escribir</param>
             /// <returns>Devuelve true si es correcto</returns>
-            public bool WriteInBlock(CardReader reader, ICardReadConfig config, byte[] data)
+            public bool WriteInBlock(CardReader reader, ConfigMifareRead config, byte[] data)
             {
                 int lg = 16;
                 switch (_Parent.Parent._MifareType)
@@ -186,7 +201,7 @@ namespace Xploit.Core.Rfid.Mifare
                     if (scfg != null && scfg.Login != null)
                     {
                         // Login al primer sector
-                        byte[] ldata = CardReader.SendCmd(reader._hCard, new byte[] { 0xFF, 0x86, 0x00, 0x00, 0x05, 0x01, 0x00, _BlockNum, 
+                        byte[] ldata = CardReader.SendCmd(reader._hCard, new byte[] { 0xFF, 0x86, 0x00, 0x00, 0x05, 0x01, 0x00, _BlockNum,
                                            (byte)(scfg.Login.KeyType == ConfigMifareRead.EKeyType.A ? 0x60 : 0x61),
                                            (byte)(scfg.Login.KeyNum == ConfigMifareRead.EKeyNum.Zero ? 0x00 : 0x01) });
 

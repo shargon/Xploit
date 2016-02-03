@@ -356,14 +356,7 @@ namespace XPloit.Core.Rfid
         /// <returns>Devuelve el tipo de retorno de la lectura</returns>
         public bool GetCard(out ICard card, ICardReadConfig config)
         {
-            byte[] bAtr = GetAtr(_hCard, _Name, API.SCARD_PCI_T0 | API.SCARD_PCI_T1);
-            if (bAtr == null)
-            {
-                card = null;
-                return false;
-            }
-
-            return GetCard(out card, bAtr, config);
+            return GetCard(out card, null, config);
         }
         /// <summary>
         /// Obtiene el UID de una tarjeta
@@ -372,7 +365,7 @@ namespace XPloit.Core.Rfid
         /// <param name="bAtr">ATR de la tarjeta</param>
         /// <param name="config">Configuración de lectura de la tarjeta</param>
         /// <returns>Devuelve el tipo de retorno de la lectura</returns>
-        internal bool GetCard(out ICard card, byte[] bAtr, ICardReadConfig config)
+        public bool GetCard(out ICard card, byte[] bAtr, ICardReadConfig config)
         {
             card = null;
 
@@ -408,7 +401,7 @@ namespace XPloit.Core.Rfid
                         string fname = Encoding.UTF8.GetString(fame.Data);
                         string sname = Encoding.UTF8.GetString(name.Data).Replace("(AUTENTICACIÓN)", "").Trim();
 
-                        card = new CardDnie() { Id = snif, Country = spais, CompleteName = sname, Name = ssname, Surname1 = fname };
+                        card = new CardDnie(bAtr) { Id = snif, Country = spais, CompleteName = sname, Name = ssname, Surname1 = fname };
                     }
                 }
 
@@ -454,7 +447,7 @@ namespace XPloit.Core.Rfid
                 byte[] receivedUID = SendCmd(_hCard, new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 });
                 if (receivedUID == null) return false;
 
-                card = new CardMifare(type) { Id = NFCHelper.Buffer2Hex(receivedUID, 0, receivedUID.Length - 2).ToUpperInvariant(), };
+                card = new CardMifare(type, bAtr) { Id = NFCHelper.Buffer2Hex(receivedUID, 0, receivedUID.Length - 2).ToUpperInvariant(), };
 
                 if (cfg != null && cfg.RequireReadSomething)
                 {

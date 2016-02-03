@@ -13,6 +13,7 @@ namespace XPloit.Core.Helpers
         static Type _BoolType = typeof(bool);
         static Type _StringType = typeof(string);
 
+        static Type _ByteType = typeof(byte), _SByteType = typeof(sbyte);
         static Type _Int64Type = typeof(long), _UInt64Type = typeof(ulong);
         static Type _Int32Type = typeof(int), _UInt32Type = typeof(uint);
         static Type _Int16Type = typeof(short), _UInt16Type = typeof(ushort);
@@ -104,6 +105,18 @@ namespace XPloit.Core.Helpers
                 }
 
                 // Numeric Conversion
+                if (type == _ByteType)
+                {
+                    byte r;
+                    if (!byte.TryParse(input.Trim(), out r)) return Convert.ToByte(MathHelper.Calc(input));
+                    return r;
+                }
+                if (type == _SByteType)
+                {
+                    sbyte r;
+                    if (!sbyte.TryParse(input.Trim(), out r)) return Convert.ToSByte(MathHelper.Calc(input));
+                    return r;
+                }
                 if (type == _Int64Type)
                 {
                     long r;

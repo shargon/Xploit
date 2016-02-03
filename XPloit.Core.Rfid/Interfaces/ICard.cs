@@ -12,5 +12,9 @@ namespace Xploit.Core.Rfid.Interfaces
         /// Tipo de tarjeta
         /// </summary>
         ECardType Type { get; }
+        /// <summary>
+        /// ATR
+        /// </summary>
+        byte[] Atr { get; }
     }
 }
