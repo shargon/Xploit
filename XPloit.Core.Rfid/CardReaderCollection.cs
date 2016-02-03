@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using Xploit.Core.Rfid;
+using Xploit.Core.Rfid.Enums;
 using Xploit.Core.Rfid.Interfaces;
 using Xploit.Core.Rfid.Mifare;
 
@@ -217,7 +218,7 @@ namespace XPloit.Core.Rfid
                                     if (!h.Handled && OnCardReaded != null)
                                     {
                                         // Tarjeta leida
-                                        if (r.Connect())
+                                        if (r.Connect() == EConnection.Ok)
                                         {
                                             ConfigMifareRead cfg = null;
                                             //cfg = new ConfigMifareRead()

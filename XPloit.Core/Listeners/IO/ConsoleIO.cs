@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Listeners.IO
@@ -7,7 +8,12 @@ namespace XPloit.Core.Listeners.IO
     {
         public Action<object, ConsoleCancelEventArgs> CancelKeyPress { get; set; }
 
-        public ConsoleIO() { Console.CancelKeyPress += Console_CancelKeyPress; }
+        public ConsoleIO()
+        {
+            Console.InputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.CancelKeyPress += Console_CancelKeyPress;
+        }
 
         void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
@@ -36,7 +42,7 @@ namespace XPloit.Core.Listeners.IO
         }
         public void SetCursorMode(ConsoleCursor.ECursorMode mode)
         {
-            switch(mode)
+            switch (mode)
             {
                 case ConsoleCursor.ECursorMode.Hidden:
                     {

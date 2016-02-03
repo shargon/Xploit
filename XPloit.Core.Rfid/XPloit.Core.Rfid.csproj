@@ -52,6 +52,7 @@
     <Compile Include="CardReaderCollection.cs" />
     <Compile Include="DniE\CardDnie.cs" />
     <Compile Include="Enums\ECardType.cs" />
+    <Compile Include="Enums\EConnection.cs" />
     <Compile Include="Helpers\NFCHelper.cs" />
     <Compile Include="Interfaces\ICard.cs" />
     <Compile Include="Interfaces\ICardReadConfig.cs" />

@@ -482,4 +482,9 @@ Options:
   <data name="Show_All_Results" xml:space="preserve">
     <value>Show %0 results? [Yes/No/Top]"</value>
   </data>
+  <data name="Man_Echo" xml:space="preserve">
+    <value>echo [input]
+
+Print the input</value>
+  </data>
 </root>

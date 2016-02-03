@@ -225,6 +225,7 @@ namespace XPloit.Core.Listeners
 
             cmd.Add(new string[] { "banner" }, cmdBanner, Lang.Get("Man_Banner"));
             cmd.Add(new string[] { "version" }, cmdVersion, Lang.Get("Man_Version"));
+            cmd.Add(new string[] { "echo" }, cmdEcho, Lang.Get("Man_Echo"));
             cmd.Add(new string[] { "clear", "cls" }, cmdClear, Lang.Get("Man_Clear"));
             cmd.Add(new string[] { "cd", "cd..", "cd\\", "cd/", "back" }, cmdCD, Lang.Get("Man_Cd"));
 
@@ -303,6 +304,10 @@ namespace XPloit.Core.Listeners
         {
             _Current = null;
             //_Command.PromptCharacter = "> ";
+        }
+        public void cmdEcho(string args)
+        {
+            _IO.WriteInfo(args);
         }
         public void cmdJobs(string args)
         {

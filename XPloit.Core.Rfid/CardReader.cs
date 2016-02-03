@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Xploit.Core.Rfid.Enums;
 using Xploit.Core.Rfid.Interfaces;
 using Xploit.Core.Rfid.Mifare;
 using XPloit.Core.Rfid.Asn1;
@@ -251,7 +252,7 @@ namespace XPloit.Core.Rfid
             // Obtenemos el tamaño
             ushort size = NFCHelper.ToUInt16(new byte[] { buffer[8], buffer[7] }, 0);
 
-            for (ushort offset = 0; offset < size; )
+            for (ushort offset = 0; offset < size;)
             {
                 byte[] s = NFCHelper.GetBytesUInt16(offset);
                 byte lee = (byte)Math.Min(size - offset, 0xff);
@@ -493,7 +494,7 @@ namespace XPloit.Core.Rfid
                         if (readCfg.Login != null)
                         {
                             // Login al primer sector
-                            data = SendCmd(_hCard, new byte[] { 0xFF, 0x86, 0x00, 0x00, 0x05, 0x01, 0x00, sector.DataBlocks[0].BlockNum, 
+                            data = SendCmd(_hCard, new byte[] { 0xFF, 0x86, 0x00, 0x00, 0x05, 0x01, 0x00, sector.DataBlocks[0].BlockNum,
                                            (byte)(readCfg.Login.KeyType == ConfigMifareRead.EKeyType.A ? 0x60 : 0x61),
                                            (byte)(readCfg.Login.KeyNum == ConfigMifareRead.EKeyNum.Zero ? 0x00 : 0x01) });
                         }
@@ -560,7 +561,7 @@ namespace XPloit.Core.Rfid
         /// Conecta el lector
         /// </summary>
         /// <param name="type">Tipo de tarjetas que se leeran</param>
-        public bool Connect()
+        public EConnection Connect()
         {
             try
             {
@@ -578,14 +579,19 @@ namespace XPloit.Core.Rfid
                 //                (uint)(type == ECardType.DniE ? API.SCARD_PROTOCOL_T0 : API.SCARD_PROTOCOL_T1);
                 result = (API.SCardFunctionReturnCodes)API.SCardConnect(_hContext, _Name, API.SCARD_SHARE_SHARED, dwProtocol, ref _hCard, ref _ActiveProtocol);
 
-                return result == API.SCardFunctionReturnCodes.SCARD_S_SUCCESS;
+                switch (result)
+                {
+                    case API.SCardFunctionReturnCodes.SCARD_W_REMOVED_CARD: return EConnection.NotCard;
+                    case API.SCardFunctionReturnCodes.SCARD_S_SUCCESS: return EConnection.Ok;
+                    default: return EConnection.Error;
+                }
             }
             catch
             {
                 Disconnect();
             }
 
-            return false;
+            return EConnection.Error;
         }
 
         /// <summary>

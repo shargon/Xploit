@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using XPloit.Core.Collections;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
@@ -17,7 +18,7 @@ namespace XPloit
         static int Main(string[] args)
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
-            //args = new string[] { "Replay=d:\\temp\\console.txt" };
+            //args = new string[] { @"Replay=" };
 
             // Linq to library assembly
             BuildLink.Dummy();
@@ -27,10 +28,10 @@ namespace XPloit
             //Console.OutputEncoding = Encoding.UTF8;
             using (CommandLayer command = new CommandLayer(new ConsoleIO()))
             {
-                command.AddInput("banner");
-
                 command.SetBackgroundColor(ConsoleColor.White);
                 command.SetBackgroundColor(ConsoleColor.Black);
+
+                command.AddInput("banner");
 
                 // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
                 // \"CryptKey=#Crypt0M3#\" 
@@ -44,7 +45,7 @@ namespace XPloit
                         command.SetForeColor(ConsoleColor.Gray);
                         command.Write(Lang.Get("Reading_File", cfg.Replay));
 
-                        foreach (string line in File.ReadAllLines(cfg.Replay))
+                        foreach (string line in File.ReadAllLines(cfg.Replay, Encoding.UTF8))
                         {
                             string ap = line.Trim();
                             if (string.IsNullOrEmpty(ap) || ap.StartsWith("#") || ap.StartsWith("//")) continue;
@@ -60,6 +61,7 @@ namespace XPloit
                         command.WriteLine(Lang.Get("Error").ToUpperInvariant());
                     }
                 }
+
 
                 if (cfg.Connect != null)
                 {

@@ -201,7 +201,7 @@ namespace XPloit.Core.Listeners.Layer
         public void WriteError(string error)
         {
             if (string.IsNullOrEmpty(error)) error = "";
-            else error = error.Trim();
+            //else error = error.Trim();
 
             WriteStart("!", ConsoleColor.Red);
             SetForeColor(ConsoleColor.Red);
@@ -218,14 +218,14 @@ namespace XPloit.Core.Listeners.Layer
         public void WriteInfo(string info, string colorText, ConsoleColor color)
         {
             if (string.IsNullOrEmpty(info)) info = "";
-            else info = info.Trim();
+            //else info = info.Trim();
 
             WriteStart("*", ConsoleColor.Cyan);
             Write(info);
 
             if (!string.IsNullOrEmpty(colorText))
             {
-                Write(" ... [");
+                Write((info.EndsWith(".") ? "." : " ") + "... [");
                 SetForeColor(color);
                 Write(colorText);
                 SetForeColor(ConsoleColor.Gray);
