@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Xploit.Core.Rfid.Enums;
 using Xploit.Core.Rfid.Interfaces;
@@ -44,6 +45,8 @@ namespace Auxiliary.Local.NFC
         public FileInfo File { get; set; }
         [ConfigurableProperty(Required = true, Description = "Key for type for login")]
         public ConfigMifareRead.EKeyType KeyType { get; set; }
+        [ConfigurableProperty(Description = "Only this sectors")]
+        public List<int> OnlySectors { get; set; }
         #endregion
 
         public override ECheck Check()
@@ -140,6 +143,13 @@ namespace Auxiliary.Local.NFC
                             length = 0;
                             foreach (CardMifare.Sector sector in card.Sectors)
                             {
+                                if (OnlySectors != null && OnlySectors.Count > 0 && !OnlySectors.Contains(sector.SectorNum))
+                                {
+                                    length += dSec * (sector.DataBlocks.Length + 1);
+                                    WriteInfo("Checking sector " + sector.SectorNum.ToString().PadLeft(2, '0'), "Passed", ConsoleColor.Yellow);
+                                    continue;
+                                }
+
                                 byte[] keyA = new byte[6], keyB = new byte[6];
 
                                 Array.Copy(file, length + (dSec * 3), keyA, 0, 6);

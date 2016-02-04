@@ -249,7 +249,10 @@ namespace XPloit.Core.Listeners
             cmd.Add(new string[] { "search" }, cmdSearch, Lang.Get("Man_Search"));
             cmd.Add(new string[] { "ifcheck" }, cmdIfCheck, Lang.Get("Man_IfCheck"));
             cmd.Add(new string[] { "ifnocheck" }, cmdIfNoCheck, Lang.Get("Man_IfNoCheck"));
+            cmd.Add(new string[] { "ifrun" }, cmdIfRun, Lang.Get("Man_IfRun"));
+            cmd.Add(new string[] { "ifnorun" }, cmdIfNoRun, Lang.Get("Man_IfNoRun"));
             cmd.Add(new string[] { "record" }, cmdRecord, Lang.Get("Man_Record"));
+            cmd.Add(new string[] { "beep" }, cmdBeep, Lang.Get("Man_Beep"));
 
             _Command = cmd;
         }
@@ -300,6 +303,7 @@ namespace XPloit.Core.Listeners
 
         #region Commands
         public void cmdClear(string args) { _IO.Clear(); }
+        public void cmdBeep(string args) { _IO.Beep(); }
         public void cmdCD(string args)
         {
             _Current = null;
@@ -385,6 +389,8 @@ namespace XPloit.Core.Listeners
         public void cmdCheck(string args) { CheckModule(); }
         public void cmdIfCheck(string args) { if (CheckModule()) _IO.AddInput(args); }
         public void cmdIfNoCheck(string args) { if (!CheckModule()) _IO.AddInput(args); }
+        public void cmdIfRun(string args) { if (RunModule()) _IO.AddInput(args); }
+        public void cmdIfNoRun(string args) { if (!RunModule()) _IO.AddInput(args); }
         void runModule(object module)
         {
             Module mod = (Module)module;
@@ -904,6 +910,16 @@ namespace XPloit.Core.Listeners
                                     }
                                     else
                                     {
+                                        if (val is List<int>) val = string.Join(",", (List<int>)val);
+                                        else if (val is List<uint>) val = string.Join(",", (List<uint>)val);
+                                        else if (val is List<short>) val = string.Join(",", (List<short>)val);
+                                        else if (val is List<ushort>) val = string.Join(",", (List<ushort>)val);
+                                        else if (val is List<long>) val = string.Join(",", (List<long>)val);
+                                        else if (val is List<ulong>) val = string.Join(",", (List<ulong>)val);
+                                        else if (val is List<byte>) val = string.Join(",", (List<byte>)val);
+                                        else if (val is List<sbyte>) val = string.Join(",", (List<sbyte>)val);
+                                        else if (val is Array) val = string.Join(",", (Array)val);
+
                                         CommandTableRow row = tb.AddRow(pi.Name, val.ToString(), c.Description);
                                         if (x == 0 || x == 3)
                                             row[1].ForeColor = ConsoleColor.Cyan;

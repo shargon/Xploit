@@ -487,4 +487,19 @@ Options:
 
 Print the input</value>
   </data>
+  <data name="Man_Beep" xml:space="preserve">
+    <value>beep
+
+Make a beep</value>
+  </data>
+  <data name="Man_IfNoRun" xml:space="preserve">
+    <value>ifnorun [command]
+
+Run the module, and if not works, then run the command</value>
+  </data>
+  <data name="Man_IfRun" xml:space="preserve">
+    <value>ifrun [command]
+
+Run the module, and if works, then run the command</value>
+  </data>
 </root>

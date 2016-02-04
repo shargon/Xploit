@@ -242,7 +242,16 @@ namespace XPloit.Core.Helpers
                             pi.PropertyType != typeof(TimeSpan) &&
                             pi.PropertyType != typeof(DateTime) &&
                             pi.PropertyType != typeof(DirectoryInfo) &&
-                            pi.PropertyType != typeof(FileInfo)
+                            pi.PropertyType != typeof(FileInfo) &&
+
+                            pi.PropertyType != typeof(List<byte>) &&
+                            pi.PropertyType != typeof(List<sbyte>) &&
+                            pi.PropertyType != typeof(List<short>) &&
+                            pi.PropertyType != typeof(List<ushort>) &&
+                            pi.PropertyType != typeof(List<int>) &&
+                            pi.PropertyType != typeof(List<uint>) &&
+                            pi.PropertyType != typeof(List<long>) &&
+                            pi.PropertyType != typeof(List<ulong>)
                             )
                             continue;
                     }
