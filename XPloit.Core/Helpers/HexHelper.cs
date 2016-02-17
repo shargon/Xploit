@@ -5,15 +5,20 @@ namespace XPloit.Core.Helpers
 {
     public class HexHelper
     {
-        public static string Buffer2Hex(byte[] data) { return Buffer2Hex(data, 0, data.Length); }
-        public static string Buffer2Hex(byte[] data, int index, int length)
+        public static string Buffer2Hex(byte[] data) { return Buffer2Hex(data, 0, data.Length, null); }
+        public static string Buffer2Hex(byte[] data, string separator) { return Buffer2Hex(data, 0, data.Length, separator); }
+        public static string Buffer2Hex(byte[] data, int index, int length) { return Buffer2Hex(data, 0, data.Length, null); }
+        public static string Buffer2Hex(byte[] data, int index, int length, string separator)
         {
             if (data != null)
             {
+                bool addSep = !string.IsNullOrEmpty(separator);
                 StringBuilder s = new StringBuilder();
                 for (int x = 0; x < length; x++)
                 {
                     byte b = data[index + x];
+
+                    if (x != 0 && addSep) s.Append(separator);
                     s.Append(b.ToString("x2").ToLower());
                 }
                 return s.ToString();
@@ -22,7 +27,7 @@ namespace XPloit.Core.Helpers
         }
 
         // assigned int values for bytes (0-255)
-        static readonly int[] toHexTable = new int[] 
+        static readonly int[] toHexTable = new int[]
         {
             3145776, 3211312, 3276848, 3342384, 3407920, 3473456, 3538992, 3604528, 3670064, 3735600,
             4259888, 4325424, 4390960, 4456496, 4522032, 4587568, 3145777, 3211313, 3276849, 3342385,
@@ -101,7 +106,7 @@ namespace XPloit.Core.Helpers
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 255, 0, 1,
             2, 3, 4, 5, 6, 7, 8, 9, 255, 255,
-            255, 255, 255, 255, 255, 10, 11, 12, 13, 14, 
+            255, 255, 255, 255, 255, 10, 11, 12, 13, 14,
             15, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 10, 11, 12,
@@ -116,7 +121,7 @@ namespace XPloit.Core.Helpers
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 255, 0, 16,
             32, 48, 64, 80, 96, 112, 128, 144, 255, 255,
-            255, 255, 255, 255, 255, 160, 176, 192, 208, 224, 
+            255, 255, 255, 255, 255, 160, 176, 192, 208, 224,
             240, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 160, 176, 192,
@@ -128,6 +133,9 @@ namespace XPloit.Core.Helpers
             // return an empty array in case of null or empty source
             if (string.IsNullOrEmpty(source))
                 return new byte[0]; // you may change it to return null
+
+            source = source.Replace(":", "").Replace(" ", "");
+
             if (source.Length % 2 == 1) // source length must be even
                 throw new ArgumentException();
             int

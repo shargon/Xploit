@@ -205,12 +205,16 @@ namespace Xploit.Core.Rfid.Mifare
                                            (byte)(scfg.Login.KeyType == ConfigMifareRead.EKeyType.A ? 0x60 : 0x61),
                                            (byte)(scfg.Login.KeyNum == ConfigMifareRead.EKeyNum.Zero ? 0x00 : 0x01) });
 
-                        if (ldata == null || ldata.Length != 2) return false;
+                        if (ldata == null || ldata.Length != 2 || ldata[0] != 0x90 || ldata[1] != 0x00)
+                            return false;
                     }
                 }
 
                 byte[] r = CardReader.SendCmd(reader._hCard, new byte[] { 0xFF, 0xD6, 0x00, _BlockNum, (byte)(data.Length) }.Concat(data).ToArray());
-                return r != null && r.Length == 2;
+                if (r != null && r.Length != 2)//&& r[0] == 0x90 && r[1] != 0x00)
+                    return true;
+
+                return false;
             }
         }
 

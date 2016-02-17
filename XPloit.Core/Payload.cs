@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text;
-using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;

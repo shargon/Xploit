@@ -251,7 +251,16 @@ namespace XPloit.Core.Helpers
                             pi.PropertyType != typeof(List<int>) &&
                             pi.PropertyType != typeof(List<uint>) &&
                             pi.PropertyType != typeof(List<long>) &&
-                            pi.PropertyType != typeof(List<ulong>)
+                            pi.PropertyType != typeof(List<ulong>) &&
+
+                            pi.PropertyType != typeof(byte[]) &&
+                            pi.PropertyType != typeof(sbyte[]) &&
+                            pi.PropertyType != typeof(short[]) &&
+                            pi.PropertyType != typeof(ushort[]) &&
+                            pi.PropertyType != typeof(int[]) &&
+                            pi.PropertyType != typeof(uint[]) &&
+                            pi.PropertyType != typeof(long[]) &&
+                            pi.PropertyType != typeof(ulong[])
                             )
                             continue;
                     }

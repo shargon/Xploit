@@ -27,6 +27,7 @@ namespace XPloit.Core.Helpers
         static Type _IPEndPointType = typeof(IPEndPoint);
         static Type _FileInfoType = typeof(FileInfo);
         static Type _DirectoryInfoType = typeof(DirectoryInfo);
+        static Type _ByteArrayType = typeof(byte[]);
 
         static Type _IListType = typeof(IList);
 
@@ -191,6 +192,10 @@ namespace XPloit.Core.Helpers
                     if (!IPHelper.ParseIpPort(input, out ip, ref port)) return null;
                     if (port == 0) return null;
                     return new IPEndPoint(ip, port);
+                }
+                if (type == _ByteArrayType)
+                {
+                    return HexHelper.FromHexString(input);
                 }
 
                 // Array

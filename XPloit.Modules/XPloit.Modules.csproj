@@ -44,7 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Auxiliary\Local\DetectTorExitNode.cs" />
+    <Compile Include="Auxiliary\Local\Fuzzing\Fuzzer.cs" />
+    <Compile Include="Auxiliary\Local\Fuzzing\PatternCreate.cs" />
+    <Compile Include="Auxiliary\Local\Fuzzing\PatternSearch.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
+    <Compile Include="Auxiliary\Local\RFID\MifareSetId.cs" />
     <Compile Include="Auxiliary\Local\TestPayload.cs" />
     <Compile Include="Auxiliary\Local\Steganography\SteganographyImage.cs" />
     <Compile Include="Auxiliary\Local\Exfiltration\DnsExfiltrateParser.cs" />
@@ -65,6 +69,7 @@
     <Compile Include="Auxiliary\Local\WordListBruteForce.cs" />
     <Compile Include="Auxiliary\Local\ProcessRun.cs" />
     <Compile Include="Payloads\Local\BruteForce\NFC\BruteForceNFCMifare.cs" />
+    <Compile Include="Payloads\Multi\Fuzzing\SocketFuzzer.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Query\Manual.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Query\Auto.cs" />
     <Compile Include="Payloads\Multi\Windows\WMI\Action\ExecuteProcess.cs" />
