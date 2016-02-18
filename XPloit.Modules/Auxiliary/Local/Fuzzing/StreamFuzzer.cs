@@ -120,7 +120,6 @@ namespace Auxiliary.Local.Fuzzing
             {
                 includeUsings = new string[]
                 {
-                    "Auxiliary.Local.Fuzzing",
                     "XPloit.Core.Extensions"
                 },
                 IncludeFiles = new string[]
