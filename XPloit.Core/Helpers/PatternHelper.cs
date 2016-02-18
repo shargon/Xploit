@@ -10,16 +10,47 @@ namespace XPloit.Core.Helpers
         /// Create a patter for exploit development
         /// </summary>
         /// <param name="length">Length</param>
-        /// <param name="setA">Set A</param>
-        /// <param name="setB">Set B</param>
-        /// <param name="setC">Set C</param>
+        public static byte[] CreateRaw(int length)
+        {
+            if (length <= 0) return new byte[] { };
+
+            char[] setA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            char[] setB = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+            char[] setC = "0123456789".ToCharArray();
+
+            int l = 0;
+            byte[] data = new byte[length];
+
+            while (true)
+                foreach (char a in setA)
+                    foreach (char b in setB)
+                        foreach (char c in setC)
+                        {
+                            data[l] = (byte)a;
+                            l++;
+                            if (l == length) return data;
+
+                            data[l] = (byte)b;
+                            l++;
+                            if (l == length) return data;
+
+                            data[l] = (byte)c;
+                            l++;
+                            if (l == length) return data;
+
+                        }
+        }
+        /// <summary>
+        /// Create a patter for exploit development
+        /// </summary>
+        /// <param name="length">Length</param>
         public static string Create(int length)
         {
             if (length <= 0) return "";
 
-            string setA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string setB = "abcdefghijklmnopqrstuvwxyz";
-            string setC = "0123456789";
+            char[] setA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            char[] setB = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+            char[] setC = "0123456789".ToCharArray();
 
             int l = 0;
             StringBuilder sb = new StringBuilder();

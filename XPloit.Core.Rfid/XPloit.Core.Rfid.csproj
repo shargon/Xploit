@@ -55,7 +55,6 @@
     <Compile Include="Enums\ECardType.cs" />
     <Compile Include="Enums\EConnection.cs" />
     <Compile Include="Helpers\NFCHelper.cs" />
-    <Compile Include="Helpers\PatternHelper.cs" />
     <Compile Include="Interfaces\ICard.cs" />
     <Compile Include="Interfaces\ICardReadConfig.cs" />
     <Compile Include="Mifare\CardMifare.cs" />

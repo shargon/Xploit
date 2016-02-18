@@ -20,6 +20,10 @@ namespace XPloit.Core.Helpers
             /// Extra Usings
             /// </summary>
             public string[] includeUsings { get; set; }
+            /// <summary>
+            /// Inherited 
+            /// </summary>
+            public Type[] Inherited { get; set; }
         }
 
         /// <summary>
@@ -91,26 +95,28 @@ namespace XPloit.Core.Helpers
                 foreach (string su in options.IncludeFiles)
                     if (!asms.Contains(su)) asms.Add(su);
 
-            List<string> usings = new List<string>();
-            usings.Add("System");
-            usings.Add("System.Data");
-            usings.Add("System.Collections.Generic");
-            usings.Add("System.Drawing.Imaging");
-            usings.Add("System.IO");
-            usings.Add("System.Web");
-            usings.Add("System.Net");
-            usings.Add("System.Net.NetworkInformation");
-            usings.Add("System.IO.Ports");
-            usings.Add("System.Windows.Forms");
-            usings.Add("System.Drawing");
-            usings.Add("System.Text");
-            usings.Add("System.Xml");
-            usings.Add("System.Drawing.Printing");
-            usings.Add("System.Data.OleDb");
-            usings.Add("System.Data.Odbc");
-            usings.Add("System.Text.RegularExpressions");
-            usings.Add("System.ComponentModel");
-            usings.Add("System.Threading");
+            List<string> usings = new List<string>(new string[]
+            {
+               "System",
+                "System.Data",
+                "System.Collections.Generic",
+                "System.Drawing.Imaging",
+                "System.IO",
+                "System.Web",
+                "System.Net",
+                "System.Net.NetworkInformation",
+                "System.IO.Ports",
+                "System.Windows.Forms",
+                "System.Drawing",
+                "System.Text",
+                "System.Xml",
+                "System.Drawing.Printing",
+                "System.Data.OleDb",
+                "System.Data.Odbc",
+                "System.Text.RegularExpressions",
+                "System.ComponentModel",
+                "System.Threading"
+            });
 
             // Append usings
             if (options != null && options.includeUsings != null)
@@ -121,7 +127,21 @@ namespace XPloit.Core.Helpers
             foreach (string su in usings)
                 addUsing += "using " + su + ";";
 
-            codeOrHash = addUsing + " namespace DummyNamespace{public class DummyClass{public DummyClass(){}" + codeOrHash + "\n}}";
+            string herencia = "";
+            if (options != null && options.Inherited != null)
+            {
+                foreach (Type t in options.Inherited)
+                {
+                    if (t == null) continue;
+
+                    if (herencia != "") herencia += ",";
+                    else herencia += ":";
+
+                    herencia += t.FullName.Replace("+", ".");
+                }
+            }
+
+            codeOrHash = addUsing + " namespace DummyNamespace{public class DummyClass" + herencia + "{public DummyClass(){}" + codeOrHash + "\n}}";
 
             Assembly asm = Compile(codeOrHash, asms.ToArray());
             if (asm == null) return null;
@@ -156,6 +176,14 @@ namespace XPloit.Core.Helpers
         {
             if (_Asm == null) return null;
             return Activator.CreateInstance(_TypeAsm);
+        }
+        /// <summary>
+        /// Create Instance
+        /// </summary>
+        public T CreateNewInstance<T>()
+        {
+            if (_Asm == null) return default(T);
+            return (T)Activator.CreateInstance(_TypeAsm);
         }
 
         #region Compile
