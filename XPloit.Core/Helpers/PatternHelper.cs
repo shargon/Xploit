@@ -37,7 +37,6 @@ namespace XPloit.Core.Helpers
                             data[l] = (byte)c;
                             l++;
                             if (l == length) return data;
-
                         }
         }
         /// <summary>

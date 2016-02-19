@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using XPloit.Core.Collections;
 using XPloit.Core.Interfaces;
 using XPloit.Res;
@@ -9,13 +10,20 @@ namespace XPloit.Core
     {
         public class IJobable : IDisposable
         {
+            Process _Process;
             bool _IsDisposed = false;
             /// <summary>
             /// Is Disposed
             /// </summary>
-            public bool IsDisposed { get { return _IsDisposed; } }
+            public bool IsDisposed { get { return _IsDisposed || (_Process != null && _Process.HasExited); } }
 
             public virtual void OnDispose() { }
+
+            public IJobable() { }
+            public IJobable(Process pr)
+            {
+                _Process = pr;
+            }
 
             /// <summary>
             /// Free resources
@@ -25,8 +33,18 @@ namespace XPloit.Core
                 if (_IsDisposed) return;
 
                 _IsDisposed = true;
+
+                if (_Process != null)
+                {
+                    try { _Process.Kill(); } catch { }
+                    _Process.Dispose();
+                }
+
                 OnDispose();
             }
+
+            //public static explicit operator IJobable(Process pr) { return new IJobable(pr); }
+            public static implicit operator IJobable(Process pr) { return new IJobable(pr); }
         }
 
         string _FullPathModule;

@@ -32,9 +32,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,6 +53,7 @@
     <Compile Include="Auxiliary\Local\Fuzzing\PatternCreate.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\PatternSearch.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
+    <Compile Include="Auxiliary\Local\Tor.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
     <Compile Include="Auxiliary\Local\RFID\MifareSetId.cs" />
     <Compile Include="Auxiliary\Local\TestPayload.cs" />
@@ -89,6 +96,9 @@
   <ItemGroup>
     <Folder Include="Auxiliary\Remote\" />
     <Folder Include="Payloads\Remote\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

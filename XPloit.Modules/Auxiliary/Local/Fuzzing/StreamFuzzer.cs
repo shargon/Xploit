@@ -55,6 +55,7 @@ namespace Auxiliary.Local.Fuzzing
                 if (ix == -1) throw (new Exception("EOF"));
                 return (byte)ix;
             }
+
             public void Write(byte[] data) { Write(data, 0, data.Length); }
             public void Write(string input) { Write(_Encoding, input); }
             public void Write(Encoding codec, string input) { Write(codec.GetBytes(input)); }
@@ -63,6 +64,7 @@ namespace Auxiliary.Local.Fuzzing
                 _Stream.Write(data, index, length);
                 _Stream.Flush();
             }
+
             public void Dispose()
             {
                 if (_Stream != null)
@@ -93,6 +95,7 @@ namespace Auxiliary.Local.Fuzzing
             {
               ReadLine();
               Write(Encoding.GetBytes("TRUN .").Concat(fuzzData));
+              ReadLine();
               Write("EXIT");
               ReadLine();
             }
@@ -125,7 +128,7 @@ namespace Auxiliary.Local.Fuzzing
                 IncludeFiles = new string[]
                 {
                     typeof(ScriptClass).Assembly.Location,    // XPloit.Modules
-                    typeof(Module).Assembly.Location            // XPloit.Core
+                    typeof(Module).Assembly.Location          // XPloit.Core
                 },
                 Inherited = new Type[]
                 {
@@ -134,7 +137,7 @@ namespace Auxiliary.Local.Fuzzing
             });
 
             WriteInfo("Loading file ...");
-            string file = System.IO.File.ReadAllText(Script.FullName, Encoding.ASCII);
+            string file = File.ReadAllText(Script.FullName, Encoding.ASCII);
             WriteInfo("File loaded", StringHelper.Convert2KbWithBytes(file.Length), System.ConsoleColor.Green);
 
             for (int max = To, st = Math.Max(Step, 1); From <= max; From += st)

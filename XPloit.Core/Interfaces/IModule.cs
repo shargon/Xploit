@@ -10,7 +10,7 @@ using XPloit.Res;
 
 namespace XPloit.Core.Interfaces
 {
-    public class IModule
+    public class IModule : IProgress
     {
         string _Name = null, _Path = null;
         string _FullPath = null;

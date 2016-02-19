@@ -67,6 +67,7 @@
     <Compile Include="Command\CommandTable.cs" />
     <Compile Include="Command\CommandTableCol.cs" />
     <Compile Include="Command\CommandTableRow.cs" />
+    <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\PatternHelper.cs" />
     <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
