@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using XPloit.Core.Attributes;
@@ -12,7 +13,8 @@ namespace XPloit.Core.Interfaces
 {
     public class IModule : IProgress
     {
-        string _Name = null, _Path = null;
+        string _InternalAuthor;
+        string _Name = null, _ModulePath = null;
         string _FullPath = null;
 
         CommandLayer _IO;
@@ -85,7 +87,24 @@ namespace XPloit.Core.Interfaces
         /// <summary>
         /// Author
         /// </summary>
-        public virtual string Author { get { return null; } }
+        public virtual string Author
+        {
+            get
+            {
+                if (_InternalAuthor == null)
+                    try
+                    {
+                        // Extract author from company of assembly
+                        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(this.GetType()).Location);
+                        _InternalAuthor = versionInfo.CompanyName;
+                    }
+                    catch
+                    {
+                        _InternalAuthor = "";
+                    }
+                return _InternalAuthor;
+            }
+        }
         /// <summary>
         /// Description
         /// </summary>
@@ -97,7 +116,7 @@ namespace XPloit.Core.Interfaces
         /// <summary>
         /// Path
         /// </summary>
-        public string Path { get { return _Path; } }
+        public string ModulePath { get { return _ModulePath; } }
         /// <summary>
         /// Return full path
         /// </summary>
@@ -112,9 +131,9 @@ namespace XPloit.Core.Interfaces
         public IModule()
         {
             Type t = GetType();
-            _Path = t.Namespace.Replace(".", "/");
+            _ModulePath = t.Namespace.Replace(".", "/");
             _Name = t.Name;
-            _FullPath = _Path + "/" + _Name;
+            _FullPath = _ModulePath + "/" + _Name;
         }
 
         /// <summary>

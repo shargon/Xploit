@@ -670,7 +670,7 @@ namespace XPloit.Core.Listeners
 
             CommandTable tb = new CommandTable();
 
-            tb.AddRow(Lang.Get("Path"), _Current.Path, "")[0].ForeColor = ConsoleColor.DarkGray;
+            tb.AddRow(Lang.Get("Path"), _Current.ModulePath, "")[0].ForeColor = ConsoleColor.DarkGray;
             tb.AddRow(Lang.Get("Name"), _Current.Name, "")[0].ForeColor = ConsoleColor.DarkGray;
 
             tb.AddRow("", "", "");
