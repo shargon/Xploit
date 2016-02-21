@@ -36,7 +36,6 @@ namespace Auxiliary.Local
 
         public Tor() { SocksPort = 9051; }
 
-
         public override ECheck Check()
         {
             Process[] procs = Process.GetProcessesByName("tor");

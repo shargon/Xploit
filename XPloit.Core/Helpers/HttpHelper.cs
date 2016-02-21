@@ -110,6 +110,8 @@ namespace XPloit.Core.Helpers
                         else progress = null;
                     }
 
+                    // TODO: Gzip compression
+
                     if (progress == null)
                         st.CopyTo(stream);
                     else
@@ -127,14 +129,13 @@ namespace XPloit.Core.Helpers
 
                             x += lee;
                         }
-
                     }
                 }
                 res.IsOk = true;
             }
             catch
             {
-
+                res.IsOk = false;
             }
             finally
             {
@@ -162,6 +163,7 @@ namespace XPloit.Core.Helpers
             }
             catch
             {
+                res.IsOk = false;
             }
             return res;
         }
