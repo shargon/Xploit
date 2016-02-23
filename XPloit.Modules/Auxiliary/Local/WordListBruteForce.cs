@@ -7,6 +7,8 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Streams;
 using XPloit.Core.Requirements.Payloads;
+using XPloit.Core.Helpers;
+using System.IO.Compression;
 
 namespace Auxiliary.Local
 {
@@ -57,7 +59,9 @@ namespace Auxiliary.Local
                 return false;
             }
 
+            FileStream stream = null;
             bool found = false;
+            string tempFile = null;
 
             try
             {
@@ -66,7 +70,30 @@ namespace Auxiliary.Local
                 int readBlock = Math.Max(1, ReadBlock);
                 int threads = Math.Max(1, Threads);
 
-                using (StreamLineReader reader = new StreamLineReader(File.OpenRead(WordListFile.FullName)))
+                stream = File.OpenRead(WordListFile.FullName);
+
+                if (FileDetectionHelper.DetectFileFormat(stream, true, true) == FileDetectionHelper.EFileFormat.Gzip)
+                {
+                    WriteInfo("Decompress gzip wordlist");
+                    WriteInfo("Compressed size", StringHelper.Convert2KbWithBytes(stream.Length), ConsoleColor.Green);
+
+                    stream.Close();
+                    stream.Dispose();
+
+                    using (FileStream streamR = File.OpenRead(WordListFile.FullName))
+                    using (GZipStream gz = new GZipStream(streamR, CompressionMode.Decompress))
+                    {
+                        // decompress
+                        tempFile = Path.GetTempFileName();
+                        stream = File.Open(tempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                        gz.CopyTo(stream);
+                        stream.Seek(0, SeekOrigin.Begin);
+                    }
+
+                    WriteInfo("Decompressed size", StringHelper.Convert2KbWithBytes(stream.Length), ConsoleColor.Green);
+                }
+
+                using (StreamLineReader reader = new StreamLineReader(stream))
                 {
                     WriteInfo("Start counting file");
                     int hay = reader.GetCount(StartAtLine);
@@ -128,6 +155,15 @@ namespace Auxiliary.Local
             }
             finally
             {
+                if (stream != null)
+                {
+                    stream.Close();
+                    stream.Dispose();
+                }
+                if (tempFile!= null)
+                {
+                    File.Delete(tempFile);
+                }
                 EndProgress();
                 check.PostRun();
             }
