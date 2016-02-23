@@ -114,6 +114,7 @@ namespace Auxiliary.Local.Fuzzing
             Encoding = Encoding.ASCII;
         }
 
+        [IsJobable]
         public override bool Run()
         {
             IFuzzerPayload payload = (IFuzzerPayload)Payload;

@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\FileRequireExists.cs" />
+    <Compile Include="Attributes\IsJobable.cs" />
     <Compile Include="Attributes\IntrusiveCheck.cs" />
     <Compile Include="Attributes\SerializableBSONReference.cs" />
     <Compile Include="Attributes\ConfigurableProperty.cs" />

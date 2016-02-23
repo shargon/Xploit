@@ -132,6 +132,7 @@ It means:
             return file2;
         }
 
+        [IsJobable]
         public override bool Run()
         {
             BruteForce b = new BruteForce();

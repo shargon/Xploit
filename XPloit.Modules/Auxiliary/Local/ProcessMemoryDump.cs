@@ -59,6 +59,7 @@ namespace Auxiliary.Local
             return ECheck.Ok;
         }
 
+        [IsJobable]
         public override bool Run()
         {
             WriteInfo("Search process ...");

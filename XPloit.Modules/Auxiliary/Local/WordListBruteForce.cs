@@ -47,6 +47,7 @@ namespace Auxiliary.Local
             SaveState = true;
         }
 
+        [IsJobable]
         public override bool Run()
         {
             ICheckPassword check = (ICheckPassword)this.Payload;
