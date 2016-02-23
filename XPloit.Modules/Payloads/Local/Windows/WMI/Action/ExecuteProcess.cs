@@ -1,11 +1,11 @@
-﻿using Auxiliary.Multi.Windows;
+﻿using Auxiliary.Local.Windows;
 using System;
 using System.Management;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
-namespace Payloads.Multi.Windows.WMI.Action
+namespace Payloads.Local.Windows.WMI.Action
 {
     public class ExecuteProcess : Payload, WMIManager.IWMIPayload
     {

@@ -1,11 +1,11 @@
-﻿using Auxiliary.Multi.Windows;
+﻿using Auxiliary.Local.Windows;
 using System;
 using System.Management;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Command;
 
-namespace Payloads.Multi.Windows.WMI.Query
+namespace Payloads.Local.Windows.WMI.Query
 {
     public class Manual : Payload, WMIManager.IWMIPayload
     {

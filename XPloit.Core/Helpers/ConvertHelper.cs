@@ -253,6 +253,49 @@ namespace XPloit.Core.Helpers
 
             return null;
         }
+
+        /// <summary>
+        /// Object to string
+        /// </summary>
+        /// <param name="value">Value</param>
+        public static string ToString(object value)
+        {
+            if (value == null) return "NULL";
+
+            if (value is List<int>) value = string.Join(",", (List<int>)value);
+            else if (value is List<uint>) value = string.Join(",", (List<uint>)value);
+            else if (value is List<short>) value = string.Join(",", (List<short>)value);
+            else if (value is List<ushort>) value = string.Join(",", (List<ushort>)value);
+            else if (value is List<long>) value = string.Join(",", (List<long>)value);
+            else if (value is List<ulong>) value = string.Join(",", (List<ulong>)value);
+            else if (value is List<byte>) value = string.Join(",", (List<byte>)value);
+            else if (value is List<sbyte>) value = string.Join(",", (List<sbyte>)value);
+
+            else if (value is List<int>) value = string.Join(",", (List<int>)value);
+            else if (value is List<uint>) value = string.Join(",", (List<uint>)value);
+            else if (value is List<short>) value = string.Join(",", (List<short>)value);
+            else if (value is List<ushort>) value = string.Join(",", (List<ushort>)value);
+            else if (value is List<long>) value = string.Join(",", (List<long>)value);
+            else if (value is List<ulong>) value = string.Join(",", (List<ulong>)value);
+            else if (value is List<byte>) value = string.Join(",", (List<byte>)value);
+            else if (value is List<sbyte>) value = string.Join(",", (List<sbyte>)value);
+
+            else if (value is int[]) value = string.Join(",", (int[])value);
+            else if (value is uint[]) value = string.Join(",", (uint[])value);
+            else if (value is short[]) value = string.Join(",", (short[])value);
+            else if (value is ushort[]) value = string.Join(",", (ushort[])value);
+            else if (value is long[]) value = string.Join(",", (long[])value);
+            else if (value is ulong[]) value = string.Join(",", (ulong[])value);
+            else if (value is byte[])
+            {
+                value = HexHelper.Buffer2Hex((byte[])value, ":");
+            }
+            else if (value is sbyte[]) value = string.Join(",", (sbyte[])value);
+            else if (value is Array) value = string.Join(",", (Array)value);
+
+            return value.ToString();
+        }
+
         static char[] GetSplitChar(Type gt)
         {
             if (gt == _StringType)

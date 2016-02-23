@@ -36,8 +36,13 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -53,6 +58,7 @@
     <Compile Include="Auxiliary\Local\Fuzzing\PatternCreate.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\PatternSearch.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
+    <Compile Include="Auxiliary\Local\DatabaseQuery.cs" />
     <Compile Include="Auxiliary\Local\Tor.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
     <Compile Include="Auxiliary\Local\RFID\MifareSetId.cs" />
@@ -66,7 +72,7 @@
     <Compile Include="Auxiliary\Local\RFID\MifareRestoreClone.cs" />
     <Compile Include="Auxiliary\Local\ProcessKill.cs" />
     <Compile Include="Auxiliary\Local\WordListGenerator.cs" />
-    <Compile Include="Auxiliary\Multi\Windows\WMIManager.cs" />
+    <Compile Include="Auxiliary\Local\Windows\WMIManager.cs" />
     <Compile Include="BuildLink.cs" />
     <Compile Include="Encoders\String\Base64Encoder.cs" />
     <Compile Include="Nops\Php\PhpNop.cs" />
@@ -76,10 +82,10 @@
     <Compile Include="Auxiliary\Local\WordListBruteForce.cs" />
     <Compile Include="Auxiliary\Local\ProcessRun.cs" />
     <Compile Include="Payloads\Local\BruteForce\NFC\BruteForceNFCMifare.cs" />
-    <Compile Include="Payloads\Multi\Fuzzing\TcpSocketFuzzer.cs" />
-    <Compile Include="Payloads\Multi\Windows\WMI\Query\Manual.cs" />
-    <Compile Include="Payloads\Multi\Windows\WMI\Query\Auto.cs" />
-    <Compile Include="Payloads\Multi\Windows\WMI\Action\ExecuteProcess.cs" />
+    <Compile Include="Payloads\Local\Fuzzing\TcpSocketFuzzer.cs" />
+    <Compile Include="Payloads\Local\Windows\WMI\Query\Manual.cs" />
+    <Compile Include="Payloads\Local\Windows\WMI\Query\Auto.cs" />
+    <Compile Include="Payloads\Local\Windows\WMI\Action\ExecuteProcess.cs" />
     <Compile Include="Payloads\Multi\Windows\x86\PayloadX86WindowsMessageBox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -94,10 +100,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Auxiliary\Multi\" />
     <Folder Include="Auxiliary\Remote\" />
     <Folder Include="Payloads\Remote\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -6,7 +6,7 @@ using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Requirements.Payloads;
 
-namespace Auxiliary.Multi.Windows
+namespace Auxiliary.Local.Windows
 {
     public class WMIManager : Module
     {

@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 
-namespace Payloads.Multi.Fuzzing
+namespace Payloads.Local.Fuzzing
 {
     public class TcpSocketFuzzer : Payload, StreamFuzzer.IFuzzerPayload
     {
