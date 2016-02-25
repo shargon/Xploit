@@ -20,8 +20,8 @@ namespace Auxiliary.Local.Server
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.URL, "https://es.wikipedia.org/wiki/Domain_Name_System") ,
                 };
             }
@@ -29,18 +29,16 @@ namespace Auxiliary.Local.Server
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Address for binding")]
+        [ConfigurableProperty(Description = "Address for binding")]
         public IPAddress LocalAddress { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Directory for creating TcpStream files")]
+        [ConfigurableProperty(Description = "Directory for creating TcpStream files")]
         public DirectoryInfo DumpFolder { get; set; }
 
-        [ConfigurableProperty(Required = true, Description = "Replicate answer from default DnsServers")]
+        [ConfigurableProperty(Description = "Replicate answer from default DnsServers")]
         public bool ReplicateAnswer { get; set; }
-
-        [ConfigurableProperty(Required = true, Description = "Replicate answer from default DnsServers (when log)")]
+        [ConfigurableProperty(Description = "Replicate answer from default DnsServers (when log)")]
         public bool LogReplicate { get; set; }
-
-        [ConfigurableProperty(Required = true, Description = "Query for Log (*.midomain.com) this query was respond with the client IP")]
+        [ConfigurableProperty(Description = "Query for Log (*.midomain.com) this query was respond with the client IP")]
         public string LogPattern { get; set; }
         #endregion
 
@@ -51,6 +49,7 @@ namespace Auxiliary.Local.Server
             LogPattern = "*";
         }
 
+        [NonJobable()]
         public override bool Run()
         {
             if (!DumpFolder.Exists) return false;

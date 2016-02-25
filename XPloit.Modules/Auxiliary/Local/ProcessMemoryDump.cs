@@ -18,24 +18,25 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Process ID")]
+        [ConfigurableProperty(Description = "Process ID")]
         public int? PID { get; set; }
-        [ConfigurableProperty(Required = true, Description = "File where create the memory dump")]
+        [ConfigurableProperty(Description = "File where create the memory dump")]
         public FileInfo FileDump { get; set; }
-
-        [ConfigurableProperty(Description = "Search a String in dump")]
-        public string SearchString { get; set; }
-        [ConfigurableProperty(Description = "Search mode for string comparison")]
-        public StringComparison SearchMode { get; set; }
         [ConfigurableProperty(Description = "Make this iterations")]
         public int Iterations { get; set; }
         [ConfigurableProperty(Description = "Sleep between iterations")]
         public TimeSpan IterationSleep { get; set; }
+        [ConfigurableProperty(Description = "Search mode for string comparison")]
+        public StringComparison SearchMode { get; set; }
 
-        [ConfigurableProperty(Description = "Output data Length")]
+        #region Optional
+        [ConfigurableProperty(Optional = true, Description = "Search a String in dump")]
+        public string SearchString { get; set; }
+        [ConfigurableProperty(Optional = true, Description = "Output data Length")]
         public int OutputDataLength { get; set; }
-        [ConfigurableProperty(Description = "Output data Seek before search match")]
+        [ConfigurableProperty(Optional = true, Description = "Output data Seek before search match")]
         public int OutputDataBefore { get; set; }
+        #endregion
         #endregion
 
         public ProcessMemoryDump()
@@ -59,7 +60,6 @@ namespace Auxiliary.Local
             return ECheck.Ok;
         }
 
-        [IsJobable]
         public override bool Run()
         {
             WriteInfo("Search process ...");

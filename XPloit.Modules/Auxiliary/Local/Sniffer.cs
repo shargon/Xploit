@@ -21,8 +21,8 @@ namespace Auxiliary.Local
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.INFO, "For outward, requiere open Firewall for promiscuous mode") ,
                 };
             }
@@ -30,16 +30,17 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Sniff this port")]
+        [ConfigurableProperty(Description = "Sniff this port")]
         public ushort LocalPort { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Sniff only the Tor Request")]
+        [ConfigurableProperty(Description = "Sniff only the Tor Request")]
         public bool OnlyTorRequest { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Address for binding")]
+        [ConfigurableProperty(Description = "Address for binding")]
         public IPAddress LocalAddress { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Directory for creating TcpStream files")]
+        [ConfigurableProperty(Description = "Directory for creating TcpStream files")]
         public DirectoryInfo DumpFolder { get; set; }
         #endregion
 
+        [NonJobable()]
         public override bool Run()
         {
             if (!SystemHelper.IsAdministrator())

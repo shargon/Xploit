@@ -27,7 +27,7 @@ namespace Payloads.Local.Windows.WMI.Query
         }
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Query the List (Win32_Process,Win32_Product)")]
+        [ConfigurableProperty(Description = "Query the List (Win32_Process,Win32_Product)")]
         public EList List { get; set; }
         #endregion
 

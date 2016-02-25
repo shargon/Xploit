@@ -39,17 +39,17 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Connection String")]
+        [ConfigurableProperty(Description = "Connection String")]
         public string ConnectionString { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Sql query")]
+        [ConfigurableProperty(Description = "Sql query")]
         public string Query { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Server type")]
+        [ConfigurableProperty(Description = "Server type")]
         public EType ServerType { get; set; }
 
         // Format
-        [ConfigurableProperty(Description = "Out File for Query")]
+        [ConfigurableProperty(Optional = true, Description = "Out File for Query")]
         public FileInfo QueryOutFile { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Out File format for querys")]
+        [ConfigurableProperty(Description = "Out File format for querys")]
         public EFormat QueryOutFormat { get; set; }
         #endregion
 

@@ -28,8 +28,8 @@ namespace Auxiliary.Local.Exfiltration
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.URL, "https://es.wikipedia.org/wiki/Domain_Name_System") ,
                 };
             }
@@ -52,18 +52,19 @@ namespace Auxiliary.Local.Exfiltration
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Description = "Address of dns server (NULL for use default)")]
-        public IPAddress DnsServer { get; set; }
-        [ConfigurableProperty(Required = true, Description = "File for exfiltrate")]
+        [ConfigurableProperty(Description = "File for exfiltrate")]
         [FileRequireExists]
         public FileInfo File { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Domain name for exfiltration")]
+        [ConfigurableProperty(Description = "Domain name for exfiltration")]
         public string DomainName { get; set; }
         [ConfigurableProperty(Description = "Sleep between calls (ms)")]
         public int Sleep { get; set; }
         [ConfigurableProperty(Description = "Send packet order")]
         public bool SendPacketOrder { get; set; }
 
+        #region Optional
+        [ConfigurableProperty(Optional = true, Description = "Address of dns server (NULL for use default)")]
+        public IPAddress DnsServer { get; set; }
         [ConfigurableProperty(Description = "IV for AES encryption")]
         public string AesIV { get; set; }
         [ConfigurableProperty(Description = "Password for AES encryption")]
@@ -74,6 +75,7 @@ namespace Auxiliary.Local.Exfiltration
         public AESHelper.EKeyLength AesKeyLength { get; set; }
         [ConfigurableProperty(Description = "RGBSalt for AES encryption")]
         public string AesRGBSalt { get; set; }
+        #endregion
         #endregion
 
         public DnsExfiltrate()

@@ -16,11 +16,11 @@ namespace Payloads.Local.Fuzzing
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "End point connection")]
+        [ConfigurableProperty(Description = "End point connection")]
         public IPEndPoint EndPoint { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Timeout for write")]
+        [ConfigurableProperty(Description = "Timeout for write")]
         public TimeSpan SendTimeout { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Timeout for read")]
+        [ConfigurableProperty(Description = "Timeout for read")]
         public TimeSpan ReceiveTimeout { get; set; }
         #endregion
 

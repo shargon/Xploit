@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using XPloit.Core.Dns.DnsRecord;
 using XPloit.Core.Dns.TSig;
+using XPloit.Core.Interfaces;
 using XPloit.Core.Sockets;
 
 namespace XPloit.Core.Dns
@@ -13,7 +14,7 @@ namespace XPloit.Core.Dns
     /// <summary>
     ///   Provides a base dns server interface
     /// </summary>
-    public class DnsServer : Job.IJobable
+    public class DnsServer : IJobable
     {
         private class MyState
         {

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using XPloit.Core.Interfaces;
 using XPloit.Core.Sockets.Proxy;
 
 namespace XPloit.Core.Sockets
 {
-    public class TcpForwarder : Job.IJobable
+    public class TcpForwarder : IJobable
     {
         class State : IDisposable
         {

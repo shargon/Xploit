@@ -82,11 +82,11 @@ namespace Auxiliary.Local.Fuzzing
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "From Length")]
+        [ConfigurableProperty(Description = "From Length")]
         public int From { get; set; }
-        [ConfigurableProperty(Required = true, Description = "To Length")]
+        [ConfigurableProperty(Description = "To Length")]
         public int To { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Step")]
+        [ConfigurableProperty(Description = "Step")]
         public int Step { get; set; }
         [FileRequireExists()]
         /*
@@ -100,9 +100,9 @@ namespace Auxiliary.Local.Fuzzing
               ReadLine();
             }
         */
-        [ConfigurableProperty(Required = true, Description = "Script for replay")]
+        [ConfigurableProperty(Description = "Script for replay")]
         public FileInfo Script { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Encoding ussed")]
+        [ConfigurableProperty(Description = "Encoding ussed")]
         public Encoding Encoding { get; set; }
         #endregion
 
@@ -114,7 +114,6 @@ namespace Auxiliary.Local.Fuzzing
             Encoding = Encoding.ASCII;
         }
 
-        [IsJobable]
         public override bool Run()
         {
             IFuzzerPayload payload = (IFuzzerPayload)Payload;

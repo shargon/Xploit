@@ -25,7 +25,7 @@ namespace Payloads.Local.BruteForce
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Drive for the crypted file (E: or /dev/XXXX )")]
+        [ConfigurableProperty(Description = "Drive for the crypted file (E: or /dev/XXXX )")]
         public string Drive { get; set; }
         #endregion
 

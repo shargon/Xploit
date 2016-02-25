@@ -26,14 +26,14 @@ namespace Payloads.Local.BruteForce.NFC
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Key for type for login")]
+        [ConfigurableProperty(Description = "Key for type for login")]
         public ConfigMifareRead.EKeyType KeyType { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Set reader index")]
+        [ConfigurableProperty(Description = "Set reader index")]
         public byte Reader { get; set; }
 
-        [ConfigurableProperty(Required = true, Description = "Sector for attack")]
+        [ConfigurableProperty(Description = "Sector for attack")]
         public byte AttackInSectorNum { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Block for attack")]
+        [ConfigurableProperty(Description = "Block for attack")]
         public ConfigMifareReadSector.EBlockRange AttackInBlock { get; set; }
         #endregion
 

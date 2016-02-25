@@ -18,7 +18,7 @@ namespace Encoders.String
         {
             if (payload == null) return null;
 
-            return Encoding.Default.GetBytes(Convert.ToBase64String(payload.GetValue(target)));
+            return Encoding.ASCII.GetBytes(Convert.ToBase64String(payload.GetValue(target)));
         }
     }
 }

@@ -4,17 +4,23 @@ namespace XPloit.Core.Attributes
 {
     public class ConfigurableProperty : Attribute
     {
+        bool _Optional;
+
         /// <summary>
         /// Contructor
         /// </summary>
         public ConfigurableProperty()
         {
-            Required = false;
+            _Optional = false;
         }
         /// <summary>
         /// Required
         /// </summary>
-        public bool Required { get; set; }
+        public bool Optional
+        {
+            get { return _Optional; }
+            set { _Optional = value; }
+        }
         /// <summary>
         /// Description
         /// </summary>

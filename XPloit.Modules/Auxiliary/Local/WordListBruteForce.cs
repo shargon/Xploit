@@ -28,16 +28,16 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Number of threads")]
+        [ConfigurableProperty(Description = "Number of threads")]
         public int Threads { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Read lines number per block")]
+        [ConfigurableProperty(Description = "Read lines number per block")]
         public int ReadBlock { get; set; }
         [FileRequireExists]
-        [ConfigurableProperty(Required = true, Description = "Wordlist file")]
+        [ConfigurableProperty(Description = "Wordlist file")]
         public FileInfo WordListFile { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Line in the WordListFile for start")]
+        [ConfigurableProperty(Description = "Line in the WordListFile for start")]
         public int StartAtLine { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Save the last line checked")]
+        [ConfigurableProperty(Description = "Save the last line checked")]
         public bool SaveState { get; set; }
         #endregion
 
@@ -49,7 +49,6 @@ namespace Auxiliary.Local
             SaveState = true;
         }
 
-        [IsJobable]
         public override bool Run()
         {
             ICheckPassword check = (ICheckPassword)this.Payload;
@@ -160,7 +159,7 @@ namespace Auxiliary.Local
                     stream.Close();
                     stream.Dispose();
                 }
-                if (tempFile!= null)
+                if (tempFile != null)
                 {
                     File.Delete(tempFile);
                 }

@@ -15,8 +15,8 @@ namespace Auxiliary.Local
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.URL, "https://msdn.microsoft.com/es-es/library/system.diagnostics.processstartinfo(v=vs.110).aspx") ,
                     new Reference(EReferenceType.URL,"http://referencesource.microsoft.com/#System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs")
                 };
@@ -25,7 +25,7 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Process ID")]
+        [ConfigurableProperty(Description = "Process ID")]
         public int? PID { get; set; }
         #endregion
 

@@ -21,8 +21,8 @@ namespace Auxiliary.Local.Steganography
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.URL, "https://en.wikipedia.org/wiki/Steganography") ,
                 };
             }
@@ -32,21 +32,24 @@ namespace Auxiliary.Local.Steganography
         #region Properties
         [ConfigurableProperty(Description = "Mode")]
         public EMode Mode { get; set; }
-        [ConfigurableProperty(Required = true, Description = "File for read")]
+        [ConfigurableProperty(Description = "File for read")]
         public FileInfo LocalFileWrite { get; set; }
         [FileRequireExists]
-        [ConfigurableProperty(Required = true, Description = "File for write")]
+        [ConfigurableProperty(Description = "File for write")]
         public FileInfo LocalFileRead { get; set; }
-        [ConfigurableProperty(Description = "IV for AES encryption")]
+
+        #region Optional
+        [ConfigurableProperty(Optional = true, Description = "IV for AES encryption")]
         public string AesIV { get; set; }
-        [ConfigurableProperty(Description = "Password for AES encryption")]
+        [ConfigurableProperty(Optional = true, Description = "Password for AES encryption")]
         public string AesPassword { get; set; }
-        [ConfigurableProperty(Description = "Iterations for AES encryption")]
+        [ConfigurableProperty(Optional = true, Description = "Iterations for AES encryption")]
         public int AesIterations { get; set; }
-        [ConfigurableProperty(Description = "KeyLength for AES encryption")]
+        [ConfigurableProperty(Optional = true, Description = "KeyLength for AES encryption")]
         public AESHelper.EKeyLength AesKeyLength { get; set; }
-        [ConfigurableProperty(Description = "RGBSalt for AES encryption")]
+        [ConfigurableProperty(Optional = true, Description = "RGBSalt for AES encryption")]
         public string AesRGBSalt { get; set; }
+        #endregion
         #endregion
 
         public SteganographyImage()

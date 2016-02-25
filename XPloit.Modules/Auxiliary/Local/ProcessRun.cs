@@ -17,8 +17,8 @@ namespace Auxiliary.Local
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.URL, "https://msdn.microsoft.com/es-es/library/system.diagnostics.processstartinfo(v=vs.110).aspx") ,
                     new Reference(EReferenceType.URL,"http://referencesource.microsoft.com/#System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs")
                 };
@@ -27,26 +27,26 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Description = "Domain")]
+        [ConfigurableProperty(Optional = true, Description = "Domain")]
         public string Domain { get; set; }
-        [ConfigurableProperty(Description = "Password for the User")]
+        [ConfigurableProperty(Optional = true, Description = "Password for the User")]
         public string Password { get; set; }
-        [ConfigurableProperty(Description = "Username")]
+        [ConfigurableProperty(Optional = true, Description = "Username")]
         public string UserName { get; set; }
 
-        [ConfigurableProperty(Required = true, Description = "Path")]
+        [ConfigurableProperty(Description = "Path")]
         public string FileName { get; set; }
-        [ConfigurableProperty(Description = "Arguments for the execution")]
+        [ConfigurableProperty(Optional = true, Description = "Arguments for the execution")]
         public string Arguments { get; set; }
-        [ConfigurableProperty(Description = "Create Window?")]
+        [ConfigurableProperty(Optional = true, Description = "Create Window?")]
         public bool CreateWindow { get; set; }
-        [ConfigurableProperty(Description = "Use Shell Execute?")]
+        [ConfigurableProperty(Optional = true, Description = "Use Shell Execute?")]
         public bool UseShellExecute { get; set; }
-        [ConfigurableProperty(Description = "Windows verb")]
+        [ConfigurableProperty(Optional = true, Description = "Windows verb")]
         public string Verb { get; set; }
-        [ConfigurableProperty(Description = "Return output")]
+        [ConfigurableProperty(Optional = true, Description = "Return output")]
         public bool ReturnOutput { get; set; }
-        [ConfigurableProperty(Description = "Process Window Style")]
+        [ConfigurableProperty(Optional = true, Description = "Process Window Style")]
         public ProcessWindowStyle ProcessWindowStyle { get; set; }
         #endregion
 

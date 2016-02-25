@@ -15,7 +15,7 @@ namespace Payloads.Local.Windows.WMI.Query
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Query for WMI")]
+        [ConfigurableProperty(Description = "Query for WMI")]
         public string Sql { get; set; }
         #endregion
 

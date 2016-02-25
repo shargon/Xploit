@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -19,7 +20,7 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Remote ip for check")]
+        [ConfigurableProperty(Description = "Remote ip for check")]
         public IPAddress RemoteIp { get; set; }
         #endregion
 
@@ -35,7 +36,7 @@ namespace Auxiliary.Local
             bool res = TorHelper.IsTorExitNode(RemoteIp);
             WriteInfo("Check tor exit node '" + RemoteIp.ToString() + "' results", res ? "EXIT-NODE DETECTED!" : "NOT LISTED", res ? ConsoleColor.Red : ConsoleColor.Green);
 
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
 
             return res ? ECheck.Ok : ECheck.Error;
         }

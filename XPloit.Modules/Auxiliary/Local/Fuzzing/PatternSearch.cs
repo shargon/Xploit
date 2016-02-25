@@ -18,11 +18,11 @@ namespace Auxiliary.Local.Fuzzing
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Length of pattern")]
+        [ConfigurableProperty(Description = "Length of pattern")]
         public int Length { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Start to search in (default 0)")]
+        [ConfigurableProperty(Description = "Start to search in (default 0)")]
         public int Start { get; set; }
-        [ConfigurableProperty(Required = true, Description = "String to find (ex. Aa0A)")]
+        [ConfigurableProperty(Description = "String to find (ex. Aa0A)")]
         public string Find { get; set; }
         #endregion
 

@@ -17,7 +17,7 @@ namespace Auxiliary.Local.Fuzzing
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Length of pattern")]
+        [ConfigurableProperty(Description = "Length of pattern")]
         public int Length { get; set; }
         #endregion
 

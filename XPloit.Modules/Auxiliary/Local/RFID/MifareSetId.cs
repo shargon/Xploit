@@ -38,11 +38,11 @@ namespace Auxiliary.Local.NFC
 
         #region Properties
         [FileRequireExists()]
-        [ConfigurableProperty(Required = true, Description = "Id for set (Require valid card)")]
+        [ConfigurableProperty(Description = "Id for set (Require valid card)")]
         public byte[] Id { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Password for Write Sector")]
+        [ConfigurableProperty(Description = "Password for Write Sector")]
         public byte[] Password { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Key for type for login")]
+        [ConfigurableProperty(Description = "Key for type for login")]
         public ConfigMifareRead.EKeyType KeyType { get; set; }
         #endregion
 

@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\FileRequireExists.cs" />
-    <Compile Include="Attributes\IsJobable.cs" />
+    <Compile Include="Attributes\NonJobable.cs" />
     <Compile Include="Attributes\IntrusiveCheck.cs" />
     <Compile Include="Attributes\SerializableBSONReference.cs" />
     <Compile Include="Attributes\ConfigurableProperty.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="Command\CommandTableRow.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\PatternHelper.cs" />
+    <Compile Include="Interfaces\IJobable.cs" />
     <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />

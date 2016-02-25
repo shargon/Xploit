@@ -19,8 +19,8 @@ namespace Auxiliary.Local.Exfiltration
         {
             get
             {
-                return new Reference[] 
-                { 
+                return new Reference[]
+                {
                     new Reference(EReferenceType.URL, "https://es.wikipedia.org/wiki/Domain_Name_System") ,
                 };
             }
@@ -29,19 +29,19 @@ namespace Auxiliary.Local.Exfiltration
 
         #region Properties
         [FileRequireExists]
-        [ConfigurableProperty(Required = true, Description = "File for parse")]
+        [ConfigurableProperty(Description = "File for parse")]
         public FileInfo File { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Folder where write the files")]
+        [ConfigurableProperty(Description = "Folder where write the files")]
         public DirectoryInfo OutFolder { get; set; }
 
-        [ConfigurableProperty(Required = true, Description = "Length of File Id (2 for 1 byte in Hex)")]
+        [ConfigurableProperty(Description = "Length of File Id (2 for 1 byte in Hex)")]
         public int PacketFileIdLength { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Length of Packet Num (8 for 4bytes in Hex)")]
+        [ConfigurableProperty(Description = "Length of Packet Num (8 for 4bytes in Hex)")]
         public int PacketNumLength { get; set; }
-
-        [ConfigurableProperty(Required = true, Description = "Regex for Data")]
+        [ConfigurableProperty(Description = "Regex for Data")]
         public string RegexData { get; set; }
 
+        #region Optional
         [ConfigurableProperty(Description = "IV for AES encryption")]
         public string AesIV { get; set; }
         [ConfigurableProperty(Description = "Password for AES encryption")]
@@ -52,6 +52,7 @@ namespace Auxiliary.Local.Exfiltration
         public AESHelper.EKeyLength AesKeyLength { get; set; }
         [ConfigurableProperty(Description = "RGBSalt for AES encryption")]
         public string AesRGBSalt { get; set; }
+        #endregion
         #endregion
 
         public DnsExfiltrateParser()

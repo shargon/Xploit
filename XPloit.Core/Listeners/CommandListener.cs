@@ -901,7 +901,7 @@ namespace XPloit.Core.Listeners
                                     {
                                         val = "NULL";
                                         CommandTableRow row = tb.AddRow(pi.Name, val.ToString(), c.Description);
-                                        if (c.Required) row[1].ForeColor = ConsoleColor.Red;
+                                        if (!c.Optional) row[1].ForeColor = ConsoleColor.Red;
                                         else
                                         {
                                             if (x == 0 || x == 3)

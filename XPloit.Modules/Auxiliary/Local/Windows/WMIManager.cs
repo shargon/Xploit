@@ -36,14 +36,17 @@ namespace Auxiliary.Local.Windows
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "The server and namespace for the ManagementScope")]
+        [ConfigurableProperty(Description = "The server and namespace for the ManagementScope")]
         public string WMIPath { get; set; }
-        [ConfigurableProperty(Description = "Sets the user name to be used for the connection operation")]
-        public string UserName { get; set; }
-        [ConfigurableProperty(Description = "Sets the password for the specified user")]
-        public string Password { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Describes the impersonation level to be used to connect to WMI")]
+        [ConfigurableProperty(Description = "Describes the impersonation level to be used to connect to WMI")]
         public ImpersonationLevel ImpersonationLevel { get; set; }
+
+        #region Optional
+        [ConfigurableProperty(Optional = true, Description = "Sets the user name to be used for the connection operation")]
+        public string UserName { get; set; }
+        [ConfigurableProperty(Optional = true, Description = "Sets the password for the specified user")]
+        public string Password { get; set; }
+        #endregion
         #endregion
 
         public WMIManager()

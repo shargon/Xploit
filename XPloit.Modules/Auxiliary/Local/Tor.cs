@@ -28,9 +28,9 @@ namespace Auxiliary.Local
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Start socks proxy in this Port")]
+        [ConfigurableProperty(Description = "Start socks proxy in this Port")]
         public ushort SocksPort { get; set; }
-        [ConfigurableProperty(Description = "Expose this local ports to Tor netowork")]
+        [ConfigurableProperty(Optional = true, Description = "Expose this local ports to Tor netowork")]
         public uint[] HiddenServicePorts { get; set; }
         #endregion
 
@@ -54,6 +54,7 @@ namespace Auxiliary.Local
             return ECheck.Ok;
         }
 
+        [NonJobable()]
         public override bool Run()
         {
             Process[] procs = Process.GetProcessesByName("tor");
@@ -228,7 +229,7 @@ namespace Auxiliary.Local
                     }
                 }
 
-                Job.Create(this, pr);
+                CreateJob(pr);
                 return true;
             }
 

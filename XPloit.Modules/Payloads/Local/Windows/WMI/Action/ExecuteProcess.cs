@@ -22,7 +22,7 @@ namespace Payloads.Local.Windows.WMI.Action
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Command line parameter")]
+        [ConfigurableProperty(Description = "Command line parameter")]
         public string CommandLine { get; set; }
 
         public bool Run(ManagementScope connection)

@@ -36,12 +36,12 @@ namespace XPloit.Core
         /// <summary>
         /// Target
         /// </summary>
-        [ConfigurableProperty(Required = true, Description = "Especify the Target")]
+        [ConfigurableProperty(Description = "Especify the Target")]
         public Target Target { get; set; }
         /// <summary>
         /// Payload
         /// </summary>
-        [ConfigurableProperty(Required = true, Description = "Especify the Payload")]
+        [ConfigurableProperty(Description = "Especify the Payload")]
         public Payload Payload { get; set; }
         /// <summary>
         /// Payload Requirements

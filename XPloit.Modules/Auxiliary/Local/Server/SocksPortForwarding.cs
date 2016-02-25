@@ -28,20 +28,22 @@ namespace Auxiliary.Local.Server
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "Local port for listening")]
+        [ConfigurableProperty(Description = "Local port for listening")]
         public ushort LocalPort { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Connect to")]
+        [ConfigurableProperty(Description = "Connect to")]
         public IPEndPoint RemoteEndPoint { get; set; }
 
-        [ConfigurableProperty(Description = "Proxy")]
+        #region Optional
+        [ConfigurableProperty(Optional = true, Description = "Proxy")]
         public IPEndPoint ProxyEndPoint { get; set; }
-        [ConfigurableProperty(Description = "Proxy user")]
+        [ConfigurableProperty(Optional = true, Description = "Proxy user")]
         public string ProxyUser { get; set; }
-        [ConfigurableProperty(Description = "Proxy Password")]
+        [ConfigurableProperty(Optional = true, Description = "Proxy Password")]
         public string ProxyPassword { get; set; }
         [FileRequireExists]
-        [ConfigurableProperty(Description = "Filter file OnSend/OnReceive(ref byte[]data, ref int index, ref int length)")]
+        [ConfigurableProperty(Optional = true, Description = "Filter file OnSend/OnReceive(ref byte[]data, ref int index, ref int length)")]
         public FileInfo FilterFile { get; set; }
+        #endregion
         #endregion
 
         public SocksPortForwarding()
@@ -79,6 +81,7 @@ namespace Auxiliary.Local.Server
             return ECheck.Error;
         }
 
+        [NonJobable()]
         public override bool Run()
         {
             byte version = Convert.ToByte(Target["Version"]);

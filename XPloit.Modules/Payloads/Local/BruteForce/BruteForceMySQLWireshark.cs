@@ -21,10 +21,10 @@ namespace Payloads.Local.BruteForce
         {
             get
             {
-                return new Reference[] 
+                return new Reference[]
                 {
                     new Reference(EReferenceType.URL, "https://github.com/twitter/mysql/blob/master/sql/password.c"),
-                    new Reference(EReferenceType.TEXT, 
+                    new Reference(EReferenceType.TEXT,
 @"The new authentication is performed in following manner:
   SERVER:  public_seed=create_random_string()
            send(public_seed)
@@ -48,7 +48,7 @@ namespace Payloads.Local.BruteForce
 
         #region Properties
         [FileRequireExists]
-        [ConfigurableProperty(Required = true, Description = "WireShark TCPStream file")]
+        [ConfigurableProperty(Description = "WireShark TCPStream file")]
         public FileInfo TCPStreamFile { get; set; }
         #endregion
 

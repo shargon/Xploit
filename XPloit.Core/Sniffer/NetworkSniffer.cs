@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using XPloit.Core.Interfaces;
 using XPloit.Core.Sniffer.Headers;
 using XPloit.Core.Sniffer.Interfaces;
 using XPloit.Core.Sniffer.Streams;
 
 namespace XPloit.Core.Sniffer
 {
-    public class NetworkSniffer : Job.IJobable
+    public class NetworkSniffer : IJobable
     {
         const ushort BufferLength = 32 * 1024;
         readonly Socket _socket;

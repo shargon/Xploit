@@ -100,14 +100,14 @@ It means:
         #endregion
 
         #region Properties
-        [ConfigurableProperty(Required = true, Description = "File where is write the word list")]
+        [ConfigurableProperty(Description = "File where is write the word list")]
         public FileInfo FileDest { get; set; }
         [FileRequireExists]
-        [ConfigurableProperty(Description = "File where its store the Sets")]
+        [ConfigurableProperty(Optional = true, Description = "File where its store the Sets")]
         public FileInfo ConfigFile { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Picture to use, sample: [C1][C2][C3][0-F][a-Z]")]
+        [ConfigurableProperty(Description = "Picture to use, sample: [C1][C2][C3][0-F][a-Z]")]
         public string ConfigPicture { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Bytes for split the file")]
+        [ConfigurableProperty(Description = "Bytes for split the file")]
         public long SplitInBytes { get; set; }
         #endregion
 
@@ -132,7 +132,6 @@ It means:
             return file2;
         }
 
-        [IsJobable]
         public override bool Run()
         {
             BruteForce b = new BruteForce();

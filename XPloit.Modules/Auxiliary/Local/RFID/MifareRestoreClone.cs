@@ -41,12 +41,15 @@ namespace Auxiliary.Local.NFC
 
         #region Properties
         [FileRequireExists()]
-        [ConfigurableProperty(Required = true, Description = "File for restore content")]
+        [ConfigurableProperty(Description = "File for restore content")]
         public FileInfo File { get; set; }
-        [ConfigurableProperty(Required = true, Description = "Key for type for login")]
+        [ConfigurableProperty(Description = "Key for type for login")]
         public ConfigMifareRead.EKeyType KeyType { get; set; }
-        [ConfigurableProperty(Description = "Only this sectors")]
+
+        #region Optional
+        [ConfigurableProperty(Optional = true, Description = "Only this sectors")]
         public List<int> OnlySectors { get; set; }
+        #endregion
         #endregion
 
         public override ECheck Check()

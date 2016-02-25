@@ -28,7 +28,7 @@ namespace XPloit.Core.Interfaces
         /// </summary>
         /// <param name="job">Job</param>
         /// <returns>Return the job</returns>
-        public Job CreateJob(Job.IJobable job)
+        public Job CreateJob(IJobable job)
         {
             return Job.Create(this, job);
         }
@@ -95,6 +95,7 @@ namespace XPloit.Core.Interfaces
                     try
                     {
                         // Extract author from company of assembly
+                        // Todo: Cache this
                         FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(this.GetType()).Location);
                         _InternalAuthor = versionInfo.CompanyName;
                     }
@@ -244,7 +245,7 @@ namespace XPloit.Core.Interfaces
 
                 if (val == null)
                 {
-                    if (!c.Required) continue;
+                    if (c.Optional) continue;
 
                     error = Lang.Get("Require_Set_Property", pi.Name);
                     return false;
