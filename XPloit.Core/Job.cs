@@ -38,7 +38,7 @@ namespace XPloit.Core
         /// </summary>
         /// <param name="cmd">Command</param>
         /// <param name="obj">Object for dispose</param>
-        internal static Job Create(IModule module, IJobable obj)
+        public static Job Create(IModule module, IJobable obj)
         {
             if (module == null || obj == null) return null;
 
@@ -63,7 +63,7 @@ namespace XPloit.Core
         /// Kill the job
         /// </summary>
         /// <returns></returns>
-        internal bool Kill()
+        public bool Kill()
         {
             if (IsRunning)
             {

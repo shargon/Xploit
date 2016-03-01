@@ -211,7 +211,7 @@ namespace Xploit.Core.Rfid.Mifare
                 }
 
                 byte[] r = CardReader.SendCmd(reader._hCard, new byte[] { 0xFF, 0xD6, 0x00, _BlockNum, (byte)(data.Length) }.Concat(data).ToArray());
-                if (r != null && r.Length != 2)//&& r[0] == 0x90 && r[1] != 0x00)
+                if (r != null && r.Length == 2 && r[0] == 0x90 && r[1] == 0x00)
                     return true;
 
                 return false;
