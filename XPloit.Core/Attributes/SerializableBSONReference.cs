@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Text;
-using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
 
 namespace XPloit.Core.Attributes
@@ -14,7 +13,7 @@ namespace XPloit.Core.Attributes
         /// </summary>
         /// <param name="type">Tipo de clase de referencia</param>
         public SerializableBSONReference(Type type) : base(type) { }
-        public override byte[] Serialize(Encoding codec, EXPloitSocketMsg type, IXPloitSocketMsg msg, byte[] header)
+        public override byte[] Serialize(Encoding codec, byte type, object msg, byte[] header)
         {
             using (MemoryStream ms = new MemoryStream())
             using (BsonWriter writer = new BsonWriter(ms))
@@ -28,11 +27,11 @@ namespace XPloit.Core.Attributes
                 return ms.ToArray();
             }
         }
-        public override IXPloitSocketMsg Deserialize(Type type, Encoding codec, byte[] data, int index, int length)
+        public override T Deserialize<T>(Type type, Encoding codec, byte[] data, int index, int length)
         {
             using (MemoryStream ms = new MemoryStream(data, index, length))
             using (BsonReader read = new BsonReader(ms))
-                return (IXPloitSocketMsg)Serializer.Deserialize(read, type);
+                return (T)Serializer.Deserialize(read, type);
         }
     }
 }

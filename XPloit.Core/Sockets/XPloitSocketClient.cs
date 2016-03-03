@@ -7,6 +7,7 @@ using System.Threading;
 using XPloit.Core.Streams;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
+using XPloit.Core.Sockets.Headers;
 
 namespace XPloit.Core.Sockets
 {
@@ -253,6 +254,22 @@ namespace XPloit.Core.Sockets
             }
         }
         /// <summary>
+        /// Envia el mensaje en respuesta a otro
+        /// </summary>
+        /// <param name="msg">Mensahe</param>
+        /// <param name="inResponseTo">En respuesta a</param>
+        /// <returns></returns>
+        public int SendReply(IXPloitSocketMsg msg, IXPloitSocketMsg inResponseTo)
+        {
+            if (inResponseTo != null)
+            {
+                XPloitMsgHeaderId headerId = inResponseTo.Headers.GetHeader<XPloitMsgHeaderId>();
+                if (headerId != null) msg.Headers.Add(XPloitMsgHeaderReply.CreateNew(headerId.Id));
+            }
+
+            return Send(msg);
+        }
+        /// <summary>
         /// Envia los mensajes al cliente en cuestión
         /// </summary>
         /// <param name="msg">Mensajes a enviar</param>
@@ -281,7 +298,10 @@ namespace XPloit.Core.Sockets
         /// <param name="msg">Mensaje</param>
         public IXPloitSocketMsg SendAndWait(IXPloitSocketMsg msg)
         {
-            Guid wait = msg.Id;
+            XPloitMsgHeaderId headerId = XPloitMsgHeaderId.CreateNew();
+            msg.Headers.Add(headerId);
+
+            Guid wait = headerId.Id;
             if (Send(msg) <= 0) return null;
 
             IXPloitSocketMsg msgRet;
@@ -309,10 +329,15 @@ namespace XPloit.Core.Sockets
                 if (msg == null) return null;
                 _MsgReceived++;
 
-                if (!Guid.Equals(msg.InResponseTo, Guid.Empty))
+                XPloitMsgHeaderReply inResponse = msg.Headers.GetHeader<XPloitMsgHeaderReply>();
+
+                if (inResponse != null)
                 {
-                    _Actions.Add(msg.InResponseTo, msg);
-                    return null;
+                    if (!Guid.Equals(inResponse.InResponseTo, Guid.Empty))
+                    {
+                        _Actions.Add(inResponse.InResponseTo, msg);
+                        return null;
+                    }
                 }
 
                 if (OnMessage != null)
@@ -320,7 +345,7 @@ namespace XPloit.Core.Sockets
 
                 return msg;
             }
-            catch
+            catch(Exception e)
             {
                 Disconnect(EDissconnectReason.Error);
                 return null;
