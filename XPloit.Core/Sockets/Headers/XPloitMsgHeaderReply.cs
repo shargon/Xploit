@@ -18,7 +18,7 @@ namespace XPloit.Core.Sockets.Headers
         /// <summary>
         /// Default constructor
         /// </summary>
-        public XPloitMsgHeaderReply()
+        internal XPloitMsgHeaderReply()
         {
             InResponseTo = Guid.Empty;
         }
@@ -26,14 +26,14 @@ namespace XPloit.Core.Sockets.Headers
         /// Default constructor
         /// </summary>
         /// <param name="inResponseTo">In response to</param>
-        public XPloitMsgHeaderReply(Guid inResponseTo)
+        internal XPloitMsgHeaderReply(Guid inResponseTo)
         {
             InResponseTo = inResponseTo;
         }
         /// <summary>
         /// Create a Reply
         /// </summary>
-        public static XPloitMsgHeaderReply CreateNew(Guid inResponseTo)
+        internal static XPloitMsgHeaderReply CreateNew(Guid inResponseTo)
         {
             return new XPloitMsgHeaderReply(inResponseTo);
         }

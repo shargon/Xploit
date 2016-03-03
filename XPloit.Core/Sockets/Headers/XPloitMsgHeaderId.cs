@@ -18,7 +18,7 @@ namespace XPloit.Core.Sockets.Headers
         /// <summary>
         /// Default constructor
         /// </summary>
-        public XPloitMsgHeaderId()
+        internal XPloitMsgHeaderId()
         {
             Id = Guid.Empty;
         }
@@ -26,14 +26,14 @@ namespace XPloit.Core.Sockets.Headers
         /// Constructor
         /// </summary>
         /// <param name="id">Id</param>
-        public XPloitMsgHeaderId(Guid id)
+        internal XPloitMsgHeaderId(Guid id)
         {
             Id = id;
         }
         /// <summary>
         /// Create a new Id
         /// </summary>
-        public static XPloitMsgHeaderId CreateNew()
+        internal static XPloitMsgHeaderId CreateNew()
         {
             return new XPloitMsgHeaderId(Guid.NewGuid());
         }
