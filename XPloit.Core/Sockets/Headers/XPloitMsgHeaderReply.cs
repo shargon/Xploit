@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Runtime.Serialization;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
@@ -13,6 +14,7 @@ namespace XPloit.Core.Sockets.Headers
         /// Response Id
         /// </summary>
         [DataMember(Name = "r")]
+        [JsonProperty(PropertyName = "r")]
         public Guid InResponseTo { get; set; }
 
         /// <summary>

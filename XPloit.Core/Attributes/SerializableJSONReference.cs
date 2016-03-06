@@ -24,7 +24,7 @@ namespace XPloit.Core.Attributes
 
         public virtual byte[] Serialize(Encoding codec, byte type, object msg, byte[] header)
         {
-            string smsg = JsonHelper.Serialize(msg);
+            string smsg = JsonHelper.Serialize(msg, false, false);
             byte[] data = codec.GetBytes(smsg);
             int l = data.Length;
 
