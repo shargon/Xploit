@@ -9,6 +9,7 @@ using XPloit.Core.Rfid;
 
 namespace Auxiliary.Local.NFC
 {
+    [OnlyFor(Windows = true)]
     public class MifareSetId : Module
     {
         Target[] _Readers = null;
@@ -37,7 +38,7 @@ namespace Auxiliary.Local.NFC
         #endregion
 
         #region Properties
-        [FileRequireExists()]
+        [RequireExists()]
         [ConfigurableProperty(Description = "Id for set (Require valid card)")]
         public byte[] Id { get; set; }
         [ConfigurableProperty(Description = "Password for Write Sector")]

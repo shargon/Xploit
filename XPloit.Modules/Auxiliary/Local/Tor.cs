@@ -14,6 +14,7 @@ using XPloit.Core.Interfaces;
 
 namespace Auxiliary.Local
 {
+    [OnlyFor(Windows = true)]
     public class Tor : Module
     {
         #region Configure

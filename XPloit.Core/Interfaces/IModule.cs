@@ -254,7 +254,7 @@ namespace XPloit.Core.Interfaces
                 {
                     if (pi.PropertyType == fileInfoType)
                     {
-                        FileRequireExists c2 = pi.GetCustomAttribute<FileRequireExists>();
+                        RequireExists c2 = pi.GetCustomAttribute<RequireExists>();
                         if (c2 != null && !c2.IsValid(val))
                         {
                             error = Lang.Get("File_Defined_Not_Exists", pi.Name);

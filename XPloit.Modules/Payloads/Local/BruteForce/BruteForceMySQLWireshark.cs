@@ -47,7 +47,7 @@ namespace Payloads.Local.BruteForce
         #endregion
 
         #region Properties
-        [FileRequireExists]
+        [RequireExists]
         [ConfigurableProperty(Description = "WireShark TCPStream file")]
         public FileInfo TCPStreamFile { get; set; }
         #endregion

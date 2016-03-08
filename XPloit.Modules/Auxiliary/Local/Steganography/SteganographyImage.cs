@@ -34,7 +34,7 @@ namespace Auxiliary.Local.Steganography
         public EMode Mode { get; set; }
         [ConfigurableProperty(Description = "File for read")]
         public FileInfo LocalFileWrite { get; set; }
-        [FileRequireExists]
+        [RequireExists]
         [ConfigurableProperty(Description = "File for write")]
         public FileInfo LocalFileRead { get; set; }
 

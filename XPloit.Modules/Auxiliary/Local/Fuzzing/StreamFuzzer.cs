@@ -88,7 +88,7 @@ namespace Auxiliary.Local.Fuzzing
         public int To { get; set; }
         [ConfigurableProperty(Description = "Step")]
         public int Step { get; set; }
-        [FileRequireExists()]
+        [RequireExists()]
         /*
             // VULNSERVER
             public override void Run(byte[] fuzzData)

@@ -8,6 +8,17 @@ namespace XPloit.Core.Helpers
     public class SystemHelper
     {
         /// <summary>
+        /// Is Mac
+        /// </summary>
+        public static bool IsMac
+        {
+            get
+            {
+                PlatformID p = Environment.OSVersion.Platform;
+                return (p == PlatformID.MacOSX) /*|| (p == 6) || (p == 128)*/;
+            }
+        }
+        /// <summary>
         /// Is Linux
         /// </summary>
         public static bool IsLinux

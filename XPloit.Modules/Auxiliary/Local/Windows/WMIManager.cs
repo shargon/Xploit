@@ -8,6 +8,7 @@ using XPloit.Core.Requirements.Payloads;
 
 namespace Auxiliary.Local.Windows
 {
+    [OnlyFor(Windows = true)]
     public class WMIManager : Module
     {
         public interface IWMIPayload

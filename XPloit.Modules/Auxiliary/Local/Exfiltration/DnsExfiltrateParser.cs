@@ -28,7 +28,7 @@ namespace Auxiliary.Local.Exfiltration
         #endregion
 
         #region Properties
-        [FileRequireExists]
+        [RequireExists]
         [ConfigurableProperty(Description = "File for parse")]
         public FileInfo File { get; set; }
         [ConfigurableProperty(Description = "Folder where write the files")]

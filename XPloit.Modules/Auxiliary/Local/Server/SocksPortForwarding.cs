@@ -40,7 +40,7 @@ namespace Auxiliary.Local.Server
         public string ProxyUser { get; set; }
         [ConfigurableProperty(Optional = true, Description = "Proxy Password")]
         public string ProxyPassword { get; set; }
-        [FileRequireExists]
+        [RequireExists]
         [ConfigurableProperty(Optional = true, Description = "Filter file OnSend/OnReceive(ref byte[]data, ref int index, ref int length)")]
         public FileInfo FilterFile { get; set; }
         #endregion

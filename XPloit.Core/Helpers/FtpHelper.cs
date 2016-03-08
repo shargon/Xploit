@@ -3,12 +3,56 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Helpers
 {
     public class FtpHelper
     {
+        public class Item
+        {
+            public enum ListStyle
+            {
+                Unix,
+                Windows,
+                Unknown
+            }
+
+            public ListStyle Style { get; set; }
+            public bool IsDirectory { get; set; }
+            public string Name { get; set; }
+            public long Length { get; set; }
+
+            public Item(string line)
+            {
+                Style = ListStyle.Unknown;
+
+                Regex fileZilla = new Regex(
+                   @"(?<dir>[-dl])(?<ownerSec>)[-r][-w]-x[-r][-w]-x[-r][-w][-x]s+(?:d)s+(?<owner>w+)s+(?<group>w+)s+(?<size>d+)s+(?<month>w+)s+(?<day>d{1,2})s+(?<year>w+)s+(?<name>.*)$");
+
+                Match match = fileZilla.Match(line);
+                if (match.Success) ParseMatch(match.Groups, ListStyle.Unix);
+                else
+                {
+                    Regex unixStyle = new Regex(@"^(?<dir>[\-ld])(?<permission>([\-r][\-w][\-xs]){3})\s+(?<filecode>\d+)\s+(?<owner>\w+)\s+(?<group>\w+)\s+(?<size>\d+)\s+(?<timestamp>((?<month>\w{3})\s+(?<day>\d{1,2})\s+(?<hour>\d{1,2}):(?<minute>\d{2}))|((?<month>\w{3})\s+(?<day>\d{1,2})\s+(?<year>\d{4})))\s+(?<name>.+)$");
+                    //Regex unixStyle = new Regex(@"^(?<dir>[-dl])(?<ownerSec>[-r][-w][-x])(?<groupSec>[-r][-w][-x])(?<everyoneSec>[-r][-w][-x])s+(?:d)s+(?<owner>w+)s+(?<group>w+)s+(?<size>d+)s+(?<month>w+)s+(?<day>d{1,2})s+(?<hour>d{1,2}):(?<minutes>d{1,2})s+(?<name>.*)$");
+                    match = unixStyle.Match(line);
+                    if (match.Success) ParseMatch(match.Groups, ListStyle.Unix);
+                }
+            }
+            void ParseMatch(GroupCollection matchGroups, ListStyle style)
+            {
+                string dirMatch = (style == ListStyle.Unix ? "d" : "dir");
+
+                Style = style;
+                IsDirectory = matchGroups["dir"].Value.Equals(dirMatch, StringComparison.InvariantCultureIgnoreCase);
+                Name = matchGroups["name"].Value;
+
+                if (!IsDirectory)
+                    Length = long.Parse(matchGroups["size"].Value);
+            }
+        }
         public class Cfg
         {
             /// <summary>
@@ -244,12 +288,11 @@ namespace XPloit.Core.Helpers
         /// <summary>
         /// Get the list of entries in current Directory
         /// </summary>
-        /// <param name="withDetails">True for get the details</param>
-        public List<string> ListDirectory(bool withDetails)
+        public List<string> ListDirectory()
         {
             string s;
 
-            FtpWebRequest ftp = GetRequest(withDetails ? WebRequestMethods.Ftp.ListDirectoryDetails : WebRequestMethods.Ftp.ListDirectory);
+            FtpWebRequest ftp = GetRequest(WebRequestMethods.Ftp.ListDirectory);
             using (FtpWebResponse response = (FtpWebResponse)ftp.GetResponse())
             using (StreamReader sr = new StreamReader(response.GetResponseStream()))
             {
@@ -263,8 +306,41 @@ namespace XPloit.Core.Helpers
             List<string> files = new List<string>();
             foreach (string fl in s.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                if (withDetails) files.Add(fl);
-                else files.Add(Path.GetFileName(fl));
+                if (fl == "." || fl == "..") continue;
+
+                files.Add(Path.GetFileName(fl));
+            }
+
+            return files;
+        }
+        /// <summary>
+        /// Get the list of entries in current Directory
+        /// </summary>
+        public List<Item> ListDirectoryExtended()
+        {
+            string s;
+
+            FtpWebRequest ftp = GetRequest(WebRequestMethods.Ftp.ListDirectoryDetails);
+            using (FtpWebResponse response = (FtpWebResponse)ftp.GetResponse())
+            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+            {
+                s = sr.ReadToEnd();
+                sr.Close();
+                response.Close();
+            }
+
+            ftp.Abort();
+
+            List<Item> files = new List<Item>();
+            foreach (string fl in s.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                Item it = new Item(fl);
+                if (it.Style == Item.ListStyle.Unknown)
+                    continue;
+                if (it.IsDirectory && (it.Name == "." || it.Name == ".."))
+                    continue;
+
+                files.Add(it);
             }
 
             return files;

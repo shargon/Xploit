@@ -102,7 +102,7 @@ It means:
         #region Properties
         [ConfigurableProperty(Description = "File where is write the word list")]
         public FileInfo FileDest { get; set; }
-        [FileRequireExists]
+        [RequireExists]
         [ConfigurableProperty(Optional = true, Description = "File where its store the Sets")]
         public FileInfo ConfigFile { get; set; }
         [ConfigurableProperty(Description = "Picture to use, sample: [C1][C2][C3][0-F][a-Z]")]

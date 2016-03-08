@@ -32,7 +32,7 @@ namespace Auxiliary.Local
         public int Threads { get; set; }
         [ConfigurableProperty(Description = "Read lines number per block")]
         public int ReadBlock { get; set; }
-        [FileRequireExists]
+        [RequireExists]
         [ConfigurableProperty(Description = "Wordlist file")]
         public FileInfo WordListFile { get; set; }
         [ConfigurableProperty(Description = "Line in the WordListFile for start")]

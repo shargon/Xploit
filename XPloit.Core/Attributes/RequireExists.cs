@@ -4,7 +4,7 @@ using System.IO;
 namespace XPloit.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class FileRequireExists : Attribute
+    public class RequireExists : Attribute
     {
         /// <summary>
         /// Return if its valid the property
@@ -16,6 +16,12 @@ namespace XPloit.Core.Attributes
             if (val is FileInfo)
             {
                 FileInfo fi = (FileInfo)val;
+                fi.Refresh();
+                return fi.Exists;
+            }
+            if (val is DirectoryInfo)
+            {
+                DirectoryInfo fi = (DirectoryInfo)val;
                 fi.Refresh();
                 return fi.Exists;
             }

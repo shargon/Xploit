@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
@@ -73,6 +74,14 @@ namespace XPloit.Core.Collections
                     if (_TypeT == type) continue;
                     if (_TypeT.IsAssignableFrom(type))
                     {
+                        OnlyFor onlyFor = type.GetCustomAttribute<OnlyFor>();
+                        if (onlyFor != null)
+                        {
+                            if (SystemHelper.IsLinux && !onlyFor.Linux) continue;
+                            if (SystemHelper.IsWindows && !onlyFor.Windows) continue;
+                            if (SystemHelper.IsMac && !onlyFor.Mac) continue;
+                        }
+
                         T o = (T)Activator.CreateInstance(type);
                         Add(o);
                     }

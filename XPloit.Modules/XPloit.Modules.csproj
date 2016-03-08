@@ -59,6 +59,7 @@
     <Compile Include="Auxiliary\Local\Fuzzing\PatternSearch.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
     <Compile Include="Auxiliary\Local\DatabaseQuery.cs" />
+    <Compile Include="Auxiliary\Local\RSync.cs" />
     <Compile Include="Auxiliary\Local\Tor.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
     <Compile Include="Auxiliary\Local\RFID\MifareSetId.cs" />
@@ -83,6 +84,8 @@
     <Compile Include="Auxiliary\Local\ProcessRun.cs" />
     <Compile Include="Payloads\Local\BruteForce\NFC\BruteForceNFCMifare.cs" />
     <Compile Include="Payloads\Local\Fuzzing\TcpSocketFuzzer.cs" />
+    <Compile Include="Payloads\Local\RSync\Ftp.cs" />
+    <Compile Include="Payloads\Local\RSync\LocalPath.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Manual.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Auto.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Action\ExecuteProcess.cs" />

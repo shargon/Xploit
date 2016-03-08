@@ -53,7 +53,7 @@ namespace Auxiliary.Local.Exfiltration
 
         #region Properties
         [ConfigurableProperty(Description = "File for exfiltrate")]
-        [FileRequireExists]
+        [RequireExists]
         public FileInfo File { get; set; }
         [ConfigurableProperty(Description = "Domain name for exfiltration")]
         public string DomainName { get; set; }

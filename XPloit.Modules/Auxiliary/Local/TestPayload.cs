@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 
 namespace Auxiliary.Local
 {
+    [OnlyFor(Windows = true)]
     public class TestPayload : Module
     {
         #region Configure
@@ -51,7 +53,7 @@ namespace Auxiliary.Local
         public override bool Run()
         {
             Target t = this.Target;
-            
+
             switch (t.Platform)
             {
                 case EPlatform.Windows:

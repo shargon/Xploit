@@ -12,6 +12,7 @@ using XPloit.Core.Rfid;
 
 namespace Auxiliary.Local.NFC
 {
+    [OnlyFor(Windows = true)]
     public class MifareRestoreClone : Module
     {
         Target[] _Readers = null;
@@ -40,7 +41,7 @@ namespace Auxiliary.Local.NFC
         #endregion
 
         #region Properties
-        [FileRequireExists()]
+        [RequireExists()]
         [ConfigurableProperty(Description = "File for restore content")]
         public FileInfo File { get; set; }
         [ConfigurableProperty(Description = "Key for type for login")]
