@@ -56,13 +56,13 @@ namespace Auxiliary.Local.Fuzzing
                 return (byte)ix;
             }
 
-            public void Write(byte[] data) { Write(data, 0, data.Length); }
+            public void Write(byte[] data, bool flush = true) { Write(data, 0, data.Length, flush); }
             public void Write(string input) { Write(_Encoding, input); }
             public void Write(Encoding codec, string input) { Write(codec.GetBytes(input)); }
-            public void Write(byte[] data, int index, int length)
+            public void Write(byte[] data, int index, int length, bool flush = true)
             {
                 _Stream.Write(data, index, length);
-                _Stream.Flush();
+                if (flush) _Stream.Flush();
             }
 
             public void Dispose()
@@ -88,6 +88,10 @@ namespace Auxiliary.Local.Fuzzing
         public int To { get; set; }
         [ConfigurableProperty(Description = "Step")]
         public int Step { get; set; }
+        [ConfigurableProperty(Description = "Create pattern")]
+        public bool CreatePattern { get; set; }
+        [ConfigurableProperty(Description = "Char for send when CreatePattern is false")]
+        public char NotPatternChar { get; set; }
         [RequireExists()]
         /*
             // VULNSERVER
@@ -111,6 +115,8 @@ namespace Auxiliary.Local.Fuzzing
             From = 1;
             To = 5000;
             Step = 1;
+            CreatePattern = true;
+            NotPatternChar = 'A';
             Encoding = Encoding.ASCII;
         }
 
@@ -123,7 +129,8 @@ namespace Auxiliary.Local.Fuzzing
             {
                 includeUsings = new string[]
                 {
-                    "XPloit.Core.Extensions"
+                    "XPloit.Core.Extensions",
+                    "XPloit.Core.Helpers"
                 },
                 IncludeFiles = new string[]
                 {
@@ -144,7 +151,16 @@ namespace Auxiliary.Local.Fuzzing
             {
                 WriteInfo("Checking ", From.ToString(), ConsoleColor.Green);
 
-                byte[] data = PatternHelper.CreateRaw(From);
+                byte[] data;
+
+                if (CreatePattern)
+                    data = PatternHelper.CreateRaw(From);
+                else
+                {
+                    data = new byte[From];
+                    for (int x = data.Length - 1; x >= 0; x--) data[x] = (byte)NotPatternChar;
+                }
+
                 ScriptClass obj = scripts.CreateNewInstance<ScriptClass>();
                 obj.Encoding = Encoding;
 

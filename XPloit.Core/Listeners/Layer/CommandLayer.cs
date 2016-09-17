@@ -423,6 +423,7 @@ namespace XPloit.Core.Listeners.Layer
                                             }
                                     }
 
+                                    if (input == null) break;
                                     // Go to end of line
                                     int mas = input.Length - index;
                                     input = input + toWrite;

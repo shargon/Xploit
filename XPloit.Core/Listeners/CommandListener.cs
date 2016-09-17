@@ -149,7 +149,7 @@ namespace XPloit.Core.Listeners
                                                                 pi[0].Name.ToLowerInvariant().Contains("path")*/;
 
                                                             bool allowFiles = !allowFolders;
-                                                            if (allowFiles) allowFolders = true;
+                                                            //if (!allowFiles) allowFolders = true;
 
                                                             if (Directory.Exists(path))
                                                             {

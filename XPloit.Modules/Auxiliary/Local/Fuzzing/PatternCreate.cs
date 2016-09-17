@@ -21,7 +21,7 @@ namespace Auxiliary.Local.Fuzzing
         public int Length { get; set; }
         #endregion
 
-        public PatternCreate() { Length = 1000; }
+        public PatternCreate() { Length =5000; }
 
         public override bool Run()
         {

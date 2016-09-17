@@ -23,10 +23,11 @@ namespace Auxiliary.Local.Fuzzing
         [ConfigurableProperty(Description = "Start to search in (default 0)")]
         public int Start { get; set; }
         [ConfigurableProperty(Description = "String to find (ex. Aa0A)")]
+        [ConvertHexString()]
         public string Find { get; set; }
         #endregion
 
-        public PatternSearch() { Length = 1000; }
+        public PatternSearch() { Length = 5000; }
 
         public override bool Run()
         {

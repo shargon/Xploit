@@ -49,6 +49,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ConvertHexString.cs" />
     <Compile Include="Attributes\OnlyFor.cs" />
     <Compile Include="Attributes\RequireExists.cs" />
     <Compile Include="Attributes\NonJobable.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\PatternHelper.cs" />
     <Compile Include="Interfaces\IJobable.cs" />
+    <Compile Include="Interfaces\IPreSetVariable.cs" />
     <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />

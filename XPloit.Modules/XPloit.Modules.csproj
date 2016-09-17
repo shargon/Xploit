@@ -59,6 +59,7 @@
     <Compile Include="Auxiliary\Local\Fuzzing\PatternSearch.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
     <Compile Include="Auxiliary\Local\DatabaseQuery.cs" />
+    <Compile Include="Auxiliary\Local\FileToHex.cs" />
     <Compile Include="Auxiliary\Local\RSync.cs" />
     <Compile Include="Auxiliary\Local\Tor.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />

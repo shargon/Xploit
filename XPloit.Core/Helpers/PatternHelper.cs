@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace XPloit.Core.Helpers
 {
@@ -6,6 +7,48 @@ namespace XPloit.Core.Helpers
     {
         public const int MaxPatternUnique = 20280;
 
+        /// <summary>
+        /// Return all bytes ordered por Test bad chars
+        /// </summary>
+        /// <param name="bad">Bad bytes for ommit</param>
+        public static byte[] GetBadBytes(params byte[] bad)
+        {
+            List<byte> ret = new List<byte>();
+            for (ushort x = 0; x <= 255; x++)
+            {
+                bool esta = false;
+
+                foreach (byte b in bad)
+                    if (b == x) { esta = true; break; }
+
+                if (esta) continue;
+                ret.Add((byte)x);
+            }
+
+            return ret.ToArray();
+        }
+        /// <summary>
+        /// Create a patter for exploit development
+        /// </summary>
+        /// <param name="length">Length</param>
+        /// <param name="c">Char</param>
+        public static byte[] CreateRaw(int length, char c)
+        {
+            return CreateRaw(length, (byte)c);
+        }
+        /// <summary>
+        /// Create a patter for exploit development
+        /// </summary>
+        /// <param name="length">Length</param>
+        /// <param name="c">Char</param>
+        public static byte[] CreateRaw(int length, byte c)
+        {
+            if (length <= 0) return new byte[] { };
+
+            byte[] ret = new byte[length];
+            for (int x = ret.Length - 1; x >= 0; x--) ret[x] = c;
+            return ret;
+        }
         /// <summary>
         /// Create a patter for exploit development
         /// </summary>

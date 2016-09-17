@@ -134,8 +134,13 @@ namespace XPloit.Core.Helpers
                 {
                     if (value != null && value is string)
                     {
+                        // PreSet
+                        foreach (IPreSetVariable a in pi[0].GetCustomAttributes<IPreSetVariable>(true))
+                            value = a.PreSetVariable(value.ToString());
+
                         // Convert to String
                         object val = ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType);
+
                         //if (val == null && value != null) return false;
                         pi[0].SetValue(obj, val);
                         return true;
