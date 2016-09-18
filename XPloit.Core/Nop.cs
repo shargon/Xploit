@@ -69,5 +69,18 @@ namespace XPloit.Core
                 return base.ConvertTo(context, culture, value, destinationType);
             }
         }
+        /// <summary>
+        /// Generate nops
+        /// </summary>
+        /// <param name="nopCount">Nop count</param>
+        public byte[] CreateJob(int nopCount)
+        {
+            byte[] nops = new byte[nopCount];
+
+            if (nopCount > 0)
+                Fill(nops, 0, nopCount);
+
+            return nops;
+        }
     }
 }

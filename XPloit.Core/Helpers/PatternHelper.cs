@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace XPloit.Core.Helpers
@@ -7,6 +8,31 @@ namespace XPloit.Core.Helpers
     {
         public const int MaxPatternUnique = 20280;
 
+        /// <summary>
+        /// Generate a random byte pattern
+        /// </summary>
+        /// <param name="length">Size</param>
+        /// <param name="badChars">Bad chars</param>
+        public static byte[] CreateRandom(int length, params byte[] badChars)
+        {
+            byte[] ret = new byte[length];
+
+            bool isgood = false;
+            Random r = new Random();
+            for (int x = ret.Length - 1; x >= 0; x--)
+            {
+                do
+                {
+                    isgood = true;
+                    ret[x] = (byte)r.Next(0, 255);
+
+                    foreach (byte b in badChars)
+                        if (b == ret[x]) { isgood = false; break; }
+                }
+                while (!isgood);
+            }
+            return ret;
+        }
         /// <summary>
         /// Return all bytes ordered por Test bad chars
         /// </summary>

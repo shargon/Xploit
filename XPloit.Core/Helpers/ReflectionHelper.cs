@@ -307,5 +307,21 @@ namespace XPloit.Core.Helpers
 
             return obj;
         }
+        /// <summary>
+        /// Devuelve si tiene algún constructor público y sin parámetros
+        /// </summary>
+        /// <param name="tp">Tipo</param>
+        public static bool HavePublicConstructor(Type tp)
+        {
+            foreach (ConstructorInfo o in tp.GetConstructors())
+            {
+                if (!o.IsPublic) continue;
+                ParameterInfo[] pi = o.GetParameters();
+
+                if (pi != null && pi.Length > 0) continue;
+                return true;
+            }
+            return false;
+        }
     }
 }

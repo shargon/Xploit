@@ -74,6 +74,9 @@ namespace XPloit.Core.Collections
                     if (_TypeT == type) continue;
                     if (_TypeT.IsAssignableFrom(type))
                     {
+                        if (!ReflectionHelper.HavePublicConstructor(type))
+                            continue;
+
                         OnlyFor onlyFor = type.GetCustomAttribute<OnlyFor>();
                         if (onlyFor != null)
                         {

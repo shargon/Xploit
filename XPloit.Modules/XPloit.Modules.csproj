@@ -77,6 +77,8 @@
     <Compile Include="Auxiliary\Local\Windows\WMIManager.cs" />
     <Compile Include="BuildLink.cs" />
     <Compile Include="Encoders\String\Base64Encoder.cs" />
+    <Compile Include="Exploits\Multi\VulnServer.cs" />
+    <Compile Include="Nops\AsmX86\AsmX86Nop.cs" />
     <Compile Include="Nops\Php\PhpNop.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />

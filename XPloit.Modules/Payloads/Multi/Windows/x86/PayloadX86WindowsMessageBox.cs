@@ -3,10 +3,11 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Extensions;
 using XPloit.Core.Helpers;
+using XPloit.Core.Requirements.Payloads;
 
 namespace Payloads.Multi.Windows.x86
 {
-    public class PayloadX86WindowsMessageBox : Payload
+    public class PayloadX86WindowsMessageBox : Payload, BufferOverflowPayloadRequirement.IBufferOverflowPayload
     {
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
@@ -55,8 +56,7 @@ namespace Payloads.Multi.Windows.x86
                 0x24,0x03
                 };
 
-            byte[] exit = AsmHelper.GetExitMethod(ExitFunction, EPlatform.Windows, EArquitecture.x86);
-            return shellcode1.Concat(message).Concat(shellcode3).Concat(exit);
+            return shellcode1.Concat(message).Concat(shellcode3);
         }
     }
 }
