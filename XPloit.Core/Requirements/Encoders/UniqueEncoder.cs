@@ -17,7 +17,7 @@ namespace XPloit.Core.Requirements.Encoders
         /// <param name="types">Types</param>
         public UniqueEncoder(params Type[] types) { _Types = types; }
 
-        public bool IsAllowed(Nop nop)
+        public bool IsAllowed(Encoder nop)
         {
             Type t2 = nop.GetType();
             foreach (Type t in _Types)

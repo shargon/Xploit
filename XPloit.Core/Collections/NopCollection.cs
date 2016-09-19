@@ -23,11 +23,11 @@ namespace XPloit.Core.Collections
             }
         }
 
-        public Nop[] GetPayloadAvailables(INopRequirements req)
+        public Nop[] GetAvailables(INopRequirements req)
         {
             if (req == null) return new Nop[] { };
             List<Nop> ls = new List<Nop>();
-            foreach (Nop p in NopCollection.Current)
+            foreach (Nop p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
                 ls.Add(p);

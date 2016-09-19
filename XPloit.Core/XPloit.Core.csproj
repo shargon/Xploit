@@ -73,6 +73,8 @@
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\PatternHelper.cs" />
     <Compile Include="Interfaces\IJobable.cs" />
+    <Compile Include="Interfaces\INopPhp.cs" />
+    <Compile Include="Interfaces\INopAsm.cs" />
     <Compile Include="Interfaces\IPreSetVariable.cs" />
     <Compile Include="Interfaces\TcpModule.cs" />
     <Compile Include="Listeners\IO\ConsoleIO.cs" />

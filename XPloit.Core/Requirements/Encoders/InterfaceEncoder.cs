@@ -17,7 +17,7 @@ namespace XPloit.Core.Requirements.Encoders
         /// <param name="type">Type</param>
         public InterfaceEncoder(Type type) { _Type = type; }
 
-        public bool IsAllowed(Nop nop)
+        public bool IsAllowed(Encoder nop)
         {
             return _Type.IsAssignableFrom(nop.GetType());
         }

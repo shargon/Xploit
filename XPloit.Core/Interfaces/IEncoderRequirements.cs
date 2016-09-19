@@ -3,10 +3,10 @@
     public interface IEncoderRequirements
     {
         /// <summary>
-        /// Retursn if encoder its allowed
+        /// Return if encoder its allowed
         /// </summary>
         /// <param name="obj">Object</param>
         /// <returns>Return true if its allowed</returns>
-        bool IsAllowed(Nop obj);
+        bool IsAllowed(Encoder obj);
     }
 }

@@ -34,5 +34,9 @@
         /// RFID
         /// </summary>
         RFID = 7,
+        /// <summary>
+        /// HTTP
+        /// </summary>
+        Http = 8,
     }
 }

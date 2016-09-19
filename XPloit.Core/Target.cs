@@ -58,6 +58,15 @@ namespace XPloit.Core
         /// <param name="arq">Arquitecture</param>
         /// <param name="name">Name</param>
         /// <param name="variables">Variables</param>
+        public Target(EPlatform platform, EArquitecture arq, params Variable[] variables)
+            : this(platform, arq, "", variables) { }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="platform">Platform</param>
+        /// <param name="arq">Arquitecture</param>
+        /// <param name="name">Name</param>
+        /// <param name="variables">Variables</param>
         public Target(EPlatform platform, EArquitecture arq, string name, params Variable[] variables)
             : this()
         {

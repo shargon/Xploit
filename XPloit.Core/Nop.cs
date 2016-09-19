@@ -18,7 +18,10 @@ namespace XPloit.Core
         /// References
         /// </summary>
         public virtual Reference[] References { get { return null; } }
-
+        /// <summary>
+        /// Allowed targets
+        /// </summary>
+        public virtual Target[] AllowedTargets { get { return null; }  }
 
         /// <summary>
         /// Fill the nop

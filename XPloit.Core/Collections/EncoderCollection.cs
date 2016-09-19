@@ -1,4 +1,7 @@
-﻿namespace XPloit.Core.Collections
+﻿using System.Collections.Generic;
+using XPloit.Core.Interfaces;
+
+namespace XPloit.Core.Collections
 {
     public class EncoderCollection : IModuleCollection<Encoder>
     {
@@ -18,6 +21,19 @@
                 }
                 return _Current;
             }
+        }
+
+
+        public Encoder[] GetAvailables(IEncoderRequirements req)
+        {
+            if (req == null) return new Encoder[] { };
+            List<Encoder> ls = new List<Encoder>();
+            foreach (Encoder p in Current)
+            {
+                if (!req.IsAllowed(p)) continue;
+                ls.Add(p);
+            }
+            return ls.ToArray();
         }
     }
 }
