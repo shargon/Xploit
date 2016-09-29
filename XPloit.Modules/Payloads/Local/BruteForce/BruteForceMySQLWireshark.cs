@@ -75,7 +75,6 @@ namespace Payloads.Local.BruteForce
             {
                 if ((byte)(finalHash[i] ^ firstHash[i]) != bhash[i])
                     return false;
-                //if ((finalHash[i] ^ firstHash[i]) != ihash[i]) return false;
             }
             return true;
         }
