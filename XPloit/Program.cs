@@ -38,14 +38,14 @@ namespace XPloit
                 Config cfg = ArgumentHelper.Parse<Config>(args);// ("\"Replay=d:\\temp\\console.txt\" \"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
 
                 // Run file
-                if (!string.IsNullOrEmpty(cfg.Replay))
+                if (!string.IsNullOrEmpty(cfg.Play))
                 {
                     try
                     {
                         command.SetForeColor(ConsoleColor.Gray);
-                        command.Write(Lang.Get("Reading_File", cfg.Replay));
+                        command.Write(Lang.Get("Reading_File", cfg.Play));
 
-                        foreach (string line in File.ReadAllLines(cfg.Replay, Encoding.UTF8))
+                        foreach (string line in File.ReadAllLines(cfg.Play, Encoding.UTF8))
                         {
                             string ap = line.Trim();
                             if (string.IsNullOrEmpty(ap) || ap.StartsWith("#") || ap.StartsWith("//")) continue;

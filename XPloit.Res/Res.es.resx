@@ -348,8 +348,8 @@ Reload the current module with the global variables</value>
   <data name="Reloaded_Module" xml:space="preserve">
     <value>Module '%0' reloaded</value>
   </data>
-  <data name="Man_Resource" xml:space="preserve">
-    <value>resource [file]
+  <data name="Man_Play" xml:space="preserve">
+    <value>play [file]
 
 Run the commands stored in a file</value>
   </data>

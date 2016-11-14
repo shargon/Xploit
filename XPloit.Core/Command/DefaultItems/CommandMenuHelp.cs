@@ -92,22 +92,14 @@ namespace XPloit.Core.Command.DefaultItems
             var abbreviations = menu.CommandAbbreviations().OrderBy(it => it.Key);
             foreach (var ab in abbreviations)
             {
-                //if (ab.Value == null)
-                //{
-                //    menu.IO.Write("      ");
-                //}
-                //else
-                //{
-                //    menu.IO.Write(ab.Value.PadRight(3) + " | ");
-                //}
+                CommandTableRow row = tb.AddRow(ab.Value, ab.Key);
+                row[0].Align = CommandTableCol.EAlign.Right;
+                row[0].ForeColor = ConsoleColor.Yellow;
 
-                tb.AddRow(ab.Value, ab.Key)[0].Align = CommandTableCol.EAlign.Right;
-                //menu.IO.WriteLine(ab.Key);
                 entra = true;
             }
 
-            if (entra) menu.IO.WriteLine(tb.Output());
-
+            if (entra) tb.OutputColored(menu.IO);
             if (!inner) menu.IO.WriteLine(Lang.Get("Type_Help"));
         }
     }

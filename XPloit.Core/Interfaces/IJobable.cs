@@ -10,6 +10,8 @@ namespace XPloit.Core.Interfaces
         Thread _Thread;
         bool _IsDisposed = false;
 
+        public event EventHandler OnDisposed;
+
         /// <summary>
         /// Is Disposed
         /// </summary>
@@ -17,17 +19,24 @@ namespace XPloit.Core.Interfaces
         {
             get
             {
-                return _IsDisposed || 
+                return _IsDisposed ||
                     (_Process != null && _Process.HasExited) ||
                     (_Thread != null && !_Thread.IsAlive);
             }
         }
-
+        /// <summary>
+        /// Tag
+        /// </summary>
+        public object Tag { get; set; }
+        /// <summary>
+        /// Dispose tag
+        /// </summary>
+        public bool DisposeTag { get; set; }
         public virtual void OnDispose() { }
 
-        internal IJobable() { }
-        internal IJobable(Process pr) { _Process = pr; }
-        internal IJobable(Thread th) { _Thread = th; }
+        internal IJobable() { DisposeTag = true; }
+        internal IJobable(Process pr) : this() { _Process = pr; }
+        internal IJobable(Thread th) : this() { _Thread = th; }
 
         /// <summary>
         /// Free resources
@@ -52,6 +61,13 @@ namespace XPloit.Core.Interfaces
             }
 
             OnDispose();
+
+            OnDisposed?.Invoke(this, EventArgs.Empty);
+            if (DisposeTag && Tag != null && Tag is IDisposable)
+            {
+                ((IDisposable)Tag).Dispose();
+                Tag = null;
+            }
         }
 
         //public static explicit operator IJobable(Process pr) { return new IJobable(pr); }

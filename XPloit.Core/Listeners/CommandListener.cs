@@ -237,7 +237,7 @@ namespace XPloit.Core.Listeners
             cmd.Add(new string[] { "check" }, cmdCheck, Lang.Get("Man_Check"));
             cmd.Add(new string[] { "exploit", "run" }, cmdRun, Lang.Get("Man_Run"));
             cmd.Add(new string[] { "reload" }, cmdReload, Lang.Get("Man_Reload"));
-            cmd.Add(new string[] { "resource" }, cmdResource, Lang.Get("Man_Resource"));
+            cmd.Add(new string[] { "play" }, cmdPlay, Lang.Get("Man_Play"));
             cmd.Add(new string[] { "kill" }, cmdKill, Lang.Get("Man_Kill"));
             cmd.Add(new string[] { "jobs" }, cmdJobs, Lang.Get("Man_Jobs"));
             cmd.Add(new string[] { "load" }, cmdLoad, Lang.Get("Man_Load"));
@@ -602,7 +602,7 @@ namespace XPloit.Core.Listeners
             tb.OutputColored(_IO);
             _IO.WriteLine("");
         }
-        public void cmdResource(string args)
+        public void cmdPlay(string args)
         {
             if (string.IsNullOrEmpty(args))
             {
@@ -743,9 +743,15 @@ namespace XPloit.Core.Listeners
                             _IO.WriteInfo(Lang.Get("Stop_Recording_Successful"));
                         }
 
-                        _IO.RecordStart(args);
-                        _IO.WriteInfo(Lang.Get("Start_Recording_Successful"));
-
+                        try
+                        {
+                            _IO.RecordStart(args);
+                            _IO.WriteInfo(Lang.Get("Start_Recording_Successful"));
+                        }
+                        catch (Exception e)
+                        {
+                            _IO.WriteError(e.Message);
+                        }
                         break;
                     }
             }
@@ -905,7 +911,7 @@ namespace XPloit.Core.Listeners
                                         else
                                         {
                                             if (x == 0 || x == 3)
-                                                row[1].ForeColor = ConsoleColor.Cyan;
+                                                row[1].ForeColor = ConsoleColor.DarkRed;
                                         }
                                     }
                                     else

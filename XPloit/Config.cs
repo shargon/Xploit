@@ -13,8 +13,8 @@ namespace XPloit
         /// </summary>
         public ClientSocketConfig Connect { get; set; }
         /// <summary>
-        /// File for replay command
+        /// File for play command
         /// </summary>
-        public string Replay { get; set; }
+        public string Play { get; set; }
     }
 }
