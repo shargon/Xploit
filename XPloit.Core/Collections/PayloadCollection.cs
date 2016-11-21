@@ -27,10 +27,11 @@ namespace XPloit.Core.Collections
         {
             if (req == null) return new Payload[] { };
             List<Payload> ls = new List<Payload>();
-            foreach (Payload p in Current)
+            foreach (ModuleHeader<Payload> p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
-                ls.Add(p);
+
+                ls.Add(p.Current);
             }
             return ls.ToArray();
         }

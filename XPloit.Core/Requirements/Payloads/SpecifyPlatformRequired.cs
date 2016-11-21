@@ -7,15 +7,17 @@ namespace XPloit.Core.Requirements.Payloads
     {
         Module _Module;
 
-        public bool IsAllowed(Payload obj)
+        public bool IsAllowed(ModuleHeader<Payload> objHeader)
         {
+            if (objHeader == null) return false;
+
             Target t = _Module.Target;
             if (t == null) return false;
-            if (obj == null) return false;
 
             if (t.Arquitecture == EArquitecture.None) return false;
             if (t.Platform == EPlatform.None) return false;
 
+            Payload obj = objHeader.Current;
             return t.Arquitecture == obj.Arquitecture && t.Platform == obj.Platform;
         }
 

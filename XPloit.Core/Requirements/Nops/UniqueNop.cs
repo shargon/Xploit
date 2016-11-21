@@ -17,11 +17,12 @@ namespace XPloit.Core.Requirements.Nops
         /// <param name="types">Types</param>
         public UniqueNop(params Type[] types) { _Types = types; }
 
-        public bool IsAllowed(Nop nop)
+        public bool IsAllowed(ModuleHeader<Nop> nop)
         {
-            Type t2 = nop.GetType();
+            Type t2 = nop.Type;
             foreach (Type t in _Types)
                 if (t == t2) return true;
+
             return false;
         }
     }

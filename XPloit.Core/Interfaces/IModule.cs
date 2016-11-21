@@ -122,6 +122,10 @@ namespace XPloit.Core.Interfaces
         /// Return full path
         /// </summary>
         public string FullPath { get { return _FullPath; } }
+        /// <summary>
+        /// DisclosureDate
+        /// </summary>
+        public virtual DateTime DisclosureDate { get { return DateTime.MinValue; } }
         ///// <summary>
         /// Type
         /// </summary>
@@ -169,7 +173,7 @@ namespace XPloit.Core.Interfaces
                                 m.Target.Id = ix;
 
                                 // Check if the Payload still valid
-                                if (m.Payload != null && m.PayloadRequirements != null && !m.PayloadRequirements.IsAllowed(m.Payload))
+                                if (m.Payload != null && m.PayloadRequirements != null && !m.PayloadRequirements.IsAllowed(new ModuleHeader<Payload>(m.Payload)))
                                     m.Payload = null;
 
                                 return true;
@@ -204,23 +208,6 @@ namespace XPloit.Core.Interfaces
             }
 
             return ret;
-        }
-        /// <summary>
-        /// Return true if are in this query
-        /// </summary>
-        /// <param name="query">Query</param>
-        public bool AreInThisSearch(string[] query)
-        {
-            if (query == null || query.Length == 0) return true;
-
-            string search = FullPath + " " + Description + " " + Author;
-
-            foreach (string a in query)
-            {
-                if (search.IndexOf(a, StringComparison.InvariantCultureIgnoreCase) < 0) return false;
-            }
-
-            return true;
         }
         /// <summary>
         /// Check Required Properties

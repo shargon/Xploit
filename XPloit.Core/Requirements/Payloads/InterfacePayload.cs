@@ -19,9 +19,9 @@ namespace XPloit.Core.Requirements.Payloads
 
         public bool ItsRequired() { return true; }
 
-        public bool IsAllowed(Payload payload)
+        public bool IsAllowed(ModuleHeader<Payload> payload)
         {
-            return _Type.IsAssignableFrom(payload.GetType());
+            return _Type.IsAssignableFrom(payload.Type);
         }
     }
 }

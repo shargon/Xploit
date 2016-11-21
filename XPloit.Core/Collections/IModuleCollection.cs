@@ -8,7 +8,8 @@ using XPloit.Core.Interfaces;
 
 namespace XPloit.Core.Collections
 {
-    public class IModuleCollection<T> : IList<T> where T : IModule
+    public class IModuleCollection<T> : IEnumerable<ModuleHeader<T>>
+        where T : IModule
     {
         Type _TypeT;
         EModuleType _Type;
@@ -18,8 +19,12 @@ namespace XPloit.Core.Collections
         /// Type of collection
         /// </summary>
         public EModuleType Type { get { return _Type; } }
+        /// <summary>
+        /// Count
+        /// </summary>
+        public int Count { get { return _InternalList.Count; } }
 
-        List<T> _InternalList = new List<T>();
+        Dictionary<string, ModuleHeader<T>> _InternalList = new Dictionary<string, ModuleHeader<T>>();
 
         protected IModuleCollection()
         {
@@ -31,30 +36,10 @@ namespace XPloit.Core.Collections
             else if (_TypeT == typeof(Module)) _Type = EModuleType.Module;
         }
 
-        public int IndexOf(T item) { return _InternalList.IndexOf(item); }
-        public void Insert(int index, T item) { _InternalList.Insert(index, item); }
-        public void RemoveAt(int index) { _InternalList.RemoveAt(index); }
-        public T this[int index]
-        {
-            get { return _InternalList[index]; }
-            set { _InternalList[index] = value; }
-        }
-        public void Add(T item) { _InternalList.Add(item); }
         public void Clear() { _InternalList.Clear(); }
-        public bool Contains(T item) { return _InternalList.Contains(item); }
-        public void CopyTo(T[] array, int arrayIndex) { _InternalList.CopyTo(array, arrayIndex); }
-        public int Count { get { return _InternalList.Count; } }
-        public bool IsReadOnly { get { return false; } }
-        public bool Remove(T item) { return _InternalList.Remove(item); }
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _InternalList.GetEnumerator();
-        }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return _InternalList.GetEnumerator();
-        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return _InternalList.Values.GetEnumerator(); }
+        IEnumerator<ModuleHeader<T>> IEnumerable<ModuleHeader<T>>.GetEnumerator() { return _InternalList.Values.GetEnumerator(); }
 
         /// <summary>
         /// Load IModule collection
@@ -85,8 +70,10 @@ namespace XPloit.Core.Collections
                             if (SystemHelper.IsMac && !onlyFor.Mac) continue;
                         }
 
+                        // Temporary creation for extract header
                         T o = (T)Activator.CreateInstance(type);
-                        Add(o);
+                        _InternalList.Add(o.FullPath.ToLowerInvariant(), new ModuleHeader<T>(o));
+                        if (o is IDisposable) ((IDisposable)o).Dispose();
                     }
                 }
             }
@@ -97,15 +84,25 @@ namespace XPloit.Core.Collections
         /// Search
         /// </summary>
         /// <param name="pars">Params</param>
-        public IEnumerable<T> Search(string[] pars)
+        public IEnumerable<ModuleHeader<T>> Search(string[] pars)
         {
-            foreach (T m in _InternalList)
-            {
-                if (m.AreInThisSearch(pars))
-                {
+            foreach (ModuleHeader<T> m in _InternalList.Values)
+                if (AreInThisSearch(m, pars))
                     yield return m;
-                }
-            }
+        }
+        /// <summary>
+        /// Return true if are in this query
+        /// </summary>
+        /// <param name="query">Query</param>
+        bool AreInThisSearch(ModuleHeader<T> m, string[] query)
+        {
+            if (query == null || query.Length == 0) return true;
+
+            string search = m.FullPath + " " + m.Description + " " + m.Author;
+            foreach (string a in query)
+                if (search.IndexOf(a, StringComparison.InvariantCultureIgnoreCase) < 0) return false;
+
+            return true;
         }
         /// <summary>
         /// Get module by fullPath
@@ -114,14 +111,13 @@ namespace XPloit.Core.Collections
         /// <param name="clone">Clone</param>
         public T GetByFullPath(string fullPath, bool clone)
         {
-            foreach (T m in _InternalList)
+            ModuleHeader<T> ret;
+            if (_InternalList.TryGetValue(fullPath.ToLowerInvariant(), out ret))
             {
-                if (string.Compare(m.FullPath, fullPath, StringComparison.InvariantCultureIgnoreCase) == 0)
-                {
-                    if (clone) return (T)ReflectionHelper.Clone(m, true);
-                    return m;
-                }
+                if (clone) return (T)ReflectionHelper.Clone(ret.Current, true);
+                return ret.Current;
             }
+
             return default(T);
         }
     }

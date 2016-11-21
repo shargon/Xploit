@@ -28,10 +28,11 @@ namespace XPloit.Core.Collections
         {
             if (req == null) return new Encoder[] { };
             List<Encoder> ls = new List<Encoder>();
-            foreach (Encoder p in Current)
+            foreach (ModuleHeader<Encoder> p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
-                ls.Add(p);
+
+                ls.Add(p.Current);
             }
             return ls.ToArray();
         }

@@ -16,9 +16,10 @@ namespace Auxiliary.Multi.SSH
         delegate byte[] onData(string text);
         public enum EDumpMethod : byte
         {
-            hexdump = 0,
-            xxd = 1,
-            perl = 2
+            scp = 0,
+            hexdump = 1,
+            xxd = 2,
+            perl = 3,
         }
 
         #region Properties
@@ -31,7 +32,10 @@ namespace Auxiliary.Multi.SSH
         public EDumpMethod Method { get; set; }
         #endregion
 
-        public DownloadFile() : base() { }
+        public DownloadFile() : base()
+        {
+            Method = EDumpMethod.scp;
+        }
 
         byte[] hexdump(string text)
         {
@@ -58,6 +62,28 @@ namespace Auxiliary.Multi.SSH
             return HexHelper.FromHexString(text);
         }
 
+        public override bool Run()
+        {
+            if (Method == EDumpMethod.scp)
+            {
+                WriteInfo("Connecting ...");
+
+                using (ScpClient SSH = new ScpClient(Host.Address.ToString(), Host.Port, User, Password))
+                {
+                    SSH.Connect();
+                    WriteInfo("Connected successful");
+
+                    WriteInfo("Executing", "SCP download", ConsoleColor.Cyan);
+                    SSH.Download(RemotePath, DumpPath);
+
+                    DumpPath.Refresh();
+                    WriteInfo("Download successful", StringHelper.Convert2KbWithBytes(DumpPath.Length), ConsoleColor.Cyan);
+                    return true;
+                }
+            }
+
+            return base.Run();
+        }
         protected override bool RunSSHAction(SshClient ssh)
         {
             string command;
@@ -103,6 +129,6 @@ namespace Auxiliary.Multi.SSH
             }
 
             return true;
-        } 
+        }
     }
 }

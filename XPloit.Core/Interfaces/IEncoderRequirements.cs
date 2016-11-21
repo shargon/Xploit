@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="obj">Object</param>
         /// <returns>Return true if its allowed</returns>
-        bool IsAllowed(Encoder obj);
+        bool IsAllowed(ModuleHeader<Encoder> obj);
     }
 }

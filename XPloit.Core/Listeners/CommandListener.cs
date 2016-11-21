@@ -47,8 +47,8 @@ namespace XPloit.Core.Listeners
                     }
                 case "use":
                     {
-                        foreach (IModule e in ModuleCollection.Current) yield return e.FullPath;
-                        foreach (IModule e in PayloadCollection.Current) yield return e.FullPath;
+                        foreach (ModuleHeader<Module> e in ModuleCollection.Current) yield return e.FullPath;
+                        foreach (ModuleHeader<Payload> e in PayloadCollection.Current) yield return e.FullPath;
                         break;
                     }
                 case "show":
@@ -101,9 +101,10 @@ namespace XPloit.Core.Listeners
                                         IPayloadRequirements req = curM == null ? null : curM.PayloadRequirements;
                                         if (req != null && req.ItsRequired())
                                         {
-                                            foreach (Payload p in PayloadCollection.Current)
+                                            foreach (ModuleHeader<Payload> p in PayloadCollection.Current)
                                             {
                                                 if (!req.IsAllowed(p)) continue;
+
                                                 yield return p.FullPath;
                                             }
                                         }
@@ -766,7 +767,7 @@ namespace XPloit.Core.Listeners
                 CommandTable tb = new CommandTable();
 
                 bool primera1 = false;
-                foreach (Module m in ModuleCollection.Current.Search(pars))
+                foreach (ModuleHeader<Module> m in ModuleCollection.Current.Search(pars))
                 {
                     if (!primera1)
                     {
@@ -780,7 +781,7 @@ namespace XPloit.Core.Listeners
                     tb.AddRow(Lang.Get("Modules"), m.FullPath, m.DisclosureDate.ToShortDateString());
                 }
                 bool primera2 = false;
-                foreach (IModule m in PayloadCollection.Current.Search(pars))
+                foreach (ModuleHeader<Payload> m in PayloadCollection.Current.Search(pars))
                 {
                     if (!primera2)
                     {

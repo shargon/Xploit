@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="obj">Object</param>
         /// <returns>Return true if its allowed</returns>
-        bool IsAllowed(Nop obj);
+        bool IsAllowed(ModuleHeader<Nop> obj);
     }
 }

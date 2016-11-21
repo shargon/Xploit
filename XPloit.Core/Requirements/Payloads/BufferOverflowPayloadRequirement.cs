@@ -30,9 +30,9 @@ namespace XPloit.Core.Requirements.Payloads
         public Encoder Encoder { get; set; }
         public BufferOverflowConfig Config { get; set; }
 
-        public bool IsAllowed(Payload payload)
+        public bool IsAllowed(ModuleHeader<Payload> payload)
         {
-            if (payload != null && payload is IBufferOverflowPayload)
+            if (payload != null && typeof(IBufferOverflowPayload).IsAssignableFrom(payload.Type))
             {
                 // Check size
                 return true;
@@ -50,11 +50,13 @@ namespace XPloit.Core.Requirements.Payloads
                 Target = t;
             }
 
-            public bool IsAllowed(Nop obj)
+            public bool IsAllowed(ModuleHeader<Nop> objHeader)
             {
-                if (obj == null || !(obj is INopAsm)) return false;
+                if (objHeader == null) return false;
 
-                INopAsm nop = (INopAsm)obj;
+                if (!typeof(INopAsm).IsAssignableFrom(objHeader.Type)) return false;
+
+                INopAsm nop = (INopAsm)objHeader.Current;
 
                 if (nop.AllowedTargets != null)
                 {

@@ -19,11 +19,12 @@ namespace XPloit.Core.Requirements.Payloads
 
         public bool ItsRequired() { return true; }
 
-        public bool IsAllowed(Payload payload)
+        public bool IsAllowed(ModuleHeader<Payload> payload)
         {
-            Type t2 = payload.GetType();
+            Type t2 = payload.Type;
             foreach (Type t in _Types)
                 if (t == t2) return true;
+
             return false;
         }
     }

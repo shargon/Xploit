@@ -17,9 +17,9 @@ namespace XPloit.Core.Requirements.Nops
         /// <param name="type">Type</param>
         public InterfaceNop(Type type) { _Type = type; }
 
-        public bool IsAllowed(Nop nop)
+        public bool IsAllowed(ModuleHeader<Nop> nop)
         {
-            return _Type.IsAssignableFrom(nop.GetType());
+            return _Type.IsAssignableFrom(nop.Type);
         }
     }
 }

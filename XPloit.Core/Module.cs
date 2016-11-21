@@ -12,7 +12,7 @@ using XPloit.Core.Requirements.Payloads;
 
 namespace XPloit.Core
 {
-    [TypeConverter(typeof(Module.ModuleTypeConverter))]
+    [TypeConverter(typeof(ModuleTypeConverter))]
     public class Module : IModule
     {
         IModule _Parent = null;
@@ -25,10 +25,6 @@ namespace XPloit.Core
         /// References
         /// </summary>
         public virtual Reference[] References { get { return null; } }
-        /// <summary>
-        /// DisclosureDate
-        /// </summary>
-        public virtual DateTime DisclosureDate { get { return DateTime.MinValue; } }
         /// <summary>
         /// Targets
         /// </summary>

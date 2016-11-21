@@ -17,11 +17,13 @@ namespace XPloit.Core.Requirements.Encoders
         /// <param name="types">Types</param>
         public UniqueEncoder(params Type[] types) { _Types = types; }
 
-        public bool IsAllowed(Encoder nop)
+        public bool IsAllowed(ModuleHeader<Encoder> nop)
         {
-            Type t2 = nop.GetType();
+            Type t2 = nop.Type;
+
             foreach (Type t in _Types)
                 if (t == t2) return true;
+
             return false;
         }
     }

@@ -27,10 +27,11 @@ namespace XPloit.Core.Collections
         {
             if (req == null) return new Nop[] { };
             List<Nop> ls = new List<Nop>();
-            foreach (Nop p in Current)
+            foreach (ModuleHeader<Nop> p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
-                ls.Add(p);
+
+                ls.Add(p.Current);
             }
             return ls.ToArray();
         }
