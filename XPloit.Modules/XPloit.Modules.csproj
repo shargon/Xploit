@@ -64,6 +64,7 @@
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
     <Compile Include="Auxiliary\Local\DatabaseQuery.cs" />
     <Compile Include="Auxiliary\Local\FileToHex.cs" />
+    <Compile Include="Auxiliary\Local\KeyDown.cs" />
     <Compile Include="Auxiliary\Local\RSync.cs" />
     <Compile Include="Auxiliary\Local\Tor.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
@@ -111,6 +112,10 @@
     <ProjectReference Include="..\XPloit.Core\XPloit.Core.csproj">
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
       <Name>XPloit.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XPloit.Windows.Api\XPloit.Windows.Api.csproj">
+      <Project>{77059fa1-4b7d-4406-bc1a-cb261086f915}</Project>
+      <Name>XPloit.Windows.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
