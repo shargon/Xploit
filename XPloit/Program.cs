@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+#if DEBUG
+using System.Diagnostics;
+#endif
 using System.IO;
 using System.Text;
 using XPloit.Core.Collections;
@@ -18,7 +21,10 @@ namespace XPloit
         static int Main(string[] args)
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
-            //args = new string[] { @"Replay=d:\temp\console.txt" };
+#if DEBUG
+            if (Debugger.IsAttached)
+                args = new string[] { @"Play=Debug.txt" };
+#endif
 
             // Linq to library assembly
             BuildLink.Dummy();

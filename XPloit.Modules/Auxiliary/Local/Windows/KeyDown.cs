@@ -8,7 +8,7 @@ using XPloit.Core.Enums;
 using XPloit.Windows.Api;
 using XPloit.Windows.Api.Native;
 
-namespace Auxiliary.Local
+namespace Auxiliary.Local.Windows
 {
     public class KeyDown : Module
     {

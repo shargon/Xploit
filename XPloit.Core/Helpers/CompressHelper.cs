@@ -7,6 +7,15 @@ namespace XPloit.Core.Helpers
     {
         const int BufferSize = 10240;
         /// <summary>
+        /// Comprueba si está comprimido
+        /// </summary>
+        /// <param name="data">Data</param>
+        public static bool IsGzipped(byte[] data, int index)
+        {
+            if (data.Length - index < 2) return false;
+            return data[index] == 0x1f && data[index + 1] == 0x8b;
+        }
+        /// <summary>
         /// Comprime o descomprime en GZIP un buffer
         /// </summary>
         /// <param name="buff">Buffer</param>

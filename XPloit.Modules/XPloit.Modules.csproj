@@ -51,6 +51,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -64,7 +65,8 @@
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
     <Compile Include="Auxiliary\Local\DatabaseQuery.cs" />
     <Compile Include="Auxiliary\Local\FileToHex.cs" />
-    <Compile Include="Auxiliary\Local\KeyDown.cs" />
+    <Compile Include="Auxiliary\Local\Windows\KeyDown.cs" />
+    <Compile Include="Auxiliary\Local\Windows\BinaryFromScreen.cs" />
     <Compile Include="Auxiliary\Local\RSync.cs" />
     <Compile Include="Auxiliary\Local\Tor.cs" />
     <Compile Include="Auxiliary\Local\ProcessMemoryDump.cs" />
@@ -125,6 +127,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Auxiliary\Local\Windows\BinaryToScreen.php" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
