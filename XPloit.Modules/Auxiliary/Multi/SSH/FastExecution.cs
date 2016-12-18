@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using XPloit.Core.Attributes;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {

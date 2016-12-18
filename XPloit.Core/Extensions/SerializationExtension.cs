@@ -1,4 +1,4 @@
-﻿using XPloit.Core.Helpers;
+﻿using XPloit.Helpers;
 
 namespace XPloit.Core.Extensions
 {

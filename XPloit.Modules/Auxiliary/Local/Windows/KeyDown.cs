@@ -5,6 +5,7 @@ using System.Threading;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
+using XPloit.Helpers.Attributes;
 using XPloit.Windows.Api;
 using XPloit.Windows.Api.Native;
 

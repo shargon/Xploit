@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {

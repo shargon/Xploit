@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4545CFDE-9EE5-4F1B-B966-D128AF0B9A6E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Xploit.Rfid</RootNamespace>
+    <AssemblyName>Xploit.Rfid</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Asn1\Asn1Node.cs" />
+    <Compile Include="Asn1\Asn1Parser.cs" />
+    <Compile Include="Asn1\Asn1Tag.cs" />
+    <Compile Include="Asn1\Asn1Util.cs" />
+    <Compile Include="Asn1\Oid.cs" />
+    <Compile Include="Asn1\RelativeOid.cs" />
+    <Compile Include="CardReader.cs" />
+    <Compile Include="CardReaderCollection.cs" />
+    <Compile Include="DniE\CardDnie.cs" />
+    <Compile Include="Enums\ECardType.cs" />
+    <Compile Include="Enums\EConnection.cs" />
+    <Compile Include="Helpers\NFCHelper.cs" />
+    <Compile Include="Interfaces\ICard.cs" />
+    <Compile Include="Interfaces\ICardReadConfig.cs" />
+    <Compile Include="Mifare\CardMifare.cs" />
+    <Compile Include="Mifare\ConfigMifareRead.cs" />
+    <Compile Include="Mifare\ConfigMifareReadSector.cs" />
+    <Compile Include="Mifare\Internal\AccessBits.cs" />
+    <Compile Include="Mifare\Internal\AccessConditions.cs" />
+    <Compile Include="Mifare\Internal\DataAreaAccessCondition.cs" />
+    <Compile Include="Mifare\Internal\DataBlock.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardDecValueException.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardIncValueException.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardLoginException.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardReadException.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardReadValueException.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardWriteException.cs" />
+    <Compile Include="Mifare\Internal\Exceptions\CardWriteValueException.cs" />
+    <Compile Include="Mifare\Internal\Extensions.cs" />
+    <Compile Include="Mifare\Internal\ICardReader.cs" />
+    <Compile Include="Mifare\Internal\MAD.cs" />
+    <Compile Include="Mifare\Internal\MAD2.cs" />
+    <Compile Include="Mifare\Internal\MiFARECard.cs" />
+    <Compile Include="Mifare\Internal\Sector.cs" />
+    <Compile Include="Mifare\Internal\TrailerAccessCondition.cs" />
+    <Compile Include="Mifare\Internal\TrailerDataBlock.cs" />
+    <Compile Include="Mifare\LoginMifareMethod.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

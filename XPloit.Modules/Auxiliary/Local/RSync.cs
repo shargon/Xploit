@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using XPloit.Core;
-using XPloit.Core.Attributes;
-using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Requirements.Payloads;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {

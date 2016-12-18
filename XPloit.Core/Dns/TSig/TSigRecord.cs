@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using XPloit.Core.Dns.DnsRecord;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.TSig
 {
-	/// <summary>
-	///   <para>Transaction signature record</para>
-	///   <para>
-	///     Defined in
-	///     <see cref="!:http://tools.ietf.org/html/rfc2845">RFC 2845</see>
-	///   </para>
-	/// </summary>
-	public class TSigRecord : DnsRecordBase
+    /// <summary>
+    ///   <para>Transaction signature record</para>
+    ///   <para>
+    ///     Defined in
+    ///     <see cref="!:http://tools.ietf.org/html/rfc2845">RFC 2845</see>
+    ///   </para>
+    /// </summary>
+    public class TSigRecord : DnsRecordBase
 	{
 		/// <summary>
 		///   Algorithm of the key

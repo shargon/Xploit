@@ -5,10 +5,10 @@ using Xploit.Core.Rfid.Enums;
 using Xploit.Core.Rfid.Interfaces;
 using Xploit.Core.Rfid.Mifare;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
-using XPloit.Core.Rfid;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
+using XPloit.Rfid;
 
 namespace Payloads.Local.BruteForce.NFC
 {

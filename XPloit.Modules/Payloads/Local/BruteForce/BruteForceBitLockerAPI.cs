@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Management;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.BruteForce
 {

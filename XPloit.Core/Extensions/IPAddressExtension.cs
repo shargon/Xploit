@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Extensions
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using XPloit.Core.Dns.DnsSec;
 using XPloit.Core.Dns.EDns;
 using XPloit.Core.Dns.TSig;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.DnsRecord
 {

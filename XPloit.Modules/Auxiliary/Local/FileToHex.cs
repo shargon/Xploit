@@ -2,6 +2,7 @@
 using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {

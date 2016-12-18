@@ -5,6 +5,7 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Requirements.Payloads;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Windows
 {

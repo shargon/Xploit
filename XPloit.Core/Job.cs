@@ -36,7 +36,7 @@ namespace XPloit.Core
         /// <summary>
         /// Create a new job
         /// </summary>
-        /// <param name="cmd">Command</param>
+        /// <param name="module">Module</param>
         /// <param name="obj">Object for dispose</param>
         public static Job Create(IModule module, IJobable obj)
         {
@@ -49,6 +49,19 @@ namespace XPloit.Core
             module.WriteInfo(Lang.Get("Job_Created"), j.Id.ToString(), ConsoleColor.Green);
             return j;
         }
+        /// <summary>
+        /// Create a new job
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <param name="obj">Object for dispose</param>
+        /// <param name="isDisposedProperty">IsDisposed property</param>
+        public static Job Create(IModule module, IDisposable obj, string isDisposedProperty)
+        {
+            if (module == null || obj == null) return null;
+
+            return Create(module, new IJobable(obj, isDisposedProperty));
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>

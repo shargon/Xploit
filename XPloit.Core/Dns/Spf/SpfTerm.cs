@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.Spf
 {

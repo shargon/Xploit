@@ -5,7 +5,8 @@ using Xploit.Core.Rfid.Mifare;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Rfid;
+using XPloit.Helpers.Attributes;
+using XPloit.Rfid;
 
 namespace Auxiliary.Local.NFC
 {

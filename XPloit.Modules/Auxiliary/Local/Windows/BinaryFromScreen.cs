@@ -6,9 +6,9 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 using XPloit.Windows.Api;
 using XPloit.Windows.Api.Native;
 

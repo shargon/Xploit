@@ -2,8 +2,8 @@
 using System;
 using System.Management;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
+using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.Windows.WMI.Action
 {

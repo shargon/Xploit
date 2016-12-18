@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.BruteForce
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.BruteForce
 {

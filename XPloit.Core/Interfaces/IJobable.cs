@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 
 namespace XPloit.Core.Interfaces
@@ -8,7 +9,9 @@ namespace XPloit.Core.Interfaces
     {
         Process _Process;
         Thread _Thread;
+        IDisposable _Object;
         bool _IsDisposed = false;
+        PropertyInfo _IsDisposedProperty;
 
         public event EventHandler OnDisposed;
 
@@ -21,7 +24,8 @@ namespace XPloit.Core.Interfaces
             {
                 return _IsDisposed ||
                     (_Process != null && _Process.HasExited) ||
-                    (_Thread != null && !_Thread.IsAlive);
+                    (_Thread != null && !_Thread.IsAlive) ||
+                    (_Object != null && (bool)_IsDisposedProperty.GetValue(_Object) == true);
             }
         }
         /// <summary>
@@ -37,6 +41,13 @@ namespace XPloit.Core.Interfaces
         internal IJobable() { DisposeTag = true; }
         internal IJobable(Process pr) : this() { _Process = pr; }
         internal IJobable(Thread th) : this() { _Thread = th; }
+        internal IJobable(IDisposable obj, string isDisposedProperty)
+        {
+            _Object = obj;
+            _IsDisposedProperty = obj.GetType().GetProperty(isDisposedProperty);
+            if (_IsDisposedProperty == null)
+                throw new Exception("Property not found: '" + isDisposedProperty + "'");
+        }
 
         /// <summary>
         /// Free resources
@@ -58,6 +69,12 @@ namespace XPloit.Core.Interfaces
             {
                 try { _Thread.Abort(); } catch { }
                 _Thread = null;
+            }
+
+            if (_Object != null)
+            {
+                try { _Object.Dispose(); } catch { }
+                _Object = null;
             }
 
             OnDispose();

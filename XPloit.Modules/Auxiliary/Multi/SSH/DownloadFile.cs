@@ -2,8 +2,8 @@
 using System;
 using System.IO;
 using System.Text;
-using XPloit.Core.Attributes;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {

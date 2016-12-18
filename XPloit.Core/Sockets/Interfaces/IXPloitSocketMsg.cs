@@ -6,9 +6,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using XPloit.Core.Attributes;
 using XPloit.Core.Extensions;
-using XPloit.Core.Helpers;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Headers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Sockets.Interfaces
 {

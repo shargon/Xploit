@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using XPloit.Core.Dns.DnsRecord;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.DnsSec
 {
-	/// <summary>
-	///   <para>Hashed next owner parameter record</para>
-	///   <para>
-	///     Defined in
-	///     <see cref="!:http://tools.ietf.org/html/rfc5155">RFC 5155</see>
-	///   </para>
-	/// </summary>
-	public class NSec3ParamRecord : DnsRecordBase
+    /// <summary>
+    ///   <para>Hashed next owner parameter record</para>
+    ///   <para>
+    ///     Defined in
+    ///     <see cref="!:http://tools.ietf.org/html/rfc5155">RFC 5155</see>
+    ///   </para>
+    /// </summary>
+    public class NSec3ParamRecord : DnsRecordBase
 	{
 		/// <summary>
 		///   Algorithm of the hash

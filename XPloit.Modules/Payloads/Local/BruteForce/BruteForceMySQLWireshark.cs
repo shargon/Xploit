@@ -6,7 +6,8 @@ using System.Text;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Sniffer.Streams;
+using XPloit.Helpers.Attributes;
+using XPloit.Sniffer.Streams;
 
 namespace Payloads.Local.BruteForce
 {

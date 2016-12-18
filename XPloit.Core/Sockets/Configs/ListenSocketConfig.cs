@@ -1,4 +1,4 @@
-﻿using XPloit.Core.Sniffer.Filters;
+﻿using XPloit.Sniffer.Filters;
 
 namespace XPloit.Core.Sockets.Configs
 {

@@ -5,6 +5,7 @@ using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Collections
 {

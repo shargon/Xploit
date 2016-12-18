@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using XPloit.Core.Dns.DnsRecord;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.DnsSec
 {
-	/// <summary>
-	///   <para>Record signature record</para>
-	///   <para>
-	///     Defined in
-	///     <see cref="!:http://tools.ietf.org/html/rfc4034">RFC 4034</see>
-	///     and
-	///     <see cref="!:http://tools.ietf.org/html/rfc3755">RFC 3755</see>
-	///   </para>
-	/// </summary>
-	public class RrSigRecord : DnsRecordBase
+    /// <summary>
+    ///   <para>Record signature record</para>
+    ///   <para>
+    ///     Defined in
+    ///     <see cref="!:http://tools.ietf.org/html/rfc4034">RFC 4034</see>
+    ///     and
+    ///     <see cref="!:http://tools.ietf.org/html/rfc3755">RFC 3755</see>
+    ///   </para>
+    /// </summary>
+    public class RrSigRecord : DnsRecordBase
 	{
 		/// <summary>
 		///   <see cref="RecordType">Record type</see> that is covered by this record

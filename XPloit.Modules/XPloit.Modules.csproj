@@ -40,6 +40,10 @@
       <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SharpPcap\PacketDotNet\PacketDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
       <Private>True</Private>
@@ -100,6 +104,7 @@
     <Compile Include="Payloads\Local\Fuzzing\TcpSocketFuzzer.cs" />
     <Compile Include="Payloads\Local\RSync\Ftp.cs" />
     <Compile Include="Payloads\Local\RSync\LocalPath.cs" />
+    <Compile Include="Payloads\Local\Sniffer\DumpToFolder.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Manual.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Auto.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Action\ExecuteProcess.cs" />
@@ -107,13 +112,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XPloit.Core.Rfid\XPloit.Core.Rfid.csproj">
+    <ProjectReference Include="..\XPloit.Rfid\XPloit.Rfid.csproj">
       <Project>{4545cfde-9ee5-4f1b-b966-d128af0b9a6e}</Project>
-      <Name>XPloit.Core.Rfid</Name>
+      <Name>XPloit.Rfid</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Core\XPloit.Core.csproj">
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
       <Name>XPloit.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+      <Project>{0981E164-5930-4BA0-983C-1CF679E5033F}</Project>
+      <Name>Xploit.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xploit.Sniffer\Xploit.Sniffer.csproj">
+      <Project>{679BBA57-3063-4F17-B491-4F0A730D6B02}</Project>
+      <Name>Xploit.Sniffer</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Windows.Api\XPloit.Windows.Api.csproj">
       <Project>{77059fa1-4b7d-4406-bc1a-cb261086f915}</Project>

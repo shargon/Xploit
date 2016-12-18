@@ -1,9 +1,9 @@
 ﻿using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Core.Extensions;
 using XPloit.Core.Helpers;
 using XPloit.Core.Requirements.Payloads;
+using XPloit.Helpers.Attributes;
 
 namespace Payloads.Multi.Windows.x86
 {

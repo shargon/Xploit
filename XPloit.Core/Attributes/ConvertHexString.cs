@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text;
-using XPloit.Core.Helpers;
-using XPloit.Core.Interfaces;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace XPloit.Core.Attributes
 {

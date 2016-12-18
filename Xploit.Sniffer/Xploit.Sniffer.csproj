@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{679BBA57-3063-4F17-B491-4F0A730D6B02}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Xploit.Sniffer</RootNamespace>
+    <AssemblyName>Xploit.Sniffer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PacketDotNet.0.13.0\lib\net\PacketDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Enums\ETcpEmisor.cs" />
+    <Compile Include="Enums\ETcpFlags.cs" />
+    <Compile Include="Filters\IPFilter.cs" />
+    <Compile Include="Filters\SnifferPortFilter.cs" />
+    <Compile Include="Filters\SnifferProtocolFilter.cs" />
+    <Compile Include="Filters\SnifferTorFilter.cs" />
+    <Compile Include="Interfaces\IIpPacketFilter.cs" />
+    <Compile Include="NetworkSniffer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapAdapterBus.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapAdapterId.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapBands.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapChannelInfo.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapChannelInfoFlags.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapDecryptionState.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapDevice.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceCapabilities.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceDescription.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceList.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceTimestamp.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapKey.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapKeyType.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapLinkTypes.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapMacFlags.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapMediumType.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapPacketHeader.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapSafeNativeMethods.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapStatistics.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapUnmanagedStructures.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapValidationType.cs" />
+    <Compile Include="SharpPcap\AirPcap\AirPcapVersion.cs" />
+    <Compile Include="SharpPcap\AirPcap\Win32SafeNativeMethods.cs" />
+    <Compile Include="SharpPcap\ARP.cs" />
+    <Compile Include="SharpPcap\CaptureDeviceList.cs" />
+    <Compile Include="SharpPcap\CaptureEventArgs.cs" />
+    <Compile Include="SharpPcap\CaptureStoppedEventHandler.cs" />
+    <Compile Include="SharpPcap\CaptureStoppedEventStatus.cs" />
+    <Compile Include="SharpPcap\DeviceMode.cs" />
+    <Compile Include="SharpPcap\DeviceNotReadyException.cs" />
+    <Compile Include="SharpPcap\ICaptureDevice.cs" />
+    <Compile Include="SharpPcap\ICaptureStatistics.cs" />
+    <Compile Include="SharpPcap\InvalidOperationDuringBackgroundCaptureException.cs" />
+    <Compile Include="SharpPcap\LibPcap\CaptureFileReaderDevice.cs" />
+    <Compile Include="SharpPcap\LibPcap\CaptureFileWriterDevice.cs" />
+    <Compile Include="SharpPcap\LibPcap\LibPcapLiveDevice.cs" />
+    <Compile Include="SharpPcap\LibPcap\LibPcapLiveDeviceList.cs" />
+    <Compile Include="SharpPcap\LibPcap\LibPcapSafeNativeMethods.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapAddress.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapDevice.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapDeviceCaptureLoop.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapHeader.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapInterface.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapStatistics.cs" />
+    <Compile Include="SharpPcap\LibPcap\PcapUnmanagedStructures.cs" />
+    <Compile Include="SharpPcap\LibPcap\Sockaddr.cs" />
+    <Compile Include="SharpPcap\NotSupportedOnCaptureFileException.cs" />
+    <Compile Include="SharpPcap\PacketArrivalEventHandler.cs" />
+    <Compile Include="SharpPcap\Pcap.cs" />
+    <Compile Include="SharpPcap\PcapException.cs" />
+    <Compile Include="SharpPcap\PosixTimeval.cs" />
+    <Compile Include="SharpPcap\RawCapture.cs" />
+    <Compile Include="SharpPcap\StatisticsException.cs" />
+    <Compile Include="SharpPcap\Version.cs" />
+    <Compile Include="SharpPcap\WinPcapRequiredException.cs" />
+    <Compile Include="SharpPcap\WinPcap\AuthenticationTypes.cs" />
+    <Compile Include="SharpPcap\WinPcap\CaptureMode.cs" />
+    <Compile Include="SharpPcap\WinPcap\OpenFlags.cs" />
+    <Compile Include="SharpPcap\WinPcap\RemoteAuthentication.cs" />
+    <Compile Include="SharpPcap\WinPcap\SafeNativeMethods.cs" />
+    <Compile Include="SharpPcap\WinPcap\SendQueue.cs" />
+    <Compile Include="SharpPcap\WinPcap\SendQueueTransmitModes.cs" />
+    <Compile Include="SharpPcap\WinPcap\StatisticsModeEventArgs.cs" />
+    <Compile Include="SharpPcap\WinPcap\StatisticsModeEventHandler.cs" />
+    <Compile Include="SharpPcap\WinPcap\StatisticsModePacket.cs" />
+    <Compile Include="SharpPcap\WinPcap\UnmanagedStructures.cs" />
+    <Compile Include="SharpPcap\WinPcap\WinPcapDevice.cs" />
+    <Compile Include="SharpPcap\WinPcap\WinPcapDeviceList.cs" />
+    <Compile Include="Streams\TcpStream.cs" />
+    <Compile Include="Streams\TcpStreamMessage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+      <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
+      <Name>Xploit.Helpers</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

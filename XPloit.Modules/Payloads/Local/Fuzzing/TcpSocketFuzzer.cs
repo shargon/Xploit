@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using XPloit.Core;
-using XPloit.Core.Attributes;
+using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.Fuzzing
 {

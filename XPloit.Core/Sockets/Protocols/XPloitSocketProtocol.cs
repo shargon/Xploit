@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
-using XPloit.Core.Helpers;
 using XPloit.Core.Sockets.Interfaces;
 using XPloit.Core.Sockets.Exceptions;
 using System.IO;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Sockets.Protocols
 {

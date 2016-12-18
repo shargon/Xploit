@@ -6,11 +6,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using XPloit.Core.Collections;
-using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners;
 using XPloit.Core.Listeners.IO;
 using XPloit.Core.Listeners.Layer;
+using XPloit.Helpers;
 using XPloit.Modules;
 using XPloit.Res;
 
@@ -22,8 +22,8 @@ namespace XPloit
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
 #if DEBUG
-            if (Debugger.IsAttached)
-                args = new string[] { @"Play=Debug.txt" };
+            //if (Debugger.IsAttached)
+            //    args = new string[] { @"Play=Debug.txt" };
 #endif
 
             // Linq to library assembly

@@ -6,10 +6,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using XPloit.Core.Helpers;
-using XPloit.Core.Sniffer.Filters;
+using XPloit.Sniffer.Filters;
 using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Exceptions;
 using XPloit.Core.Sockets.Interfaces;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Sockets
 {

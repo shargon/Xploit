@@ -9,8 +9,9 @@ using System.Threading;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {

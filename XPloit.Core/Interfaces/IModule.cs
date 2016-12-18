@@ -5,8 +5,10 @@ using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Command;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
 using XPloit.Core.Listeners.Layer;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
+using XPloit.Helpers.Interfaces;
 using XPloit.Res;
 
 namespace XPloit.Core.Interfaces
@@ -31,6 +33,15 @@ namespace XPloit.Core.Interfaces
         public Job CreateJob(IJobable job)
         {
             return Job.Create(this, job);
+        }
+        /// <summary>
+        /// Create a new job
+        /// </summary>
+        /// <param name="obj">Disposed Object</param>
+        /// <param name="isDisposedProperty">Disposed Property</param>
+        public Job CreateJob(IDisposable obj, string isDisposedProperty = "IsDisposed")
+        {
+            return Job.Create(this, obj, isDisposedProperty);
         }
 
         #region Log methods

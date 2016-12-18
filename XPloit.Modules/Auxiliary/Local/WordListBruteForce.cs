@@ -1,14 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
-using XPloit.Core.Streams;
 using XPloit.Core.Requirements.Payloads;
-using XPloit.Core.Helpers;
-using System.IO.Compression;
+using XPloit.Core.Streams;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {

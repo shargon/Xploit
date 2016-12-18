@@ -13,9 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Test", "XPloit.Test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Modules", "XPloit.Modules\XPloit.Modules.csproj", "{E6F76B95-64D6-4986-8B72-B80E2B6C8C98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Core.Rfid", "XPloit.Core.Rfid\XPloit.Core.Rfid.csproj", "{4545CFDE-9EE5-4F1B-B966-D128AF0B9A6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Rfid", "XPloit.Rfid\XPloit.Rfid.csproj", "{4545CFDE-9EE5-4F1B-B966-D128AF0B9A6E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Windows.Api", "XPloit.Windows.Api\XPloit.Windows.Api.csproj", "{77059FA1-4B7D-4406-BC1A-CB261086F915}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Sniffer", "Xploit.Sniffer\Xploit.Sniffer.csproj", "{679BBA57-3063-4F17-B491-4F0A730D6B02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Helpers", "Xploit.Helpers\Xploit.Helpers.csproj", "{0981E164-5930-4BA0-983C-1CF679E5033F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{77059FA1-4B7D-4406-BC1A-CB261086F915}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77059FA1-4B7D-4406-BC1A-CB261086F915}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77059FA1-4B7D-4406-BC1A-CB261086F915}.Release|Any CPU.Build.0 = Release|Any CPU
+		{679BBA57-3063-4F17-B491-4F0A730D6B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679BBA57-3063-4F17-B491-4F0A730D6B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679BBA57-3063-4F17-B491-4F0A730D6B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679BBA57-3063-4F17-B491-4F0A730D6B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0981E164-5930-4BA0-983C-1CF679E5033F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0981E164-5930-4BA0-983C-1CF679E5033F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0981E164-5930-4BA0-983C-1CF679E5033F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0981E164-5930-4BA0-983C-1CF679E5033F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

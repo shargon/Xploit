@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
@@ -12,6 +13,8 @@ using XPloit.Core.Enums;
 using XPloit.Core.Helpers;
 using XPloit.Core.Interfaces;
 using XPloit.Core.Listeners.Layer;
+using XPloit.Helpers;
+using XPloit.Helpers.Attributes;
 using XPloit.Res;
 
 namespace XPloit.Core.Listeners
@@ -115,9 +118,18 @@ namespace XPloit.Core.Listeners
                                         // By property value
                                         PropertyInfo[] pi = null;
 
-                                        if (curM != null && curM.Payload != null) pi = ReflectionHelper.GetProperties(curM.Payload, pname);
+                                        object ob = null;
+                                        if (curM != null && curM.Payload != null)
+                                        {
+                                            pi = ReflectionHelper.GetProperties(curM.Payload, pname);
+                                            ob = curM.Payload;
+                                        }
 
-                                        if (pi == null || pi.Length == 0) pi = ReflectionHelper.GetProperties(_Current, pname);
+                                        if (pi == null || pi.Length == 0)
+                                        {
+                                            pi = ReflectionHelper.GetProperties(_Current, pname);
+                                            ob = _Current;
+                                        }
                                         if (pi != null && pi.Length > 0)
                                         {
                                             Type tp = pi[0].PropertyType;
@@ -135,6 +147,33 @@ namespace XPloit.Core.Listeners
                                                 }
                                                 else
                                                 {
+                                                    if (ob != null)
+                                                    {
+                                                        AutoFillAttribute auto = pi[0].GetCustomAttribute<AutoFillAttribute>();
+                                                        if (auto != null)
+                                                        {
+                                                            MethodInfo mi = ReflectionHelper.GetMethods(ob.GetType(), auto.Function).FirstOrDefault();
+                                                            if (mi != null)
+                                                            {
+                                                                object var = mi.Invoke(ob, new object[] { });
+                                                                if (var is string[])
+                                                                {
+                                                                    if (var is string[])
+                                                                    {
+                                                                        foreach (string v in ((string[])var)) yield return v;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (var is IEnumerable<string>)
+                                                                    {
+                                                                        foreach (string v in ((IEnumerable<string>)var)) yield return v;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
                                                     if (/*tp == typeof(string) ||*/ tp == typeof(FileInfo) || tp == typeof(DirectoryInfo))
                                                     {
                                                         string path = arguments[1];

@@ -1,5 +1,6 @@
 ﻿using System;
 using XPloit.Core.Listeners.Layer;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Helpers
 {
@@ -618,7 +619,6 @@ namespace XPloit.Core.Helpers
             //21
             //command.SetBackgroundColor(ConsoleColor.DarkBlue);
             command.WriteLine(StringHelper.Replicate(" ", 80));
-
 
             command.SetBackgroundColor(ConsoleColor.Black);
         }

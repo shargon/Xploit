@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.DnsRecord
 {

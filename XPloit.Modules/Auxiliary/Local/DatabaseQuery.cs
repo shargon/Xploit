@@ -8,9 +8,9 @@ using System.Data.OracleClient;
 using System.Data.SqlClient;
 using System.IO;
 using XPloit.Core;
-using XPloit.Core.Attributes;
 using XPloit.Core.Command;
 using XPloit.Core.Enums;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {

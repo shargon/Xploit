@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using XPloit.Core.Dns.DnsRecord;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.DnsSec
 {
-	/// <summary>
-	///   Hashed next owner
-	///   <para>
-	///     Defined in
-	///     <see cref="!:http://tools.ietf.org/html/rfc5155">RFC 5155</see>
-	///   </para>
-	/// </summary>
-	public class NSec3Record : DnsRecordBase
+    /// <summary>
+    ///   Hashed next owner
+    ///   <para>
+    ///     Defined in
+    ///     <see cref="!:http://tools.ietf.org/html/rfc5155">RFC 5155</see>
+    ///   </para>
+    /// </summary>
+    public class NSec3Record : DnsRecordBase
 	{
 		/// <summary>
 		///   Algorithm of hash

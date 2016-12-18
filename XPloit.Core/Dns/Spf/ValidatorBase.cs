@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using XPloit.Core.Dns.DnsRecord;
 using XPloit.Core.Extensions;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
  
 namespace XPloit.Core.Dns.Spf
 {

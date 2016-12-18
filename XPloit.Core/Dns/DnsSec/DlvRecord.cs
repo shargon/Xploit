@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using XPloit.Core.Dns.DnsRecord;
-using XPloit.Core.Helpers;
+using XPloit.Helpers;
 
 namespace XPloit.Core.Dns.DnsSec
 {
-	/// <summary>
-	///   <para>DNSSEC lookaside validation</para>
-	///   <para>
-	///     Defined in
-	///     <see cref="!:http://tools.ietf.org/html/rfc4431">RFC 4431</see>
-	///   </para>
-	/// </summary>
-	public class DlvRecord : DnsRecordBase
+    /// <summary>
+    ///   <para>DNSSEC lookaside validation</para>
+    ///   <para>
+    ///     Defined in
+    ///     <see cref="!:http://tools.ietf.org/html/rfc4431">RFC 4431</see>
+    ///   </para>
+    /// </summary>
+    public class DlvRecord : DnsRecordBase
 	{
 		/// <summary>
 		///   Key tag

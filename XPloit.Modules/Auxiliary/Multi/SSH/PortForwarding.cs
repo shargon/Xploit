@@ -1,8 +1,8 @@
 ﻿using Renci.SshNet;
 using System.Net;
 using System.Threading;
-using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
+using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {

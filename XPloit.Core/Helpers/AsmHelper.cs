@@ -88,7 +88,6 @@ namespace XPloit.Core.Helpers
                     }
             }
 
-
             return null;
         }
     }

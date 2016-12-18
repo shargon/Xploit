@@ -32,7 +32,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -49,13 +48,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\AutoFillAttribute.cs" />
     <Compile Include="Attributes\ConvertHexString.cs" />
     <Compile Include="Attributes\OnlyFor.cs" />
     <Compile Include="Attributes\RequireExists.cs" />
     <Compile Include="Attributes\NonJobable.cs" />
     <Compile Include="Attributes\IntrusiveCheck.cs" />
     <Compile Include="Attributes\SerializableBSONReference.cs" />
-    <Compile Include="Attributes\ConfigurableProperty.cs" />
     <Compile Include="BruteForce\BruteForce.cs" />
     <Compile Include="BruteForce\BruteForceAllowedChars.cs" />
     <Compile Include="BruteForce\BruteForceStep.cs" />
@@ -70,12 +69,11 @@
     <Compile Include="Command\CommandTable.cs" />
     <Compile Include="Command\CommandTableCol.cs" />
     <Compile Include="Command\CommandTableRow.cs" />
-    <Compile Include="Helpers\HttpHelper.cs" />
-    <Compile Include="Helpers\PatternHelper.cs" />
+    <Compile Include="Helpers\AsmHelper.cs" />
+    <Compile Include="Helpers\BannerHelper.cs" />
     <Compile Include="Interfaces\IJobable.cs" />
     <Compile Include="Interfaces\INopPhp.cs" />
     <Compile Include="Interfaces\INopAsm.cs" />
-    <Compile Include="Interfaces\IPreSetVariable.cs" />
     <Compile Include="Interfaces\TcpModule.cs" />
     <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
@@ -83,11 +81,6 @@
     <Compile Include="Enums\EArquitecture.cs" />
     <Compile Include="Enums\EExitFunc.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
-    <Compile Include="Forensics\Interfaces\IProcessMemoryDump.cs" />
-    <Compile Include="Forensics\LinuxProcessMemoryDump.cs" />
-    <Compile Include="Forensics\WindowsProcessMemoryDump.cs" />
-    <Compile Include="Helpers\AsmHelper.cs" />
-    <Compile Include="Helpers\BaseEncodingHelper.cs" />
     <Compile Include="Dns\DnsClient.cs" />
     <Compile Include="Dns\DnsClientAsyncState.cs" />
     <Compile Include="Dns\DnsClientBase.cs" />
@@ -190,18 +183,7 @@
     <Compile Include="Dns\TSig\TSigAlgorithm.cs" />
     <Compile Include="Dns\TSig\TSigAlgorithmHelper.cs" />
     <Compile Include="Dns\TSig\TSigRecord.cs" />
-    <Compile Include="Helpers\CompressHelper.cs" />
-    <Compile Include="Helpers\CounterHelper.cs" />
-    <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
-    <Compile Include="Helpers\FileDetectionHelper.cs" />
-    <Compile Include="Helpers\FtpHelper.cs" />
-    <Compile Include="Helpers\IniHelper.cs" />
-    <Compile Include="Helpers\LatchHelper.cs" />
-    <Compile Include="Helpers\ProcessHelper.cs" />
-    <Compile Include="Helpers\ScriptHelper.cs" />
-    <Compile Include="Helpers\TorHelper.cs" />
-    <Compile Include="Interfaces\IProgress.cs" />
     <Compile Include="Listeners\IO\ConsoleCursor.cs" />
     <Compile Include="ModuleHeader.cs" />
     <Compile Include="NotificationCenter.cs" />
@@ -213,7 +195,6 @@
     <Compile Include="Sockets\TcpForwarder.cs" />
     <Compile Include="Streams\StreamLineReader.cs" />
     <Compile Include="Requirements\Payloads\SpecifyPlatformRequired.cs" />
-    <Compile Include="Sniffer\Filters\SnifferTorFilter.cs" />
     <Compile Include="Sockets\UdpListener.cs" />
     <Compile Include="Dns\Spf\SenderIDRecord.cs" />
     <Compile Include="Dns\Spf\SenderIDScope.cs" />
@@ -231,23 +212,12 @@
     <Compile Include="Enums\ECheck.cs" />
     <Compile Include="Enums\EModuleType.cs" />
     <Compile Include="Extensions\StringComparisonExtensions.cs" />
-    <Compile Include="Helpers\BannerHelper.cs" />
-    <Compile Include="Helpers\AESHelper.cs" />
     <Compile Include="Attributes\SerializableJSONReference.cs" />
     <Compile Include="Enums\EPlatform.cs" />
     <Compile Include="Enums\EReferenceType.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\SerializationExtension.cs" />
-    <Compile Include="Helpers\ArgumentHelper.cs" />
-    <Compile Include="Helpers\BitConverterHelper.cs" />
-    <Compile Include="Helpers\ConvertHelper.cs" />
-    <Compile Include="Helpers\HashHelper.cs" />
-    <Compile Include="Helpers\HexHelper.cs" />
-    <Compile Include="Helpers\MathHelper.cs" />
-    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Command\Interfaces\IAutoCompleteSource.cs" />
-    <Compile Include="Helpers\ReflectionHelper.cs" />
-    <Compile Include="Helpers\SystemHelper.cs" />
     <Compile Include="Interfaces\IIOCommandLayer.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Encoder.cs" />
@@ -255,7 +225,6 @@
     <Compile Include="Interfaces\IEncoderRequirements.cs" />
     <Compile Include="Interfaces\INopRequirements.cs" />
     <Compile Include="Streams\StreamSpeedLimit.cs" />
-    <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="Interfaces\IListener.cs" />
@@ -265,24 +234,12 @@
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Listeners\CommandListener.cs" />
     <Compile Include="Listeners\SocketListener.cs" />
-    <Compile Include="Sniffer\Filters\IPFilter.cs" />
     <Compile Include="Requirements\Encoders\InterfaceEncoder.cs" />
     <Compile Include="Requirements\Encoders\UniqueEncoder.cs" />
     <Compile Include="Requirements\Nops\InterfaceNop.cs" />
     <Compile Include="Requirements\Nops\UniqueNop.cs" />
     <Compile Include="Requirements\Payloads\InterfacePayload.cs" />
     <Compile Include="Reference.cs" />
-    <Compile Include="Sniffer\Enums\ETcpEmisor.cs" />
-    <Compile Include="Sniffer\Enums\ETcpFlags.cs" />
-    <Compile Include="Sniffer\Interfaces\IPacket.cs" />
-    <Compile Include="Sniffer\Headers\IPHeader.cs" />
-    <Compile Include="Sniffer\Interfaces\ITcpStreamFilter.cs" />
-    <Compile Include="Sniffer\NetworkSniffer.cs" />
-    <Compile Include="Sniffer\Filters\SnifferPortFilter.cs" />
-    <Compile Include="Sniffer\Headers\TcpHeader.cs" />
-    <Compile Include="Sniffer\Streams\TcpStream.cs" />
-    <Compile Include="Sniffer\Headers\UdpHeader.cs" />
-    <Compile Include="Sniffer\Streams\TcpStreamMessage.cs" />
     <Compile Include="Sockets\Configs\ClientSocketConfig.cs" />
     <Compile Include="Sockets\Configs\ListenSocketConfig.cs" />
     <Compile Include="Sockets\Proxy\AuthMethod.cs" />
@@ -300,7 +257,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sockets\Enums\EDissconnectReason.cs" />
     <Compile Include="Sockets\Enums\EXPloitSocketMsg.cs" />
-    <Compile Include="Helpers\IPHelpers.cs" />
     <Compile Include="Sockets\Exceptions\StopFirstException.cs" />
     <Compile Include="Sockets\Exceptions\ProtocolException.cs" />
     <Compile Include="Sockets\Exceptions\MaxLengthPacketException.cs" />
@@ -319,9 +275,17 @@
     <Compile Include="VerbalExpressions\CommonRegex.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+      <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
+      <Name>Xploit.Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">
       <Project>{912c9a24-1f3d-4dec-973c-02b93303ffd4}</Project>
       <Name>XPloit.Res</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xploit.Sniffer\Xploit.Sniffer.csproj">
+      <Project>{679bba57-3063-4f17-b491-4f0a730d6b02}</Project>
+      <Name>Xploit.Sniffer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
