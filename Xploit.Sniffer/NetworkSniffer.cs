@@ -1,13 +1,16 @@
+using PacketDotNet;
 using SharpPcap;
+using SharpPcap.LibPcap;
 using System;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using XPloit.Sniffer.Interfaces;
 using XPloit.Sniffer.Streams;
-using System.IO;
-using SharpPcap.LibPcap;
-using PacketDotNet;
-using System.Net;
 
 namespace XPloit.Sniffer
 {
@@ -17,16 +20,34 @@ namespace XPloit.Sniffer
         //readonly Socket _socket;
 
         public delegate void delPacket(IPProtocolType protocolType, IpPacket packet);
-        public delegate void delTcpStream(TcpStream stream);
+        public delegate void delTcpStream(TcpStream stream, bool isNew);
 
+        public event CaptureStoppedEventHandler OnCaptureStop;
         public event delPacket OnPacket;
         public event delTcpStream OnTcpStream;
 
-        IIpPacketFilter[] _Filters = null;
-        List<TcpStream> _TcpStreams = new List<TcpStream>();
+        IIpPacketFilter[] _Filters;
+        Dictionary<string, TcpStream> _TcpStreams = new Dictionary<string, TcpStream>();
         bool _IsDisposed, _HasFilters;
         ICaptureDevice _Device;
 
+        BackgroundWorker _Worker = new BackgroundWorker() { WorkerSupportsCancellation = true };
+        BlockingCollection<cPacket> _SyncPackets = new BlockingCollection<cPacket>();
+
+        class cPacket
+        {
+            public DateTime Date;
+            public IpPacket Packet;
+        }
+
+        /// <summary>
+        /// Filter
+        /// </summary>
+        public string Filter { get; set; }
+        /// <summary>
+        /// Start tcp stream only with sync
+        /// </summary>
+        public bool StartTcpStreamOnlyWithSync { get; set; }
         /// <summary>
         /// Filter
         /// </summary>
@@ -54,8 +75,7 @@ namespace XPloit.Sniffer
         /// <summary>
         /// return IsDisposed
         /// </summary>
-        public bool IsDisposed { get { return _IsDisposed; } }
-
+        public bool IsDisposed { get { return _IsDisposed || _Worker == null || !_Worker.IsBusy; } }
         /// <summary>
         /// Constructor
         /// </summary>
@@ -68,7 +88,8 @@ namespace XPloit.Sniffer
             if (_Device == null) throw (new Exception("Device '" + deviceOrPcapfile + "' not found!"));
 
             _Device.OnPacketArrival += Device_OnPacketArrival;
-
+            _Worker.DoWork += _Worker_DoWork;
+            _Device.OnCaptureStopped += _Device_OnCaptureStopped;
             // Open the device for capturing
 
             //_socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
@@ -79,6 +100,62 @@ namespace XPloit.Sniffer
             //byte[] byOut = new byte[4] { 1, 0, 0, 0 };
 
             //_socket.IOControl(IOControlCode.ReceiveAll, byTrue, byOut);
+        }
+        void _Device_OnCaptureStopped(object sender, CaptureStoppedEventStatus status)
+        {
+            _SyncPackets.CompleteAdding();
+            while (_Worker.IsBusy) Thread.Sleep(50);
+
+            Stop();
+
+            OnCaptureStop?.Invoke(sender, status);
+        }
+        void _Worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            foreach (cPacket pc in _SyncPackets.GetConsumingEnumerable())
+            {
+                Packet packet = pc.Packet.PayloadPacket;
+                ushort sourcePort = 0, destPort = 0;
+                switch (pc.Packet.Protocol)
+                {
+                    case IPProtocolType.TCP:
+                        {
+                            TcpPacket p = (TcpPacket)packet;
+                            sourcePort = p.SourcePort;
+                            destPort = p.DestinationPort;
+                            break;
+                        }
+                    case IPProtocolType.UDP:
+                        {
+                            UdpPacket p = (UdpPacket)packet;
+                            sourcePort = p.SourcePort;
+                            destPort = p.DestinationPort;
+                            break;
+                        }
+                }
+
+                if (_HasFilters && !IsAllowedPacket(pc.Packet, sourcePort, destPort)) continue;
+
+                OnPacket?.Invoke(pc.Packet.Protocol, pc.Packet);
+
+                if (pc.Packet.Protocol == IPProtocolType.TCP)
+                {
+                    bool isNew;
+
+                    TcpStream stream = TcpStream.GetStream(_TcpStreams, pc.Packet, (TcpPacket)packet, StartTcpStreamOnlyWithSync, out isNew);
+                    if (stream == null) continue;
+
+                    OnTcpStream(stream, isNew);
+
+                    if (stream.IsClossed) _TcpStreams.Remove(stream.Key);
+                    else
+                    {
+                        if (isNew) _TcpStreams.Add(stream.Key, stream);
+
+                        // Ver colgados
+                    }
+                }
+            }
         }
         void Device_OnPacketArrival(object sender, CaptureEventArgs e)
         {
@@ -91,44 +168,25 @@ namespace XPloit.Sniffer
             IpPacket ip = (IpPacket)et.PayloadPacket;
             if (ip == null || ip.PayloadPacket == null) return;
 
-            OnPacket?.Invoke(ip.Protocol, ip);
-
-            switch (ip.Protocol)
-            {
-                case IPProtocolType.TCP:
-                    {
-                        if (!(ip.PayloadPacket is TcpPacket)) return;
-
-                        TcpPacket p = (TcpPacket)ip.PayloadPacket;
-                        if (_HasFilters && !IsAllowedPacket(ip, p.SourcePort, p.DestinationPort)) return;
-
-                        TcpStream stream = TcpStream.GetStream(_TcpStreams, ip, p);
-                        if (stream != null)
-                        {
-                            if (stream.IsClossed) _TcpStreams.Remove(stream);
-                            OnTcpStream(stream);
-                        }
-                        break;
-                    }
-                case IPProtocolType.UDP:
-                    {
-                        if (!(ip.PayloadPacket is UdpPacket)) return;
-
-                        UdpPacket p = (UdpPacket)ip.PayloadPacket;
-                        if (_HasFilters && !IsAllowedPacket(ip, p.SourcePort, p.DestinationPort)) return;
-
-                        break;
-                    }
-            }
+            _SyncPackets.TryAdd(new cPacket() { Date = e.Packet.Timeval.Date, Packet = ip });
         }
-
         /// <summary>
         /// Start sniffing
         /// </summary>
         public void Start()
         {
+            Stop();
+
+            //if (StartTcpStreamOnlyWithSync) 
+            //_ParallelPackets = new BlockingCollection<Packet>();
+            //else 
+
+            _SyncPackets = new BlockingCollection<cPacket>();
             _Device.Open();
+            if (!string.IsNullOrEmpty(Filter)) _Device.Filter = Filter;
             _Device.StartCapture();
+            _Worker.RunWorkerAsync();
+
             //Receive();
         }
         /*
@@ -183,6 +241,25 @@ namespace XPloit.Sniffer
 
             return true;
         }
+        public void Stop()
+        {
+            try
+            {
+                if (_Device.Started) _Device.Close();
+            }
+            catch { }
+
+            _SyncPackets.CompleteAdding();
+
+            while (_Worker.IsBusy) Thread.Sleep(50);
+
+            // Clean
+            while (_SyncPackets.Count > 0)
+            {
+                cPacket item;
+                _SyncPackets.TryTake(out item);
+            }
+        }
         /// <summary>
         /// Liberación de recursos
         /// </summary>
@@ -190,14 +267,9 @@ namespace XPloit.Sniffer
         {
             if (_Device == null) return;
 
-            _IsDisposed = true;
+            Stop();
 
-            try
-            {
-                _Device.StopCapture();
-                _Device.Close();
-            }
-            catch { }
+            _IsDisposed = true;
             _Device = null;
 
             //try { _socket.Close(); }

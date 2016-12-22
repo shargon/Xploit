@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\ETcpEmisor.cs" />
-    <Compile Include="Enums\ETcpFlags.cs" />
     <Compile Include="Filters\IPFilter.cs" />
     <Compile Include="Filters\SnifferPortFilter.cs" />
     <Compile Include="Filters\SnifferProtocolFilter.cs" />
@@ -126,6 +125,7 @@
     <Compile Include="SharpPcap\WinPcap\WinPcapDeviceList.cs" />
     <Compile Include="Streams\TcpStream.cs" />
     <Compile Include="Streams\TcpStreamMessage.cs" />
+    <Compile Include="Streams\TcpStreamStack.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">

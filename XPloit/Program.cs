@@ -22,8 +22,8 @@ namespace XPloit
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
 #if DEBUG
-            //if (Debugger.IsAttached)
-            //    args = new string[] { @"Play=Debug.txt" };
+            if (Debugger.IsAttached)
+                args = new string[] { @"Play=Debug.txt" };
 #endif
 
             // Linq to library assembly

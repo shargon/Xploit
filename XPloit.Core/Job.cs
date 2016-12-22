@@ -80,10 +80,15 @@ namespace XPloit.Core
         {
             if (IsRunning)
             {
-                _Object.Dispose();
+                if (_Object != null && !_Object.IsDisposed)
+                    _Object.Dispose();
                 return true;
             }
-            return false;
+
+            if (_Object != null && !_Object.IsDisposed)
+                _Object.Dispose();
+
+            return true;
         }
     }
 }

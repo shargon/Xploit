@@ -14,7 +14,7 @@ namespace XPloit.Core.Helpers
         {
             Random r = new Random();
 
-            switch (r.Next(7))
+            switch (r.Next(8))
             {
                 case 0: GetStarWarsBanner(command); break;
                 case 1: GetWolfBanner(command); break;
@@ -22,8 +22,33 @@ namespace XPloit.Core.Helpers
                 case 3: GetBatmanBanner(command); break;
                 case 4: GetDarthVader(command); break;
                 case 5: GetVespino(command); break;
+                case 6: GetFwhibbit(command);break;
                 default: GetNyanCatBanner(command); break;
             }
+        }
+
+        public static void GetFwhibbit(CommandLayer command)
+        {
+            command.WriteLine("        .--``..---.                ");
+            command.WriteLine("         .````--:ohdmNms/`         ");
+            command.WriteLine("          -:/+++/-.:smNd+          ");
+            command.WriteLine("       ```..--:ohmNNdhh.           ");
+            command.WriteLine("     `-. `.``.-+sosshd.         :. ");
+            command.WriteLine("   -os--/sosdmmNNMMNy         .+// ");
+            command.WriteLine("  :h+.+hNNMMMNNNMMNm/      `/yNN.` ");
+            command.WriteLine(" .do/oNNMMMMMmohs+:`    .+hNMMMM-` ");
+            command.WriteLine(" `yohNhNNNMh-           dosNMMMmo- ");
+            command.WriteLine("  -mN+hMMMy             .smNMNdd/+`");
+            command.WriteLine("   yN.hMMh               +NMMNmhds:");
+            command.WriteLine("   +N//m+                 .osshyho ");
+            command.WriteLine("  ..smhh                           ");
+            command.WriteLine("   ::oNmy-                         ");
+            command.WriteLine("      .//yhs/:`                    ");
+            command.WriteLine("          :ymNN/                   ");
+            command.WriteLine("         .-+shdho.                 ");
+            command.WriteLine("             `.--..` \033[1;m'''   ");
+            command.WriteLine("");
+            command.WriteLine("       Follow the white Rabbit ...");
         }
 
         public static void GetSimple1Banner(CommandLayer command)

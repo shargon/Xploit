@@ -1,5 +1,4 @@
 ﻿using PacketDotNet;
-using System.Net;
 
 namespace XPloit.Sniffer.Interfaces
 {

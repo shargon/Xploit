@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Text;
-using XPloit.Core.Sockets.Interfaces;
 
 namespace XPloit.Core.Attributes
 {

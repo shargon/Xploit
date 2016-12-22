@@ -9,15 +9,32 @@ namespace XPloit.Sniffer.Streams
         ETcpEmisor _Emisor;
         byte[] _Data;
         internal int _LastRead = 0;
+        TcpStreamMessage _Previous, _Next;
 
         /// <summary>
         /// Data
         /// </summary>
         public byte[] Data { get { return _Data; } }
         /// <summary>
-        /// UTF8-Data
+        /// Previous Stream
+        /// </summary>
+        public TcpStreamMessage Previous { get { return _Previous; } }
+        /// <summary>
+        /// Next
+        /// </summary>
+        public TcpStreamMessage Next { get { return _Next; } }
+        /// <summary>
+        /// Ascii-Data
         /// </summary>
         public string DataAscii { get { return Encoding.ASCII.GetString(_Data); } }
+        /// <summary>
+        /// UTF8-Data
+        /// </summary>
+        public string DataUTF8 { get { return Encoding.UTF8.GetString(_Data); } }
+        /// <summary>
+        /// Unicode-Data
+        /// </summary>
+        public string DataUnicode { get { return Encoding.Unicode.GetString(_Data); } }
         /// <summary>
         /// HEX-Data
         /// </summary>
@@ -44,10 +61,16 @@ namespace XPloit.Sniffer.Streams
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="emisor">Emisor</param>
-        public TcpStreamMessage(byte[] data, ETcpEmisor emisor)
+        public TcpStreamMessage(byte[] data, ETcpEmisor emisor, TcpStreamMessage previous)
         {
             _Data = data;
             _Emisor = emisor;
+
+            if (previous != null)
+            {
+                _Previous = previous;
+                previous._Next = this;
+            }
         }
         /// <summary>
         /// Add data to Stream
@@ -63,6 +86,6 @@ namespace XPloit.Sniffer.Streams
             Array.Copy(data, 0, _Data, l, data.Length);
         }
 
-        public override string ToString() { return Emisor.ToString() + " (" + _Data.Length.ToString() + ")"; }
+        public override string ToString() { return Emisor.ToString() + " (" + _Data.Length.ToString() + ") " + DataAscii; }
     }
 }

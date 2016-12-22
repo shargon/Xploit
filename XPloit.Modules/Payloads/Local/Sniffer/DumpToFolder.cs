@@ -31,7 +31,7 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
             return true;
         }
         public void OnPacket(IPProtocolType protocolType, IpPacket packet) { }
-        public void OnTcpStream(TcpStream stream)
+        public void OnTcpStream(TcpStream stream, bool isNew)
         {
             if (stream == null) return;
 

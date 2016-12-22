@@ -2,6 +2,13 @@
 {
     public enum ETcpEmisor
     {
-        A, B
+        /// <summary>
+        /// Tcp Client
+        /// </summary>
+        Client,
+        /// <summary>
+        /// Tcp Server
+        /// </summary>
+        Server
     }
 }

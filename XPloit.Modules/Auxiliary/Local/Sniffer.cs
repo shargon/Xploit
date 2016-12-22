@@ -22,12 +22,12 @@ namespace Auxiliary.Local
             bool CaptureOnTcpStream { get; }
             bool CaptureOnPacket { get; }
 
-            void OnTcpStream(TcpStream stream);
+            void OnTcpStream(TcpStream stream, bool isNew);
             bool Check();
             void OnPacket(IPProtocolType protocolType, IpPacket packet);
         }
 
-        string _CaptureDevice;
+        string _Interface;
 
         #region Configure
         public override string Author { get { return "Fernando Díaz Toledano"; } }
@@ -45,26 +45,31 @@ namespace Auxiliary.Local
         #region Properties
         [ConfigurableProperty(Description = "Sniff this port", Optional = true)]
         public ushort[] FilterPorts { get; set; }
+        [ConfigurableProperty(Description = "Filter", Optional = true)]
+        public string Filter { get; set; }
         [ConfigurableProperty(Description = "Filter protocols", Optional = true)]
         public IPProtocolType[] FilterProtocols { get; set; }
         [ConfigurableProperty(Description = "Filter only the Tor Request")]
         public bool FilterOnlyTorRequest { get; set; }
         [AutoFill("GetAllDevices")]
         [ConfigurableProperty(Description = "Capture device or pcap file")]
-        public string CaptureDevice
+        public string Interface
         {
             get
             {
-                if (string.IsNullOrEmpty(_CaptureDevice)) _CaptureDevice = NetworkSniffer.CaptureDevices.FirstOrDefault();
-                return _CaptureDevice;
+                if (string.IsNullOrEmpty(_Interface)) _Interface = NetworkSniffer.CaptureDevices.FirstOrDefault();
+                return _Interface;
             }
-            set { _CaptureDevice = value; }
+            set { _Interface = value; }
         }
+        [ConfigurableProperty(Description = "Start tcp stream only with SYNC")]
+        public bool StartTcpStreamOnlyWithSync { get; set; }
         #endregion
 
         public Sniffer()
         {
-            FilterProtocols = new IPProtocolType[] { IPProtocolType.TCP, IPProtocolType.UDP };
+            //FilterProtocols = new IPProtocolType[] { IPProtocolType.TCP, IPProtocolType.UDP };
+            StartTcpStreamOnlyWithSync = true;
         }
         public string[] GetAllDevices() { return NetworkSniffer.CaptureDevices; }
         [NonJobable()]
@@ -76,7 +81,9 @@ namespace Auxiliary.Local
             if (!pay.Check()) return false;
             if (FilterOnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
 
-            NetworkSniffer s = new NetworkSniffer(CaptureDevice);
+            NetworkSniffer s = new NetworkSniffer(Interface);
+            s.StartTcpStreamOnlyWithSync = StartTcpStreamOnlyWithSync;
+            if (!string.IsNullOrEmpty(Filter)) s.Filter = Filter;
             if (pay.CaptureOnTcpStream) s.OnTcpStream += pay.OnTcpStream;
             if (pay.CaptureOnPacket) s.OnPacket += pay.OnPacket;
 
@@ -87,10 +94,15 @@ namespace Auxiliary.Local
             if (FilterProtocols != null && FilterProtocols.Length > 0) filters.Add(new SnifferProtocolFilter(FilterProtocols));
 
             s.Filters = filters.ToArray();
+            s.OnCaptureStop += S_OnCaptureStop;
             s.Start();
 
             CreateJob(s, "IsDisposed");
             return true;
+        }
+        void S_OnCaptureStop(object sender, SharpPcap.CaptureStoppedEventStatus status)
+        {
+            WriteInfo("Capture stopped");
         }
         public override ECheck Check()
         {
@@ -103,7 +115,7 @@ namespace Auxiliary.Local
                 IPayloadSniffer pay = (IPayloadSniffer)Payload;
                 if (!pay.Check()) return ECheck.Error;
 
-                s = new NetworkSniffer(CaptureDevice);
+                s = new NetworkSniffer(Interface);
                 s.Start();
 
                 return ECheck.Ok;

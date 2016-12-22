@@ -55,6 +55,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -104,6 +105,7 @@
     <Compile Include="Payloads\Local\Fuzzing\TcpSocketFuzzer.cs" />
     <Compile Include="Payloads\Local\RSync\Ftp.cs" />
     <Compile Include="Payloads\Local\RSync\LocalPath.cs" />
+    <Compile Include="Payloads\Local\Sniffer\GetCredentials.cs" />
     <Compile Include="Payloads\Local\Sniffer\DumpToFolder.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Manual.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Auto.cs" />
@@ -123,6 +125,10 @@
     <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
       <Project>{0981E164-5930-4BA0-983C-1CF679E5033F}</Project>
       <Name>Xploit.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xploit.Server.Http\Xploit.Server.Http.csproj">
+      <Project>{2a844ca2-5d6c-45b5-963b-7dca1140e16f}</Project>
+      <Name>Xploit.Server.Http</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xploit.Sniffer\Xploit.Sniffer.csproj">
       <Project>{679BBA57-3063-4F17-B491-4F0A730D6B02}</Project>
