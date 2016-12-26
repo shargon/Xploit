@@ -1,6 +1,7 @@
 ﻿using PacketDotNet;
 using System.Collections.Generic;
 using XPloit.Sniffer.Interfaces;
+using System.Net;
 
 namespace XPloit.Sniffer.Filters
 {
@@ -13,9 +14,9 @@ namespace XPloit.Sniffer.Filters
         /// </summary>
         public List<IPProtocolType> AvailableProtocols { get { return _AvailableProtocols; } }
 
-        public bool IsAllowed(IpPacket ip, ushort portSource, ushort portDest)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
         {
-            return AvailableProtocols.Contains(ip.Protocol);
+            return AvailableProtocols.Contains(protocol);
         }
 
         /// <summary>

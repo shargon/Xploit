@@ -1,54 +1,124 @@
 ﻿using PacketDotNet;
 using System.Collections.Generic;
+using System.Net;
+using XPloit.Sniffer.Enums;
+using XPloit.Sniffer.Streams;
+using Xploit.Sniffer.Enums;
+using System;
+using System.Linq;
 
 namespace Xploit.Sniffer.Streams
 {
     public class TcpStreamStack
     {
-        Dictionary<uint, TcpPacket> _Stack = new Dictionary<uint, TcpPacket>();
-        /// <summary>
-        /// SequenceNumber
-        /// </summary>
-        public uint SequenceNumber { get; set; }
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="sequenceNumber">SequenceNumber</param>
-        public TcpStreamStack(uint sequenceNumber)
+        Dictionary<string, TcpStream> _TcpStreams = new Dictionary<string, TcpStream>();
+
+        int _Dropped;
+        public int Dropped { get { return _Dropped; } }
+        public TimeSpan TimeoutSync { get; set; }
+        public TimeSpan Timeout { get; set; }
+
+        public TcpStreamStack()
         {
-            SequenceNumber = sequenceNumber;
+            TimeoutSync = TimeSpan.FromSeconds(20);
+            Timeout = TimeSpan.FromMinutes(15);
         }
-        /// <summary>
-        /// Try get next Packet
-        /// </summary>
-        /// <param name="sequenceNumber">Sequence Number</param>
-        /// <param name="packet">Packet</param>
-        public bool TryGetNextPacket(out TcpPacket packet)
+
+        public static string GetKey(IPEndPoint source, IPEndPoint dest, bool reverse)
         {
-            if (_Stack.TryGetValue(SequenceNumber, out packet))
+            if (reverse) return dest.ToString() + ">" + source.ToString();
+            return source.ToString() + ">" + dest.ToString();
+        }
+        public bool TryGetValue(IPEndPoint source, IPEndPoint dest, out TcpStream ret, out ETcpEmisor em)
+        {
+            em = dest.Port < 49152 ? ETcpEmisor.Client : ETcpEmisor.Server;
+
+            if (!_TcpStreams.TryGetValue(GetKey(source, dest, em == ETcpEmisor.Server), out ret))
             {
-                _Stack.Remove(SequenceNumber);
+                em = em == ETcpEmisor.Client ? ETcpEmisor.Server : ETcpEmisor.Client;
+
+                if (!_TcpStreams.TryGetValue(GetKey(source, dest, em == ETcpEmisor.Server), out ret))
+                {
+                    em = ETcpEmisor.Client;
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        internal bool Remove(string key)
+        {
+            lock (_TcpStreams) return _TcpStreams.Remove(key);
+        }
+        public bool GetStream(IPEndPoint ipSource, IPEndPoint ipDest, TcpPacket tcp, DateTime date, EStartTcpStreamMethod startTcpStreamMethod, out TcpStream stream)
+        {
+            ETcpEmisor em;
+            if (!TryGetValue(ipSource, ipDest, out stream, out em))
+            {
+                bool syn = tcp.Syn;
+                bool ack = tcp.Ack;
+
+                // No data or no Sync
+                switch (startTcpStreamMethod)
+                {
+                    case EStartTcpStreamMethod.Sync:
+                        {
+                            if (!syn || ack)
+                            {
+                                stream = null;
+                                return false;
+                            }
+                            break;
+                        }
+                    case EStartTcpStreamMethod.SyncAck:
+                        {
+                            if (!syn || !ack)
+                            {
+                                stream = null;
+                                return false;
+                            }
+                            break;
+                        }
+                }
+
+                lock (_TcpStreams)
+                {
+                    stream = new TcpStream(this, syn && ack ? ETcpEmisor.Server : ETcpEmisor.Client, ipSource, ipDest, tcp, date);
+                    _TcpStreams.Add(stream.Key, stream);
+                }
                 return true;
             }
+
+            if (!stream.IsClossed)
+                stream.Add(date, em, tcp);
+
             return false;
         }
-        /// <summary>
-        /// Append to stack
-        /// </summary>
-        /// <param name="sequenceNumber">Sequence Number</param>
-        /// <param name="packet">Packet</param>
-        public void Append(uint sequenceNumber, TcpPacket packet)
+        internal IEnumerable<TcpStream> CleanByTimeout(DateTime date)
         {
-            if (!_Stack.ContainsKey(sequenceNumber))
-                _Stack.Add(sequenceNumber, packet);
+            TcpStream[] ret;
+            lock (_TcpStreams) { ret = _TcpStreams.Values.ToArray(); }
+
+            foreach (TcpStream v in ret)
+            {
+                if (v == null) continue;
+
+                lock (v) if (!v.IsClossed && !IsTimeouted(v, date))
+                    {
+                        v.Close();
+                        _Dropped++;
+                        yield return v;
+                    }
+            }
         }
-        /// <summary>
-        /// String representation
-        /// </summary>
-        public override string ToString() { return SequenceNumber.ToString(); }
-        /// <summary>
-        /// Clear
-        /// </summary>
-        public void Clear() { _Stack.Clear(); }
+        bool IsTimeouted(TcpStream v, DateTime date)
+        {
+            TcpStreamMessage st = v.LastStream;
+
+            if (st == null)
+                return date < v.StartDate.Add(TimeoutSync);
+
+            return date < st.Date.Add(Timeout);
+        }
     }
 }

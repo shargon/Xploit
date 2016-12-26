@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using Auxiliary.Local;
 using PacketDotNet;
 using XPloit.Core;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
+using XPloit.Sniffer;
+using System.Collections.Concurrent;
 
 namespace XPloit.Modules.Payloads.Local.Sniffer
 {
@@ -18,6 +22,8 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
         public DirectoryInfo DumpFolder { get; set; }
         public bool CaptureOnTcpStream { get { return true; } }
         public bool CaptureOnPacket { get { return false; } }
+
+        public event NetworkSniffer.delOnQueueObject OnObject;
         #endregion
 
         public bool Check()
@@ -31,7 +37,7 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
             return true;
         }
         public void OnPacket(IPProtocolType protocolType, IpPacket packet) { }
-        public void OnTcpStream(TcpStream stream, bool isNew)
+        public void OnTcpStream(TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null) return;
 
@@ -40,5 +46,6 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                 stream.Source.ToString().Replace(":", ",") + " - " +
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }
+        public void Dequeue(object obj) { }
     }
 }

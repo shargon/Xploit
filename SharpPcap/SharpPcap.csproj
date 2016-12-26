@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7D75CA11-8745-4382-B3EB-C41416DBC48C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpPcap</RootNamespace>
+    <AssemblyName>SharpPcap</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PacketDotNet.0.13.0\lib\net\PacketDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AirPcap\AirPcapAdapterBus.cs" />
+    <Compile Include="AirPcap\AirPcapAdapterId.cs" />
+    <Compile Include="AirPcap\AirPcapBands.cs" />
+    <Compile Include="AirPcap\AirPcapChannelInfo.cs" />
+    <Compile Include="AirPcap\AirPcapChannelInfoFlags.cs" />
+    <Compile Include="AirPcap\AirPcapDecryptionState.cs" />
+    <Compile Include="AirPcap\AirPcapDevice.cs" />
+    <Compile Include="AirPcap\AirPcapDeviceCapabilities.cs" />
+    <Compile Include="AirPcap\AirPcapDeviceDescription.cs" />
+    <Compile Include="AirPcap\AirPcapDeviceList.cs" />
+    <Compile Include="AirPcap\AirPcapDeviceTimestamp.cs" />
+    <Compile Include="AirPcap\AirPcapKey.cs" />
+    <Compile Include="AirPcap\AirPcapKeyType.cs" />
+    <Compile Include="AirPcap\AirPcapLinkTypes.cs" />
+    <Compile Include="AirPcap\AirPcapMacFlags.cs" />
+    <Compile Include="AirPcap\AirPcapMediumType.cs" />
+    <Compile Include="AirPcap\AirPcapPacketHeader.cs" />
+    <Compile Include="AirPcap\AirPcapSafeNativeMethods.cs" />
+    <Compile Include="AirPcap\AirPcapStatistics.cs" />
+    <Compile Include="AirPcap\AirPcapUnmanagedStructures.cs" />
+    <Compile Include="AirPcap\AirPcapValidationType.cs" />
+    <Compile Include="AirPcap\AirPcapVersion.cs" />
+    <Compile Include="AirPcap\Win32SafeNativeMethods.cs" />
+    <Compile Include="ARP.cs" />
+    <Compile Include="CaptureDeviceList.cs" />
+    <Compile Include="CaptureEventArgs.cs" />
+    <Compile Include="CaptureStoppedEventHandler.cs" />
+    <Compile Include="CaptureStoppedEventStatus.cs" />
+    <Compile Include="DeviceMode.cs" />
+    <Compile Include="DeviceNotReadyException.cs" />
+    <Compile Include="ICaptureDevice.cs" />
+    <Compile Include="ICaptureStatistics.cs" />
+    <Compile Include="InvalidOperationDuringBackgroundCaptureException.cs" />
+    <Compile Include="LibPcap\CaptureFileReaderDevice.cs" />
+    <Compile Include="LibPcap\CaptureFileWriterDevice.cs" />
+    <Compile Include="LibPcap\LibPcapLiveDevice.cs" />
+    <Compile Include="LibPcap\LibPcapLiveDeviceList.cs" />
+    <Compile Include="LibPcap\LibPcapSafeNativeMethods.cs" />
+    <Compile Include="LibPcap\PcapAddress.cs" />
+    <Compile Include="LibPcap\PcapDevice.cs" />
+    <Compile Include="LibPcap\PcapDeviceCaptureLoop.cs" />
+    <Compile Include="LibPcap\PcapHeader.cs" />
+    <Compile Include="LibPcap\PcapInterface.cs" />
+    <Compile Include="LibPcap\PcapStatistics.cs" />
+    <Compile Include="LibPcap\PcapUnmanagedStructures.cs" />
+    <Compile Include="LibPcap\Sockaddr.cs" />
+    <Compile Include="NotSupportedOnCaptureFileException.cs" />
+    <Compile Include="PacketArrivalEventHandler.cs" />
+    <Compile Include="Pcap.cs" />
+    <Compile Include="PcapException.cs" />
+    <Compile Include="PosixTimeval.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawCapture.cs" />
+    <Compile Include="StatisticsException.cs" />
+    <Compile Include="Version.cs" />
+    <Compile Include="WinPcapRequiredException.cs" />
+    <Compile Include="WinPcap\AuthenticationTypes.cs" />
+    <Compile Include="WinPcap\CaptureMode.cs" />
+    <Compile Include="WinPcap\OpenFlags.cs" />
+    <Compile Include="WinPcap\RemoteAuthentication.cs" />
+    <Compile Include="WinPcap\SafeNativeMethods.cs" />
+    <Compile Include="WinPcap\SendQueue.cs" />
+    <Compile Include="WinPcap\SendQueueTransmitModes.cs" />
+    <Compile Include="WinPcap\StatisticsModeEventArgs.cs" />
+    <Compile Include="WinPcap\StatisticsModeEventHandler.cs" />
+    <Compile Include="WinPcap\StatisticsModePacket.cs" />
+    <Compile Include="WinPcap\UnmanagedStructures.cs" />
+    <Compile Include="WinPcap\WinPcapDevice.cs" />
+    <Compile Include="WinPcap\WinPcapDeviceList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="SharpPcap.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

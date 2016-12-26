@@ -66,9 +66,11 @@ namespace Xploit.Server.Http
                     case EHttpMethod.SOCKET: parseSocket(); _is_socket = true; return;
                 }
 
-                WriteHeader("Date", DateTime.Now.ToUniversalTime().ToString("R"));
-                WriteHeader("Server", "MAIS");
-
+                if (!_ReadOnly)
+                {
+                    WriteHeader("Date", DateTime.Now.ToUniversalTime().ToString("R"));
+                    WriteHeader("Server", "MAIS");
+                }
                 if (_Server != null)
                 {
                     if (IsSocket) _Server.OnRequestSocket(this);
@@ -78,7 +80,7 @@ namespace Xploit.Server.Http
             catch (Exception e) { IProcessError(e); }
             finally
             {
-                if (stream != null) stream.Flush();
+                if (stream != null && !_ReadOnly) stream.Flush();
                 if (post_pg != null && _Server != null) _Server.OnPostProgress(post_pg, EHttpPostState.End);
             }
         }
@@ -247,7 +249,7 @@ namespace Xploit.Server.Http
             Dictionary<string, string> headers = new Dictionary<string, string>();
             while (streamReadLine(stream, out line))
             {
-                if (string.IsNullOrEmpty(line)) { break; }
+                if (string.IsNullOrEmpty(line)) break;
 
                 string name, val;
                 SeparaEnDos(line, ':', out name, out val);

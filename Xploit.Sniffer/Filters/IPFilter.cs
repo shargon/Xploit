@@ -16,14 +16,13 @@ namespace XPloit.Sniffer.Filters
         /// </summary>
         public List<IPAddress> OnlyAllowed { get; set; }
 
-        public bool IsAllowed(IpPacket ip, ushort portSource, ushort portDest)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
         {
-            if (IsAllowed(ip.SourceAddress)) return true;
-            if (IsAllowed(ip.DestinationAddress)) return true;
+            if (IsAllowed(source.Address)) return true;
+            if (IsAllowed(dest.Address)) return true;
 
             return false;
         }
-
         /// <summary>
         /// Check if ip its allowed
         /// </summary>

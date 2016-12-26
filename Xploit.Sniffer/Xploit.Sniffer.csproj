@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\EStartTcpStreamMethod.cs" />
     <Compile Include="Enums\ETcpEmisor.cs" />
     <Compile Include="Filters\IPFilter.cs" />
     <Compile Include="Filters\SnifferPortFilter.cs" />
@@ -55,79 +56,16 @@
     <Compile Include="Interfaces\IIpPacketFilter.cs" />
     <Compile Include="NetworkSniffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapAdapterBus.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapAdapterId.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapBands.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapChannelInfo.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapChannelInfoFlags.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapDecryptionState.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapDevice.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceCapabilities.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceDescription.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceList.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapDeviceTimestamp.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapKey.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapKeyType.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapLinkTypes.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapMacFlags.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapMediumType.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapPacketHeader.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapSafeNativeMethods.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapStatistics.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapUnmanagedStructures.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapValidationType.cs" />
-    <Compile Include="SharpPcap\AirPcap\AirPcapVersion.cs" />
-    <Compile Include="SharpPcap\AirPcap\Win32SafeNativeMethods.cs" />
-    <Compile Include="SharpPcap\ARP.cs" />
-    <Compile Include="SharpPcap\CaptureDeviceList.cs" />
-    <Compile Include="SharpPcap\CaptureEventArgs.cs" />
-    <Compile Include="SharpPcap\CaptureStoppedEventHandler.cs" />
-    <Compile Include="SharpPcap\CaptureStoppedEventStatus.cs" />
-    <Compile Include="SharpPcap\DeviceMode.cs" />
-    <Compile Include="SharpPcap\DeviceNotReadyException.cs" />
-    <Compile Include="SharpPcap\ICaptureDevice.cs" />
-    <Compile Include="SharpPcap\ICaptureStatistics.cs" />
-    <Compile Include="SharpPcap\InvalidOperationDuringBackgroundCaptureException.cs" />
-    <Compile Include="SharpPcap\LibPcap\CaptureFileReaderDevice.cs" />
-    <Compile Include="SharpPcap\LibPcap\CaptureFileWriterDevice.cs" />
-    <Compile Include="SharpPcap\LibPcap\LibPcapLiveDevice.cs" />
-    <Compile Include="SharpPcap\LibPcap\LibPcapLiveDeviceList.cs" />
-    <Compile Include="SharpPcap\LibPcap\LibPcapSafeNativeMethods.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapAddress.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapDevice.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapDeviceCaptureLoop.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapHeader.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapInterface.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapStatistics.cs" />
-    <Compile Include="SharpPcap\LibPcap\PcapUnmanagedStructures.cs" />
-    <Compile Include="SharpPcap\LibPcap\Sockaddr.cs" />
-    <Compile Include="SharpPcap\NotSupportedOnCaptureFileException.cs" />
-    <Compile Include="SharpPcap\PacketArrivalEventHandler.cs" />
-    <Compile Include="SharpPcap\Pcap.cs" />
-    <Compile Include="SharpPcap\PcapException.cs" />
-    <Compile Include="SharpPcap\PosixTimeval.cs" />
-    <Compile Include="SharpPcap\RawCapture.cs" />
-    <Compile Include="SharpPcap\StatisticsException.cs" />
-    <Compile Include="SharpPcap\Version.cs" />
-    <Compile Include="SharpPcap\WinPcapRequiredException.cs" />
-    <Compile Include="SharpPcap\WinPcap\AuthenticationTypes.cs" />
-    <Compile Include="SharpPcap\WinPcap\CaptureMode.cs" />
-    <Compile Include="SharpPcap\WinPcap\OpenFlags.cs" />
-    <Compile Include="SharpPcap\WinPcap\RemoteAuthentication.cs" />
-    <Compile Include="SharpPcap\WinPcap\SafeNativeMethods.cs" />
-    <Compile Include="SharpPcap\WinPcap\SendQueue.cs" />
-    <Compile Include="SharpPcap\WinPcap\SendQueueTransmitModes.cs" />
-    <Compile Include="SharpPcap\WinPcap\StatisticsModeEventArgs.cs" />
-    <Compile Include="SharpPcap\WinPcap\StatisticsModeEventHandler.cs" />
-    <Compile Include="SharpPcap\WinPcap\StatisticsModePacket.cs" />
-    <Compile Include="SharpPcap\WinPcap\UnmanagedStructures.cs" />
-    <Compile Include="SharpPcap\WinPcap\WinPcapDevice.cs" />
-    <Compile Include="SharpPcap\WinPcap\WinPcapDeviceList.cs" />
     <Compile Include="Streams\TcpStream.cs" />
     <Compile Include="Streams\TcpStreamMessage.cs" />
+    <Compile Include="Streams\TcpPacketStack.cs" />
     <Compile Include="Streams\TcpStreamStack.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SharpPcap\SharpPcap.csproj">
+      <Project>{7d75ca11-8745-4382-b3eb-c41416dbc48c}</Project>
+      <Name>SharpPcap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
       <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
       <Name>Xploit.Helpers</Name>

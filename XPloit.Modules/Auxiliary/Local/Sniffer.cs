@@ -1,6 +1,9 @@
 ﻿using PacketDotNet;
+using SharpPcap;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Xploit.Sniffer.Enums;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -22,7 +25,9 @@ namespace Auxiliary.Local
             bool CaptureOnTcpStream { get; }
             bool CaptureOnPacket { get; }
 
-            void OnTcpStream(TcpStream stream, bool isNew);
+            void Dequeue(object obj);
+
+            void OnTcpStream(TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
             bool Check();
             void OnPacket(IPProtocolType protocolType, IpPacket packet);
         }
@@ -63,13 +68,13 @@ namespace Auxiliary.Local
             set { _Interface = value; }
         }
         [ConfigurableProperty(Description = "Start tcp stream only with SYNC")]
-        public bool StartTcpStreamOnlyWithSync { get; set; }
+        public EStartTcpStreamMethod StartTcpStreamMethod { get; set; }
         #endregion
 
         public Sniffer()
         {
             //FilterProtocols = new IPProtocolType[] { IPProtocolType.TCP, IPProtocolType.UDP };
-            StartTcpStreamOnlyWithSync = true;
+            StartTcpStreamMethod = EStartTcpStreamMethod.Sync;
         }
         public string[] GetAllDevices() { return NetworkSniffer.CaptureDevices; }
         [NonJobable()]
@@ -82,7 +87,9 @@ namespace Auxiliary.Local
             if (FilterOnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
 
             NetworkSniffer s = new NetworkSniffer(Interface);
-            s.StartTcpStreamOnlyWithSync = StartTcpStreamOnlyWithSync;
+            s.StartTcpStreamMethod = StartTcpStreamMethod;
+            s.OnDequeue += pay.Dequeue;
+
             if (!string.IsNullOrEmpty(Filter)) s.Filter = Filter;
             if (pay.CaptureOnTcpStream) s.OnTcpStream += pay.OnTcpStream;
             if (pay.CaptureOnPacket) s.OnPacket += pay.OnPacket;
@@ -100,7 +107,7 @@ namespace Auxiliary.Local
             CreateJob(s, "IsDisposed");
             return true;
         }
-        void S_OnCaptureStop(object sender, SharpPcap.CaptureStoppedEventStatus status)
+        void S_OnCaptureStop(object sender, CaptureStoppedEventStatus status)
         {
             WriteInfo("Capture stopped");
         }

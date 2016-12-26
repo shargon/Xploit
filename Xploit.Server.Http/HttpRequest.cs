@@ -11,18 +11,18 @@ namespace Xploit.Server.Http
         public HttpFile[] Files { get { return _files; } }
 
         bool _VarsToLowerCase;
-        HttpHost _host = null;
+        HttpHost _host;
         string http_url = "", _IP = "";
         string http_protocol_version = "";
         EHttpMethod http_method = EHttpMethod.Unknown;
-        HttpAuth _auth = null;
-        Dictionary<string, string> _header = null;
+        HttpAuth _auth;
+        Dictionary<string, string> _header;
         Dictionary<string, string> _get = new Dictionary<string, string>();
         Dictionary<string, string> _post = new Dictionary<string, string>();
         EBrowser _br = EBrowser.Unknown;
-        LocationInfo _loc = null;
+        LocationInfo _loc;
         ESO _so = ESO.Unknown;
-        HttpPath _http_path = null;
+        HttpPath _http_path;
 
         public bool IsSocket { get { return http_method == EHttpMethod.SOCKET; } }
         public ESO SO { get { return _so; } }
@@ -104,9 +104,24 @@ namespace Xploit.Server.Http
         internal void SetFiles(HttpFile[] httpFiles) { _files = httpFiles; }
         public HttpRequest(string request, string host, string ip, Dictionary<string, string> header, HttpAuth auth, ESO so, EBrowser br, bool is_socket, bool varsToLowerCase)
         {
-            string[] tokens = request.Split(' ');
-            if (header == null || tokens.Length != 3)
-                throw new Exception("invalid http request line");
+            if (header == null)
+            {
+                http_method = EHttpMethod.Unknown;
+                return;
+            }
+
+            int ixa = request.IndexOf(' ');
+            if (ixa <= -1)
+            {
+                http_method = EHttpMethod.Unknown;
+                return;
+            }
+            int ixb = request.LastIndexOf(' ');
+            if (ixb <= -1 || ixa == ixb)
+            {
+                http_method = EHttpMethod.Unknown;
+                return;
+            }
 
             _VarsToLowerCase = varsToLowerCase;
             _IP = ip;
@@ -116,8 +131,9 @@ namespace Xploit.Server.Http
             _auth = auth;
             _host = new HttpHost(host);
 
-            switch (tokens[0].ToUpper())
+            switch (request.Substring(0, ixa).ToUpper())
             {
+                case "HEAD": http_method = EHttpMethod.HEAD; break;
                 case "GET": http_method = EHttpMethod.GET; break;
                 case "POST": http_method = EHttpMethod.POST; break;
                 default: http_method = EHttpMethod.Unknown; break;
@@ -125,8 +141,8 @@ namespace Xploit.Server.Http
 
             if (is_socket) http_method = EHttpMethod.SOCKET;
 
-            http_url = tokens[1].Trim('/');
-            http_protocol_version = tokens[2];
+            http_url = request.Substring(ixa + 1, ixb - ixa - 1).Trim('/');
+            http_protocol_version = request.Substring(ixb + 1);
 
             int ix_h = http_url.IndexOf('?');
             if (ix_h != -1)

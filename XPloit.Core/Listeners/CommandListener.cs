@@ -950,8 +950,8 @@ namespace XPloit.Core.Listeners
                                         if (!c.Optional) row[1].ForeColor = ConsoleColor.Red;
                                         else
                                         {
-                                            if (x == 0 || x == 3)
-                                                row[1].ForeColor = ConsoleColor.DarkRed;
+                                            //if (x == 0 || x == 3)
+                                            row[1].ForeColor = ConsoleColor.DarkRed;
                                         }
                                     }
                                     else

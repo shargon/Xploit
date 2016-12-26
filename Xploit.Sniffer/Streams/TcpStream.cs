@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using Xploit.Sniffer;
 using Xploit.Sniffer.Streams;
 using XPloit.Helpers;
 using XPloit.Sniffer.Enums;
@@ -17,18 +18,20 @@ namespace XPloit.Sniffer.Streams
         TcpStreamMessage _Last;
         List<TcpStreamMessage> _InternalList = new List<TcpStreamMessage>();
 
-        TcpStreamStack _ClientStack;
-        TcpStreamStack _ServerStack;
+        TcpPacketStack _ClientStack;
+        TcpPacketStack _ServerStack;
         const int DumpStep = 16;
         byte _Writed;
-        long _ClientLength ;
-        long _ServerLength ;
+        long _ClientLength;
+        long _ServerLength;
         char[] _LastWrited = new char[DumpStep];
-        bool _IsClossed = false;
+        bool _IsClossed;
         string _Key;
-        ushort _DestinationPort, _SourcePort;
-        IPAddress _DestinationAddress, _SourceAddress;
+        IPEndPoint _Destination, _Source;
+        DateTime _StartDate;
+        TcpStreamStack _TcpStack;
 
+        public DateTime StartDate { get { return _StartDate; } }
         public string Key { get { return _Key; } }
         public long ClientLength { get { return _ClientLength; } }
         public long ServerLength { get { return _ServerLength; } }
@@ -37,12 +40,8 @@ namespace XPloit.Sniffer.Streams
         public TcpStreamMessage LastStream { get { return _Last; } }
         public TcpStreamMessage FirstStream { get { return _InternalList.Count == 0 ? null : _InternalList[0]; } }
         public bool IsClossed { get { return _IsClossed; } }
-        public ushort DestinationPort { get { return _DestinationPort; } }
-        public ushort SourcePort { get { return _SourcePort; } }
-        public IPAddress SourceAddress { get { return _SourceAddress; } }
-        public IPAddress DestinationAddress { get { return _DestinationAddress; } }
-        public IPEndPoint Source { get { return new IPEndPoint(_SourceAddress, _SourcePort); } }
-        public IPEndPoint Destination { get { return new IPEndPoint(_DestinationAddress, _DestinationPort); } }
+        public IPEndPoint Source { get { return _Source; } }
+        public IPEndPoint Destination { get { return _Destination; } }
         /// <summary>
         /// Variables
         /// </summary>
@@ -56,17 +55,19 @@ namespace XPloit.Sniffer.Streams
                 return _InternalList[index];
             }
         }
-        void Add(ETcpEmisor emisor, TcpPacket tcp)
+        public void Add(DateTime date, ETcpEmisor emisor, TcpPacket tcp)
         {
-            TcpStreamStack stack = null;
+            uint sequenceNumber = tcp.SequenceNumber;
+
+            TcpPacketStack stack = null;
             switch (emisor)
             {
                 case ETcpEmisor.Client:
                     {
                         if (_ClientStack == null)
                         {
-                            _ClientStack = new TcpStreamStack((uint)(tcp.SequenceNumber + tcp.PayloadData.Length + (tcp.Syn ? 1 : 0)));
-                            AppendPacket(_ClientStack, emisor, tcp);
+                            _ClientStack = new TcpPacketStack((uint)(sequenceNumber + tcp.PayloadData.Length + (tcp.Syn ? 1 : 0)));
+                            AppendPacket(date, _ClientStack, emisor, tcp);
                             return;
                         }
                         stack = _ClientStack;
@@ -76,8 +77,8 @@ namespace XPloit.Sniffer.Streams
                     {
                         if (_ServerStack == null)
                         {
-                            _ServerStack = new TcpStreamStack((uint)(tcp.SequenceNumber + tcp.PayloadData.Length + (tcp.Syn && tcp.Ack ? 1 : 0)));
-                            AppendPacket(_ServerStack, emisor, tcp);
+                            _ServerStack = new TcpPacketStack((uint)(sequenceNumber + tcp.PayloadData.Length + (tcp.Syn && tcp.Ack ? 1 : 0)));
+                            AppendPacket(date, _ServerStack, emisor, tcp);
                             return;
                         }
                         stack = _ServerStack;
@@ -85,37 +86,40 @@ namespace XPloit.Sniffer.Streams
                     }
             }
 
-            if (stack.SequenceNumber == tcp.SequenceNumber)
-                AppendPacket(stack, emisor, tcp);
-            else stack.Append(tcp.SequenceNumber, tcp);
+            if (stack.SequenceNumber == sequenceNumber)
+                AppendPacket(date, stack, emisor, tcp);
+            else stack.Append(sequenceNumber, tcp);
 
             // Try process
             while (stack.TryGetNextPacket(out tcp))
-                AppendPacket(stack, emisor, tcp);
+                AppendPacket(date, stack, emisor, tcp);
         }
-        void AppendPacket(TcpStreamStack stack, ETcpEmisor emisor, TcpPacket tcp)
+        void AppendPacket(DateTime date, TcpPacketStack stack, ETcpEmisor emisor, TcpPacket tcp)
         {
             if (tcp.Fin || tcp.Rst)
-                _IsClossed = true;
+                Close();
 
-            uint l = (uint)tcp.PayloadData.Length;
+            byte[] payload = tcp.PayloadData;
+            if (payload == null) return;
+
+            uint l = (uint)payload.Length;
             if (l <= 0) return;
             stack.SequenceNumber += l;
 
             if (_Last == null)
             {
-                _Last = new TcpStreamMessage(tcp.PayloadData, emisor, null);
+                _Last = new TcpStreamMessage(date, payload, emisor, null);
                 _InternalList.Add(_Last);
             }
             else
             {
                 // Check if its the same
                 if (_Last.Emisor == emisor)
-                    _Last.AddData(tcp.PayloadData);
+                    _Last.AddData(payload);
                 else
                 {
                     // New Packet
-                    _Last = new TcpStreamMessage(tcp.PayloadData, emisor, _Last);
+                    _Last = new TcpStreamMessage(date, payload, emisor, _Last);
                     _InternalList.Add(_Last);
                 }
             }
@@ -123,63 +127,36 @@ namespace XPloit.Sniffer.Streams
             if (emisor == ETcpEmisor.Client) _ClientLength += l;
             else _ServerLength += l;
         }
-        public static TcpStream GetStream(Dictionary<string, TcpStream> streams, IpPacket ip, TcpPacket tcp, bool startTcpStreamOnlyWithSync, out bool isNew)
-        {
-            string key = GetKey(ip, tcp, false);
-            TcpStream ret;
-            ETcpEmisor em;
-            if (!streams.TryGetValue(key, out ret))
-            {
-                key = GetKey(ip, tcp, true);
-                if (!streams.TryGetValue(key, out ret))
-                {
-                    // No data or no Sync
-                    if ((startTcpStreamOnlyWithSync && !tcp.Syn) || tcp.Rst)
-                    {
-                        isNew = false;
-                        return null;
-                    }
-
-                    isNew = true;
-                    return new TcpStream(tcp.Syn ? ETcpEmisor.Client : ETcpEmisor.Server, ip, tcp);
-                }
-                else em = ETcpEmisor.Server;
-            }
-            else em = ETcpEmisor.Client;
-
-            isNew = false;
-
-            if (!ret.IsClossed) ret.Add(em, tcp);
-            return ret;
-        }
-        static string GetKey(IpPacket ip, TcpPacket tcp, bool reverse)
-        {
-            if (reverse) return ip.DestinationAddress.ToString() + ":" + tcp.DestinationPort.ToString() + ">" + ip.SourceAddress.ToString() + ":" + tcp.SourcePort.ToString();
-            return ip.SourceAddress.ToString() + ":" + tcp.SourcePort.ToString() + ">" + ip.DestinationAddress.ToString() + ":" + tcp.DestinationPort.ToString();
-        }
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="ip">Ip</param>
+        /// <param name="emisor">Emisor</param>
+        /// <param name="source">Ip Source</param>
+        /// <param name="dest">Ip Dest</param>
         /// <param name="tcp">Packet</param>
-        public TcpStream(ETcpEmisor emisor, IpPacket ip, TcpPacket tcp)
+        /// <param name="date">Date</param>
+        public TcpStream(TcpStreamStack stack, ETcpEmisor emisor, IPEndPoint source, IPEndPoint dest, TcpPacket tcp, DateTime date)
         {
+            _TcpStack = stack;
             _IsFirst = true;
-            _Key = GetKey(ip, tcp, false);
-            if (ip != null && tcp != null)
+            _StartDate = date;
+            _Key = TcpStreamStack.GetKey(source, dest, emisor == ETcpEmisor.Server);
+            if (tcp != null)
             {
-                _DestinationPort = tcp.DestinationPort;
-                _SourcePort = tcp.SourcePort;
+                if (emisor == ETcpEmisor.Server)
+                {
+                    _Destination = source;
+                    _Source = dest;
+                }
+                else
+                {
+                    _Source = source;
+                    _Destination = dest;
+                }
 
-                _DestinationAddress = ip.DestinationAddress;
-                _SourceAddress = ip.SourceAddress;
-
-                Add(emisor, tcp);
+                Add(date, emisor, tcp);
             }
-            else
-            {
-                _IsClossed = true;
-            }
+            else Close();
         }
         /// <summary>
         /// Load TCP Stream from WireShark TCPStreamFormat
@@ -193,13 +170,15 @@ namespace XPloit.Sniffer.Streams
             {
                 string[] sp = File.ReadAllLines(file);
 
+                IPEndPoint empty = new IPEndPoint(IPAddress.None, 0);
+
                 foreach (string line in sp)
                 {
                     string l = line.TrimStart().Replace(":", "");
 
                     ETcpEmisor em = line.StartsWith("\t") ? ETcpEmisor.Server : ETcpEmisor.Client;
                     if (tcp == null)
-                        tcp = new TcpStream(em, null, null);
+                        tcp = new TcpStream(null, em, empty, empty, null, DateTime.Now);
 
                     if (l.Length >= 9 && !l.Substring(0, 8).Contains(" "))
                     {
@@ -215,7 +194,7 @@ namespace XPloit.Sniffer.Streams
 
                     if (tcp._Last == null)
                     {
-                        tcp._Last = new TcpStreamMessage(data, em, null);
+                        tcp._Last = new TcpStreamMessage(DateTime.Now, data, em, null);
                         tcp._InternalList.Add(tcp._Last);
                     }
                     else
@@ -226,7 +205,7 @@ namespace XPloit.Sniffer.Streams
                         else
                         {
                             // New Packet
-                            tcp._Last = new TcpStreamMessage(data, em, tcp._Last);
+                            tcp._Last = new TcpStreamMessage(DateTime.Now, data, em, tcp._Last);
                             tcp._InternalList.Add(tcp._Last);
                         }
                     }
@@ -298,14 +277,19 @@ namespace XPloit.Sniffer.Streams
             File.AppendAllText(file, sb.ToString());
             l._LastRead = ld;
         }
+        public void Close()
+        {
+            _IsClossed = true;
+            if (_TcpStack != null) _TcpStack.Remove(_Key);
+            if (_ClientStack != null) _ClientStack.Clear();
+            if (_ServerStack != null) _ServerStack.Clear();
+        }
         /// <summary>
         /// Free resources
         /// </summary>
         public void Dispose()
         {
-            _IsClossed = true;
-            if (_ClientStack != null) _ClientStack.Clear();
-            if (_ServerStack != null) _ServerStack.Clear();
+            Close();
             _InternalList.Clear();
         }
         public IEnumerator<TcpStreamMessage> GetEnumerator() { return _InternalList.GetEnumerator(); }

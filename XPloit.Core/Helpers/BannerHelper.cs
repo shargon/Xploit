@@ -29,7 +29,7 @@ namespace XPloit.Core.Helpers
 
         public static void GetFwhibbit(CommandLayer command)
         {
-            command.WriteLine("        .--``..---.                ");
+            command.WriteLine("             .--``..---.           ");
             command.WriteLine("         .````--:ohdmNms/`         ");
             command.WriteLine("          -:/+++/-.:smNd+          ");
             command.WriteLine("       ```..--:ohmNNdhh.           ");
@@ -46,7 +46,8 @@ namespace XPloit.Core.Helpers
             command.WriteLine("      .//yhs/:`                    ");
             command.WriteLine("          :ymNN/                   ");
             command.WriteLine("         .-+shdho.                 ");
-            command.WriteLine("             `.--..` \033[1;m'''   ");
+            command.WriteLine("             `.--..`               ");
+
             command.WriteLine("");
             command.WriteLine("       Follow the white Rabbit ...");
         }

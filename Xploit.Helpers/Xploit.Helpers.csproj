@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -62,6 +63,13 @@
     <Compile Include="Forensics\LinuxProcessMemoryDump.cs" />
     <Compile Include="Forensics\WindowsProcessMemoryDump.cs" />
     <Compile Include="FtpHelper.cs" />
+    <Compile Include="Geolocate\BigIntegerExtensions.cs" />
+    <Compile Include="Geolocate\GeoLite2LocationProvider.cs" />
+    <Compile Include="Geolocate\GeoLocateResult.cs" />
+    <Compile Include="Geolocate\ILocationProvider.cs" />
+    <Compile Include="Geolocate\IPAddressCollection.cs" />
+    <Compile Include="Geolocate\IpNetwork.cs" />
+    <Compile Include="Geolocate\IPNetworkCollection.cs" />
     <Compile Include="HashHelper.cs" />
     <Compile Include="HexHelper.cs" />
     <Compile Include="HttpHelper.cs" />

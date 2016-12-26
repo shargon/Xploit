@@ -203,33 +203,42 @@ namespace XPloit.Core.Listeners.Layer
             if (string.IsNullOrEmpty(error)) error = "";
             //else error = error.Trim();
 
-            WriteStart("!", ConsoleColor.Red);
-            SetForeColor(ConsoleColor.Red);
-            WriteLine(error.Replace("\n", "\n    "));
+            lock (this)
+            {
+                WriteStart("!", ConsoleColor.Red);
+                SetForeColor(ConsoleColor.Red);
+                WriteLine(error.Replace("\n", "\n    "));
+            }
         }
         public void WriteInfo(string info)
         {
             if (string.IsNullOrEmpty(info)) info = "";
             else info = info.Trim();
 
-            WriteStart("*", ConsoleColor.Cyan);
-            WriteLine(info.Replace("\n", "\n    "));
+            lock (this)
+            {
+                WriteStart("*", ConsoleColor.Cyan);
+                WriteLine(info.Replace("\n", "\n    "));
+            }
         }
         public void WriteInfo(string info, string colorText, ConsoleColor color)
         {
             if (string.IsNullOrEmpty(info)) info = "";
             //else info = info.Trim();
 
-            WriteStart("*", ConsoleColor.Cyan);
-            Write(info);
-
-            if (!string.IsNullOrEmpty(colorText))
+            lock (this)
             {
-                Write((info.EndsWith(".") ? "." : " ") + "... [");
-                SetForeColor(color);
-                Write(colorText);
-                SetForeColor(ConsoleColor.Gray);
-                WriteLine("]");
+                WriteStart("*", ConsoleColor.Cyan);
+                Write(info);
+
+                if (!string.IsNullOrEmpty(colorText))
+                {
+                    Write((info.EndsWith(".") ? "." : " ") + "... [");
+                    SetForeColor(color);
+                    Write(colorText);
+                    SetForeColor(ConsoleColor.Gray);
+                    WriteLine("]");
+                }
             }
         }
         public void Clear()

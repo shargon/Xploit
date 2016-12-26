@@ -1,4 +1,4 @@
 ﻿namespace Xploit.Server.Http.Enums
 {
-    public enum EHttpMethod { GET, POST, SOCKET, Unknown };
+    public enum EHttpMethod { HEAD, GET, POST, SOCKET, Unknown };
 }

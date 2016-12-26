@@ -293,7 +293,6 @@ namespace XPloit.Helpers
 
             return value.ToString();
         }
-
         static char[] GetSplitChar(Type gt)
         {
             if (gt == _StringType)

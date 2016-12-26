@@ -9,6 +9,7 @@ namespace XPloit.Sniffer.Streams
         ETcpEmisor _Emisor;
         byte[] _Data;
         internal int _LastRead = 0;
+        DateTime _Date;
         TcpStreamMessage _Previous, _Next;
 
         /// <summary>
@@ -23,6 +24,10 @@ namespace XPloit.Sniffer.Streams
         /// Next
         /// </summary>
         public TcpStreamMessage Next { get { return _Next; } }
+        /// <summary>
+        /// DateTime
+        /// </summary>
+        public DateTime Date { get { return _Date; } }
         /// <summary>
         /// Ascii-Data
         /// </summary>
@@ -59,10 +64,13 @@ namespace XPloit.Sniffer.Streams
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="date">Date</param>
         /// <param name="data">Data</param>
         /// <param name="emisor">Emisor</param>
-        public TcpStreamMessage(byte[] data, ETcpEmisor emisor, TcpStreamMessage previous)
+        /// <param name="previous">Previous</param>
+        public TcpStreamMessage(DateTime date, byte[] data, ETcpEmisor emisor, TcpStreamMessage previous)
         {
+            _Date = date;
             _Data = data;
             _Emisor = emisor;
 
@@ -76,7 +84,7 @@ namespace XPloit.Sniffer.Streams
         /// Add data to Stream
         /// </summary>
         /// <param name="data">Data</param>
-        internal void AddData(byte[] data)
+        public void AddData(byte[] data)
         {
             if (data == null) return;
             int l = _Data.Length;
@@ -85,7 +93,6 @@ namespace XPloit.Sniffer.Streams
             Array.Resize(ref _Data, l + data.Length);
             Array.Copy(data, 0, _Data, l, data.Length);
         }
-
         public override string ToString() { return Emisor.ToString() + " (" + _Data.Length.ToString() + ") " + DataAscii; }
     }
 }

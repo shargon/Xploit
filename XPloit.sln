@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Helpers", "Xploit.He
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Server.Http", "Xploit.Server.Http\Xploit.Server.Http.csproj", "{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpPcap", "SharpPcap\SharpPcap.csproj", "{7D75CA11-8745-4382-B3EB-C41416DBC48C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D75CA11-8745-4382-B3EB-C41416DBC48C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D75CA11-8745-4382-B3EB-C41416DBC48C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D75CA11-8745-4382-B3EB-C41416DBC48C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D75CA11-8745-4382-B3EB-C41416DBC48C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -251,6 +251,7 @@ namespace XPloit.Helpers
                             pi.PropertyType != typeof(float) &&
                             pi.PropertyType != typeof(double) &&
 
+                            pi.PropertyType != typeof(Uri) &&
                             pi.PropertyType != typeof(IPAddress) &&
                             pi.PropertyType != typeof(IPEndPoint) &&
                             pi.PropertyType != typeof(TimeSpan) &&

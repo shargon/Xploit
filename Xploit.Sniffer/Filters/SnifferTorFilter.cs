@@ -1,4 +1,5 @@
-﻿using PacketDotNet;
+﻿using System.Net;
+using PacketDotNet;
 using XPloit.Helpers;
 using XPloit.Sniffer.Interfaces;
 
@@ -6,12 +7,12 @@ namespace XPloit.Sniffer.Filters
 {
     public class SnifferTorFilter : IIpPacketFilter
     {
-        public bool IsAllowed(IpPacket ip, ushort portSource, ushort portDest)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
         {
             TorHelper.UpdateTorExitNodeList(true);
 
-            if (TorHelper.IsTorExitNode(ip.SourceAddress)) return true;
-            if (TorHelper.IsTorExitNode(ip.DestinationAddress)) return true;
+            if (TorHelper.IsTorExitNode(source.Address)) return true;
+            if (TorHelper.IsTorExitNode(dest.Address)) return true;
 
             return false;
         }
