@@ -47,12 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\EExtractorReturn.cs" />
     <Compile Include="Enums\EStartTcpStreamMethod.cs" />
     <Compile Include="Enums\ETcpEmisor.cs" />
+    <Compile Include="Extractors\Credential.cs" />
+    <Compile Include="Extractors\ExtractFtpPop3.cs" />
+    <Compile Include="Extractors\ExtractHttp.cs" />
+    <Compile Include="Extractors\ExtractTelnet.cs" />
     <Compile Include="Filters\IPFilter.cs" />
     <Compile Include="Filters\SnifferPortFilter.cs" />
     <Compile Include="Filters\SnifferProtocolFilter.cs" />
     <Compile Include="Filters\SnifferTorFilter.cs" />
+    <Compile Include="Interfaces\ICredentialExtractor.cs" />
     <Compile Include="Interfaces\IIpPacketFilter.cs" />
     <Compile Include="NetworkSniffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +75,10 @@
     <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
       <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
       <Name>Xploit.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xploit.Server.Http\Xploit.Server.Http.csproj">
+      <Project>{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}</Project>
+      <Name>Xploit.Server.Http</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
