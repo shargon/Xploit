@@ -2,16 +2,14 @@
 using System.Net;
 using System.Threading;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Port Forwarding from SSH machine")]
     public class PortForwarding : SShBaseModule
     {
-        #region Configure
-        public override string Description { get { return "Port Forwarding from SSH machine"; } }
-        #endregion
-
         public enum EForwardMethod : byte
         {
             LocalToRemote = 0,

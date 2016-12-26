@@ -10,11 +10,10 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Server
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Invisible socks port forwarding")]
     public class SocksPortForwarding : Module
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Invisible socks port forwarding"; } }
         public override Target[] Targets
         {
             get

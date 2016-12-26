@@ -10,12 +10,9 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Execute SSH stream to exe machine")]
     public class FastExecution : SShBaseModule
     {
-        #region Configure
-        public override string Description { get { return "Execute SSH stream to exe machine"; } }
-        #endregion
-
         #region Properties
         [ConfigurableProperty(Description = "Remote command from ssh server")]
         public string Command { get; set; }

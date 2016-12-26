@@ -11,6 +11,7 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Fuzzing
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Generic Fuzzer")]
     public class StreamFuzzer : Module
     {
         /// <summary>
@@ -77,8 +78,6 @@ namespace Auxiliary.Local.Fuzzing
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Generic Fuzzer"; } }
         public override IPayloadRequirements PayloadRequirements { get { return new InterfacePayload(typeof(IFuzzerPayload)); } }
         #endregion
 

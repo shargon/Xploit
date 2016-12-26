@@ -13,6 +13,7 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Local Brute force by wordlist")]
     public class WordListBruteForce : Module
     {
         public interface ICheckPassword
@@ -23,8 +24,6 @@ namespace Auxiliary.Local
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Local Brute force by wordlist"; } }
         public override IPayloadRequirements PayloadRequirements { get { return new InterfacePayload(typeof(ICheckPassword)); } }
         #endregion
 

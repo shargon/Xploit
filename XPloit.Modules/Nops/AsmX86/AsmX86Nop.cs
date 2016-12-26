@@ -1,13 +1,13 @@
 ﻿using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Core.Interfaces;
 
 namespace Nops.AsmX86
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Asm X86 Nop")]
     public class AsmX86Nop : INopAsm
     {
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Asm X86 Nop"; } }
         public override Target[] AllowedTargets
         {
             get

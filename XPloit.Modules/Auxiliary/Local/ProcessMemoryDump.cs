@@ -5,18 +5,15 @@ using System.Text;
 using System.Threading;
 using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Do a memory dump for the selected Process")]
     public class ProcessMemoryDump : Module
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Do a memory dump for the selected Process"; } }
-        #endregion
-
         #region Properties
         [ConfigurableProperty(Description = "Process ID")]
         public int? PID { get; set; }

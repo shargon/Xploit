@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 using XPloit.Windows.Api;
@@ -14,6 +15,7 @@ using XPloit.Windows.Api.Native;
 
 namespace Auxiliary.Local.Windows
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Binary from screen")]
     public class BinaryFromScreen : Module
     {
         public enum ECapture : byte
@@ -39,8 +41,6 @@ namespace Auxiliary.Local.Windows
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Binary from screen"; } }
         public override Reference[] References
         {
             get

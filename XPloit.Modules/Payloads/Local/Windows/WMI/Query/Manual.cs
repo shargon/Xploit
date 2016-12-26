@@ -3,17 +3,14 @@ using System;
 using System.Management;
 using XPloit.Core;
 using XPloit.Core.Command;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.Windows.WMI.Query
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Execute a default query in WMI")]
     public class Manual : Payload, WMIManager.IWMIPayload
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Execute a default query in WMI"; } }
-        #endregion
-
         #region Properties
         [ConfigurableProperty(Description = "Query for WMI")]
         public string Sql { get; set; }

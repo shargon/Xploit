@@ -63,18 +63,17 @@ namespace XPloit.Core.Collections
                         if (!ReflectionHelper.HavePublicConstructor(type))
                             continue;
 
-                        OnlyFor onlyFor = type.GetCustomAttribute<OnlyFor>();
-                        if (onlyFor != null)
+                        AllowedPlatformsAttribute allowed = type.GetCustomAttribute<AllowedPlatformsAttribute>();
+                        if (allowed != null)
                         {
-                            if (SystemHelper.IsLinux && !onlyFor.Linux) continue;
-                            if (SystemHelper.IsWindows && !onlyFor.Windows) continue;
-                            if (SystemHelper.IsMac && !onlyFor.Mac) continue;
+                            if (SystemHelper.IsLinux && !allowed.Linux) continue;
+                            if (SystemHelper.IsWindows && !allowed.Windows) continue;
+                            if (SystemHelper.IsMac && !allowed.Mac) continue;
                         }
 
                         // Temporary creation for extract header
-                        T o = (T)Activator.CreateInstance(type);
-                        _InternalList.Add(o.FullPath.ToLowerInvariant(), new ModuleHeader<T>(o));
-                        if (o is IDisposable) ((IDisposable)o).Dispose();
+                        ModuleHeader<T> d = new Core.ModuleHeader<T>(type);
+                        _InternalList.Add(d.FullPath.ToLowerInvariant(), d);
                     }
                 }
             }

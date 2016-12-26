@@ -1,18 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.RSync
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Ftp rsync")]
     public class Ftp : Payload, Auxiliary.Local.RSync.ISync
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Ftp rsync"; } }
-        #endregion
-
         char SeparatorChar = '/';
 
         #region Properties

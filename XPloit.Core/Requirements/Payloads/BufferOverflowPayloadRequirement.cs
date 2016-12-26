@@ -76,7 +76,7 @@ namespace XPloit.Core.Requirements.Payloads
             if (Config == null) throw (new ArgumentException("Config"));
 
             if (NopGenerator == null)
-                NopGenerator = NopCollection.Current.GetAvailables(new checkNop(target)).FirstOrDefault();
+                NopGenerator = NopCollection.Current.GetAvailables(new checkNop(target)).Select(u => u.Current).FirstOrDefault();
 
             //Config.NopCount = 4;
             // con 5 nop va y con menos ya no, lo requiere el encoder? donde se sabe cuantos requiere?, como calcularlo?

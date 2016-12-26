@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Text;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 
 namespace Encoders.String
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Encode byte[] to base64 string")]
     public class Base64Encoder : XPloit.Core.Encoder
     {
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Encode byte[] to base64 string"; } }
-
         /// <summary>
         /// Encode
         /// </summary>

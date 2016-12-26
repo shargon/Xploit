@@ -2,17 +2,15 @@
 using System;
 using System.IO;
 using System.Text;
+using XPloit.Core.Attributes;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Get a binay from SSH machine")]
     public class DownloadFile : SShBaseModule
     {
-        #region Configure
-        public override string Description { get { return "Get a binay from SSH machine"; } }
-        #endregion
-
         delegate byte[] onData(string text);
         public enum EDumpMethod : byte
         {

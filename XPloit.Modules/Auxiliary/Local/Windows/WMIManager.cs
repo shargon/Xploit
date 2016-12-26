@@ -9,7 +9,8 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Windows
 {
-    [OnlyFor(Windows = true)]
+    [AllowedPlatforms(Windows = true)]
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "WMI call")]
     public class WMIManager : Module
     {
         public interface IWMIPayload
@@ -21,8 +22,6 @@ namespace Auxiliary.Local.Windows
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "WMI call"; } }
         public override Reference[] References
         {
             get

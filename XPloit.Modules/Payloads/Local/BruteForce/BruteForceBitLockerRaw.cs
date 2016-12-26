@@ -5,17 +5,17 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.BruteForce
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Crack Bitlocker drive")]
     public class BruteForceBitLockerRaw : Payload, WordListBruteForce.ICheckPassword
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Crack Bitlocker drive"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://github.com/Aorimn/dislocker") }; } }
         #endregion
 

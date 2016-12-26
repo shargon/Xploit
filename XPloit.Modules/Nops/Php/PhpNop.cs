@@ -1,13 +1,13 @@
 ﻿using XPloit.Core;
 using XPloit.Core.Enums;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Attributes;
 
 namespace Nops.Php
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "PHP Nop")]
     public class PhpNop : INopPhp
     {
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "PHP Nop"; } }
         public override Target[] AllowedTargets
         {
             get

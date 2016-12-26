@@ -9,18 +9,15 @@ using Xploit.Sniffer.Enums;
 using Xploit.Sniffer.Extractors;
 using Xploit.Sniffer.Interfaces;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
 
 namespace XPloit.Modules.Payloads.Local.Sniffer
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Sniffer insecure protocols passwords")]
     public class GetCredentials : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Sniffer passwords"; } }
-        #endregion
-
         #region Properties
         public bool CaptureOnTcpStream { get { return true; } }
         public bool CaptureOnPacket { get { return false; } }

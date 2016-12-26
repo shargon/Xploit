@@ -4,16 +4,13 @@ using System.Management;
 using XPloit.Core;
 using XPloit.Core.Command;
 using XPloit.Helpers.Attributes;
+using XPloit.Core.Attributes;
 
 namespace Payloads.Local.Windows.WMI.Query
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Execute a default query in WMI")]
     public class Auto : Payload, WMIManager.IWMIPayload
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Execute a default query in WMI"; } }
-        #endregion
-
         public enum EList
         {
             Win32_Process,

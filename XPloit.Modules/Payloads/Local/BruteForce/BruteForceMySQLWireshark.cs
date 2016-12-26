@@ -11,13 +11,12 @@ using XPloit.Sniffer.Streams;
 
 namespace Payloads.Local.BruteForce
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Crack MySql sniffed with WireShark Credentials")]
     public class BruteForceMySQLWireshark : Payload, WordListBruteForce.ICheckPassword
     {
         Encoding _Codec = Encoding.Default;
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Crack MySql sniffed with WireShark Credentials"; } }
         public override Reference[] References
         {
             get

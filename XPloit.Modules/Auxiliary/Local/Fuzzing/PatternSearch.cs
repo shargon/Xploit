@@ -2,17 +2,15 @@
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.Helpers;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Fuzzing
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Search pattern string for exploit development")]
     public class PatternSearch : Module
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Search pattern string for exploit development"; } }
         public override Reference[] References
         {
             get { return new Reference[] { new Reference(EReferenceType.URL, "http://unlogic.co.uk/2014/07/16/exploit-pattern-generator/") }; }

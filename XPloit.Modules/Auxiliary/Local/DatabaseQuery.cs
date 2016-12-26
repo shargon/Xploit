@@ -9,11 +9,13 @@ using System.Data.SqlClient;
 using System.IO;
 using XPloit.Core;
 using XPloit.Core.Command;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Database query")]
     public class DatabaseQuery : Module
     {
         public enum EType
@@ -33,8 +35,6 @@ namespace Auxiliary.Local
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Database query"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "http://www.connectionstrings.com/") }; } }
         #endregion
 

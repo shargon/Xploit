@@ -5,6 +5,7 @@ using Xploit.Core.Rfid.Enums;
 using Xploit.Core.Rfid.Interfaces;
 using Xploit.Core.Rfid.Mifare;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
@@ -12,13 +13,12 @@ using XPloit.Rfid;
 
 namespace Payloads.Local.BruteForce.NFC
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Mifare bruteforce")]
     public class BruteForceNFCMifare : Payload, WordListBruteForce.ICheckPassword
     {
         Target[] _Targets = null;
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Mifare bruteforce"; } }
         public override Reference[] References
         {
             get { return new Reference[] { new Reference(EReferenceType.URL, "https://en.wikipedia.org/wiki/MIFARE"), }; }

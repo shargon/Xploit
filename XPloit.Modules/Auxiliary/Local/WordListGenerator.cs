@@ -10,16 +10,7 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
-    public class WordListGenerator : Module
-    {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description
-        {
-            get
-            {
-                return
-@"Generate a wordList
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = @"Generate a wordList
 -------------------
 
 To configure the 'ConfigFile' it's so easy. It is a 'ini file' like this:
@@ -95,11 +86,9 @@ It means:
     - Firstly use set C1
     - Then, you use a optional word set 'MyWords', the first char must be non case-sensitive, replacing vocals
     - And finish with C1
-";
-            }
-        }
-        #endregion
-
+")]
+    public class WordListGenerator : Module
+    {
         #region Properties
         [ConfigurableProperty(Description = "File where is write the word list")]
         public FileInfo FileDest { get; set; }

@@ -715,9 +715,11 @@ namespace XPloit.Core.Listeners
 
             tb.AddRow("", "", "");
 
-            if (!string.IsNullOrEmpty(_Current.Author))
+            ModuleInfoAttribute mInfo = _Current == null ? null : _Current.GetType().GetCustomAttribute<ModuleInfoAttribute>();
+
+            if (mInfo != null && !string.IsNullOrEmpty(mInfo.Author))
             {
-                CommandTableRow row = tb.AddRow(1, Lang.Get("Author"), _Current.Author, "");
+                CommandTableRow row = tb.AddRow(1, Lang.Get("Author"), mInfo.Author, "");
                 row[0].ForeColor = ConsoleColor.DarkGray;
                 row[1].Align = CommandTableCol.EAlign.None;
                 row[2].Align = CommandTableCol.EAlign.None;
@@ -747,9 +749,9 @@ namespace XPloit.Core.Listeners
                 }
             }
 
-            if (!string.IsNullOrEmpty(_Current.Description))
+            if (mInfo != null && !string.IsNullOrEmpty(mInfo.Description))
             {
-                foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("Description"), _Current.Description, ""))
+                foreach (CommandTableRow row in tb.AddSplitRow(1, Lang.Get("Description"), mInfo.Description, ""))
                 {
                     row[0].ForeColor = ConsoleColor.DarkGray;
                     row[1].Align = CommandTableCol.EAlign.None;
@@ -991,7 +993,7 @@ namespace XPloit.Core.Listeners
                     }
                 case "payloads":
                     {
-                        Payload[] ps = curM == null ? null : PayloadCollection.Current.GetPayloadAvailables(curM.PayloadRequirements);
+                        ModuleHeader<Payload>[] ps = curM == null ? null : PayloadCollection.Current.GetAvailables(curM.PayloadRequirements).ToArray();
                         if (ps == null || ps.Length <= 0)
                             _IO.WriteInfo(Lang.Get("Nothing_To_Show"));
                         else
@@ -1000,7 +1002,7 @@ namespace XPloit.Core.Listeners
 
                             tb.AddRow(tb.AddRow(Lang.Get("Name"), Lang.Get("Description")).MakeSeparator());
 
-                            foreach (Payload p in ps)
+                            foreach (ModuleHeader<Payload> p in ps)
                                 tb.AddRow(p.FullPath, p.Description);
 
                             _IO.Write(tb.Output());

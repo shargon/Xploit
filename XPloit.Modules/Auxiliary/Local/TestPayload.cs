@@ -6,12 +6,11 @@ using XPloit.Core.Enums;
 
 namespace Auxiliary.Local
 {
-    [OnlyFor(Windows = true)]
+    [AllowedPlatforms(Windows = true)]
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "NFC Restore system")]
     public class TestPayload : Module
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "NFC Restore system"; } }
         public override Target[] Targets
         {
             get

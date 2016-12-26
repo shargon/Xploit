@@ -11,11 +11,10 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Exfiltration
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "DNS-Exfiltration file parser")]
     public class DnsExfiltrateParser : Module, AESHelper.IAESConfig
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "DNS-Exfiltration file parser"; } }
         public override Reference[] References
         {
             get

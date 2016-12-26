@@ -4,7 +4,7 @@ using System.IO;
 namespace XPloit.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class RequireExists : Attribute
+    public class RequireExistsAttribute : Attribute
     {
         /// <summary>
         /// Return if its valid the property

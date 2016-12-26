@@ -18,6 +18,7 @@ using XPloit.Sniffer.Streams;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Sniffer")]
     public class Sniffer : Module
     {
         public interface IPayloadSniffer
@@ -35,8 +36,6 @@ namespace Auxiliary.Local
         string _Interface;
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Sniffer"; } }
         public override Reference[] References
         {
             get { return new Reference[] { new Reference(EReferenceType.INFO, "For outward, requiere open Firewall for promiscuous mode"), }; }

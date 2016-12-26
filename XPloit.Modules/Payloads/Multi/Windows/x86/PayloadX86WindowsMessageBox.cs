@@ -2,16 +2,16 @@
 using XPloit.Core.Enums;
 using XPloit.Core.Extensions;
 using XPloit.Core.Helpers;
+using XPloit.Core.Attributes;
 using XPloit.Core.Requirements.Payloads;
 using XPloit.Helpers.Attributes;
 
 namespace Payloads.Multi.Windows.x86
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Show MessageBox")]
     public class PayloadX86WindowsMessageBox : Payload, BufferOverflowPayloadRequirement.IBufferOverflowPayload
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Show MessageBox"; } }
         public override EArquitecture Arquitecture { get { return EArquitecture.x86; } }
         public override EPlatform Platform { get { return EPlatform.Windows; } }
         #endregion

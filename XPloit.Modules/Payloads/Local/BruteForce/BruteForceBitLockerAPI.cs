@@ -5,16 +5,16 @@ using System.IO;
 using System.Management;
 using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.BruteForce
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Crack Bitlocker drive calling windows API")]
     public class BruteForceBitLockerAPI : Payload, WordListBruteForce.ICheckPassword
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Crack Bitlocker drive calling windows API"; } }
         public override Reference[] References
         {
             get

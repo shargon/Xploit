@@ -49,11 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AutoFillAttribute.cs" />
-    <Compile Include="Attributes\ConvertHexString.cs" />
-    <Compile Include="Attributes\OnlyFor.cs" />
-    <Compile Include="Attributes\RequireExists.cs" />
-    <Compile Include="Attributes\NonJobable.cs" />
-    <Compile Include="Attributes\IntrusiveCheck.cs" />
+    <Compile Include="Attributes\ConvertHexStringAttribute.cs" />
+    <Compile Include="Attributes\AllowedPlatformsAttribute.cs" />
+    <Compile Include="Attributes\ModuleInfoAttribute.cs" />
+    <Compile Include="Attributes\RequireExistsAttribute.cs" />
+    <Compile Include="Attributes\NonJobableAttribute.cs" />
+    <Compile Include="Attributes\IntrusiveCheckAttribute.cs" />
     <Compile Include="Attributes\SerializableBSONReference.cs" />
     <Compile Include="BruteForce\BruteForce.cs" />
     <Compile Include="BruteForce\BruteForceAllowedChars.cs" />

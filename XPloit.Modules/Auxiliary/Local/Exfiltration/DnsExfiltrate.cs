@@ -11,20 +11,13 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Exfiltration
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "DNS-Exfiltration send\n" +
+                    "<FileId><PacketNumber><Data>.domain\n" +
+                    "   FileId -> Length in Target\n" +
+                    "   PacketNumber -> 4 bytes, disable in 'SendPacketOrder'")]
     public class DnsExfiltrate : Module, AESHelper.IAESConfig
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description
-        {
-            get
-            {
-                return "DNS-Exfiltration send\n" +
-                    "<FileId><PacketNumber><Data>.domain\n" +
-                    "   FileId -> Length in Target\n" +
-                    "   PacketNumber -> 4 bytes, disable in 'SendPacketOrder'";
-            }
-        }
         public override Reference[] References
         {
             get

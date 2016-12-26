@@ -23,18 +23,13 @@ namespace XPloit.Core.Collections
             }
         }
 
-
-        public Encoder[] GetAvailables(IEncoderRequirements req)
+        public IEnumerable<ModuleHeader<Encoder>> GetAvailables(IEncoderRequirements req)
         {
-            if (req == null) return new Encoder[] { };
-            List<Encoder> ls = new List<Encoder>();
             foreach (ModuleHeader<Encoder> p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
-
-                ls.Add(p.Current);
+                yield return p;
             }
-            return ls.ToArray();
         }
     }
 }

@@ -11,13 +11,12 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local.Steganography
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Steganography by Image generator/parser (in PNG)\nHave two modes:\n - Write: Destroy original message file\n - Read : Read the image and write the secret file in LocalFileWrite")]
     public class SteganographyImage : Module, AESHelper.IAESConfig
     {
         public enum EMode { Read, Write };
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Steganography by Image generator/parser (in PNG)\nHave two modes:\n - Write: Destroy original message file\n - Read : Read the image and write the secret file in LocalFileWrite"; } }
         public override Reference[] References
         {
             get

@@ -1,29 +1,21 @@
-﻿using System;
+﻿using PacketDotNet;
+using System.Collections.Concurrent;
 using System.IO;
-using Auxiliary.Local;
-using PacketDotNet;
 using XPloit.Core;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
-using XPloit.Sniffer;
-using System.Collections.Concurrent;
 
 namespace XPloit.Modules.Payloads.Local.Sniffer
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Sniffer to folder")]
     public class DumpToFolder : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Sniffer to folder"; } }
-        #endregion
-
         #region Properties
         [ConfigurableProperty(Description = "Directory for creating TcpStream files")]
         public DirectoryInfo DumpFolder { get; set; }
         public bool CaptureOnTcpStream { get { return true; } }
         public bool CaptureOnPacket { get { return false; } }
-
-        public event NetworkSniffer.delOnQueueObject OnObject;
         #endregion
 
         public bool Check()

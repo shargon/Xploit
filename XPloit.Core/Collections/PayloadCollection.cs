@@ -23,17 +23,13 @@ namespace XPloit.Core.Collections
             }
         }
 
-        public Payload[] GetPayloadAvailables(IPayloadRequirements req)
+        public IEnumerable<ModuleHeader<Payload>> GetAvailables(IPayloadRequirements req)
         {
-            if (req == null) return new Payload[] { };
-            List<Payload> ls = new List<Payload>();
             foreach (ModuleHeader<Payload> p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
-
-                ls.Add(p.Current);
+                yield return p;
             }
-            return ls.ToArray();
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace XPloit.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class IntrusiveCheck : Attribute
+    public class NonJobableAttribute : Attribute
     {
     }
 }

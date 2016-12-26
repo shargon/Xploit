@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using XPloit.Core.Attributes;
@@ -13,11 +12,11 @@ using XPloit.Res;
 
 namespace XPloit.Core.Interfaces
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Sniffer")]
     public class IModule : IProgress
     {
-        string _InternalAuthor;
-        string _Name = null, _ModulePath = null;
-        string _FullPath = null;
+        string _Name, _ModulePath;
+        string _FullPath;
 
         CommandLayer _IO;
 
@@ -96,32 +95,6 @@ namespace XPloit.Core.Interfaces
         #endregion
 
         /// <summary>
-        /// Author
-        /// </summary>
-        public virtual string Author
-        {
-            get
-            {
-                if (_InternalAuthor == null)
-                    try
-                    {
-                        // Extract author from company of assembly
-                        // Todo: Cache this
-                        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetAssembly(this.GetType()).Location);
-                        _InternalAuthor = versionInfo.CompanyName;
-                    }
-                    catch
-                    {
-                        _InternalAuthor = "";
-                    }
-                return _InternalAuthor;
-            }
-        }
-        /// <summary>
-        /// Description
-        /// </summary>
-        public virtual string Description { get { return null; } }
-        /// <summary>
         /// Name
         /// </summary>
         public string Name { get { return _Name; } }
@@ -146,10 +119,14 @@ namespace XPloit.Core.Interfaces
 
         public IModule()
         {
-            Type t = GetType();
-            _ModulePath = t.Namespace.Replace(".", "/");
-            _Name = t.Name;
-            _FullPath = _ModulePath + "/" + _Name;
+            GetNames(GetType(), out _ModulePath, out _Name, out _FullPath);
+        }
+
+        public static void GetNames(Type t, out string modulePath, out string name, out string fullPath)
+        {
+            modulePath = t.Namespace.Replace(".", "/");
+            name = t.Name;
+            fullPath = modulePath + "/" + name;
         }
 
         /// <summary>
@@ -184,7 +161,7 @@ namespace XPloit.Core.Interfaces
                                 m.Target.Id = ix;
 
                                 // Check if the Payload still valid
-                                if (m.Payload != null && m.PayloadRequirements != null && !m.PayloadRequirements.IsAllowed(new ModuleHeader<Payload>(m.Payload)))
+                                if (m.Payload != null && m.PayloadRequirements != null && !m.PayloadRequirements.IsAllowed(new ModuleHeader<Payload>(m.Payload.GetType())))
                                     m.Payload = null;
 
                                 return true;
@@ -252,7 +229,7 @@ namespace XPloit.Core.Interfaces
                 {
                     if (pi.PropertyType == fileInfoType)
                     {
-                        RequireExists c2 = pi.GetCustomAttribute<RequireExists>();
+                        RequireExistsAttribute c2 = pi.GetCustomAttribute<RequireExistsAttribute>();
                         if (c2 != null && !c2.IsValid(val))
                         {
                             error = Lang.Get("File_Defined_Not_Exists", pi.Name);

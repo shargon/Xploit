@@ -10,20 +10,13 @@ using XPloit.Rfid;
 
 namespace Auxiliary.Local.NFC
 {
-    [OnlyFor(Windows = true)]
+    [AllowedPlatforms(Windows = true)]
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Mifare Id Setter. Require a valid card")]
     public class MifareSetId : Module
     {
         Target[] _Readers = null;
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description
-        {
-            get
-            {
-                return "Mifare Id Setter. Require a valid card";
-            }
-        }
         public override Reference[] References
         {
             get { return new Reference[] { new Reference(EReferenceType.URL, "https://en.wikipedia.org/wiki/MIFARE"), }; }

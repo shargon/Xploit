@@ -23,17 +23,13 @@ namespace XPloit.Core.Collections
             }
         }
 
-        public Nop[] GetAvailables(INopRequirements req)
+        public IEnumerable<ModuleHeader<Nop>> GetAvailables(INopRequirements req)
         {
-            if (req == null) return new Nop[] { };
-            List<Nop> ls = new List<Nop>();
             foreach (ModuleHeader<Nop> p in Current)
             {
                 if (!req.IsAllowed(p)) continue;
-
-                ls.Add(p.Current);
+                yield return p;
             }
-            return ls.ToArray();
         }
     }
 }

@@ -3,16 +3,14 @@ using System;
 using System.Net;
 using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Multi.SSH
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "SSH BaseModule")]
     public class SShBaseModule : Module
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        #endregion
-
         #region Properties
         [ConfigurableProperty(Description = "Host")]
         public IPEndPoint Host { get; set; }

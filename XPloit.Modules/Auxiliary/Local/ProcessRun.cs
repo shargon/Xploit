@@ -4,15 +4,15 @@ using System.Security;
 using System.Text;
 using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Execute a system command in local machine")]
     public class ProcessRun : Module
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Execute a system command in local machine"; } }
         public override Reference[] References
         {
             get

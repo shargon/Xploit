@@ -15,12 +15,11 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
-    [OnlyFor(Windows = true)]
+    [AllowedPlatforms(Windows = true)]
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Tor Process")]
     public class Tor : Module
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Tor Process"; } }
         public override Reference[] References { get { return new Reference[] { new Reference(EReferenceType.URL, "https://www.torproject.org/"), }; } }
         public override Target[] Targets
         {

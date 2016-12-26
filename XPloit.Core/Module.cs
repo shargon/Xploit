@@ -16,7 +16,7 @@ namespace XPloit.Core
     [TypeConverter(typeof(ModuleTypeConverter))]
     public class Module : IModule
     {
-        IModule _Parent = null;
+        IModule _Parent;
 
         /// <summary>
         /// ModuleType
@@ -91,12 +91,12 @@ namespace XPloit.Core
             }
             if (Payload == null)
             {
-                Payload[] payloads = PayloadCollection.Current.GetPayloadAvailables(PayloadRequirements);
-                if (payloads != null && payloads.Length == 1)
+                foreach (ModuleHeader<Payload> p in PayloadCollection.Current.GetAvailables(PayloadRequirements))
                 {
                     //Payload = payloads[0];
-                    SetProperty("Payload", payloads[0]);
+                    SetProperty("Payload", p.Current);
                     //Payload.SetIO(io);
+                    break;
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace XPloit.Core
         /// </summary>
         public bool IsCheckIntrusive()
         {
-            return GetType().GetMethod("Check").GetCustomAttribute<IntrusiveCheck>() != null;
+            return GetType().GetMethod("Check").GetCustomAttribute<IntrusiveCheckAttribute>() != null;
         }
     }
 }

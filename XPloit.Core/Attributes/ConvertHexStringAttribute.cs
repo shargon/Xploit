@@ -5,7 +5,7 @@ using XPloit.Helpers.Attributes;
 
 namespace XPloit.Core.Attributes
 {
-    public class ConvertHexString : IPreSetVariable
+    public class ConvertHexStringAttribute : IPreSetVariable
     {
         /// <summary>
         /// Codificación a utilizar
@@ -35,7 +35,7 @@ namespace XPloit.Core.Attributes
             return value;
         }
 
-        public ConvertHexString()
+        public ConvertHexStringAttribute()
         {
             Encoding = Encoding.ASCII;
         }

@@ -3,15 +3,15 @@ using System;
 using System.Management;
 using XPloit.Core;
 using XPloit.Core.Enums;
+using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 
 namespace Payloads.Local.Windows.WMI.Action
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Execute a process in WMI")]
     public class ExecuteProcess : Payload, WMIManager.IWMIPayload
     {
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Execute a process in WMI"; } }
         public override Reference[] References
         {
             get

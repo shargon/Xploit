@@ -6,13 +6,9 @@ using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Create a Hex string from file")]
     public class FileToHex : Module
     {
-        #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Create a Hex string from file"; } }
-        #endregion
-
         public enum Emode
         {
             C_Like_String

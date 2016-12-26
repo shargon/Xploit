@@ -4,12 +4,14 @@ using System.IO;
 using System.Threading.Tasks;
 using XPloit.Core;
 using XPloit.Core.Interfaces;
+using XPloit.Core.Attributes;
 using XPloit.Core.Requirements.Payloads;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Remote sync for folders")]
     public class RSync : Module
     {
         public class SyncFolder
@@ -83,8 +85,6 @@ namespace Auxiliary.Local
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Remote sync for folders"; } }
         public override IPayloadRequirements PayloadRequirements { get { return new InterfacePayload(typeof(ISync)); } }
         #endregion
 

@@ -11,6 +11,7 @@ using XPloit.Windows.Api.Native;
 
 namespace Auxiliary.Local.Windows
 {
+    [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Key down a textfile")]
     public class KeyDown : Module
     {
         public enum EFilter : byte
@@ -21,8 +22,6 @@ namespace Auxiliary.Local.Windows
         }
 
         #region Configure
-        public override string Author { get { return "Fernando Díaz Toledano"; } }
-        public override string Description { get { return "Key down a textfile"; } }
         public override Reference[] References
         {
             get
