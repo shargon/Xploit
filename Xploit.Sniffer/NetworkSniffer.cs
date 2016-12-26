@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Xploit.Helpers.Geolocate;
 using Xploit.Sniffer.Enums;
 using Xploit.Sniffer.Streams;
 using XPloit.Sniffer.Interfaces;
@@ -169,6 +170,15 @@ namespace XPloit.Sniffer
         }
         void OnProcessQueue()
         {
+            if (GeoLite2LocationProvider.Current == null)
+            {
+#if DEBUG
+                GeoLite2LocationProvider.LoadCurrent(
+                    @"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-Blocks-IP.csv.gz",
+                    @"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-City-Locations-es.csv.gz");
+#endif
+            }
+
             Parallel.For(0, _Queue.Count, (i) =>
             {
                 object o;

@@ -165,19 +165,12 @@ CREATE TABLE `pass_http` (
                 stream.Dispose();
         }
         Dictionary<string, string> _LastCred = new Dictionary<string, string>();
-        ILocationProvider GeoProvider;
-
-        public GetCredentials()
-        {
-#if DEBUG
-            GeoProvider = new GeoLite2LocationProvider(@"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-Blocks-IP.csv", @"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-City-Locations-es.csv");
-#endif
-        }
+        
         public void Dequeue(object o)
         {
             Credential c = (Credential)o;
 
-            c.RecallCounty(GeoProvider);
+            c.RecallCounty(GeoLite2LocationProvider.Current);
             string json = c.ToString();
 
             // Console

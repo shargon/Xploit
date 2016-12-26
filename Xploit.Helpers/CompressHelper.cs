@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 
 namespace XPloit.Helpers
@@ -29,6 +30,28 @@ namespace XPloit.Helpers
 
             using (MemoryStream ms = new MemoryStream(buff, index, count))
                 return Compress(ms, compress);
+        }
+        /// <summary>
+        /// Get Ungzipped stream from file
+        /// </summary>
+        /// <param name="file">File</param>
+        public static Stream UnGzFile(string file)
+        {
+            if (!File.Exists(file)) return null;
+
+            FileStream fs = File.OpenRead(file);
+            byte[] head = new byte[2];
+            if (fs.Read(head, 0, 2) == 2)
+            {
+                if (IsGzipped(head, 0))
+                {
+                    fs.Seek(0, SeekOrigin.Begin);
+                    return new GZipStream(fs, CompressionMode.Decompress, false);
+                }
+            }
+
+            fs.Seek(0, SeekOrigin.Begin);
+            return fs;
         }
         /// <summary>
         /// Comprime o descomprime en GZIP un Stream

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using XPloit.Helpers;
 
 namespace Xploit.Helpers.Geolocate
 {
@@ -18,6 +19,26 @@ namespace Xploit.Helpers.Geolocate
                 Network = network;
                 Result = data;
             }
+
+            public override string ToString()
+            {
+                return Network.ToString() + " - " + Result.ToString();
+            }
+        }
+
+        static GeoLite2LocationProvider _Current;
+        /// <summary>
+        /// Geolocalization
+        /// </summary>
+        public static GeoLite2LocationProvider Current { get { return _Current; } }
+        /// <summary>
+        /// Load the current GeoIp
+        /// </summary>
+        /// <param name="blockFile">Block file</param>
+        /// <param name="locationFile">Location file</param>
+        public static void LoadCurrent(string blockFile, string locationFile)
+        {
+            if (_Current == null) _Current = new GeoLite2LocationProvider(blockFile, locationFile);
         }
         geoIp[] _Locates;
 
@@ -28,10 +49,7 @@ namespace Xploit.Helpers.Geolocate
         public static IEnumerable<string> LineGenerator(StreamReader sr)
         {
             string line;
-            while ((line = sr.ReadLine()) != null)
-            {
-                yield return line;
-            }
+            while ((line = sr.ReadLine()) != null) yield return line;
         }
         /// <summary>
         /// Constructor
@@ -44,7 +62,8 @@ namespace Xploit.Helpers.Geolocate
             {
                 Dictionary<long, GeoLocateResult> data = new Dictionary<long, GeoLocateResult>();
 
-                using (StreamReader sr = new StreamReader(pathLocations))
+                using (Stream fs = CompressHelper.UnGzFile(pathLocations))
+                using (StreamReader sr = new StreamReader(fs))
                 {
                     Parallel.ForEach<string>(LineGenerator(sr), line =>
                     {
@@ -78,7 +97,8 @@ namespace Xploit.Helpers.Geolocate
                 }
 
                 List<geoIp> l = new List<geoIp>();
-                using (StreamReader sr = new StreamReader(pathBlocksIp))
+                using (Stream fs = CompressHelper.UnGzFile(pathBlocksIp))
+                using (StreamReader sr = new StreamReader(fs))
                 {
                     Parallel.ForEach<string>(LineGenerator(sr), line =>
                     {
