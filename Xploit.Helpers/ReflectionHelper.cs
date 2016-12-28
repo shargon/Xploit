@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using XPloit.Helpers.Attributes;
 
 namespace XPloit.Helpers
@@ -153,7 +154,7 @@ namespace XPloit.Helpers
                 }
                 return false;
             }
-            catch
+            catch //(Exception e)
             {
                 return false;
             }
@@ -252,6 +253,7 @@ namespace XPloit.Helpers
                             pi.PropertyType != typeof(double) &&
 
                             pi.PropertyType != typeof(Uri) &&
+                            pi.PropertyType != typeof(Encoding) &&
                             pi.PropertyType != typeof(IPAddress) &&
                             pi.PropertyType != typeof(IPEndPoint) &&
                             pi.PropertyType != typeof(TimeSpan) &&

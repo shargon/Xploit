@@ -229,15 +229,25 @@ namespace XPloit.Core.Listeners.Layer
             lock (this)
             {
                 WriteStart("*", ConsoleColor.Cyan);
-                Write(info);
 
+                string append;
+                if (string.IsNullOrEmpty(info))
+                {
+                    append = "";
+                }
+                else
+                {
+                    append = "... [";
+                    Write(info);
+                }
                 if (!string.IsNullOrEmpty(colorText))
                 {
-                    Write((info.EndsWith(".") ? "." : " ") + "... [");
+                    Write((info.EndsWith(".") ? "." : " ") + append);
                     SetForeColor(color);
                     Write(colorText);
                     SetForeColor(ConsoleColor.Gray);
-                    WriteLine("]");
+
+                    WriteLine(string.IsNullOrEmpty(append) ? "" : "]");
                 }
             }
         }
@@ -450,7 +460,7 @@ namespace XPloit.Core.Listeners.Layer
                                             // Check show results
                                             WriteLine(Lang.Get("Show_All_Results", ls.Count.ToString()));
                                             string s1 = InternalReadLine().ToUpperInvariant();
-
+                                           
                                             // Top signal?
                                             if (s1 == "T" || s1 == "TOP")
                                                 ls.RemoveRange(50, ls.Count - 50);
@@ -459,6 +469,8 @@ namespace XPloit.Core.Listeners.Layer
                                                 // No signal?
                                                 if (s1 != "Y" && s1 != "YES")
                                                 {
+                                                    index = 0;
+                                                    input = "";
                                                     if (prompt != null) prompt(this);
                                                     break;
                                                 }

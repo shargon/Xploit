@@ -174,7 +174,11 @@ namespace XPloit.Core.Listeners
                                                         }
                                                     }
 
-                                                    if (/*tp == typeof(string) ||*/ tp == typeof(FileInfo) || tp == typeof(DirectoryInfo))
+                                                    if (tp == typeof(Encoding))
+                                                    {
+                                                        foreach (EncodingInfo v in Encoding.GetEncodings()) yield return v.Name;
+                                                    }
+                                                    else if (/*tp == typeof(string) ||*/ tp == typeof(FileInfo) || tp == typeof(DirectoryInfo))
                                                     {
                                                         string path = arguments[1];
 

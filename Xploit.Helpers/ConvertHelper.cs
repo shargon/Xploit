@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System.Text;
 
 namespace XPloit.Helpers
 {
@@ -27,6 +28,7 @@ namespace XPloit.Helpers
         static Type _IPAddressType = typeof(IPAddress);
         static Type _IPEndPointType = typeof(IPEndPoint);
         static Type _FileInfoType = typeof(FileInfo);
+        static Type _EncodingType = typeof(Encoding);
         static Type _DirectoryInfoType = typeof(DirectoryInfo);
         static Type _ByteArrayType = typeof(byte[]);
 
@@ -80,8 +82,8 @@ namespace XPloit.Helpers
                 // Bool
                 if (type == _BoolType)
                 {
-                    Boolean r;
-                    if (!Boolean.TryParse(input.Trim(), out r))
+                    bool r;
+                    if (!bool.TryParse(input.Trim(), out r))
                     {
                         string si = input.ToLowerInvariant();
                         return si == "y" || si == "s" || si == "yes" || si == "si" || si == "1" || si == "true";
@@ -143,7 +145,6 @@ namespace XPloit.Helpers
                     if (!uint.TryParse(input.Trim(), out r)) return Convert.ToUInt32(MathHelper.Calc(input));
                     return r;
                 }
-
                 if (type == _Int16Type)
                 {
                     short r;
@@ -156,7 +157,6 @@ namespace XPloit.Helpers
                     if (!ushort.TryParse(input.Trim(), out r)) return Convert.ToUInt16(MathHelper.Calc(input));
                     return r;
                 }
-
                 // Decimal (With '.' as decimal separator)
                 if (type == _DoubleType)
                 {
@@ -166,8 +166,8 @@ namespace XPloit.Helpers
                 }
                 if (type == _DecimalType)
                 {
-                    Decimal r;
-                    if (!Decimal.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return Convert.ToDecimal(MathHelper.Calc(input));
+                    decimal r;
+                    if (!decimal.TryParse(input.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out r)) return Convert.ToDecimal(MathHelper.Calc(input));
                     return r;
                 }
                 if (type == _FloatType)
@@ -185,7 +185,11 @@ namespace XPloit.Helpers
                 }
                 if (type == _FileInfoType) return new FileInfo(input);
                 if (type == _DirectoryInfoType) return new DirectoryInfo(input);
-
+                if (type == _EncodingType)
+                {
+                    EncodingInfo i= Encoding.GetEncodings().Where(u => string.Compare(input, u.Name, true) == 0 || string.Compare(input, u.DisplayName) == 0).FirstOrDefault();
+                    return i == null ? null : i.GetEncoding();
+                }
                 if (type == _IPEndPointType)
                 {
                     IPAddress ip;
@@ -285,11 +289,11 @@ namespace XPloit.Helpers
                 }
                 return string.Join(",", (l).OfType<object>().Select(u => u.ToString()));
             }
-            //else if (value is IEnumerable)
-            //{
-            //    IEnumerable l = (IEnumerable)value;
-            //    return string.Join(",", (l).OfType<object>().Select(u => u.ToString()));
-            //}
+            else if (value is Encoding)
+            {
+                Encoding l = (Encoding)value;
+                return l.BodyName;
+            }
 
             return value.ToString();
         }
