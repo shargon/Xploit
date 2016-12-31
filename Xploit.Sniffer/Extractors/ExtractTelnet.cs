@@ -29,7 +29,8 @@ namespace Xploit.Sniffer.Extractors
         static ICredentialExtractor _Current = new ExtractTelnet();
         public static ICredentialExtractor Current { get { return _Current; } }
 
-        List<string> _UserFields = new List<string>(new string[] { "user", "usuario" });
+        List<string> _DiscardFields = new List<string>(new string[] { "help", "ayuda" });
+        List<string> _UserFields = new List<string>(new string[] { "user", "usuario", "login" });
         List<string> _PasswordFields = new List<string>(new string[] { "pass", "key", "credential", "clave" });
 
         string CleanTelnet(byte[] data, int index, int length)
@@ -96,8 +97,13 @@ namespace Xploit.Sniffer.Extractors
                             }
 
                             // Check
-                            foreach (string uf in _UserFields) if (serverl.Contains(uf)) { nextIs = "user"; isTelnet = true; break; }
-                            foreach (string uf in _PasswordFields) if (serverl.Contains(uf)) { nextIs = "pwd"; isTelnet = true; break; }
+                            bool dontCheckUsers = false;
+                            foreach (string uf in _DiscardFields) if (serverl.Contains(uf)) { isTelnet = dontCheckUsers = true; break; }
+                            if (!dontCheckUsers)
+                            {
+                                foreach (string uf in _UserFields) if (serverl.Contains(uf)) { nextIs = "user"; isTelnet = true; break; }
+                                foreach (string uf in _PasswordFields) if (serverl.Contains(uf)) { nextIs = "pwd"; isTelnet = true; break; }
+                            }
                             break;
                         }
                     case ETcpEmisor.Client:

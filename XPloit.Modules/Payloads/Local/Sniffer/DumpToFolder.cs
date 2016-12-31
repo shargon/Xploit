@@ -6,7 +6,7 @@ using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
 
-namespace XPloit.Modules.Payloads.Local.Sniffer
+namespace Payloads.Local.Sniffer
 {
     [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Sniffer to folder")]
     public class DumpToFolder : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer

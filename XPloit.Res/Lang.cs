@@ -37,10 +37,9 @@ namespace XPloit.Res
         /// <param name="pars">Params (%0 ,%1 ... )</param>
         public static string Get(string name, params string[] pars)
         {
-            string ret = rs == null ? null : rs.GetString(name, true);
+            if (rs == null) return "<<" + name + ">>";
+            string ret = rs.GetString(name, true);
             if (ret == null) return "<<" + name + ">>";
-
-            //string ret = rm.GetString(name, Current);
 
             for (int x = 0, m = pars.Length; x < m; x++)
                 ret = ret.Replace("%" + x.ToString(), pars[x]);
