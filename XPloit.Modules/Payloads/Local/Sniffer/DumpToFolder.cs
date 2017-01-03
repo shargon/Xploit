@@ -28,8 +28,8 @@ namespace Payloads.Local.Sniffer
 
             return true;
         }
-        public void OnPacket(IPProtocolType protocolType, IpPacket packet) { }
-        public void OnTcpStream(TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
+        public void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet) { }
+        public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null) return;
 
@@ -38,6 +38,6 @@ namespace Payloads.Local.Sniffer
                 stream.Source.ToString().Replace(":", ",") + " - " +
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }
-        public void Dequeue(object obj) { }
+        public void Dequeue(object sender, object obj) { }
     }
 }

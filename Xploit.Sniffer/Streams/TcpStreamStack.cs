@@ -6,6 +6,7 @@ using XPloit.Sniffer.Streams;
 using Xploit.Sniffer.Enums;
 using System;
 using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace Xploit.Sniffer.Streams
 {
@@ -50,7 +51,7 @@ namespace Xploit.Sniffer.Streams
         {
             lock (_TcpStreams) return _TcpStreams.Remove(key);
         }
-        public bool GetStream(IPEndPoint ipSource, IPEndPoint ipDest, TcpPacket tcp, DateTime date, EStartTcpStreamMethod startTcpStreamMethod, out TcpStream stream)
+        public bool GetStream(PhysicalAddress hwSource, PhysicalAddress hwDest, IPEndPoint ipSource, IPEndPoint ipDest, TcpPacket tcp, DateTime date, EStartTcpStreamMethod startTcpStreamMethod, out TcpStream stream)
         {
             ETcpEmisor em;
             if (!TryGetValue(ipSource, ipDest, out stream, out em))
@@ -83,7 +84,7 @@ namespace Xploit.Sniffer.Streams
 
                 lock (_TcpStreams)
                 {
-                    stream = new TcpStream(this, syn && ack ? ETcpEmisor.Server : ETcpEmisor.Client, ipSource, ipDest, tcp, date);
+                    stream = new TcpStream(this, syn && ack ? ETcpEmisor.Server : ETcpEmisor.Client, hwSource, hwDest, ipSource, ipDest, tcp, date);
                     _TcpStreams.Add(stream.Key, stream);
                 }
                 return true;

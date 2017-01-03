@@ -25,12 +25,11 @@ namespace Auxiliary.Local
         {
             bool CaptureOnTcpStream { get; }
             bool CaptureOnPacket { get; }
-
-            void Dequeue(object obj);
-
-            void OnTcpStream(TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
             bool Check();
-            void OnPacket(IPProtocolType protocolType, IpPacket packet);
+
+            void Dequeue(object sender, object obj);
+            void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
+            void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet);
         }
 
         string _Interface;

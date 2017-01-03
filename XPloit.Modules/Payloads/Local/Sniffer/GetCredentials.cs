@@ -98,10 +98,10 @@ CREATE TABLE `pass_http` (
         Dictionary<string, string> _LastCred = new Dictionary<string, string>();
 
         public bool Check() { return true; }
-        public void OnPacket(IPProtocolType protocolType, IpPacket packet) { }
+        public void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet) { }
 
         ICredentialExtractor[] _Checks = new ICredentialExtractor[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
-        public void OnTcpStream(TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
+        public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null || stream.Count == 0) return;
 
@@ -157,7 +157,7 @@ CREATE TABLE `pass_http` (
                 stream.Dispose();
         }
 
-        public void Dequeue(object o)
+        public void Dequeue(object sender, object o)
         {
             Credential c = (Credential)o;
 

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using Xploit.Sniffer;
 using Xploit.Sniffer.Streams;
@@ -28,6 +29,7 @@ namespace XPloit.Sniffer.Streams
         bool _IsClossed;
         string _Key;
         IPEndPoint _Destination, _Source;
+        PhysicalAddress _DestinationHwAddress, _SourceHwAddress;
         DateTime _StartDate;
         TcpStreamStack _TcpStack;
 
@@ -42,6 +44,8 @@ namespace XPloit.Sniffer.Streams
         public bool IsClossed { get { return _IsClossed; } }
         public IPEndPoint Source { get { return _Source; } }
         public IPEndPoint Destination { get { return _Destination; } }
+        public PhysicalAddress SourceHwAddress { get { return _SourceHwAddress; } }
+        public PhysicalAddress DestinationHwAddress { get { return _DestinationHwAddress; } }
         /// <summary>
         /// Variables
         /// </summary>
@@ -130,16 +134,21 @@ namespace XPloit.Sniffer.Streams
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="stack">Stack</param>
         /// <param name="emisor">Emisor</param>
         /// <param name="source">Ip Source</param>
         /// <param name="dest">Ip Dest</param>
+        /// <param name="hwSource">Hw Source</param>
+        /// <param name="hwDest">Hw Dest</param>
         /// <param name="tcp">Packet</param>
         /// <param name="date">Date</param>
-        public TcpStream(TcpStreamStack stack, ETcpEmisor emisor, IPEndPoint source, IPEndPoint dest, TcpPacket tcp, DateTime date)
+        public TcpStream(TcpStreamStack stack, ETcpEmisor emisor, PhysicalAddress hwSource, PhysicalAddress hwDest, IPEndPoint source, IPEndPoint dest, TcpPacket tcp, DateTime date)
         {
             _TcpStack = stack;
             _IsFirst = true;
             _StartDate = date;
+            _SourceHwAddress = hwSource;
+            _DestinationHwAddress = hwDest;
             _Key = TcpStreamStack.GetKey(source, dest, emisor == ETcpEmisor.Server);
             if (tcp != null)
             {
@@ -170,15 +179,15 @@ namespace XPloit.Sniffer.Streams
             {
                 string[] sp = File.ReadAllLines(file);
 
-                IPEndPoint empty = new IPEndPoint(IPAddress.None, 0);
-
+                IPEndPoint empty = new IPEndPoint(IPAddress.None, IPEndPoint.MinPort);
+                
                 foreach (string line in sp)
                 {
                     string l = line.TrimStart().Replace(":", "");
 
                     ETcpEmisor em = line.StartsWith("\t") ? ETcpEmisor.Server : ETcpEmisor.Client;
                     if (tcp == null)
-                        tcp = new TcpStream(null, em, empty, empty, null, DateTime.Now);
+                        tcp = new TcpStream(null, em, PhysicalAddress.None, PhysicalAddress.None, empty, empty, null, DateTime.Now);
 
                     if (l.Length >= 9 && !l.Substring(0, 8).Contains(" "))
                     {

@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace XPloit.Helpers
 {
@@ -28,6 +29,7 @@ namespace XPloit.Helpers
         static Type _IPAddressType = typeof(IPAddress);
         static Type _IPEndPointType = typeof(IPEndPoint);
         static Type _FileInfoType = typeof(FileInfo);
+        static Type _RegexType = typeof(Regex);
         static Type _EncodingType = typeof(Encoding);
         static Type _DirectoryInfoType = typeof(DirectoryInfo);
         static Type _ByteArrayType = typeof(byte[]);
@@ -183,6 +185,7 @@ namespace XPloit.Helpers
                     if (IPHelper.ParseIpPort(input, out ip, ref prto)) return ip;
                     return IPAddress.Any;
                 }
+                if (type == _RegexType) return new Regex(input);
                 if (type == _FileInfoType) return new FileInfo(input);
                 if (type == _DirectoryInfoType) return new DirectoryInfo(input);
                 if (type == _EncodingType)

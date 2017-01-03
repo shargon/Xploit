@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using XPloit.Helpers.Attributes;
 
 namespace XPloit.Helpers
@@ -260,6 +261,7 @@ namespace XPloit.Helpers
                             pi.PropertyType != typeof(DateTime) &&
                             pi.PropertyType != typeof(DirectoryInfo) &&
                             pi.PropertyType != typeof(FileInfo) &&
+                            pi.PropertyType != typeof(Regex) &&
 
                             pi.PropertyType != typeof(List<byte>) &&
                             pi.PropertyType != typeof(List<sbyte>) &&

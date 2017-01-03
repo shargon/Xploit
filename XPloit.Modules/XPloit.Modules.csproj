@@ -107,6 +107,7 @@
     <Compile Include="Payloads\Local\Fuzzing\TcpSocketFuzzer.cs" />
     <Compile Include="Payloads\Local\RSync\Ftp.cs" />
     <Compile Include="Payloads\Local\RSync\LocalPath.cs" />
+    <Compile Include="Payloads\Local\Sniffer\TcpPacketInjection.cs" />
     <Compile Include="Payloads\Local\Sniffer\GetCredentials.cs" />
     <Compile Include="Payloads\Local\Sniffer\DumpToFolder.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Query\Manual.cs" />
