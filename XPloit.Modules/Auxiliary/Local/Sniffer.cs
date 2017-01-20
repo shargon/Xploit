@@ -27,9 +27,10 @@ namespace Auxiliary.Local
             bool CaptureOnPacket { get; }
             bool Check();
 
+            void Stop(object sender);
             void Dequeue(object sender, object obj);
             void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
-            void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet);
+            void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet);
         }
 
         string _Interface;
@@ -107,6 +108,9 @@ namespace Auxiliary.Local
         }
         void S_OnCaptureStop(object sender, CaptureStoppedEventStatus status)
         {
+            IPayloadSniffer pay = (IPayloadSniffer)Payload;
+            if (pay != null) pay.Stop(sender);
+
             WriteInfo("Capture stopped");
         }
         public override ECheck Check()

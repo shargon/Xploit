@@ -5,6 +5,7 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
+using System;
 
 namespace Payloads.Local.Sniffer
 {
@@ -28,7 +29,7 @@ namespace Payloads.Local.Sniffer
 
             return true;
         }
-        public void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet) { }
+        public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null) return;
@@ -39,5 +40,6 @@ namespace Payloads.Local.Sniffer
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }
         public void Dequeue(object sender, object obj) { }
+        public void Stop(object sender) { }
     }
 }

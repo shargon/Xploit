@@ -14,25 +14,39 @@ using XPloit.Sniffer.Streams;
 
 namespace Xploit.Sniffer.Extractors
 {
-    public class ExtractHttp : ICredentialExtractor
+    public class ExtractHttp : IObjectExtractor
     {
+        static string[] SqliWordList = new string[] { "concat(", "unionselect", "sysobjects", "1'='1", "version(", "@@version", "mysql.user", "xp_cmdshell", "groupby", "information_schema" };
+        static string[] XssWordList = new string[] { "<script", "onerror=", "onmouseover=", "document.cookie", "javascript:" };
+
         static string[] UserWordList = new string[] {/* "u",*/ "login", "uid", "id", "userid", "user_id", "user", "uname", "username", "user_name", "usuario", "mail", "email", "name", "user_login", "email_login" };
         static string[] PasswordWordList = new string[] {/* "p",*/ "pass", "password", "key", "pwd", "clave", "hash", "password_login" };
 
-        public class HttpCookieCredential : Credential
+        public class HttpAttack : Attack
         {
-            public HttpCookieCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
-            public override string Type { get { return "HTTP-COOKIE"; } }
+            public HttpAttack() : base(EAttackType.None) { }
+            public HttpAttack(EAttackType type, DateTime date, IPEndPoint ip) : base(date, ip, type) { }
             /// <summary>
-            /// Cookie
+            /// Host
             /// </summary>
-            public string Cookie { get; set; }
+            public string HttpHost { get; set; }
+            /// <summary>
+            /// Url
+            /// </summary>
+            public string HttpUrl { get; set; }
+            /// <summary>
+            /// User
+            /// </summary>
+            public string[] Get { get; set; }
+            /// <summary>
+            /// Password
+            /// </summary>
+            public string[] Post { get; set; }
         }
         public class HttpCredential : Credential
         {
-            string _Type;
-            public HttpCredential(string type, DateTime date, IPEndPoint ip) : base(date, ip) { _Type = type; }
-            public override string Type { get { return _Type; } }
+            public HttpCredential() : base(ECredentialType.None) { }
+            public HttpCredential(ECredentialType type, DateTime date, IPEndPoint ip) : base(date, ip, type) { }
             /// <summary>
             /// Host
             /// </summary>
@@ -52,8 +66,8 @@ namespace Xploit.Sniffer.Extractors
         }
         public class HttpAuthCredential : Credential
         {
-            public HttpAuthCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
-            public override string Type { get { return "HTTP-AUTH"; } }
+            public HttpAuthCredential() : base(ECredentialType.HttpAuth) { }
+            public HttpAuthCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.HttpAuth) { }
             /// <summary>
             /// Host
             /// </summary>
@@ -75,11 +89,13 @@ namespace Xploit.Sniffer.Extractors
         enum EDic
         {
             User,
-            Pass
+            Pass,
+            SQLI,
+            XSS
         }
 
-        static ICredentialExtractor _Current = new ExtractHttp();
-        public static ICredentialExtractor Current { get { return _Current; } }
+        static IObjectExtractor _Current = new ExtractHttp();
+        public static IObjectExtractor Current { get { return _Current; } }
 
         class server : IHttpServer, IEnumerable<HttpRequest>, IDisposable
         {
@@ -105,7 +121,7 @@ namespace Xploit.Sniffer.Extractors
             public void Dispose() { _List.Clear(); }
         }
 
-        public EExtractorReturn GetCredentials(TcpStream stream, out Credential[] cred)
+        public EExtractorReturn GetObjects(TcpStream stream, out object[] cred)
         {
             if (!stream.IsClossed)
             {
@@ -131,7 +147,7 @@ namespace Xploit.Sniffer.Extractors
                 return EExtractorReturn.DontRetry;
             }
 
-            List<Credential> ls = new List<Credential>();
+            List<object> ls = new List<object>();
             foreach (TcpStreamMessage pack in stream)
                 if (pack.Emisor == ETcpEmisor.Client)
                 {
@@ -180,7 +196,9 @@ namespace Xploit.Sniffer.Extractors
                                 {
                                     users.Sort();
                                     pwds.Sort();
-                                    ls.Add(new HttpCredential((x == 0 ? "GET" : "POST"), stream.StartDate, stream.Destination)
+                                    ls.Add(new HttpCredential(
+                                        (x == 0 ? Credential.ECredentialType.HttpGet : Credential.ECredentialType.HttpPost),
+                                        stream.StartDate, stream.Destination)
                                     {
                                         IsValid = valid,
                                         HttpHost = r.Host.ToString(),
@@ -191,12 +209,27 @@ namespace Xploit.Sniffer.Extractors
                                 }
                             }
 
-                            //List<string> sqli = new List<string>();
-                            //if (sqli.Count >= 2)
-                            //    ls.Add(new HttpPostCredential()
-                            //    {
-                            //        User = sqli.Count == 0 ? null : sqli.ToArray(),
-                            //    });
+                            foreach (EDic attack in new EDic[] { EDic.SQLI, EDic.XSS })
+                            {
+                                if (Fill(r.GET, attack) || Fill(r.POST, attack))
+                                {
+                                    Attack.EAttackType type;
+                                    switch (attack)
+                                    {
+                                        case EDic.SQLI: type = Attack.EAttackType.HttpSqli; break;
+                                        case EDic.XSS: type = Attack.EAttackType.HttpXss; break;
+                                        default: continue;
+                                    }
+
+                                    ls.Add(new HttpAttack(type, stream.StartDate, stream.Destination)
+                                    {
+                                        HttpHost = r.Host.ToString(),
+                                        HttpUrl = r.Url,
+                                        Get = r.GET.Count == 0 ? null : ToDic(r.GET).OrderBy(c => c).ToArray(),
+                                        Post = r.POST.Count == 0 ? null : ToDic(r.POST).OrderBy(c => c).ToArray(),
+                                    });
+                                }
+                            }
                         }
                     }
                 }
@@ -204,8 +237,13 @@ namespace Xploit.Sniffer.Extractors
             cred = ls.Count == 0 ? null : ls.ToArray();
             return cred == null ? EExtractorReturn.DontRetry : EExtractorReturn.True;
         }
+        IEnumerable<string> ToDic(Dictionary<string, string> g)
+        {
+            foreach (KeyValuePair<string, string> val in g)
+                yield return val.Key + "=" + val.Value;
+        }
 
-        bool Exclude(string val, EDic dic)
+        bool ExcludeUserPass(string val, EDic dic)
         {
             if (string.IsNullOrEmpty(val)) return true;
             if (val.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)) return true;
@@ -230,15 +268,47 @@ namespace Xploit.Sniffer.Extractors
         }
         bool Fill(Dictionary<string, string> d, List<string> ls, EDic dic)
         {
+            if (d.Count == 0) return false;
+
             bool ret = false;
             string v;
-            foreach (string su in dic == EDic.User ? UserWordList : PasswordWordList)
-                if (d.TryGetValue(su, out v) && !ls.Contains(v) && !Exclude(v, dic))
+            foreach (string su in GetDic(dic))
+            {
+                if (d.TryGetValue(su, out v) && !ls.Contains(v) && !ExcludeUserPass(v, dic))
                 {
                     ls.Add(v);
                     ret = true;
                 }
+            }
             return ret;
+        }
+        bool Fill(Dictionary<string, string> d, EDic dic)
+        {
+            if (d.Count == 0) return false;
+
+            foreach (string su in GetDic(dic))
+            {
+                foreach (KeyValuePair<string, string> val in d)
+                {
+                    string sval = val.Value.ToLowerInvariant();
+
+                    if (sval.Replace(" ", "").Contains(su))
+                        return true;
+                }
+            }
+            return false;
+        }
+        string[] GetDic(EDic dic)
+        {
+            switch (dic)
+            {
+                case EDic.User: return UserWordList;
+                case EDic.Pass: return PasswordWordList;
+                case EDic.SQLI: return SqliWordList;
+                case EDic.XSS: return XssWordList;
+            }
+
+            return null;
         }
     }
 }

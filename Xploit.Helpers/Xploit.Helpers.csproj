@@ -75,6 +75,7 @@
     <Compile Include="HttpHelper.cs" />
     <Compile Include="IniHelper.cs" />
     <Compile Include="Attributes\IPreSetVariable.cs" />
+    <Compile Include="Interfaces\IConvertibleFromString.cs" />
     <Compile Include="Interfaces\IProcessMemoryDump.cs" />
     <Compile Include="Interfaces\IProgress.cs" />
     <Compile Include="IPHelpers.cs" />

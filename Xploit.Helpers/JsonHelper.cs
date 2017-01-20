@@ -26,7 +26,9 @@ namespace XPloit.Helpers
             return JsonConvert.SerializeObject(obj, indent ? Formatting.Indented : Formatting.None, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                NullValueHandling = serializeNull ? NullValueHandling.Include : NullValueHandling.Ignore
+                NullValueHandling = serializeNull ? NullValueHandling.Include : NullValueHandling.Ignore,
+                StringEscapeHandling = StringEscapeHandling.EscapeNonAscii,
+
                 //PreserveReferencesHandling = PreserveReferencesHandling.Objects
             }
                 );

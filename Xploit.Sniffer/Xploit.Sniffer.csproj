@@ -50,6 +50,7 @@
     <Compile Include="Enums\EExtractorReturn.cs" />
     <Compile Include="Enums\EStartTcpStreamMethod.cs" />
     <Compile Include="Enums\ETcpEmisor.cs" />
+    <Compile Include="Extractors\Attack.cs" />
     <Compile Include="Extractors\Credential.cs" />
     <Compile Include="Extractors\ExtractFtpPop3.cs" />
     <Compile Include="Extractors\ExtractHttp.cs" />
@@ -58,7 +59,8 @@
     <Compile Include="Filters\SnifferPortFilter.cs" />
     <Compile Include="Filters\SnifferProtocolFilter.cs" />
     <Compile Include="Filters\SnifferTorFilter.cs" />
-    <Compile Include="Interfaces\ICredentialExtractor.cs" />
+    <Compile Include="Interfaces\ICountryRecaller.cs" />
+    <Compile Include="Interfaces\IObjectExtractor.cs" />
     <Compile Include="Interfaces\IIpPacketFilter.cs" />
     <Compile Include="NetworkSniffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

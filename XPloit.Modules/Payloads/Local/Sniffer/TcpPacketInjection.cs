@@ -30,7 +30,8 @@ namespace Payloads.Local.Sniffer
 
         EthernetPacket[] packets = null;
 
-        public void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet) { }
+        public void Stop(object sender) { }
+        public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null ||

@@ -25,7 +25,7 @@ namespace XPloit.Sniffer
         //readonly Socket _socket;
 
         public delegate void delOnQueueObject(object sender, object enqueue);
-        public delegate void delPacket(object sender, IPProtocolType protocolType, IpPacket packet);
+        public delegate void delPacket(object sender, IPProtocolType protocolType, EthernetPacket packet);
         public delegate void delTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
 
         public event CaptureStoppedEventHandler OnCaptureStop;
@@ -178,8 +178,9 @@ namespace XPloit.Sniffer
                 Thread.Sleep(500);
                 if (!((_WorkerClean != null && !_WorkerClean.CancellationPending && !e.Cancel))) break;
 
-                foreach (TcpStream stream in _TcpStack.CleanByTimeout(_ProcessDate))
-                    OnTcpStream(this, stream, false, _Queue);
+                if (OnTcpStream != null)
+                    foreach (TcpStream stream in _TcpStack.CleanByTimeout(_ProcessDate))
+                        OnTcpStream(this, stream, false, _Queue);
 
                 Thread.Sleep(500);
             }
@@ -212,7 +213,10 @@ namespace XPloit.Sniffer
                 object o;
                 if (_Queue.TryDequeue(out o))
                     try { OnDequeue?.Invoke(this, o); }
-                    catch { _Queue.Enqueue(o); }
+                    catch (Exception ex)
+                    {
+                        _Queue.Enqueue(o);
+                    }
             });
         }
         void Device_OnPacketArrival(object sender, CaptureEventArgs e)
@@ -236,7 +240,7 @@ namespace XPloit.Sniffer
                         IPEndPoint dest = new IPEndPoint(ip.DestinationAddress, p.DestinationPort);
 
                         if (_HasFilters && !IsAllowedPacket(source, dest, IPProtocolType.TCP)) return;
-                        OnPacket?.Invoke(this, ip.Protocol, ip);
+                        OnPacket?.Invoke(this, ip.Protocol, et);
 
                         if (_SyncPackets.Count > 50000) Thread.Sleep(1);
 
@@ -260,7 +264,7 @@ namespace XPloit.Sniffer
                         IPEndPoint dest = new IPEndPoint(ip.DestinationAddress, p.DestinationPort);
 
                         if (_HasFilters && !IsAllowedPacket(source, dest, IPProtocolType.UDP)) return;
-                        OnPacket?.Invoke(this, ip.Protocol, ip);
+                        OnPacket?.Invoke(this, ip.Protocol, et);
                         break;
                     }
                 default:
@@ -268,7 +272,7 @@ namespace XPloit.Sniffer
                         IPEndPoint source = new IPEndPoint(ip.SourceAddress, 0);
                         IPEndPoint dest = new IPEndPoint(ip.DestinationAddress, 0);
                         if (_HasFilters && !IsAllowedPacket(source, dest, IPProtocolType.UDP)) return;
-                        OnPacket?.Invoke(this, ip.Protocol, ip);
+                        OnPacket?.Invoke(this, ip.Protocol, et);
                         break;
                     }
             }

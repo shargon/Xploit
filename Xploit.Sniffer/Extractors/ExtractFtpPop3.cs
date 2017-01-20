@@ -8,12 +8,12 @@ using XPloit.Sniffer.Streams;
 
 namespace Xploit.Sniffer.Extractors
 {
-    public class ExtractFtpPop3 : ICredentialExtractor
+    public class ExtractFtpPop3 : IObjectExtractor
     {
         public class Pop3Credential : Credential
         {
-            public Pop3Credential(DateTime date, IPEndPoint ip) : base(date, ip) { }
-            public override string Type { get { return "POP3"; } }
+            public Pop3Credential() : base(ECredentialType.Pop3) { }
+            public Pop3Credential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Pop3) { }
             /// <summary>
             /// User
             /// </summary>
@@ -26,11 +26,12 @@ namespace Xploit.Sniffer.Extractors
             /// IsAPOP https://tools.ietf.org/html/rfc1939#page-15
             /// </summary>
             public string AuthType { get; set; }
+
         }
         public class FTPCredential : Credential
         {
-            public FTPCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
-            public override string Type { get { return "FTP"; } }
+            public FTPCredential() : base(ECredentialType.Ftp) { }
+            public FTPCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Ftp) { }
             /// <summary>
             /// User
             /// </summary>
@@ -88,10 +89,10 @@ C> PASS tanstaaf
 S> -ERR
 
      */
-        static ICredentialExtractor _Current = new ExtractFtpPop3();
-        public static ICredentialExtractor Current { get { return _Current; } }
+        static IObjectExtractor _Current = new ExtractFtpPop3();
+        public static IObjectExtractor Current { get { return _Current; } }
 
-        public EExtractorReturn GetCredentials(TcpStream stream, out Credential[] cred)
+        public EExtractorReturn GetObjects(TcpStream stream, out object[] cred)
         {
             if (stream.ClientLength < 1 || (stream.Count != 1 && stream.Count < 3) || stream.ServerLength < 4)
             {

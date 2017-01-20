@@ -236,32 +236,32 @@ namespace XPloit.Helpers
 
                     if (pi.PropertyType.IsClass)
                     {
-                        if (pi.PropertyType != typeof(string) &&
-                            pi.PropertyType != typeof(bool) &&
+                        if (pi.PropertyType != ConvertHelper._StringType &&
+                            pi.PropertyType != ConvertHelper._BoolType &&
 
-                            pi.PropertyType != typeof(sbyte) &&
-                            pi.PropertyType != typeof(ushort) &&
-                            pi.PropertyType != typeof(uint) &&
-                            pi.PropertyType != typeof(ulong) &&
+                            pi.PropertyType != ConvertHelper._SByteType &&
+                            pi.PropertyType != ConvertHelper._UInt16Type &&
+                            pi.PropertyType != ConvertHelper._UInt32Type &&
+                            pi.PropertyType != ConvertHelper._UInt64Type &&
 
-                            pi.PropertyType != typeof(byte) &&
-                            pi.PropertyType != typeof(short) &&
-                            pi.PropertyType != typeof(int) &&
-                            pi.PropertyType != typeof(long) &&
+                            pi.PropertyType != ConvertHelper._ByteType &&
+                            pi.PropertyType != ConvertHelper._Int16Type &&
+                            pi.PropertyType != ConvertHelper._Int32Type &&
+                            pi.PropertyType != ConvertHelper._Int64Type &&
 
-                            pi.PropertyType != typeof(decimal) &&
-                            pi.PropertyType != typeof(float) &&
-                            pi.PropertyType != typeof(double) &&
+                            pi.PropertyType != ConvertHelper._DecimalType &&
+                            pi.PropertyType != ConvertHelper._FloatType &&
+                            pi.PropertyType != ConvertHelper._DoubleType &&
 
-                            pi.PropertyType != typeof(Uri) &&
-                            pi.PropertyType != typeof(Encoding) &&
-                            pi.PropertyType != typeof(IPAddress) &&
-                            pi.PropertyType != typeof(IPEndPoint) &&
-                            pi.PropertyType != typeof(TimeSpan) &&
-                            pi.PropertyType != typeof(DateTime) &&
-                            pi.PropertyType != typeof(DirectoryInfo) &&
-                            pi.PropertyType != typeof(FileInfo) &&
-                            pi.PropertyType != typeof(Regex) &&
+                            pi.PropertyType != ConvertHelper._UriType  &&
+                            pi.PropertyType != ConvertHelper._EncodingType &&
+                            pi.PropertyType != ConvertHelper._IPAddressType &&
+                            pi.PropertyType != ConvertHelper._IPEndPointType &&
+                            pi.PropertyType != ConvertHelper._TimeSpanType &&
+                            pi.PropertyType != ConvertHelper._DateTimeType &&
+                            pi.PropertyType != ConvertHelper._DirectoryInfoType &&
+                            pi.PropertyType != ConvertHelper._FileInfoType &&
+                            pi.PropertyType != ConvertHelper._RegexType &&
 
                             pi.PropertyType != typeof(List<byte>) &&
                             pi.PropertyType != typeof(List<sbyte>) &&
@@ -280,6 +280,8 @@ namespace XPloit.Helpers
                             pi.PropertyType != typeof(uint[]) &&
                             pi.PropertyType != typeof(long[]) &&
                             pi.PropertyType != typeof(ulong[]) &&
+
+                            !ConvertHelper._IConvertibleFromString.IsAssignableFrom(pi.PropertyType) &&
 
                             // Array[Enum]
                             !(pi.PropertyType.IsArray && pi.PropertyType.GetElementType().IsEnum)

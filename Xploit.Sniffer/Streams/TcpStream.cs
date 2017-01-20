@@ -6,7 +6,6 @@ using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
-using Xploit.Sniffer;
 using Xploit.Sniffer.Streams;
 using XPloit.Helpers;
 using XPloit.Sniffer.Enums;
@@ -32,7 +31,11 @@ namespace XPloit.Sniffer.Streams
         PhysicalAddress _DestinationHwAddress, _SourceHwAddress;
         DateTime _StartDate;
         TcpStreamStack _TcpStack;
+        TcpPacket _LastPacket;
 
+        public TcpPacket LastPacket { get { return _LastPacket; } }
+        public long ClientSequenceNumber { get { return _ClientStack == null ? 0 : _ClientStack.SequenceNumber; } }
+        public long ServerSequenceNumber { get { return _ServerStack == null ? 0 : _ServerStack.SequenceNumber; } }
         public DateTime StartDate { get { return _StartDate; } }
         public string Key { get { return _Key; } }
         public long ClientLength { get { return _ClientLength; } }
@@ -103,6 +106,7 @@ namespace XPloit.Sniffer.Streams
             if (tcp.Fin || tcp.Rst)
                 Close();
 
+            _LastPacket = tcp;
             byte[] payload = tcp.PayloadData;
             if (payload == null) return;
 
@@ -150,6 +154,8 @@ namespace XPloit.Sniffer.Streams
             _SourceHwAddress = hwSource;
             _DestinationHwAddress = hwDest;
             _Key = TcpStreamStack.GetKey(source, dest, emisor == ETcpEmisor.Server);
+            _LastPacket = tcp;
+
             if (tcp != null)
             {
                 if (emisor == ETcpEmisor.Server)
@@ -180,7 +186,7 @@ namespace XPloit.Sniffer.Streams
                 string[] sp = File.ReadAllLines(file);
 
                 IPEndPoint empty = new IPEndPoint(IPAddress.None, IPEndPoint.MinPort);
-                
+
                 foreach (string line in sp)
                 {
                     string l = line.TrimStart().Replace(":", "");

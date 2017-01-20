@@ -6,17 +6,13 @@ using XPloit.Helpers;
 
 namespace Xploit.Sniffer.Extractors
 {
-    public class Credential: ICountryRecaller
+    public class Attack : ICountryRecaller
     {
-        public enum ECredentialType : byte
+        public enum EAttackType : byte
         {
             None = 0,
-            Ftp = 1,
-            Pop3 = 2,
-            Telnet = 3,
-            HttpGet = 4,
-            HttpPost = 5,
-            HttpAuth = 6,
+            HttpSqli = 1,
+            HttpXss = 2
         }
 
         IPAddress _Address;
@@ -43,13 +39,14 @@ namespace Xploit.Sniffer.Extractors
         /// <summary>
         /// Credential type
         /// </summary>
-        public ECredentialType Type { get; set; }
+        public EAttackType Type { get; set; }
         /// <summary>
         /// Is Valid
         /// </summary>
         public bool IsValid { get; set; }
-        public Credential(ECredentialType type) { Type = type; }
-        public Credential(DateTime date, IPEndPoint ip, ECredentialType type) : this(type)
+
+        public Attack(EAttackType type) { Type = type; }
+        public Attack(DateTime date, IPEndPoint ip, EAttackType type) : this(type)
         {
             Date = date.ToString("yyyy-MM-dd HH:mm:ss");
             _Address = ip.Address;

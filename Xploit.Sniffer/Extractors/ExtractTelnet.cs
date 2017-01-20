@@ -9,12 +9,12 @@ using XPloit.Sniffer.Streams;
 
 namespace Xploit.Sniffer.Extractors
 {
-    public class ExtractTelnet : ICredentialExtractor
+    public class ExtractTelnet : IObjectExtractor
     {
         public class TelnetCredential : Credential
         {
-            public TelnetCredential(DateTime date, IPEndPoint ip) : base(date, ip) { }
-            public override string Type { get { return "TELNET"; } }
+            public TelnetCredential() : base(ECredentialType.Telnet) { }
+            public TelnetCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Telnet) { }
             /// <summary>
             /// User
             /// </summary>
@@ -26,8 +26,8 @@ namespace Xploit.Sniffer.Extractors
         }
 
 
-        static ICredentialExtractor _Current = new ExtractTelnet();
-        public static ICredentialExtractor Current { get { return _Current; } }
+        static IObjectExtractor _Current = new ExtractTelnet();
+        public static IObjectExtractor Current { get { return _Current; } }
 
         List<string> _DiscardFields = new List<string>(new string[] { "help", "ayuda" });
         List<string> _UserFields = new List<string>(new string[] { "user", "usuario", "login" });
@@ -60,7 +60,7 @@ namespace Xploit.Sniffer.Extractors
             string ret = Encoding.ASCII.GetString(data, index, length);
             return ret.Trim('\r', '\n', '\0');
         }
-        public EExtractorReturn GetCredentials(TcpStream stream, out Credential[] cred)
+        public EExtractorReturn GetObjects(TcpStream stream, out object[] cred)
         {
             if (!stream.IsClossed)
             {

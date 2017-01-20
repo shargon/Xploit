@@ -8,33 +8,36 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using XPloit.Helpers.Interfaces;
 
 namespace XPloit.Helpers
 {
     public class ConvertHelper
     {
-        static Type _BoolType = typeof(bool);
-        static Type _StringType = typeof(string);
+        internal static Type _BoolType = typeof(bool);
+        internal static Type _StringType = typeof(string);
 
-        static Type _ByteType = typeof(byte), _SByteType = typeof(sbyte);
-        static Type _Int64Type = typeof(long), _UInt64Type = typeof(ulong);
-        static Type _Int32Type = typeof(int), _UInt32Type = typeof(uint);
-        static Type _Int16Type = typeof(short), _UInt16Type = typeof(ushort);
+        internal static Type _ByteType = typeof(byte), _SByteType = typeof(sbyte);
+        internal static Type _Int64Type = typeof(long), _UInt64Type = typeof(ulong);
+        internal static Type _Int32Type = typeof(int), _UInt32Type = typeof(uint);
+        internal static Type _Int16Type = typeof(short), _UInt16Type = typeof(ushort);
 
-        static Type _DoubleType = typeof(double);
-        static Type _DecimalType = typeof(decimal);
-        static Type _FloatType = typeof(float);
-        static Type _TimeSpanType = typeof(TimeSpan);
-        static Type _DateTimeType = typeof(DateTime);
-        static Type _IPAddressType = typeof(IPAddress);
-        static Type _IPEndPointType = typeof(IPEndPoint);
-        static Type _FileInfoType = typeof(FileInfo);
-        static Type _RegexType = typeof(Regex);
-        static Type _EncodingType = typeof(Encoding);
-        static Type _DirectoryInfoType = typeof(DirectoryInfo);
-        static Type _ByteArrayType = typeof(byte[]);
+        internal static Type _IConvertibleFromString = typeof(IConvertibleFromString);
+        internal static Type _UriType = typeof(Uri);
+        internal static Type _DoubleType = typeof(double);
+        internal static Type _DecimalType = typeof(decimal);
+        internal static Type _FloatType = typeof(float);
+        internal static Type _TimeSpanType = typeof(TimeSpan);
+        internal static Type _DateTimeType = typeof(DateTime);
+        internal static Type _IPAddressType = typeof(IPAddress);
+        internal static Type _IPEndPointType = typeof(IPEndPoint);
+        internal static Type _FileInfoType = typeof(FileInfo);
+        internal static Type _RegexType = typeof(Regex);
+        internal static Type _EncodingType = typeof(Encoding);
+        internal static Type _DirectoryInfoType = typeof(DirectoryInfo);
+        internal static Type _ByteArrayType = typeof(byte[]);
 
-        static Type _IListType = typeof(IList);
+        internal static Type _IListType = typeof(IList);
 
         public static object ConvertTo(string input, Type type)
         {
@@ -185,12 +188,13 @@ namespace XPloit.Helpers
                     if (IPHelper.ParseIpPort(input, out ip, ref prto)) return ip;
                     return IPAddress.Any;
                 }
+                if (type == _UriType) return new Uri(input);
                 if (type == _RegexType) return new Regex(input);
                 if (type == _FileInfoType) return new FileInfo(input);
                 if (type == _DirectoryInfoType) return new DirectoryInfo(input);
                 if (type == _EncodingType)
                 {
-                    EncodingInfo i= Encoding.GetEncodings().Where(u => string.Compare(input, u.Name, true) == 0 || string.Compare(input, u.DisplayName) == 0).FirstOrDefault();
+                    EncodingInfo i = Encoding.GetEncodings().Where(u => string.Compare(input, u.Name, true) == 0 || string.Compare(input, u.DisplayName) == 0).FirstOrDefault();
                     return i == null ? null : i.GetEncoding();
                 }
                 if (type == _IPEndPointType)
@@ -248,9 +252,15 @@ namespace XPloit.Helpers
                     // Is Convertible (Like Password)
                     TypeConverter conv = TypeDescriptor.GetConverter(type);
                     if (conv.CanConvertFrom(_StringType))
-                    {
                         return conv.ConvertFrom(input);
-                    };
+
+                    // For generic Types is more easy
+                    if (_IConvertibleFromString.IsAssignableFrom(type))
+                    {
+                        IConvertibleFromString c = (IConvertibleFromString)Activator.CreateInstance(type);
+                        c.LoadFromString(input);
+                        return c;
+                    }
 
                     if (input.StartsWith("{") && input.EndsWith("}"))
                         input = input.Substring(1, input.Length - 2);
