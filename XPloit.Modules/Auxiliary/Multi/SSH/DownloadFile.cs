@@ -66,7 +66,7 @@ namespace Auxiliary.Multi.SSH
             {
                 WriteInfo("Connecting ...");
 
-                using (ScpClient SSH = new ScpClient(Host.Address.ToString(), Host.Port, User, Password))
+                using (ScpClient SSH = new ScpClient(SSHHost.Address.ToString(), SSHHost.Port, User, Password))
                 {
                     SSH.Connect();
                     WriteInfo("Connected successful");

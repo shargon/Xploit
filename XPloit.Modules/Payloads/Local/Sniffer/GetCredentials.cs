@@ -32,6 +32,7 @@ namespace Payloads.Local.Sniffer
 
         long hay = 0;
         Dictionary<Credential.ECredentialType, string> _LastCred = new Dictionary<Credential.ECredentialType, string>();
+        IObjectExtractor[] _Checks = new IObjectExtractor[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
 
         public void Stop(object sender)
         {
@@ -43,8 +44,6 @@ namespace Payloads.Local.Sniffer
             return true;
         }
         public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
-
-        IObjectExtractor[] _Checks = new IObjectExtractor[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (isNew) hay++;
@@ -77,16 +76,8 @@ namespace Payloads.Local.Sniffer
                             {
                                 stream.Dispose();
 
-                                foreach (Credential c in cred)
-                                {
-                                    // Prevent reiteration
-                                    string json = c.ToString(), last;
-                                    if (_LastCred.TryGetValue(c.Type, out last) && last == json)
-                                        continue;
-
-                                    _LastCred[c.Type] = json;
+                                foreach (object c in cred)
                                     queue.Enqueue(c);
-                                }
 
                                 return;
                             }
@@ -101,7 +92,6 @@ namespace Payloads.Local.Sniffer
             if (!some)
                 stream.Dispose();
         }
-
         public void Dequeue(object sender, object o)
         {
             ICountryRecaller ic;

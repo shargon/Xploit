@@ -12,8 +12,8 @@ namespace Auxiliary.Multi.SSH
     public class SShBaseModule : Module
     {
         #region Properties
-        [ConfigurableProperty(Description = "Host")]
-        public IPEndPoint Host { get; set; }
+        [ConfigurableProperty(Description = "SSH Host (Ip:22)")]
+        public IPEndPoint SSHHost { get; set; }
         [ConfigurableProperty(Description = "User")]
         public string User { get; set; }
         [ConfigurableProperty(Description = "Password")]
@@ -22,7 +22,7 @@ namespace Auxiliary.Multi.SSH
 
         protected SShBaseModule()
         {
-            Host = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 22);
+            SSHHost = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 22);
             User = "root";
         }
         public override ECheck Check()
@@ -30,7 +30,7 @@ namespace Auxiliary.Multi.SSH
             WriteInfo("Connecting ...");
             try
             {
-                using (SshClient SSH = new SshClient(Host.Address.ToString(), Host.Port, User, Password))
+                using (SshClient SSH = new SshClient(SSHHost.Address.ToString(), SSHHost.Port, User, Password))
                 {
                     SSH.Connect();
                     WriteInfo("Connected successful");
@@ -49,7 +49,7 @@ namespace Auxiliary.Multi.SSH
         {
             WriteInfo("Connecting ...");
 
-            using (SshClient SSH = new SshClient(Host.Address.ToString(), Host.Port, User, Password))
+            using (SshClient SSH = new SshClient(SSHHost.Address.ToString(), SSHHost.Port, User, Password))
             {
                 SSH.Connect();
                 WriteInfo("Connected successful");

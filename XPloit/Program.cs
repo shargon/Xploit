@@ -68,7 +68,6 @@ namespace XPloit
                     }
                 }
 
-
                 if (cfg.Connect != null)
                 {
                     // Connect to server

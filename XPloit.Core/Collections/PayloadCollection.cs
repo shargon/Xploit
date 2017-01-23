@@ -25,11 +25,12 @@ namespace XPloit.Core.Collections
 
         public IEnumerable<ModuleHeader<Payload>> GetAvailables(IPayloadRequirements req)
         {
-            foreach (ModuleHeader<Payload> p in Current)
-            {
-                if (!req.IsAllowed(p)) continue;
-                yield return p;
-            }
+            if (req != null)
+                foreach (ModuleHeader<Payload> p in Current)
+                {
+                    if (!req.IsAllowed(p)) continue;
+                    yield return p;
+                }
         }
     }
 }

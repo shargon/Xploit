@@ -17,10 +17,10 @@ namespace Auxiliary.Multi.SSH
         }
 
         #region Properties
-        [ConfigurableProperty(Description = "Remote Host from server")]
-        public IPEndPoint RemoteHost { get; set; }
-        [ConfigurableProperty(Description = "Local Host")]
-        public IPEndPoint LocalHost { get; set; }
+        [ConfigurableProperty(Description = "Local address at ssh server (127.0.0.1:3306)")]
+        public IPEndPoint SSHLocalAddress { get; set; }
+        [ConfigurableProperty(Description = "Local binding address (127.0.0.1:3307)")]
+        public IPEndPoint LocalAddress { get; set; }
 
         [ConfigurableProperty(Description = "Method for forwarding")]
         public EForwardMethod Method { get; set; }
@@ -28,8 +28,8 @@ namespace Auxiliary.Multi.SSH
 
         public PortForwarding() : base()
         {
-            RemoteHost = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80);
-            LocalHost = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888);
+            SSHLocalAddress = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 3306);
+            LocalAddress = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 3307);
             Method = EForwardMethod.RemoteToLocal;
         }
 
@@ -41,19 +41,19 @@ namespace Auxiliary.Multi.SSH
                 default:
                 case EForwardMethod.LocalToRemote:
                     {
-                        port = new ForwardedPortRemote(RemoteHost.Address, (uint)RemoteHost.Port, LocalHost.Address, (uint)LocalHost.Port);
+                        port = new ForwardedPortRemote(SSHLocalAddress.Address, (uint)SSHLocalAddress.Port, LocalAddress.Address, (uint)LocalAddress.Port);
                         break;
                     }
                 case EForwardMethod.RemoteToLocal:
                     {
-                        port = new ForwardedPortLocal(LocalHost.Address.ToString(), (uint)LocalHost.Port, RemoteHost.Address.ToString(), (uint)RemoteHost.Port);
+                        port = new ForwardedPortLocal(LocalAddress.Address.ToString(), (uint)LocalAddress.Port, SSHLocalAddress.Address.ToString(), (uint)SSHLocalAddress.Port);
                         break;
                     }
             }
 
             WriteInfo("Connecting ...");
 
-            SshClient SSH = new SshClient(Host.Address.ToString(), Host.Port, User, Password);
+            SshClient SSH = new SshClient(SSHHost.Address.ToString(), SSHHost.Port, User, Password);
 
             SSH.Connect();
             WriteInfo("Connected successful");

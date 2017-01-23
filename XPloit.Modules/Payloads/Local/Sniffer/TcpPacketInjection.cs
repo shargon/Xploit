@@ -15,6 +15,8 @@ namespace Payloads.Local.Sniffer
     [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Tcp Packet Injection")]
     public class TcpPacketInjection : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer
     {
+        EthernetPacket[] packets = null;
+    
         #region Properties
         [RequireExists]
         [ConfigurableProperty(Description = "File for replication (Ip & Ethernet layer overrided)", Optional = false)]
@@ -27,8 +29,6 @@ namespace Payloads.Local.Sniffer
         public bool CaptureOnTcpStream { get { return true; } }
         public bool CaptureOnPacket { get { return false; } }
         #endregion
-
-        EthernetPacket[] packets = null;
 
         public void Stop(object sender) { }
         public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }

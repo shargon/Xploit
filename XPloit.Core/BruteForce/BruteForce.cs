@@ -38,6 +38,8 @@ namespace XPloit.Core.BruteForce
                         case "0-F": toca = new string[] { "0123456789ABCDEF" }; break;
                         case "0-f": toca = new string[] { "0123456789abcdef" }; break;
                         case "0-9": toca = new string[] { "0123456789" }; break;
+                        case "¡!": toca = new string[] { " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" }; break;
+                        case "¡m!": toca = new string[] { "!#$%&()*+,-./:;<=>?@_|~" }; break;
                         case "a-z": toca = new string[] { "abcdefghijklmnopqrstuvwxyz" }; break;
                         case "A-Z": toca = new string[] { "ABCDEFGHIJKLMNOPQRSTUVWXYZ" }; break;
                         case "a-Z": toca = new string[] { "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" }; break;

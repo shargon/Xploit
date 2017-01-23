@@ -46,6 +46,12 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 [a-Z]
 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 
+[¡!]
+ !""#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+
+[¡s!]
+!#$%&()*+,-./:;<=>?@_|~
+
 Configure the 'ConfigPicture'
 -----------------------------
 

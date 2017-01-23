@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using XPloit.Core.Attributes;
 using XPloit.Core.Collections;
@@ -91,13 +92,9 @@ namespace XPloit.Core
             }
             if (Payload == null)
             {
-                foreach (ModuleHeader<Payload> p in PayloadCollection.Current.GetAvailables(PayloadRequirements))
-                {
-                    //Payload = payloads[0];
+                ModuleHeader<Payload> p = PayloadCollection.Current.GetAvailables(PayloadRequirements).FirstOrDefault();
+                if (p != null)
                     SetProperty("Payload", p.Current);
-                    //Payload.SetIO(io);
-                    break;
-                }
             }
         }
 
