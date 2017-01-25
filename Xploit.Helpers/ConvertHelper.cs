@@ -39,7 +39,7 @@ namespace XPloit.Helpers
 
         internal static Type _IListType = typeof(IList);
 
-        public static object ConvertTo(string input, Type type)
+        public static object ConvertTo(string input, Type type, object currentValue = null)
         {
             if (!string.IsNullOrEmpty(input))
             {
@@ -202,7 +202,13 @@ namespace XPloit.Helpers
                     IPAddress ip;
                     ushort port = 0;
                     if (!IPHelper.ParseIpPort(input, out ip, ref port)) return null;
-                    if (port == 0) return null;
+                    if (port == 0)
+                    {
+                        if (currentValue != null && currentValue is IPEndPoint)
+                            port = (ushort)((IPEndPoint)currentValue).Port;
+
+                        if (port == 0) return null;
+                    }
                     return new IPEndPoint(ip, port);
                 }
                 if (type == _ByteArrayType)

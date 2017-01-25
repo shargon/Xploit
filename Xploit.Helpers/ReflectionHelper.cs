@@ -141,7 +141,7 @@ namespace XPloit.Helpers
                             value = a.PreSetVariable(value.ToString());
 
                         // Convert to String
-                        object val = ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType);
+                        object val = ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType, pi[0].GetValue(obj));
 
                         //if (val == null && value != null) return false;
                         pi[0].SetValue(obj, val);
@@ -253,7 +253,7 @@ namespace XPloit.Helpers
                             pi.PropertyType != ConvertHelper._FloatType &&
                             pi.PropertyType != ConvertHelper._DoubleType &&
 
-                            pi.PropertyType != ConvertHelper._UriType  &&
+                            pi.PropertyType != ConvertHelper._UriType &&
                             pi.PropertyType != ConvertHelper._EncodingType &&
                             pi.PropertyType != ConvertHelper._IPAddressType &&
                             pi.PropertyType != ConvertHelper._IPEndPointType &&
