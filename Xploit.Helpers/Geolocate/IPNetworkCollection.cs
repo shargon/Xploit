@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Numerics;
 
-namespace Xploit.Helpers.Geolocate
+namespace XPloit.Helpers.Geolocate
 {
     public class IPNetworkCollection : IEnumerable<IPNetwork>, IEnumerator<IPNetwork>
     {

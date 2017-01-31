@@ -392,7 +392,7 @@ namespace XPloit.Core.Listeners.Layer
 
                                     List<string> ls = new List<string>();
                                     foreach (string s in source)
-                                        if (word != s && s.StartsWith(word, autoComplete.ComparisonMethod))
+                                        if (s != null && word != s && s.StartsWith(word, autoComplete.ComparisonMethod))
                                         {
                                             if (!ls.Contains(s)) ls.Add(s);
                                         }
@@ -460,7 +460,7 @@ namespace XPloit.Core.Listeners.Layer
                                             // Check show results
                                             WriteLine(Lang.Get("Show_All_Results", ls.Count.ToString()));
                                             string s1 = InternalReadLine().ToUpperInvariant();
-                                           
+
                                             // Top signal?
                                             if (s1 == "T" || s1 == "TOP")
                                                 ls.RemoveRange(50, ls.Count - 50);

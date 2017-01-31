@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Xploit.Server.Http;
-using Xploit.Server.Http.Enums;
-using Xploit.Server.Http.Interfaces;
-using Xploit.Sniffer.Enums;
-using Xploit.Sniffer.Interfaces;
+using XPloit.Server.Http;
+using XPloit.Server.Http.Enums;
+using XPloit.Server.Http.Interfaces;
 using XPloit.Sniffer.Enums;
+using XPloit.Sniffer.Interfaces;
 using XPloit.Sniffer.Streams;
 
-namespace Xploit.Sniffer.Extractors
+namespace XPloit.Sniffer.Extractors
 {
     public class ExtractHttp : IObjectExtractor
     {

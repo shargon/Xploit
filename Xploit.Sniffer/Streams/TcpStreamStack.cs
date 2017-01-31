@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Streams;
-using Xploit.Sniffer.Enums;
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
 
-namespace Xploit.Sniffer.Streams
+namespace XPloit.Sniffer.Streams
 {
     public class TcpStreamStack
     {

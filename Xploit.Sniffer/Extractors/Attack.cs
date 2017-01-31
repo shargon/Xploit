@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net;
-using Xploit.Helpers.Geolocate;
-using Xploit.Sniffer.Interfaces;
+using XPloit.Helpers.Geolocate;
+using XPloit.Sniffer.Interfaces;
 using XPloit.Helpers;
 
-namespace Xploit.Sniffer.Extractors
+namespace XPloit.Sniffer.Extractors
 {
     public class Attack : ICountryRecaller
     {

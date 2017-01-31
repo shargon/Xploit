@@ -1,6 +1,6 @@
-﻿using Xploit.Helpers.Geolocate;
+﻿using XPloit.Helpers.Geolocate;
 
-namespace Xploit.Sniffer.Interfaces
+namespace XPloit.Sniffer.Interfaces
 {
     public interface ICountryRecaller
     {

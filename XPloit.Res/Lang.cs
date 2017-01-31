@@ -26,9 +26,11 @@ namespace XPloit.Res
                 rs = rManager.GetResourceSet(culture, true, true);
                 return rManager;
             }
-            catch { }
-
-            return null;
+            catch
+            {
+                // Default spanish
+                return LoadLanguage(new CultureInfo("en-EN"), ref rs);
+            }
         }
         /// <summary>
         /// Get String from language

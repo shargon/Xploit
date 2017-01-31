@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Xploit.Server.Http.Enums;
+using XPloit.Server.Http.Enums;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class HttpRequest : IDisposable
     {

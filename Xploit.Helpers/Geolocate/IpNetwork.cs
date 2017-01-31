@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text.RegularExpressions;
 
-namespace Xploit.Helpers.Geolocate
+namespace XPloit.Helpers.Geolocate
 {
     /// <summary>
     /// IP Network utility class. 

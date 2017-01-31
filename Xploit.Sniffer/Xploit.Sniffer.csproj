@@ -7,8 +7,8 @@
     <ProjectGuid>{679BBA57-3063-4F17-B491-4F0A730D6B02}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Xploit.Sniffer</RootNamespace>
-    <AssemblyName>Xploit.Sniffer</AssemblyName>
+    <RootNamespace>XPloit.Sniffer</RootNamespace>
+    <AssemblyName>XPloit.Sniffer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -74,13 +74,13 @@
       <Project>{7d75ca11-8745-4382-b3eb-c41416dbc48c}</Project>
       <Name>SharpPcap</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+    <ProjectReference Include="..\Xploit.Helpers\XPloit.Helpers.csproj">
       <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
-      <Name>Xploit.Helpers</Name>
+      <Name>XPloit.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Server.Http\Xploit.Server.Http.csproj">
+    <ProjectReference Include="..\Xploit.Server.Http\XPloit.Server.Http.csproj">
       <Project>{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}</Project>
-      <Name>Xploit.Server.Http</Name>
+      <Name>XPloit.Server.Http</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

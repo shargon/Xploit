@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Net;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class LocationInfo
     {

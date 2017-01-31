@@ -2,9 +2,9 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using Xploit.Server.Http.Enums;
+using XPloit.Server.Http.Enums;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class Html5SocketMsg
     {

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class HttpFile
     {

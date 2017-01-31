@@ -1,4 +1,4 @@
-﻿namespace Xploit.Sniffer.Enums
+﻿namespace XPloit.Sniffer.Enums
 {
     public enum EStartTcpStreamMethod
     {

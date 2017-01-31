@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Text;
-using Xploit.Sniffer.Enums;
-using Xploit.Sniffer.Interfaces;
 using XPloit.Sniffer.Enums;
+using XPloit.Sniffer.Interfaces;
 using XPloit.Sniffer.Streams;
 
-namespace Xploit.Sniffer.Extractors
+namespace XPloit.Sniffer.Extractors
 {
     public class ExtractFtpPop3 : IObjectExtractor
     {

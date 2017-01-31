@@ -6,7 +6,7 @@ using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
-using Xploit.Sniffer.Streams;
+using XPloit.Sniffer.Streams;
 using XPloit.Helpers;
 using XPloit.Sniffer.Enums;
 

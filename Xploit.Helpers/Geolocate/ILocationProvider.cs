@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Xploit.Helpers.Geolocate
+namespace XPloit.Helpers.Geolocate
 {
     public interface ILocationProvider
     {

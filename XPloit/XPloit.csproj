@@ -54,9 +54,9 @@
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
       <Name>XPloit.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+    <ProjectReference Include="..\XPloit.Helpers\XPloit.Helpers.csproj">
       <Project>{0981E164-5930-4BA0-983C-1CF679E5033F}</Project>
-      <Name>Xploit.Helpers</Name>
+      <Name>XPloit.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Modules\XPloit.Modules.csproj">
       <Project>{e6f76b95-64d6-4986-8b72-b80e2b6c8c98}</Project>

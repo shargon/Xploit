@@ -3,9 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using XPloit.Helpers;
 
-namespace Xploit.Helpers.Geolocate
+namespace XPloit.Helpers.Geolocate
 {
     public class GeoLite2LocationProvider : ILocationProvider
     {

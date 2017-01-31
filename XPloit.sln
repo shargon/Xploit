@@ -17,11 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Rfid", "XPloit.Rfid\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Windows.Api", "XPloit.Windows.Api\XPloit.Windows.Api.csproj", "{77059FA1-4B7D-4406-BC1A-CB261086F915}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Sniffer", "Xploit.Sniffer\Xploit.Sniffer.csproj", "{679BBA57-3063-4F17-B491-4F0A730D6B02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Sniffer", "XPloit.Sniffer\XPloit.Sniffer.csproj", "{679BBA57-3063-4F17-B491-4F0A730D6B02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Helpers", "Xploit.Helpers\Xploit.Helpers.csproj", "{0981E164-5930-4BA0-983C-1CF679E5033F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Helpers", "XPloit.Helpers\XPloit.Helpers.csproj", "{0981E164-5930-4BA0-983C-1CF679E5033F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xploit.Server.Http", "Xploit.Server.Http\Xploit.Server.Http.csproj", "{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPloit.Server.Http", "XPloit.Server.Http\XPloit.Server.Http.csproj", "{2A844CA2-5D6C-45B5-963B-7DCA1140E16F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpPcap", "SharpPcap\SharpPcap.csproj", "{7D75CA11-8745-4382-B3EB-C41416DBC48C}"
 EndProject

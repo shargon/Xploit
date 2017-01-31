@@ -44,8 +44,8 @@
       <HintPath>..\packages\MongoDB.Driver.Core.2.4.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -54,8 +54,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
@@ -293,20 +293,21 @@
     <Compile Include="VerbalExpressions\CommonRegex.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+    <ProjectReference Include="..\XPloit.Helpers\XPloit.Helpers.csproj">
       <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
-      <Name>Xploit.Helpers</Name>
+      <Name>XPloit.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">
       <Project>{912c9a24-1f3d-4dec-973c-02b93303ffd4}</Project>
       <Name>XPloit.Res</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Sniffer\Xploit.Sniffer.csproj">
+    <ProjectReference Include="..\XPloit.Sniffer\XPloit.Sniffer.csproj">
       <Project>{679bba57-3063-4f17-b491-4f0a730d6b02}</Project>
-      <Name>Xploit.Sniffer</Name>
+      <Name>XPloit.Sniffer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

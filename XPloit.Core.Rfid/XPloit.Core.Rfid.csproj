@@ -7,8 +7,8 @@
     <ProjectGuid>{4545CFDE-9EE5-4F1B-B966-D128AF0B9A6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Xploit.Core.Rfid</RootNamespace>
-    <AssemblyName>Xploit.Core.Rfid</AssemblyName>
+    <RootNamespace>XPloit.Core.Rfid</RootNamespace>
+    <AssemblyName>XPloit.Core.Rfid</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

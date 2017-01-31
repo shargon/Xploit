@@ -156,18 +156,21 @@ namespace XPloit.Core.Listeners
                                                             if (mi != null)
                                                             {
                                                                 object var = mi.Invoke(ob, new object[] { });
-                                                                if (var is string[])
+                                                                if (var != null)
                                                                 {
                                                                     if (var is string[])
                                                                     {
-                                                                        foreach (string v in ((string[])var)) yield return v;
+                                                                        if (var is string[])
+                                                                        {
+                                                                            foreach (string v in ((string[])var)) yield return v;
+                                                                        }
                                                                     }
-                                                                }
-                                                                else
-                                                                {
-                                                                    if (var is IEnumerable<string>)
+                                                                    else
                                                                     {
-                                                                        foreach (string v in ((IEnumerable<string>)var)) yield return v;
+                                                                        if (var is IEnumerable<string>)
+                                                                        {
+                                                                            foreach (string v in ((IEnumerable<string>)var)) yield return v;
+                                                                        }
                                                                     }
                                                                 }
                                                             }

@@ -1,6 +1,6 @@
-﻿using Xploit.Server.Http.Enums;
+﻿using XPloit.Server.Http.Enums;
 
-namespace Xploit.Server.Http.Interfaces
+namespace XPloit.Server.Http.Interfaces
 {
     public interface IHttpServer
     {

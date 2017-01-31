@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Xploit.Helpers.Geolocate
+namespace XPloit.Helpers.Geolocate
 {
     public static class BigIntegerExtensions
     {

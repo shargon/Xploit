@@ -7,8 +7,8 @@
     <ProjectGuid>{0981E164-5930-4BA0-983C-1CF679E5033F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Xploit.Helpers</RootNamespace>
-    <AssemblyName>Xploit.Helpers</AssemblyName>
+    <RootNamespace>XPloit.Helpers</RootNamespace>
+    <AssemblyName>XPloit.Helpers</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Xploit.Server.Http.Interfaces;
+using XPloit.Server.Http.Interfaces;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class HttpSessionFile : IHttpSession
     {

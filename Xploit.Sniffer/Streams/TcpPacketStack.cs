@@ -1,7 +1,7 @@
 ﻿using PacketDotNet;
 using System.Collections.Generic;
 
-namespace Xploit.Sniffer.Streams
+namespace XPloit.Sniffer.Streams
 {
     public class TcpPacketStack
     {

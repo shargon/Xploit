@@ -3,7 +3,6 @@ using SharpPcap;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Xploit.Sniffer.Enums;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -12,6 +11,7 @@ using XPloit.Core.Requirements.Payloads;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer;
+using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Filters;
 using XPloit.Sniffer.Interfaces;
 using XPloit.Sniffer.Streams;
@@ -61,7 +61,7 @@ namespace Auxiliary.Local
         {
             get
             {
-                if (string.IsNullOrEmpty(_Interface)) _Interface = NetworkSniffer.CaptureDevices.FirstOrDefault();
+                if (string.IsNullOrEmpty(_Interface)) _Interface = NetworkSniffer.CaptureDevices.Where(u => !string.IsNullOrEmpty(u)).FirstOrDefault();
                 return _Interface;
             }
             set { _Interface = value; }

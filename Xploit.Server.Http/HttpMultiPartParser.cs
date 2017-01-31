@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class HttpMultiPartParser
     {

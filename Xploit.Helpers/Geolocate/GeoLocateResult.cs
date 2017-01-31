@@ -1,4 +1,4 @@
-﻿namespace Xploit.Helpers.Geolocate
+﻿namespace XPloit.Helpers.Geolocate
 {
     public class GeoLocateResult
     {

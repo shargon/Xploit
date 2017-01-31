@@ -41,16 +41,16 @@
   <ItemGroup>
     <Compile Include="Lang.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Res.es.Designer.cs">
-      <DependentUpon>Res.es.resx</DependentUpon>
+    <Compile Include="Res.en.Designer.cs">
+      <DependentUpon>Res.en.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res.es.resx">
+    <EmbeddedResource Include="Res.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Res.es.Designer.cs</LastGenOutput>
+      <LastGenOutput>Res.en.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

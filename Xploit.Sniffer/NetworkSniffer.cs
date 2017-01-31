@@ -11,9 +11,8 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using Xploit.Helpers.Geolocate;
-using Xploit.Sniffer.Enums;
-using Xploit.Sniffer.Streams;
+using XPloit.Helpers.Geolocate;
+using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Interfaces;
 using XPloit.Sniffer.Streams;
 

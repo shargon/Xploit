@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Xploit.Server.Http.Interfaces
+namespace XPloit.Server.Http.Interfaces
 {
     public interface IHttpSession
     {

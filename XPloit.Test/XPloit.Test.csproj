@@ -58,14 +58,17 @@
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
       <Name>XPloit.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+    <ProjectReference Include="..\Xploit.Helpers\XPloit.Helpers.csproj">
       <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>
-      <Name>Xploit.Helpers</Name>
+      <Name>XPloit.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">
       <Project>{912c9a24-1f3d-4dec-973c-02b93303ffd4}</Project>
       <Name>XPloit.Res</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -1,7 +1,7 @@
-﻿using Xploit.Sniffer.Enums;
+﻿using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Streams;
 
-namespace Xploit.Sniffer.Interfaces
+namespace XPloit.Sniffer.Interfaces
 {
     public interface IObjectExtractor
     {

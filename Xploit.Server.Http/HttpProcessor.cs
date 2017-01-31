@@ -4,10 +4,10 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Web;
-using Xploit.Server.Http.Enums;
-using Xploit.Server.Http.Interfaces;
+using XPloit.Server.Http.Enums;
+using XPloit.Server.Http.Interfaces;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class HttpProcessor : IDisposable
     {

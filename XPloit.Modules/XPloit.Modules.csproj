@@ -53,7 +53,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\SharpPcap\PacketDotNet\PacketDotNet.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
@@ -68,8 +67,8 @@
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
@@ -145,17 +144,17 @@
       <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
       <Name>XPloit.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Helpers\Xploit.Helpers.csproj">
+    <ProjectReference Include="..\XPloit.Helpers\XPloit.Helpers.csproj">
       <Project>{0981E164-5930-4BA0-983C-1CF679E5033F}</Project>
-      <Name>Xploit.Helpers</Name>
+      <Name>XPloit.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Server.Http\Xploit.Server.Http.csproj">
+    <ProjectReference Include="..\XPloit.Server.Http\XPloit.Server.Http.csproj">
       <Project>{2a844ca2-5d6c-45b5-963b-7dca1140e16f}</Project>
-      <Name>Xploit.Server.Http</Name>
+      <Name>XPloit.Server.Http</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xploit.Sniffer\Xploit.Sniffer.csproj">
+    <ProjectReference Include="..\XPloit.Sniffer\XPloit.Sniffer.csproj">
       <Project>{679BBA57-3063-4F17-B491-4F0A730D6B02}</Project>
-      <Name>Xploit.Sniffer</Name>
+      <Name>XPloit.Sniffer</Name>
     </ProjectReference>
     <ProjectReference Include="..\XPloit.Windows.Api\XPloit.Windows.Api.csproj">
       <Project>{77059fa1-4b7d-4406-bc1a-cb261086f915}</Project>

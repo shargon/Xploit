@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xploit.Server.Http
+namespace XPloit.Server.Http
 {
     public class HttpCache
     {
