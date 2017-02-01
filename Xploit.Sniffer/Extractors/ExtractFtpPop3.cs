@@ -86,8 +86,7 @@ C> USER mrose
 S> +OK User accepted
 C> PASS tanstaaf
 S> -ERR
-
-     */
+*/
         static IObjectExtractor _Current = new ExtractFtpPop3();
         public static IObjectExtractor Current { get { return _Current; } }
 

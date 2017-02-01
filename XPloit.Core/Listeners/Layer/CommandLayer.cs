@@ -49,7 +49,6 @@ namespace XPloit.Core.Listeners.Layer
         }
 
         ConsoleCursor _Position = null;
-        bool _AllowOutPut = true, _InsertMode = true;
         Thread _CancelableThread = null;
         ConsoleColor _LastFore, _LastBack;
         ConsoleColor _PromptColor = ConsoleColor.Green;
@@ -57,6 +56,7 @@ namespace XPloit.Core.Listeners.Layer
 
         int _LastPercent = -1;
         double _ProgressVal = 0, _ProgressMax = 0;
+        bool _AllowOutPut = true, _InsertMode = true;
         bool _ReSendProgress = false;
 
         /// <summary>
