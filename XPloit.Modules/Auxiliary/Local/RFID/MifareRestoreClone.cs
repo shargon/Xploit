@@ -79,6 +79,12 @@ namespace Auxiliary.Local.NFC
         }
         bool InternalRun(bool check)
         {
+            if (Target == null)
+            {
+                WriteError("Target not found ");
+                return false;
+            }
+
             byte[] file = System.IO.File.ReadAllBytes(File.FullName);
 
             using (CardReaderCollection cardReaderCollections = new CardReaderCollection())

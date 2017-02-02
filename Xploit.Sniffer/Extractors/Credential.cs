@@ -3,6 +3,10 @@ using System.Net;
 using XPloit.Helpers.Geolocate;
 using XPloit.Sniffer.Interfaces;
 using XPloit.Helpers;
+using MongoDB.Bson;
+using Newtonsoft.Json;
+using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json.Converters;
 
 namespace XPloit.Sniffer.Extractors
 {
@@ -43,6 +47,8 @@ namespace XPloit.Sniffer.Extractors
         /// <summary>
         /// Credential type
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]  // JSON.Net
+        [BsonRepresentation(BsonType.String)]         // Mongo
         public ECredentialType Type { get; set; }
         /// <summary>
         /// Is Valid

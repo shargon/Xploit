@@ -200,10 +200,10 @@ namespace XPloit.Sniffer
             if (GeoLite2LocationProvider.Current == null)
             {
 #if DEBUG
-                ///TODO: Config the default GeoIp
+                /// TODO: Config the default GeoIp
                 GeoLite2LocationProvider.LoadCurrent(
-                    @"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-Blocks-IP.csv.gz",
-                    @"D:\Fuentes\Xploit\Resources\GeoLite2\Small\GeoLite2-City-Locations-es.csv.gz");
+                    @"GeoLite2" + Path.DirectorySeparatorChar + "GeoLite2-Blocks-IP.csv.gz",
+                    @"GeoLite2" + Path.DirectorySeparatorChar + "GeoLite2-City-Locations-es.csv.gz");
 #endif
             }
 

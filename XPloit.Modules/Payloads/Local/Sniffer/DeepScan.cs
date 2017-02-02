@@ -17,7 +17,7 @@ using XPloit.Sniffer.Streams;
 namespace Payloads.Local.Sniffer
 {
     [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Sniffer insecure protocols passwords")]
-    public class GetCredentials : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer
+    public class DeepScan : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer
     {
         #region Properties
         public bool CaptureOnTcpStream { get { return true; } }
@@ -28,21 +28,29 @@ namespace Payloads.Local.Sniffer
 
         [ConfigurableProperty(Description = "Write credentials as info")]
         public bool WriteAsInfo { get; set; }
+
+
+        [ConfigurableProperty(Description = "Search for credencials")]
+        public bool SearchCredentials { get; set; }
+        [ConfigurableProperty(Description = "Search for attacks")]
+        public bool SearchAttacks { get; set; }
         #endregion
 
         long hay = 0;
         Dictionary<Credential.ECredentialType, string> _LastCred = new Dictionary<Credential.ECredentialType, string>();
         IObjectExtractor[] _Checks = new IObjectExtractor[] { ExtractTelnet.Current, ExtractHttp.Current, ExtractFtpPop3.Current };
 
+        public DeepScan()
+        {
+            SearchCredentials = true;
+            SearchAttacks = true;
+        }
+
         public void Stop(object sender)
         {
             WriteInfo("Stream captured", hay.ToString(), ConsoleColor.Cyan);
         }
-        public bool Check()
-        {
-            hay = 0;
-            return true;
-        }
+        public bool Check() { hay = 0; return true; }
         public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
@@ -77,7 +85,13 @@ namespace Payloads.Local.Sniffer
                                 stream.Dispose();
 
                                 foreach (object c in cred)
-                                    queue.Enqueue(c);
+                                    if (c != null)
+                                    {
+                                        if (c is Attack && !SearchAttacks) continue;
+                                        if (c is Credential && !SearchCredentials) continue;
+
+                                        queue.Enqueue(c);
+                                    }
 
                                 return;
                             }
