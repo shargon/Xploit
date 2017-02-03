@@ -126,7 +126,7 @@ namespace XPloit.Helpers
                 PropertyInfo pi = tp.GetProperty(l);
                 if (pi == null) continue;
 
-                pi.SetValue(obj, ConvertHelper.ConvertTo(r, pi.PropertyType));
+                pi.SetValue(obj, ConvertHelper.ConvertTo(r, pi.PropertyType), null);
             }
         }
     }

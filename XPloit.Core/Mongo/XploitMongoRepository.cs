@@ -22,7 +22,7 @@ namespace XPloit.Core.Mongo
 
         /// <summary>
         /// Mongo url
-        ///     mongodb://127.0.0.1:27017/sonda
+        ///     mongodb://root:pwd@127.0.0.1:27017/tor
         /// </summary>
         public MongoUrl Url { get; private set; }
         /// <summary>
@@ -68,9 +68,14 @@ namespace XPloit.Core.Mongo
             ConventionRegistry.Register("EnumStringConvention", pack, t => true);
 
             _Repository = DB.GetCollection<T>(typeof(T).Name);
-            if (true)
+        }
+
+        public void Check()
+        {
+            if (_DB != null)
                 _DB.ListCollections();
         }
+
         public override string ToString() { return Url.ToString(); }
         #endregion
 

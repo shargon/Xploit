@@ -367,7 +367,11 @@ namespace XPloit.Helpers
             }
             finally
             {
-                if (fs != null) { fs.Close(); fs.Dispose(); }
+                if (fs != null)
+                {
+                    fs.Close();
+                    fs.Dispose();
+                }
             }
             // Throw exception
             if (ex != null)

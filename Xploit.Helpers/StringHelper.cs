@@ -66,18 +66,17 @@ namespace XPloit.Helpers
         /// <param name="input">Input</param>
         public static bool IsValidEmail(string input)
         {
-            if (String.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
                 return false;
 
             // Use IdnMapping class to convert Unicode domain names.
             try
             {
                 validDomain v = new validDomain();
-                input = Regex.Replace(input, @"(@)(.+)$", v.DomainMapper,
-                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
+                input = Regex.Replace(input, @"(@)(.+)$", v.DomainMapper, RegexOptions.None);
                 if (!v.isValid) return false;
             }
-            catch (RegexMatchTimeoutException)
+            catch
             {
                 return false;
             }
@@ -90,9 +89,9 @@ namespace XPloit.Helpers
                 return Regex.IsMatch(input,
                       @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
                       @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
-                      RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+                      RegexOptions.IgnoreCase);
             }
-            catch (RegexMatchTimeoutException)
+            catch
             {
                 return false;
             }
@@ -152,7 +151,7 @@ namespace XPloit.Helpers
             if (variables != null && input != null)
                 foreach (string k in variables.Keys)
                 {
-                    if (input.Contains(k)) 
+                    if (input.Contains(k))
                         input = input.Replace(k, variables[k]);
                 }
 

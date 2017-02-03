@@ -35,9 +35,12 @@ namespace XPloit.Helpers.Geolocate
         /// </summary>
         /// <param name="blockFile">Block file</param>
         /// <param name="locationFile">Location file</param>
-        public static void LoadCurrent(string blockFile, string locationFile)
+        public static bool LoadCurrent(string blockFile, string locationFile)
         {
-            if (_Current == null) _Current = new GeoLite2LocationProvider(blockFile, locationFile);
+            if (_Current == null || _Current.Count <= 0)
+                _Current = new GeoLite2LocationProvider(blockFile, locationFile);
+
+            return _Current != null && _Current.Count > 0;
         }
         geoIp[] _Locates;
 

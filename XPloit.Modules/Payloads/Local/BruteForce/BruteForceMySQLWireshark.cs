@@ -266,7 +266,6 @@ namespace Payloads.Local.BruteForce
             private MemoryStream bufferStream;
 
             private int maxBlockSize;
-            private ulong maxPacketSize;
 
             private Stream inStream;
             private ulong inLength;
@@ -278,10 +277,6 @@ namespace Payloads.Local.BruteForce
 
             public MySqlStream(Encoding encoding)
             {
-                // we have no idea what the real value is so we start off with the max value
-                // The real value will be set in NativeDriver.Configure()
-                maxPacketSize = ulong.MaxValue;
-
                 // we default maxBlockSize to MaxValue since we will get the 'real' value in 
                 // the authentication handshake and we know that value will not exceed 
                 // true maxBlockSize prior to that.

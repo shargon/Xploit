@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 #endif
 using System.IO;
+using System.Reflection;
 using System.Text;
 using XPloit.Core.Collections;
 using XPloit.Core.Interfaces;
@@ -11,6 +12,7 @@ using XPloit.Core.Listeners;
 using XPloit.Core.Listeners.IO;
 using XPloit.Core.Listeners.Layer;
 using XPloit.Helpers;
+using XPloit.Helpers.Geolocate;
 using XPloit.Modules;
 using XPloit.Res;
 
@@ -24,8 +26,10 @@ namespace XPloit
 #if DEBUG
             if (Debugger.IsAttached)
                 args = new string[] { @"Play=Debug.txt" };
-#endif
 
+
+
+#endif
             // Linq to library assembly
             BuildLink.Dummy();
 
@@ -38,6 +42,15 @@ namespace XPloit
                 command.SetBackgroundColor(ConsoleColor.Black);
 
                 command.AddInput("banner");
+
+                if (GeoLite2LocationProvider.Current == null)
+                {
+                    /// TODO: Config the default GeoIp
+                    if (GeoLite2LocationProvider.LoadCurrent(
+                         Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-Blocks-IP.csv.gz"),
+                         Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-City-Locations-es.csv.gz")))
+                        command.WriteInfo("Loaded GeoIp", GeoLite2LocationProvider.Current.Count.ToString(), ConsoleColor.Green);
+                }
 
                 // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
                 // \"CryptKey=#Crypt0M3#\" 

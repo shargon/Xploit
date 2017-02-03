@@ -238,6 +238,7 @@ namespace XPloit.Helpers
                 if (_IListType.IsAssignableFrom(type))
                 {
                     IList l = (IList)Activator.CreateInstance(type);
+                    
                     // If dosent have T return null
                     if (type.GenericTypeArguments == null || type.GenericTypeArguments.Length == 0) return null;
 

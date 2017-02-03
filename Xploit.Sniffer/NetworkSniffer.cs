@@ -197,16 +197,6 @@ namespace XPloit.Sniffer
         }
         void OnProcessQueue()
         {
-            if (GeoLite2LocationProvider.Current == null)
-            {
-#if DEBUG
-                /// TODO: Config the default GeoIp
-                GeoLite2LocationProvider.LoadCurrent(
-                    @"GeoLite2" + Path.DirectorySeparatorChar + "GeoLite2-Blocks-IP.csv.gz",
-                    @"GeoLite2" + Path.DirectorySeparatorChar + "GeoLite2-City-Locations-es.csv.gz");
-#endif
-            }
-
             Parallel.For(0, _Queue.Count, (i) =>
             {
                 object o;

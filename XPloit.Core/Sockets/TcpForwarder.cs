@@ -38,7 +38,7 @@ namespace XPloit.Core.Sockets
 
         List<TcpForwarder> socks = new List<TcpForwarder>();
 
-        public delegate void delDataFilter(ref byte[] data,ref int index,ref int length);
+        public delegate void delDataFilter(ref byte[] data, ref int index, ref int length);
         public delegate void delSocketEvent(object sender, EndPoint endPoint);
 
         delDataFilter _OnSend = null, _OnReceive;
@@ -47,7 +47,6 @@ namespace XPloit.Core.Sockets
         byte bSocketType = 0;
         string _User, _Password;
 
-        public event EventHandler OnDisposed;
         public event delSocketEvent OnConnect;
         public event delSocketEvent OnEror;
 
@@ -186,7 +185,7 @@ namespace XPloit.Core.Sockets
             }
             catch { }
 
-            if (disposed && OnDisposed != null) OnDisposed(this, EventArgs.Empty);
+            if (disposed) RaiseOnDisposed();
 
             base.OnDispose();
         }

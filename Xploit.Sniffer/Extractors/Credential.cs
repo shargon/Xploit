@@ -1,16 +1,16 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Net;
+using XPloit.Helpers;
 using XPloit.Helpers.Geolocate;
 using XPloit.Sniffer.Interfaces;
-using XPloit.Helpers;
-using MongoDB.Bson;
-using Newtonsoft.Json;
-using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json.Converters;
 
 namespace XPloit.Sniffer.Extractors
 {
-    public class Credential: ICountryRecaller
+    public class Credential : ICountryRecaller
     {
         public enum ECredentialType : byte
         {
@@ -36,6 +36,10 @@ namespace XPloit.Sniffer.Extractors
             get { return _Address.ToString(); }
             set { _Address = IPAddress.Parse(value); }
         }
+        /// <summary>
+        /// Continent
+        /// </summary>
+        public string Continent { get; set; }
         /// <summary>
         /// Country
         /// </summary>
@@ -68,7 +72,11 @@ namespace XPloit.Sniffer.Extractors
                 GeoLocateResult r = provider.LocateIp(_Address);
                 if (r != null)
                 {
-                    Country = r.ISOCode;
+                    string c, cc;
+                    StringHelper.Split(r.ISOCode, '-', out cc, out c);
+
+                    Continent = cc;
+                    Country = c;
                     return true;
                 }
             }

@@ -88,7 +88,7 @@ namespace XPloit.Helpers
                 if (!p.CanRead) continue;
                 if (!p.CanWrite) continue;
 
-                p.SetValue(to, p.GetValue(from));
+                p.SetValue(to, p.GetValue(from, null), null);
                 change++;
             }
 
@@ -137,22 +137,23 @@ namespace XPloit.Helpers
                             value = a.PreSetVariable(value.ToString());
 
                         // Convert to String
-                        object val = ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType, pi[0].GetValue(obj));
+                        object val = ConvertHelper.ConvertTo(value.ToString(), pi[0].PropertyType, pi[0].GetValue(obj, null));
 
                         //if (val == null && value != null) return false;
-                        pi[0].SetValue(obj, val);
+                        pi[0].SetValue(obj, val, null);
                         return true;
                     }
                     else
                     {
-                        pi[0].SetValue(obj, value);
+                        pi[0].SetValue(obj, value, null);
                         return true;
                     }
                 }
                 return false;
             }
-            catch //(Exception e)
+            catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return false;
             }
         }
@@ -318,7 +319,7 @@ namespace XPloit.Helpers
                 {
                     if (!pi.CanRead || !pi.CanWrite) continue;
 
-                    pi.SetValue(obj, pi.GetValue(parent));
+                    pi.SetValue(obj, pi.GetValue(parent, null), null);
                 }
             }
 

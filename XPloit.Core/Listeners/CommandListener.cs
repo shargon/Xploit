@@ -951,7 +951,7 @@ namespace XPloit.Core.Listeners
                                         primera = false;
                                     }
 
-                                    object val = pi.GetValue(pv);
+                                    object val = pi.GetValue(pv, null);
                                     if (val == null)
                                     {
                                         val = "NULL";

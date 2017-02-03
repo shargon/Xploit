@@ -78,13 +78,18 @@ namespace XPloit.Core.Interfaces
             }
 
             OnDispose();
+            RaiseOnDisposed();
 
-            OnDisposed?.Invoke(this, EventArgs.Empty);
             if (DisposeTag && Tag != null && Tag is IDisposable)
             {
                 ((IDisposable)Tag).Dispose();
                 Tag = null;
             }
+        }
+
+        protected void RaiseOnDisposed()
+        {
+            OnDisposed?.Invoke(this, EventArgs.Empty);
         }
 
         //public static explicit operator IJobable(Process pr) { return new IJobable(pr); }

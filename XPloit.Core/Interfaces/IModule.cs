@@ -216,7 +216,7 @@ namespace XPloit.Core.Interfaces
                 if (c == null)
                     continue;
 
-                object val = pi.GetValue(obj);
+                object val = pi.GetValue(obj, null);
 
                 if (val == null)
                 {

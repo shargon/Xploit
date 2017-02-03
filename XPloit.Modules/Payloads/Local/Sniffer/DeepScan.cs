@@ -50,7 +50,13 @@ namespace Payloads.Local.Sniffer
         {
             WriteInfo("Stream captured", hay.ToString(), ConsoleColor.Cyan);
         }
-        public bool Check() { hay = 0; return true; }
+        public bool Check()
+        {
+            if (Repository != null) Repository.Check();
+
+            hay = 0;
+            return true;
+        }
         public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
@@ -133,7 +139,7 @@ namespace Payloads.Local.Sniffer
                 IMongoCollection<ICountryRecaller> col =
                     Repository.Database.GetCollection<ICountryRecaller>(o.GetType().Name);
 
-                col.InsertOne(ic);
+                col.InsertOneAsync(ic);
             }
         }
     }
