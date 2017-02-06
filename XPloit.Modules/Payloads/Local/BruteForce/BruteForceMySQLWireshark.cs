@@ -1,6 +1,7 @@
 ﻿using Auxiliary.Local;
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using XPloit.Core;
@@ -87,7 +88,7 @@ namespace Payloads.Local.BruteForce
 
             TcpStream dump = TcpStream.FromFile(TCPStreamFile.FullName);
             if (dump.Count < 2) return false;
-            crack(dump[0].Data, dump[1].Data, out Hash, out Seed, out DBUser);
+            crack(dump[0].Data.Take(dump[0].DataLength).ToArray(), dump[1].Data.Take(dump[1].DataLength).ToArray(), out Hash, out Seed, out DBUser);
 
             if (!string.IsNullOrEmpty(DBUser))
                 WriteInfo("User found", DBUser, ConsoleColor.Green);

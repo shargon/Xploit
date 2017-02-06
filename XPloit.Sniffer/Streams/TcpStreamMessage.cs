@@ -1,21 +1,32 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using XPloit.Sniffer.Enums;
 
 namespace XPloit.Sniffer.Streams
 {
-    public class TcpStreamMessage
+    public class TcpStreamMessage : IDisposable
     {
+        //const int incBuffer = 1024;
+
+        //byte[] _Data;
         ETcpEmisor _Emisor;
-        byte[] _Data;
-        internal int _LastRead = 0;
+        int _DataLength = 0;
+
+        MemoryStream _Stream;
+
         DateTime _Date;
+        internal int _LastRead = 0;
         TcpStreamMessage _Previous, _Next;
 
         /// <summary>
         /// Data
         /// </summary>
-        public byte[] Data { get { return _Data; } }
+        public byte[] Data { get { return _Stream.ToArray(); } }
+        /// <summary>
+        /// Data Length
+        /// </summary>
+        public int DataLength { get { return _DataLength; } }
         /// <summary>
         /// Previous Stream
         /// </summary>
@@ -31,15 +42,15 @@ namespace XPloit.Sniffer.Streams
         /// <summary>
         /// Ascii-Data
         /// </summary>
-        public string DataAscii { get { return Encoding.ASCII.GetString(_Data); } }
+        public string DataAscii { get { return GetString(Encoding.ASCII); } }
         /// <summary>
         /// UTF8-Data
         /// </summary>
-        public string DataUTF8 { get { return Encoding.UTF8.GetString(_Data); } }
+        public string DataUTF8 { get { return GetString(Encoding.UTF8); } }
         /// <summary>
         /// Unicode-Data
         /// </summary>
-        public string DataUnicode { get { return Encoding.Unicode.GetString(_Data); } }
+        public string DataUnicode { get { return GetString(Encoding.Unicode); } }
         /// <summary>
         /// HEX-Data
         /// </summary>
@@ -47,10 +58,11 @@ namespace XPloit.Sniffer.Streams
         {
             get
             {
+                byte[] data = Data;
                 StringBuilder sb = new StringBuilder();
-                foreach (byte b in _Data)
+                for (int x = 0; x < _DataLength; x++)
                 {
-                    sb.Append(b.ToString("x2"));
+                    sb.Append(data[x].ToString("x2"));
                     sb.Append(" ");
                 }
 
@@ -71,8 +83,12 @@ namespace XPloit.Sniffer.Streams
         public TcpStreamMessage(DateTime date, byte[] data, ETcpEmisor emisor, TcpStreamMessage previous)
         {
             _Date = date;
-            _Data = data;
             _Emisor = emisor;
+            
+            //_Data = data;
+            _Stream = new MemoryStream();
+            _Stream.Write(data, 0, data.Length);
+            _DataLength = data.Length;
 
             if (previous != null)
             {
@@ -80,19 +96,55 @@ namespace XPloit.Sniffer.Streams
                 previous._Next = this;
             }
         }
+        string GetString(Encoding enc)
+        {
+            return enc.GetString(Data, 0, _DataLength);
+        }
         /// <summary>
         /// Add data to Stream
         /// </summary>
         /// <param name="data">Data</param>
-        public void AddData(byte[] data)
+        public void AddData(byte[] data, int index, int length)
         {
-            if (data == null) return;
-            int l = _Data.Length;
-            if (l == 0) return;
+            if (data == null || length <= 0)
+                return;
 
-            Array.Resize(ref _Data, l + data.Length);
-            Array.Copy(data, 0, _Data, l, data.Length);
+            _Stream.Write(data, 0, length);
+
+            //int l = _Data.Length;
+            //if (l == 0) return;
+
+            //if (_DataLength + length >= l)
+            //{
+            //    byte[] d = new byte[l + Math.Max(length, incBuffer)];
+
+            //    Buffer.BlockCopy(_Data, 0, d, 0, _DataLength);
+            //    Buffer.BlockCopy(data, index, d, _DataLength, length);
+            //    _Data = d;
+            //}
+            //else
+            //{
+            //    Buffer.BlockCopy(data, index, _Data, _DataLength, length);
+            //}
+
+            _DataLength += length;
         }
-        public override string ToString() { return Emisor.ToString() + " (" + _Data.Length.ToString() + ") " + DataAscii; }
+        /// <summary>
+        /// Release
+        /// </summary>
+        public void Dispose()
+        {
+            if (_Stream == null) return;
+
+            _Stream.Dispose();
+            _Stream = null;
+        }
+        /// <summary>
+        /// String representation
+        /// </summary>
+        public override string ToString()
+        {
+            return Emisor.ToString() + " (" + _DataLength.ToString() + ") " + DataAscii;
+        }
     }
 }

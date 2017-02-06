@@ -76,11 +76,14 @@ namespace XPloit.Sniffer.Extractors
 
             foreach (TcpStreamMessage pack in stream)
             {
+                int dLength = pack.DataLength;
+                byte[] data = pack.Data;
+
                 switch (pack.Emisor)
                 {
                     case ETcpEmisor.Server:
                         {
-                            string serverl = CleanTelnet(pack.Data, 0, pack.Data.Length).ToLowerInvariant();
+                            string serverl = CleanTelnet(data, 0, dLength).ToLowerInvariant();
                             if (string.IsNullOrEmpty(serverl))
                             {
                                 isTelnet = true;
@@ -105,19 +108,19 @@ namespace XPloit.Sniffer.Extractors
                                 return EExtractorReturn.DontRetry;
                             }
 
-                            string data = CleanTelnet(pack.Data, 0, pack.Data.Length);
-                            if (string.IsNullOrEmpty(data)) continue;
+                            string sdata = CleanTelnet(data, 0, dLength);
+                            if (string.IsNullOrEmpty(sdata) || sdata.Length > 64) continue;
 
                             switch (nextIs)
                             {
                                 case "user":
                                     {
-                                        user = data;
+                                        user = sdata;
                                         break;
                                     }
                                 case "pwd":
                                     {
-                                        password = data;
+                                        password = sdata;
                                         nextIs = "valid-check";
 
                                         last = new TelnetCredential(stream.StartDate, stream.Destination)

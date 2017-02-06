@@ -244,7 +244,8 @@ namespace XPloit.Sniffer
                         if (_HasFilters && !IsAllowedPacket(source, dest, IPProtocolType.TCP)) return;
                         OnPacket?.Invoke(this, ip.Protocol, et);
 
-                        if (_SyncPackets.Count > 50000) Thread.Sleep(1);
+                        if (_SyncPackets.Count > 40000)
+                            Thread.Sleep(1);
 
                         _SyncPackets.TryAdd(new cPacket()
                         {

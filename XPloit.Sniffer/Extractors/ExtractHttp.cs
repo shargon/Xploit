@@ -129,7 +129,7 @@ namespace XPloit.Sniffer.Extractors
                     }
 
                     using (server s = new server())
-                    using (MemoryStream str = new MemoryStream(pack.Data))
+                    using (MemoryStream str = new MemoryStream(pack.Data, 0, pack.DataLength))
                     using (HttpProcessor p = new HttpProcessor(stream.Destination.ToString(), str, s, true))
                     {
                         foreach (HttpRequest r in s)
@@ -174,7 +174,7 @@ namespace XPloit.Sniffer.Extractors
                                         IsValid = valid,
                                         HttpHost = r.Host.ToString(),
                                         HttpUrl = r.Url,
-                                        User = users == null ? null: Reduce(users.ToArray()),
+                                        User = users == null ? null : Reduce(users.ToArray()),
                                         Password = pwds == null ? null : Reduce(pwds.ToArray())
                                     });
                                 }

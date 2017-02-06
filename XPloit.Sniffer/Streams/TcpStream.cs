@@ -110,9 +110,9 @@ namespace XPloit.Sniffer.Streams
             byte[] payload = tcp.PayloadData;
             if (payload == null) return;
 
-            uint l = (uint)payload.Length;
+            int l = payload.Length;
             if (l <= 0) return;
-            stack.SequenceNumber += l;
+            stack.SequenceNumber += (uint)l;
 
             if (_Last == null)
             {
@@ -123,7 +123,7 @@ namespace XPloit.Sniffer.Streams
             {
                 // Check if its the same
                 if (_Last.Emisor == emisor)
-                    _Last.AddData(payload);
+                    _Last.AddData(payload, 0, l);
                 else
                 {
                     // New Packet
@@ -216,7 +216,7 @@ namespace XPloit.Sniffer.Streams
                     {
                         // Check if its the same
                         if (tcp._Last.Emisor == em)
-                            tcp._Last.AddData(data);
+                            tcp._Last.AddData(data, 0, data.Length);
                         else
                         {
                             // New Packet
@@ -242,7 +242,7 @@ namespace XPloit.Sniffer.Streams
             int ld, va;
             lock (l)
             {
-                ld = l.Data.Length;
+                ld = l.DataLength;
                 va = l._LastRead;
                 if (ld <= va) return;
             }
@@ -305,6 +305,8 @@ namespace XPloit.Sniffer.Streams
         public void Dispose()
         {
             Close();
+
+            foreach (TcpStreamMessage v in _InternalList) v.Dispose();
             _InternalList.Clear();
         }
         public IEnumerator<TcpStreamMessage> GetEnumerator() { return _InternalList.GetEnumerator(); }
