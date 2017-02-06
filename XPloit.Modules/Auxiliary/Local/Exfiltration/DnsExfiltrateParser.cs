@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
-using XPloit.Core.VerbalExpressions;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
 
@@ -61,7 +60,7 @@ namespace Auxiliary.Local.Exfiltration
             AesKeyLength = AESHelper.EKeyLength.Length256;
             AesRGBSalt = null;
 
-            RegexData = new VerbalExpressions().Find("\t").Something().Find("\t").ToString();
+            RegexData = @"(\t)(.+)(\t)";
             PacketFileIdLength = 2;
             PacketNumLength = 0;
         }
