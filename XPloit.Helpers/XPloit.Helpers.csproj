@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0981E164-5930-4BA0-983C-1CF679E5033F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XPloit.Helpers</RootNamespace>
+    <AssemblyName>XPloit.Helpers</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PacketDotNet.0.13.0\lib\net\PacketDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AESHelper.cs" />
+    <Compile Include="ArgumentHelper.cs" />
+    <Compile Include="Attributes\ConfigurableProperty.cs" />
+    <Compile Include="BaseEncodingHelper.cs" />
+    <Compile Include="BitConverterHelper.cs" />
+    <Compile Include="CompressHelper.cs" />
+    <Compile Include="ConvertHelper.cs" />
+    <Compile Include="CounterHelper.cs" />
+    <Compile Include="EnumHelper.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
+    <Compile Include="FileDetectionHelper.cs" />
+    <Compile Include="Forensics\LinuxProcessMemoryDump.cs" />
+    <Compile Include="Forensics\WindowsProcessMemoryDump.cs" />
+    <Compile Include="FtpHelper.cs" />
+    <Compile Include="Geolocate\BigIntegerExtensions.cs" />
+    <Compile Include="Geolocate\GeoLite2LocationProvider.cs" />
+    <Compile Include="Geolocate\GeoLocateResult.cs" />
+    <Compile Include="Geolocate\ILocationProvider.cs" />
+    <Compile Include="Geolocate\IPAddressCollection.cs" />
+    <Compile Include="Geolocate\IpNetwork.cs" />
+    <Compile Include="Geolocate\IPNetworkCollection.cs" />
+    <Compile Include="HashHelper.cs" />
+    <Compile Include="HexHelper.cs" />
+    <Compile Include="HttpHelper.cs" />
+    <Compile Include="IniHelper.cs" />
+    <Compile Include="Attributes\IPreSetVariable.cs" />
+    <Compile Include="Interfaces\IConvertibleFromString.cs" />
+    <Compile Include="Interfaces\IProcessMemoryDump.cs" />
+    <Compile Include="Interfaces\IProgress.cs" />
+    <Compile Include="IPHelpers.cs" />
+    <Compile Include="JsonHelper.cs" />
+    <Compile Include="LatchHelper.cs" />
+    <Compile Include="MathHelper.cs" />
+    <Compile Include="PatternHelper.cs" />
+    <Compile Include="ProcessHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionHelper.cs" />
+    <Compile Include="ScriptHelper.cs" />
+    <Compile Include="StringHelper.cs" />
+    <Compile Include="SystemHelper.cs" />
+    <Compile Include="TorHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
