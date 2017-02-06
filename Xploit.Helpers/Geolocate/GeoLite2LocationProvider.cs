@@ -131,9 +131,10 @@ namespace XPloit.Helpers.Geolocate
         /// <param name="address">Direccón</param>
         public GeoLocateResult LocateIp(IPAddress address)
         {
-            foreach (geoIp g in _Locates)
-                if (IPNetwork.Contains(g.Network, address))
-                    return g.Result;
+            if (_Locates != null)
+                foreach (geoIp g in _Locates)
+                    if (IPNetwork.Contains(g.Network, address))
+                        return g.Result;
 
             return GeoLocateResult.Empty;
         }

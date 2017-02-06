@@ -28,7 +28,7 @@ namespace Auxiliary.Local
             bool Check();
 
             void Stop(object sender);
-            void Dequeue(object sender, object obj);
+            void Dequeue(object sender, object[] obj);
             void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
             void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet);
         }

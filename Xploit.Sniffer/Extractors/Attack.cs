@@ -55,13 +55,14 @@ namespace XPloit.Sniffer.Extractors
         /// </summary>
         public bool IsValid { get; set; }
 
-        public Attack(EAttackType type) { Type = type; }
-        public Attack(DateTime date, IPEndPoint ip, EAttackType type) : this(type)
+        protected Attack(EAttackType type) { Type = type; }
+        protected Attack(DateTime date, IPEndPoint ip, EAttackType type) : this(type)
         {
             Date = date.ToString("yyyy-MM-dd HH:mm:ss");
             _Address = ip.Address;
             Port = ip.Port;
         }
+
         public bool RecallCounty(ILocationProvider provider)
         {
             if (provider != null)

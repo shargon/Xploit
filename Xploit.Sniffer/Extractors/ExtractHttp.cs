@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using XPloit.Helpers;
 using XPloit.Server.Http;
 using XPloit.Server.Http.Enums;
 using XPloit.Server.Http.Interfaces;
@@ -54,35 +55,6 @@ namespace XPloit.Sniffer.Extractors
             /// Url
             /// </summary>
             public string HttpUrl { get; set; }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string[] User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string[] Password { get; set; }
-        }
-        public class HttpAuthCredential : Credential
-        {
-            public HttpAuthCredential() : base(ECredentialType.HttpAuth) { }
-            public HttpAuthCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.HttpAuth) { }
-            /// <summary>
-            /// Host
-            /// </summary>
-            public string HttpHost { get; set; }
-            /// <summary>
-            /// Url
-            /// </summary>
-            public string HttpUrl { get; set; }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
         }
 
         enum EDic
@@ -168,13 +140,13 @@ namespace XPloit.Sniffer.Extractors
 
                             if (r.Autentication != null)
                             {
-                                ls.Add(new HttpAuthCredential(stream.StartDate, stream.Destination)
+                                ls.Add(new HttpCredential(Credential.ECredentialType.HttpAuth, stream.StartDate, stream.Destination)
                                 {
                                     IsValid = valid,
                                     HttpHost = r.Host.ToString(),
                                     HttpUrl = r.Url,
-                                    Password = r.Autentication.Password,
-                                    User = r.Autentication.User
+                                    Password = Reduce(r.Autentication.Password),
+                                    User = Reduce(r.Autentication.User)
                                 });
                             }
 
@@ -202,8 +174,8 @@ namespace XPloit.Sniffer.Extractors
                                         IsValid = valid,
                                         HttpHost = r.Host.ToString(),
                                         HttpUrl = r.Url,
-                                        User = users.Count == 0 ? null : users.ToArray(),
-                                        Password = pwds.Count == 0 ? null : pwds.ToArray()
+                                        User = users == null ? null: Reduce(users.ToArray()),
+                                        Password = pwds == null ? null : Reduce(pwds.ToArray())
                                     });
                                 }
                             }
@@ -236,6 +208,14 @@ namespace XPloit.Sniffer.Extractors
             cred = ls.Count == 0 ? null : ls.ToArray();
             return cred == null ? EExtractorReturn.DontRetry : EExtractorReturn.True;
         }
+
+        string Reduce(params string[] password)
+        {
+            if (password == null || password.Length <= 0) return null;
+            if (password.Length > 0) return JsonHelper.Serialize(password);
+            return password[0];
+        }
+
         IEnumerable<string> ToDic(Dictionary<string, string> g)
         {
             foreach (KeyValuePair<string, string> val in g)

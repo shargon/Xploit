@@ -68,7 +68,7 @@ namespace Payloads.Local.Sniffer
                 sniffer.Send(p);
             }
         }
-        public void Dequeue(object sender, object obj) { }
+        public void Dequeue(object sender, object[] obj) { }
         public bool Check()
         {
             packets = NetworkSniffer.ReadAllPacketsFromPcap(SendPcap.FullName).Where(u => u is EthernetPacket).Cast<EthernetPacket>().ToArray();

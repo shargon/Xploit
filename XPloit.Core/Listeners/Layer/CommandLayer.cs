@@ -111,7 +111,7 @@ namespace XPloit.Core.Listeners.Layer
                 e.Cancel = true;
                 Thread th = _CancelableThread;
                 _CancelableThread = null;
-                th.Abort();
+                if (th != null) th.Abort();
             }
         }
         public void WriteProgress(double value)

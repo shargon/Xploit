@@ -58,8 +58,17 @@ namespace XPloit.Sniffer.Extractors
         /// Is Valid
         /// </summary>
         public bool IsValid { get; set; }
-        public Credential(ECredentialType type) { Type = type; }
-        public Credential(DateTime date, IPEndPoint ip, ECredentialType type) : this(type)
+        /// <summary>
+        /// User
+        /// </summary>
+        public string User { get; set; }
+        /// <summary>
+        /// Password
+        /// </summary>
+        public string Password { get; set; }
+
+        protected Credential(ECredentialType type) { Type = type; }
+        protected Credential(DateTime date, IPEndPoint ip, ECredentialType type) : this(type)
         {
             Date = date.ToString("yyyy-MM-dd HH:mm:ss");
             _Address = ip.Address;

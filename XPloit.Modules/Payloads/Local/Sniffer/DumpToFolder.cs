@@ -5,7 +5,6 @@ using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Helpers.Attributes;
 using XPloit.Sniffer.Streams;
-using System;
 
 namespace Payloads.Local.Sniffer
 {
@@ -39,7 +38,7 @@ namespace Payloads.Local.Sniffer
                 stream.Source.ToString().Replace(":", ",") + " - " +
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }
-        public void Dequeue(object sender, object obj) { }
+        public void Dequeue(object sender, object[] obj) { }
         public void Stop(object sender) { }
     }
 }

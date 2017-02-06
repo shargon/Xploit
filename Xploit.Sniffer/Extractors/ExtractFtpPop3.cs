@@ -14,14 +14,6 @@ namespace XPloit.Sniffer.Extractors
             public Pop3Credential() : base(ECredentialType.Pop3) { }
             public Pop3Credential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Pop3) { }
             /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
-            /// <summary>
             /// IsAPOP https://tools.ietf.org/html/rfc1939#page-15
             /// </summary>
             public string AuthType { get; set; }
@@ -31,14 +23,6 @@ namespace XPloit.Sniffer.Extractors
         {
             public FTPCredential() : base(ECredentialType.Ftp) { }
             public FTPCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Ftp) { }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
         }
 
         /*

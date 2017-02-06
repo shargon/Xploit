@@ -17,8 +17,7 @@ namespace XPloit.Core.Listeners.IO
 
         void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            if (CancelKeyPress != null)
-                CancelKeyPress(sender, e);
+            CancelKeyPress?.Invoke(sender, e);
         }
 
         public void Beep() { Console.Beep(); }

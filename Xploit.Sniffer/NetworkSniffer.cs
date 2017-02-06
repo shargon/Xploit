@@ -23,7 +23,7 @@ namespace XPloit.Sniffer
         const ushort BufferLength = 32 * 1024;
         //readonly Socket _socket;
 
-        public delegate void delOnQueueObject(object sender, object enqueue);
+        public delegate void delOnQueueObject(object sender, object[] enqueue);
         public delegate void delPacket(object sender, IPProtocolType protocolType, EthernetPacket packet);
         public delegate void delTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
 
@@ -156,7 +156,8 @@ namespace XPloit.Sniffer
                 bool isNew = _TcpStack.GetStream(pc.HwSource, pc.HwDest, pc.IpSource, pc.IpDest, pc.Tcp, pc.Date, StartTcpStreamMethod, out stream);
 
                 _ProcessDate = pc.Date;
-                if (stream != null && OnTcpStream != null) OnTcpStream(this, stream, isNew, _Queue);
+                if (stream != null && OnTcpStream != null)
+                    OnTcpStream(this, stream, isNew, _Queue);
             }
 
             _WorkerClean.CancelAsync();
@@ -197,16 +198,28 @@ namespace XPloit.Sniffer
         }
         void OnProcessQueue()
         {
-            Parallel.For(0, _Queue.Count, (i) =>
+            int max = _Queue.Count;
+            if (max <= 0) return;
+
+            object[] ls = new object[max];
+
+            for (int x = 0; x < max; x++)
             {
                 object o;
                 if (_Queue.TryDequeue(out o))
-                    try { OnDequeue?.Invoke(this, o); }
-                    catch (Exception ex)
-                    {
-                        _Queue.Enqueue(o);
-                    }
-            });
+                    ls[x] = o;
+            }
+
+            try
+            {
+                OnDequeue?.Invoke(this, ls);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                //_Queue.Enqueue(o);
+            }
+
         }
         void Device_OnPacketArrival(object sender, CaptureEventArgs e)
         {

@@ -14,14 +14,6 @@ namespace XPloit.Sniffer.Extractors
         {
             public TelnetCredential() : base(ECredentialType.Telnet) { }
             public TelnetCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Telnet) { }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string User { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string Password { get; set; }
         }
 
 

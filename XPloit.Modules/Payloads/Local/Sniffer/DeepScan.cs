@@ -112,35 +112,50 @@ namespace Payloads.Local.Sniffer
             if (!some)
                 stream.Dispose();
         }
-        public void Dequeue(object sender, object o)
+        public void Dequeue(object sender, object[] arr)
         {
-            ICountryRecaller ic;
+            Dictionary<string, List<ICountryRecaller>> ls = new Dictionary<string, List<ICountryRecaller>>();
 
-            if (o is ICountryRecaller)
-            {
-                ic = (ICountryRecaller)o;
-                ic.RecallCounty(GeoLite2LocationProvider.Current);
-            }
-            else return;
+            foreach (object o in arr)
+                if (o != null && o is ICountryRecaller)
+                {
+                    ICountryRecaller ic = (ICountryRecaller)o;
+                    ic.RecallCounty(GeoLite2LocationProvider.Current);
+
+                    List<ICountryRecaller> la;
+                    string name = o.GetType().Name;
+                    if (!ls.TryGetValue(name, out la))
+                    {
+                        la = new List<ICountryRecaller>();
+                        ls.Add(name, la);
+                    }
+
+                    la.Add(ic);
+                }
 
             // Console
             if (WriteAsInfo)
             {
-                string json = o.ToString();
+                foreach (string key in ls.Keys)
+                    foreach (ICountryRecaller o in ls[key])
+                    {
+                        string json = o.ToString();
 
-                if (!(o is Credential) || ((Credential)o).IsValid) WriteInfo(json);
-                else WriteError(json);
+                        if (!(o is Credential) || ((Credential)o).IsValid) WriteInfo(json);
+                        else WriteError(json);
+                    }
             }
 
             // Repository
-            if (Repository != null && ic != null)
-            {
-                // Split repositories by type
-                IMongoCollection<ICountryRecaller> col =
-                    Repository.Database.GetCollection<ICountryRecaller>(o.GetType().Name);
+            if (Repository != null)
+                foreach (string key in ls.Keys)
+                {
+                    // Split repositories by type
+                    IMongoCollection<ICountryRecaller> col = Repository.Database.GetCollection<ICountryRecaller>(key);
 
-                col.InsertOneAsync(ic);
-            }
+                    //foreach (ICountryRecaller ox in ls[key]) col.InsertOne(ox);
+                    col.InsertMany(ls[key]);  // No va !
+                }
         }
     }
 }
