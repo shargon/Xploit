@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -186,7 +186,7 @@ Use a XPloit module</value>
   <data name="Man_Banner" xml:space="preserve">
     <value>banner
 
-Show a beautifull xploit banner</value>
+Show a beautiful xploit banner</value>
   </data>
   <data name="Man_Clear" xml:space="preserve">
     <value>clear / cls
@@ -264,7 +264,7 @@ Show available information for the current module
     <value>File</value>
   </data>
   <data name="Version_Start" xml:space="preserve">
-    <value>Wellcome to Xploit Framework :)
+    <value>Welcome to Xploit Framework :)
 Official openSource repository in: https://github.com/shargon/Xploit</value>
   </data>
   <data name="Man_Version" xml:space="preserve">
@@ -322,7 +322,7 @@ Search a module in the loaded modules</value>
     <value>Job created</value>
   </data>
   <data name="Man_Set_Global" xml:space="preserve">
-    <value>setg [variable] [value]
+    <value>gset [variable] [value]
 
 Set a global variable for the current module and the next call to this module</value>
   </data>
