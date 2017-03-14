@@ -7,6 +7,11 @@ namespace XPloit.Helpers
 {
     public class SystemHelper
     {
+        static bool _IsMono = Type.GetType("Mono.Runtime") != null;
+        /// <summary>
+        /// Is Mono
+        /// </summary>
+        public static bool IsMono { get { return _IsMono; } }
         /// <summary>
         /// Is Mac
         /// </summary>

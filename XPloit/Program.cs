@@ -23,10 +23,7 @@ namespace XPloit
         static int Main(string[] args)
         {
             // hacer load, reload, probar el global con payload, hacer el listen general con un handler, no cargar exploits sin el load
-            //#if DEBUG
-            //if (Debugger.IsAttached)
-            //args = new string[] { @"Play=Debug.txt" };
-            //#endif
+
             // Linq to library assembly
             BuildLink.Dummy();
 
@@ -39,6 +36,10 @@ namespace XPloit
                 command.SetBackgroundColor(ConsoleColor.Black);
 
                 command.AddInput("banner");
+#if DEBUG
+                if (Debugger.IsAttached)
+                    command.AddInput("Play Debug.txt");
+#endif
 
                 if (GeoLite2LocationProvider.Current == null)
                 {

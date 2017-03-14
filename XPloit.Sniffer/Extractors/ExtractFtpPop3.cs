@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Text;
 using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Interfaces;
@@ -9,22 +8,6 @@ namespace XPloit.Sniffer.Extractors
 {
     public class ExtractFtpPop3 : IObjectExtractor
     {
-        public class Pop3Credential : Credential
-        {
-            public Pop3Credential() : base(ECredentialType.Pop3) { }
-            public Pop3Credential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Pop3) { }
-            /// <summary>
-            /// IsAPOP https://tools.ietf.org/html/rfc1939#page-15
-            /// </summary>
-            public string AuthType { get; set; }
-
-        }
-        public class FTPCredential : Credential
-        {
-            public FTPCredential() : base(ECredentialType.Ftp) { }
-            public FTPCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Ftp) { }
-        }
-
         /*
 # FTP https://en.wikipedia.org/wiki/List_of_FTP_server_return_codes
 

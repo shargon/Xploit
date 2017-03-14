@@ -212,7 +212,7 @@ namespace XPloit.Sniffer.Extractors
         string Reduce(params string[] password)
         {
             if (password == null || password.Length <= 0) return null;
-            if (password.Length > 0) return JsonHelper.Serialize(password);
+            if (password.Length > 1) return JsonHelper.Serialize(password);
             return password[0];
         }
 

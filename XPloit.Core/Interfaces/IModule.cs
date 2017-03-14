@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using XPloit.Core.Attributes;
 using XPloit.Core.Command;
 using XPloit.Core.Enums;
@@ -32,6 +33,16 @@ namespace XPloit.Core.Interfaces
         public Job CreateJob(IJobable job)
         {
             return Job.Create(this, job);
+        }
+        /// <summary>
+        /// Create a new job
+        /// </summary>
+        /// <param name="job">Job</param>
+        /// <returns>Return the job</returns>
+        public Job CreateJob(Task job)
+        {
+            job.Start();
+            return CreateJob(job, "IsCompleted");
         }
         /// <summary>
         /// Create a new job

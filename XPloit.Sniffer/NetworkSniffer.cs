@@ -11,7 +11,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using XPloit.Helpers.Geolocate;
 using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Interfaces;
 using XPloit.Sniffer.Streams;
@@ -49,6 +48,9 @@ namespace XPloit.Sniffer
             public IPEndPoint IpSource, IpDest;
             public TcpPacket Tcp;
         }
+
+        public TimeSpan TimeoutSync { get { return _TcpStack.TimeoutSync; } set { _TcpStack.TimeoutSync = value; } }
+        public TimeSpan Timeout { get { return _TcpStack.Timeout; } set { _TcpStack.Timeout = value; } }
 
         /// <summary>
         /// Read all pcap file

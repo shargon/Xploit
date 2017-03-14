@@ -21,6 +21,9 @@ namespace XPloit.Core.Listeners.IO
             Visible
         }
 
+        static ConsoleCursor _Empty = new ConsoleCursor();
+        public static ConsoleCursor Empty { get { return _Empty; } }
+
         ECursorMode _CursorMode;
         int _CursorX, _CursorY;
         int _Width, _Height;

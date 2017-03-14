@@ -1,5 +1,6 @@
 ﻿using PacketDotNet;
 using SharpPcap;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,12 +69,19 @@ namespace Auxiliary.Local
         }
         [ConfigurableProperty(Description = "Start tcp stream only with SYNC")]
         public EStartTcpStreamMethod StartTcpStreamMethod { get; set; }
+
+        [ConfigurableProperty(Description = "Timeout for waiting Sync signal")]
+        public TimeSpan TcpTimeoutSync { get; set; }
+        [ConfigurableProperty(Description = "Timeout for closing tcp Streams")]
+        public TimeSpan TcpTimeout { get; set; }
         #endregion
 
         public Sniffer()
         {
             //FilterProtocols = new IPProtocolType[] { IPProtocolType.TCP, IPProtocolType.UDP };
             StartTcpStreamMethod = EStartTcpStreamMethod.Sync;
+            TcpTimeout = TimeSpan.FromMinutes(5);
+            TcpTimeoutSync = TimeSpan.FromSeconds(20);
         }
         public string[] GetAllDevices() { return NetworkSniffer.CaptureDevices; }
         [NonJobable()]
@@ -85,7 +93,11 @@ namespace Auxiliary.Local
             if (!pay.Check()) return false;
             if (FilterOnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
 
-            NetworkSniffer s = new NetworkSniffer(Interface);
+            NetworkSniffer s = new NetworkSniffer(Interface)
+            {
+                Timeout = TcpTimeout,
+                TimeoutSync = TcpTimeoutSync
+            };
             s.StartTcpStreamMethod = StartTcpStreamMethod;
             s.OnDequeue += pay.Dequeue;
 
@@ -124,7 +136,11 @@ namespace Auxiliary.Local
                 IPayloadSniffer pay = (IPayloadSniffer)Payload;
                 if (!pay.Check()) return ECheck.Error;
 
-                s = new NetworkSniffer(Interface);
+                s = new NetworkSniffer(Interface)
+                {
+                    Timeout = TcpTimeout,
+                    TimeoutSync = TcpTimeoutSync
+                };
                 s.Start();
 
                 return ECheck.Ok;

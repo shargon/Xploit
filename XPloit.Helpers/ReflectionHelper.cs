@@ -278,7 +278,8 @@ namespace XPloit.Helpers
                             pi.PropertyType != typeof(long[]) &&
                             pi.PropertyType != typeof(ulong[]) &&
 
-                            !ConvertHelper._IConvertibleFromString.IsAssignableFrom(pi.PropertyType) &&
+                            // Class with string constructor
+                            !(pi.PropertyType.IsClass && pi.PropertyType.GetConstructor(new Type[] { ConvertHelper._StringType }) != null) &&
 
                             // Array[Enum]
                             !(pi.PropertyType.IsArray && pi.PropertyType.GetElementType().IsEnum)

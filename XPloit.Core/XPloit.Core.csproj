@@ -204,6 +204,7 @@
     <Compile Include="Extensions\IPAddressExtension.cs" />
     <Compile Include="Listeners\IO\ConsoleCursor.cs" />
     <Compile Include="ModuleHeader.cs" />
+    <Compile Include="Mongo\RemovableValueT.cs" />
     <Compile Include="Mongo\XploitMongoRepository.cs" />
     <Compile Include="NotificationCenter.cs" />
     <Compile Include="Sockets\Enums\EXPloitSocketMsgHeader.cs" />

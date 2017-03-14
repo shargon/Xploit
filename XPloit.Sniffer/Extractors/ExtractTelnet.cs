@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Text;
 using XPloit.Sniffer.Enums;
 using XPloit.Sniffer.Interfaces;
@@ -10,13 +8,6 @@ namespace XPloit.Sniffer.Extractors
 {
     public class ExtractTelnet : IObjectExtractor
     {
-        public class TelnetCredential : Credential
-        {
-            public TelnetCredential() : base(ECredentialType.Telnet) { }
-            public TelnetCredential(DateTime date, IPEndPoint ip) : base(date, ip, ECredentialType.Telnet) { }
-        }
-
-
         static IObjectExtractor _Current = new ExtractTelnet();
         public static IObjectExtractor Current { get { return _Current; } }
 

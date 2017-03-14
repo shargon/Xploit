@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using XPloit.Helpers.Interfaces;
 
 namespace XPloit.Core.Mongo
 {
@@ -14,7 +13,7 @@ namespace XPloit.Core.Mongo
     /// Repository for mongo
     /// </summary>
     /// <typeparam name="T">Type</typeparam>
-    public class XploitMongoRepository<T> : IMongoCollection<T>, IConvertibleFromString
+    public class XploitMongoRepository<T> : IMongoCollection<T>
     {
         MongoClient _MongoClient;
         IMongoDatabase _DB;
@@ -46,14 +45,16 @@ namespace XPloit.Core.Mongo
         /// Constructor
         /// </summary>
         /// <param name="url">Url</param>
-        public XploitMongoRepository(string url) { LoadFromString(url); }
-
-        #region Conversions
-        public static implicit operator string(XploitMongoRepository<T> repo) { return repo.Url.ToString(); }
-        public static implicit operator XploitMongoRepository<T>(string url) { return new XploitMongoRepository<T>(url); }
-        public void LoadFromString(string url)
+        public XploitMongoRepository(string url) : this(new MongoUrl(url)) { }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="url">Url</param>
+        public XploitMongoRepository(MongoUrl url)
         {
-            Url = new MongoUrl(url);
+            Url = url;
+
+            if (url == null) return;
 
             _MongoClient = new MongoClient(Url);
             _DB = _MongoClient.GetDatabase(Url.DatabaseName, new MongoDatabaseSettings()
@@ -67,17 +68,63 @@ namespace XPloit.Core.Mongo
             ConventionPack pack = new ConventionPack { new EnumRepresentationConvention(BsonType.String) };
             ConventionRegistry.Register("EnumStringConvention", pack, t => true);
 
-            _Repository = DB.GetCollection<T>(typeof(T).Name);
+            string name = typeof(T).Name;
+
+            //check for existence
+            // BsonDocument filter = new BsonDocument("name", name);
+            // IAsyncCursor<BsonDocument> collections = _DB.ListCollections(new ListCollectionsOptions { Filter = filter });
+            //// if (!collections.Any())
+            //     try
+            //     {
+            //         while (true)
+            //         {
+            //             try
+            //             {
+            //                 DB.DropCollection(name);
+            //                 DB.CreateCollection(name, new CreateCollectionOptions()
+            //                 {
+            //                     Capped = true,
+            //                     MaxSize = (536870912),
+            //                 });
+            //                 break;
+            //             }
+            //             catch (Exception ex)
+            //             {
+
+            //             }
+            //         }
+            //     }
+            //     catch { }
+
+            _Repository = DB.GetCollection<T>(name);
         }
 
-        public void Check()
-        {
-            if (_DB != null)
-                _DB.ListCollections();
-        }
+        #region Conversions
+        public static implicit operator string(XploitMongoRepository<T> repo) { return repo.Url.ToString(); }
+        public static implicit operator XploitMongoRepository<T>(string url) { return new XploitMongoRepository<T>(url); }
 
         public override string ToString() { return Url.ToString(); }
         #endregion
+
+        public IEnumerable<RemovableValue<T>> Watch()
+        {
+            while (true)
+            {
+                IAsyncCursor<T> cursor = _Repository.Find(_ => true).ToCursor();
+                while (cursor.MoveNext())
+                {
+                    foreach (T document in cursor.Current)
+                    {
+                        RemovableValue<T> r = new RemovableValue<T>(document);
+
+                        yield return r;
+
+                        if (r.Remove)
+                            _Repository.DeleteOne(new BsonDocument("_id", document.ToBsonDocument()["_id"]));
+                    }
+                }
+            }
+        }
 
         #region Interface
         public CollectionNamespace CollectionNamespace { get { return _Repository.CollectionNamespace; } }
@@ -94,12 +141,14 @@ namespace XPloit.Core.Mongo
         { return _Repository.BulkWrite(requests, options, cancellationToken); }
         public Task<BulkWriteResult<T>> BulkWriteAsync(IEnumerable<WriteModel<T>> requests, BulkWriteOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         { return _Repository.BulkWriteAsync(requests, options, cancellationToken); }
+
         public long Count(FilterDefinition<T> filter, CountOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         { return _Repository.Count(filter, options, cancellationToken); }
         public Task<long> CountAsync(FilterDefinition<T> filter, CountOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
         { return _Repository.CountAsync(filter, options, cancellationToken); }
         public DeleteResult DeleteMany(FilterDefinition<T> filter, CancellationToken cancellationToken = default(CancellationToken))
         { return _Repository.DeleteMany(filter, cancellationToken); }
+
         public DeleteResult DeleteMany(FilterDefinition<T> filter, DeleteOptions options, CancellationToken cancellationToken = default(CancellationToken))
         { return _Repository.DeleteMany(filter, options, cancellationToken); }
         public Task<DeleteResult> DeleteManyAsync(FilterDefinition<T> filter, CancellationToken cancellationToken = default(CancellationToken))

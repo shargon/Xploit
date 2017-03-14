@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Text;
 using XPloit.Sniffer.Enums;
 
@@ -9,11 +8,11 @@ namespace XPloit.Sniffer.Streams
     {
         //const int incBuffer = 1024;
 
-        //byte[] _Data;
+        byte[] _Data;
         ETcpEmisor _Emisor;
-        int _DataLength = 0;
+        int _DataLength = 0, _DataCapacity = 0;
 
-        MemoryStream _Stream;
+        //MemoryStream _Stream;
 
         DateTime _Date;
         internal int _LastRead = 0;
@@ -22,7 +21,14 @@ namespace XPloit.Sniffer.Streams
         /// <summary>
         /// Data
         /// </summary>
-        public byte[] Data { get { return _Stream.ToArray(); } }
+        public byte[] Data
+        {
+            get
+            {
+                return _Data;
+                //return _Stream.ToArray();
+            }
+        }
         /// <summary>
         /// Data Length
         /// </summary>
@@ -84,11 +90,12 @@ namespace XPloit.Sniffer.Streams
         {
             _Date = date;
             _Emisor = emisor;
-            
-            //_Data = data;
-            _Stream = new MemoryStream();
-            _Stream.Write(data, 0, data.Length);
+
+            _Data = data;
+            //_Stream = new MemoryStream();
+            //_Stream.Write(data, 0, data.Length);
             _DataLength = data.Length;
+            _DataCapacity = _DataLength;
 
             if (previous != null)
             {
@@ -98,7 +105,7 @@ namespace XPloit.Sniffer.Streams
         }
         string GetString(Encoding enc)
         {
-            return enc.GetString(Data, 0, _DataLength);
+            return enc.GetString(_Data, 0, _DataLength);
         }
         /// <summary>
         /// Add data to Stream
@@ -109,23 +116,28 @@ namespace XPloit.Sniffer.Streams
             if (data == null || length <= 0)
                 return;
 
-            _Stream.Write(data, 0, length);
+            int value = _DataLength + length;
 
-            //int l = _Data.Length;
-            //if (l == 0) return;
+            if (value > _DataCapacity)
+            {
+                int num = value;
+                if (num < 256) num = 256;
+                if (num < _DataCapacity * 2)
+                {
+                    num = _DataCapacity * 2;
+                    if (num > 2147483591) num = ((value > 2147483591) ? value : 2147483591);
+                }
 
-            //if (_DataLength + length >= l)
-            //{
-            //    byte[] d = new byte[l + Math.Max(length, incBuffer)];
+                byte[] n = new byte[num];
+                Buffer.BlockCopy(_Data, 0, n, 0, _DataLength);
+                Buffer.BlockCopy(data, 0, n, _DataLength, length);
+                _Data = n;
+                _DataCapacity = num;
+            }
+            else
+                Buffer.BlockCopy(data, 0, _Data, _DataLength, length);
 
-            //    Buffer.BlockCopy(_Data, 0, d, 0, _DataLength);
-            //    Buffer.BlockCopy(data, index, d, _DataLength, length);
-            //    _Data = d;
-            //}
-            //else
-            //{
-            //    Buffer.BlockCopy(data, index, _Data, _DataLength, length);
-            //}
+            //_Stream.Write(data, 0, length);
 
             _DataLength += length;
         }
@@ -134,10 +146,11 @@ namespace XPloit.Sniffer.Streams
         /// </summary>
         public void Dispose()
         {
-            if (_Stream == null) return;
+            //if (_Stream == null) return;
 
-            _Stream.Dispose();
-            _Stream = null;
+            //_Stream.Dispose();
+            //_Stream = null;
+            _Data = null;
         }
         /// <summary>
         /// String representation

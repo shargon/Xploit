@@ -303,6 +303,8 @@ namespace XPloit.Core.Listeners.Layer
         public void SetForeColor(ConsoleColor value)
         {
             if (!_AllowOutPut) return;
+
+            if (value == ConsoleColor.DarkGray && SystemHelper.IsMono) value = ConsoleColor.Gray;
             if (_LastFore == value) return;
 
             _LastFore = value;
@@ -366,7 +368,7 @@ namespace XPloit.Core.Listeners.Layer
 
                 if (input == null)
                 {
-                    if (prompt != null) prompt(this);
+                    prompt?.Invoke(this);
 
                     ConsoleKeyInfo myKey;
                     do
@@ -543,7 +545,6 @@ namespace XPloit.Core.Listeners.Layer
                             case ConsoleKey.MediaPlay:
                             case ConsoleKey.MediaPrevious:
                             case ConsoleKey.MediaStop:
-                            case ConsoleKey.NoName:
                             case ConsoleKey.Packet:
                             case ConsoleKey.Pause:
                             case ConsoleKey.Play:
@@ -695,6 +696,12 @@ namespace XPloit.Core.Listeners.Layer
 
                                     input = next;
                                     index = next.Length;
+                                    break;
+                                }
+                            case ConsoleKey.NoName:
+                                {
+                                    // Not console
+                                    Thread.Sleep(1000);
                                     break;
                                 }
                             default:

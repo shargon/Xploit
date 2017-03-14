@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using XPloit.Sniffer.Enums;
-using XPloit.Sniffer.Streams;
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -21,9 +20,8 @@ namespace XPloit.Sniffer.Streams
         public TcpStreamStack()
         {
             TimeoutSync = TimeSpan.FromSeconds(20);
-            Timeout = TimeSpan.FromMinutes(15);
+            Timeout = TimeSpan.FromMinutes(10);
         }
-
         public static string GetKey(IPEndPoint source, IPEndPoint dest, bool reverse)
         {
             if (reverse) return dest.ToString() + ">" + source.ToString();

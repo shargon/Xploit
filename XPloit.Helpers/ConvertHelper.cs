@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using XPloit.Helpers.Interfaces;
+using System.Reflection;
 
 namespace XPloit.Helpers
 {
@@ -22,7 +23,6 @@ namespace XPloit.Helpers
         internal static Type _Int32Type = typeof(int), _UInt32Type = typeof(uint);
         internal static Type _Int16Type = typeof(short), _UInt16Type = typeof(ushort);
 
-        internal static Type _IConvertibleFromString = typeof(IConvertibleFromString);
         internal static Type _UriType = typeof(Uri);
         internal static Type _DoubleType = typeof(double);
         internal static Type _DecimalType = typeof(decimal);
@@ -238,7 +238,7 @@ namespace XPloit.Helpers
                 if (_IListType.IsAssignableFrom(type))
                 {
                     IList l = (IList)Activator.CreateInstance(type);
-                    
+
                     // If dosent have T return null
                     if (type.GenericTypeArguments == null || type.GenericTypeArguments.Length == 0) return null;
 
@@ -262,12 +262,8 @@ namespace XPloit.Helpers
                         return conv.ConvertFrom(input);
 
                     // For generic Types is more easy
-                    if (_IConvertibleFromString.IsAssignableFrom(type))
-                    {
-                        IConvertibleFromString c = (IConvertibleFromString)Activator.CreateInstance(type);
-                        c.LoadFromString(input);
-                        return c;
-                    }
+                    if (type.GetConstructor(new Type[] { _StringType }) != null)
+                        return Activator.CreateInstance(type, input);
 
                     if (input.StartsWith("{") && input.EndsWith("}"))
                         input = input.Substring(1, input.Length - 2);

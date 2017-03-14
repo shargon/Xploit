@@ -138,8 +138,7 @@ namespace XPloit.Helpers
             if (string.IsNullOrEmpty(pattern)) return false;
             if (string.IsNullOrEmpty(input)) return false;
 
-            return new Regex(@"\A" + new Regex(@"\.|\$|\^|\{|\[|\(|\||\)|\*|\+|\?|\\").Replace(pattern, ch => @"\" + ch).Replace('_', '.').Replace("%", ".*") + @"\z", RegexOptions.Singleline).IsMatch(input);
-            //return Operators.LikeString(input, pattern, Microsoft.VisualBasic.CompareMethod.Text);
+            return RegexHelper.RegexAsMsdos(pattern).IsMatch(input);
         }
         /// <summary>
         /// Replace a string with the current variables example {Year} -> current Year

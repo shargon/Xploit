@@ -72,9 +72,13 @@
     <Compile Include="Enums\ETcpEmisor.cs" />
     <Compile Include="Extractors\Attack.cs" />
     <Compile Include="Extractors\Credential.cs" />
+    <Compile Include="Extractors\ExtractBase.cs" />
     <Compile Include="Extractors\ExtractFtpPop3.cs" />
     <Compile Include="Extractors\ExtractHttp.cs" />
     <Compile Include="Extractors\ExtractTelnet.cs" />
+    <Compile Include="Extractors\FTPCredential.cs" />
+    <Compile Include="Extractors\Pop3Credential.cs" />
+    <Compile Include="Extractors\TelnetCredential.cs" />
     <Compile Include="Filters\IPFilter.cs" />
     <Compile Include="Filters\SnifferPortFilter.cs" />
     <Compile Include="Filters\SnifferProtocolFilter.cs" />

@@ -52,8 +52,6 @@ namespace Payloads.Local.Sniffer
         }
         public bool Check()
         {
-            if (Repository != null) Repository.Check();
-
             hay = 0;
             return true;
         }
