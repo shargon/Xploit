@@ -1,4 +1,4 @@
-﻿using HtmlAgilityPack;
+using HtmlAgilityPack;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -31,7 +31,7 @@ namespace Auxiliary.Local
         #region Properties
         [ConfigurableProperty(Description = "Start socks proxy in this Port")]
         public ushort SocksPort { get; set; }
-        [ConfigurableProperty(Optional = true, Description = "Expose this local ports to Tor netowork")]
+        [ConfigurableProperty(Optional = true, Description = "Expose this local ports to Tor network")]
         public uint[] HiddenServicePorts { get; set; }
         #endregion
 
