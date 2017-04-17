@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading;
 using XPloit.Core;
@@ -40,7 +40,19 @@ namespace Auxiliary.Local.Fingerprinting
             while ((subdomain = file.ReadLine()) != null)
             {
                 url = subdomain + "." + domain;
-                res = SubdomainEnumerationHelper.SubdomainCheck(url);
+                try
+                {
+                    IPHostEntry hostInfo = Dns.GetHostByName(url);
+                    if (hostInfo.ToString() != "")
+                        res = true;
+                    else
+                        res = false;
+                }
+                catch (Exception e)
+                {
+                    res = false;
+                }
+
                 if (res ==true)
                 {
                     WriteInfo("Subdomain found:" + subdomain.ToString() + "." + domain.ToString(), "FOUND" , ConsoleColor.Green);
