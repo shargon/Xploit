@@ -34,9 +34,10 @@ namespace Auxiliary.Local.Fuzzing
 
         public override ECheck Check()
         {
+            // Info about word list
+            string tempFile = null;
             Stream stream = File.OpenRead(WordList.FullName);
 
-            string tempFile = null;
             if (FileHelper.DetectFileFormat(stream, true, true) == FileHelper.EFileFormat.Gzip)
             {
                 WriteInfo("Decompress gzip wordlist");
@@ -61,6 +62,7 @@ namespace Auxiliary.Local.Fuzzing
             using (StreamLineReader reader = new StreamLineReader(stream))
                 WriteInfo("Subdomains count", reader.GetCount(0).ToString(), ConsoleColor.Green);
 
+            // Clean up
             if (stream != null)
             {
                 stream.Close();
@@ -70,6 +72,7 @@ namespace Auxiliary.Local.Fuzzing
             if (!string.IsNullOrEmpty(tempFile) && File.Exists(tempFile))
                 File.Delete(tempFile);
 
+            // Info about main domain
             IPHostEntry hostInfo = Dns.GetHostByName(Domain);
             if (hostInfo != null)
             {
@@ -104,7 +107,6 @@ namespace Auxiliary.Local.Fuzzing
                  catch
                  {
                  }
-                 // WriteInfo("Checking subdomain: '" + subdomain.ToString() + "." + domain.ToString() + "' results", res ? "EXISTS!" : "NOT EXISTS", res ? ConsoleColor.Green : ConsoleColor.Red);
              });
 
             return true;
