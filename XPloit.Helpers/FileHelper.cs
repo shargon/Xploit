@@ -1,9 +1,46 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 
 namespace XPloit.Helpers
 {
-    public class FileDetectionHelper
+    public class FileHelper
     {
+        /// <summary>
+        /// Read lines from file (Allow gzip)
+        /// </summary>
+        /// <param name="path">Path</param>
+        public static IEnumerable<string> ReadWordFile(string path)
+        {
+            Stream stream = File.OpenRead(path);
+
+            if (DetectFileFormat(stream, true, true) == EFileFormat.Gzip)
+            {
+                //WriteInfo("Decompress gzip wordlist");
+                //WriteInfo("Compressed size", StringHelper.Convert2KbWithBytes(stream.Length), ConsoleColor.Green);
+
+                stream.Close();
+                stream.Dispose();
+
+                using (FileStream streamR = File.OpenRead(path))
+                using (GZipStream gz = new GZipStream(streamR, CompressionMode.Decompress))
+                {
+                    // decompress
+                    using (StreamReader sr = new StreamReader(gz, true))
+                    {
+                        string line;
+                        while ((line = sr.ReadLine()) != null) yield return line;
+                    }
+                }
+
+                //WriteInfo("Decompressed size", StringHelper.Convert2KbWithBytes(stream.Length), ConsoleColor.Green);
+            }
+            else using (StreamReader sr = new StreamReader(stream, true))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null) yield return line;
+                }
+        }
         /// <summary>
         /// Formatos de archivo reconocidos
         /// </summary>

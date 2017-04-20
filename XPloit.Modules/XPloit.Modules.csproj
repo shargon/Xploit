@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Auxiliary\Local\DetectTorExitNode.cs" />
+    <Compile Include="Auxiliary\Local\Fuzzing\SubdomainEnumeration.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\PatternCreate.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\PatternSearch.cs" />
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />

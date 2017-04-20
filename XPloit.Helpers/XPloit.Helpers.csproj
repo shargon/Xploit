@@ -63,7 +63,7 @@
     <Compile Include="CounterHelper.cs" />
     <Compile Include="EnumHelper.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
-    <Compile Include="FileDetectionHelper.cs" />
+    <Compile Include="FileHelper.cs" />
     <Compile Include="Forensics\LinuxProcessMemoryDump.cs" />
     <Compile Include="Forensics\WindowsProcessMemoryDump.cs" />
     <Compile Include="FtpHelper.cs" />

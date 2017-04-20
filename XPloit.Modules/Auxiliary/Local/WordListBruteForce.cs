@@ -71,7 +71,7 @@ namespace Auxiliary.Local
 
                 stream = File.OpenRead(WordListFile.FullName);
 
-                if (FileDetectionHelper.DetectFileFormat(stream, true, true) == FileDetectionHelper.EFileFormat.Gzip)
+                if (FileHelper.DetectFileFormat(stream, true, true) == FileHelper.EFileFormat.Gzip)
                 {
                     WriteInfo("Decompress gzip wordlist");
                     WriteInfo("Compressed size", StringHelper.Convert2KbWithBytes(stream.Length), ConsoleColor.Green);
