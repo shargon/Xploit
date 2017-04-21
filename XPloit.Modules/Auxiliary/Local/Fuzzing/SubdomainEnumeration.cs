@@ -73,7 +73,7 @@ namespace Auxiliary.Local.Fuzzing
                 File.Delete(tempFile);
 
             // Info about main domain
-            IPHostEntry hostInfo = Dns.GetHostByName(Domain);
+            IPHostEntry hostInfo = Dns.GetHostEntry(Domain);
             if (hostInfo != null)
             {
                 string ip =
@@ -94,7 +94,7 @@ namespace Auxiliary.Local.Fuzzing
                  string url = subdomain + "." + Domain;
                  try
                  {
-                     IPHostEntry hostInfo = Dns.GetHostByName(url);
+                     IPHostEntry hostInfo = Dns.GetHostEntry(url);
                      if (hostInfo.ToString() != "")
                      {
                          string ip =
