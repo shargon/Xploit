@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using XPloit.Helpers;
 using XPloit.Server.Http;
 using XPloit.Server.Http.Enums;
@@ -21,41 +20,6 @@ namespace XPloit.Sniffer.Extractors
 
         static string[] UserWordList = new string[] {/* "u",*/ "login", "uid", "id", "userid", "user_id", "user", "uname", "username", "user_name", "usuario", "mail", "email", "name", "user_login", "email_login" };
         static string[] PasswordWordList = new string[] {/* "p",*/ "pass", "password", "key", "pwd", "clave", "hash", "password_login" };
-
-        public class HttpAttack : Attack
-        {
-            public HttpAttack() : base(EAttackType.None) { }
-            public HttpAttack(EAttackType type, DateTime date, IPEndPoint ip) : base(date, ip, type) { }
-            /// <summary>
-            /// Host
-            /// </summary>
-            public string HttpHost { get; set; }
-            /// <summary>
-            /// Url
-            /// </summary>
-            public string HttpUrl { get; set; }
-            /// <summary>
-            /// User
-            /// </summary>
-            public string[] Get { get; set; }
-            /// <summary>
-            /// Password
-            /// </summary>
-            public string[] Post { get; set; }
-        }
-        public class HttpCredential : Credential
-        {
-            public HttpCredential() : base(ECredentialType.None) { }
-            public HttpCredential(ECredentialType type, DateTime date, IPEndPoint ip) : base(date, ip, type) { }
-            /// <summary>
-            /// Host
-            /// </summary>
-            public string HttpHost { get; set; }
-            /// <summary>
-            /// Url
-            /// </summary>
-            public string HttpUrl { get; set; }
-        }
 
         enum EDic
         {
@@ -150,10 +114,9 @@ namespace XPloit.Sniffer.Extractors
                                 });
                             }
 
-                            if (r.Files.Length > 0)
-                            {
-
-                            }
+                            //if (r.Files.Length > 0)
+                            //{
+                            //}
 
                             for (int x = 0; x < 2; x++)
                             {
@@ -182,7 +145,11 @@ namespace XPloit.Sniffer.Extractors
 
                             foreach (EDic attack in new EDic[] { EDic.SQLI, EDic.XSS })
                             {
-                                if (Fill(r.GET, attack) || Fill(r.POST, attack))
+                                Dictionary<string, string> get = new Dictionary<string, string>();
+                                Dictionary<string, string> post = new Dictionary<string, string>();
+
+                                if (FillCoincidences(r.GET, attack, get) || 
+                                    FillCoincidences(r.POST, attack, post))
                                 {
                                     Attack.EAttackType type;
                                     switch (attack)
@@ -196,8 +163,8 @@ namespace XPloit.Sniffer.Extractors
                                     {
                                         HttpHost = r.Host.ToString(),
                                         HttpUrl = r.Url,
-                                        Get = r.GET.Count == 0 ? null : ToDic(r.GET).OrderBy(c => c).ToArray(),
-                                        Post = r.POST.Count == 0 ? null : ToDic(r.POST).OrderBy(c => c).ToArray(),
+                                        Get = get.Count == 0 ? null : ToDic(get).OrderBy(c => c).ToArray(),
+                                        Post = post.Count == 0 ? null : ToDic(post).OrderBy(c => c).ToArray(),
                                     });
                                 }
                             }
@@ -261,10 +228,11 @@ namespace XPloit.Sniffer.Extractors
             }
             return ret;
         }
-        bool Fill(Dictionary<string, string> d, EDic dic)
+        bool FillCoincidences(Dictionary<string, string> d, EDic dic, Dictionary<string, string> dest)
         {
             if (d.Count == 0) return false;
 
+            bool dv = false;
             foreach (string su in GetDic(dic))
             {
                 foreach (KeyValuePair<string, string> val in d)
@@ -272,10 +240,18 @@ namespace XPloit.Sniffer.Extractors
                     string sval = val.Value.ToLowerInvariant();
 
                     if (sval.Replace(" ", "").Contains(su))
-                        return true;
+                    {
+                        if (dest.ContainsKey(val.Key))
+                            dest[val.Key] = val.Value;
+                        else
+                            dest.Add(val.Key, val.Value);
+
+                        dv = true;
+                    }
                 }
             }
-            return false;
+
+            return dv;
         }
         string[] GetDic(EDic dic)
         {

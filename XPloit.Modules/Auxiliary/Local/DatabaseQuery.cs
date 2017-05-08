@@ -1,16 +1,12 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
-using System.Data.OleDb;
-using System.Data.OracleClient;
-using System.Data.SqlClient;
 using System.IO;
 using XPloit.Core;
-using XPloit.Core.Command;
 using XPloit.Core.Attributes;
+using XPloit.Core.Command;
 using XPloit.Core.Enums;
+using XPloit.Core.Helpers;
 using XPloit.Helpers.Attributes;
 
 namespace Auxiliary.Local
@@ -18,15 +14,6 @@ namespace Auxiliary.Local
     [ModuleInfo(Author = "Fernando Díaz Toledano", Description = "Database query")]
     public class DatabaseQuery : Module
     {
-        public enum EType
-        {
-            SqlServer = 0,
-            MySql = 1,
-            OleDb = 2,
-            Odbc = 3,
-            Oracle = 4
-        }
-
         public enum EFormat
         {
             Console = 0,
@@ -44,7 +31,7 @@ namespace Auxiliary.Local
         [ConfigurableProperty(Description = "Sql query")]
         public string Query { get; set; }
         [ConfigurableProperty(Description = "Server type")]
-        public EType ServerType { get; set; }
+        public EDbType ServerType { get; set; }
 
         // Format
         [ConfigurableProperty(Optional = true, Description = "Out File for Query")]
@@ -57,7 +44,7 @@ namespace Auxiliary.Local
         {
             ConnectionString = "Server=myServerAddress;Port=3306;Database=myDataBase;Uid=myUsername;Pwd = myPassword;";
             Query = "Select 'X-Polit' as Framework ";
-            ServerType = EType.MySql;
+            ServerType = EDbType.MySql;
             QueryOutFormat = EFormat.Console;
         }
 
@@ -182,7 +169,7 @@ namespace Auxiliary.Local
             return false;
         }
 
-        DbConnection Get()
+        public DbConnection Get()
         {
             if (QueryOutFormat != EFormat.Console)
             {
@@ -192,15 +179,7 @@ namespace Auxiliary.Local
                     throw (new Exception(QueryOutFormat.ToString() + " Format require set 'QueryOutFile' Property"));
             }
 
-            switch (ServerType)
-            {
-                case EType.Oracle: return new OracleConnection(ConnectionString);
-                case EType.SqlServer: return new SqlConnection(ConnectionString);
-                case EType.OleDb: return new OleDbConnection(ConnectionString);
-                case EType.Odbc: return new OdbcConnection(ConnectionString);
-                case EType.MySql: return new MySqlConnection(ConnectionString);
-            }
-            return null;
+            return DBHelper.GetDB(ServerType, ConnectionString);
         }
     }
 }

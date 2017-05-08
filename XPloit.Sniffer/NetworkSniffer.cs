@@ -219,7 +219,7 @@ namespace XPloit.Sniffer
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                //_Queue.Enqueue(o);
+                //foreach (object o in ls) _Queue.Enqueue(o);
             }
 
         }

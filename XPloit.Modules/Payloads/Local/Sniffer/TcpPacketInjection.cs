@@ -30,6 +30,7 @@ namespace Payloads.Local.Sniffer
         public bool CaptureOnPacket { get { return false; } }
         #endregion
 
+        public void Start(object sender) { }
         public void Stop(object sender) { }
         public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)

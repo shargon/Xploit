@@ -28,7 +28,9 @@ namespace Auxiliary.Local
             bool CaptureOnPacket { get; }
             bool Check();
 
+            void Start(object sender);
             void Stop(object sender);
+
             void Dequeue(object sender, object[] obj);
             void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
             void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet);
@@ -91,6 +93,8 @@ namespace Auxiliary.Local
             //if (!SystemHelper.IsAdministrator())
             //    WriteError("Require admin rights");
             if (!pay.Check()) return false;
+
+            pay.Start(this);
             if (FilterOnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
 
             NetworkSniffer s = new NetworkSniffer(Interface)

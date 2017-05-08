@@ -39,6 +39,7 @@ namespace Payloads.Local.Sniffer
                 stream.Destination.ToString().Replace(":", ",") + ".dump");
         }
         public void Dequeue(object sender, object[] obj) { }
+        public void Start(object sender) { }
         public void Stop(object sender) { }
     }
 }
