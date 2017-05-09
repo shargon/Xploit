@@ -16,5 +16,14 @@ namespace XPloit
         /// File for play command
         /// </summary>
         public string Play { get; set; }
+        /// <summary>
+        /// Interactive
+        /// </summary>
+        public bool Interactive { get; set; }
+
+        public Config()
+        {
+            Interactive = true;
+        }
     }
 }

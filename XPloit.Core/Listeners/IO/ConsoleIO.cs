@@ -9,9 +9,9 @@ namespace XPloit.Core.Listeners.IO
         bool _IsInteractive;
         public Action<object, ConsoleCancelEventArgs> CancelKeyPress { get; set; }
 
-        public ConsoleIO()
+        public ConsoleIO(bool interactive)
         {
-            _IsInteractive = Environment.UserInteractive;
+            _IsInteractive = interactive;
 
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;

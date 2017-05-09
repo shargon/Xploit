@@ -77,7 +77,7 @@
     <Compile Include="Extractors\HttpCredential.cs" />
     <Compile Include="Extractors\Pop3Credential.cs" />
     <Compile Include="Extractors\TelnetCredential.cs" />
-    <Compile Include="Filters\IPFilter.cs" />
+    <Compile Include="Filters\SnifferIPFilter.cs" />
     <Compile Include="Filters\SnifferPortFilter.cs" />
     <Compile Include="Filters\SnifferProtocolFilter.cs" />
     <Compile Include="Filters\SnifferTorFilter.cs" />
@@ -95,6 +95,10 @@
     <ProjectReference Include="..\SharpPcap\SharpPcap.csproj">
       <Project>{7d75ca11-8745-4382-b3eb-c41416dbc48c}</Project>
       <Name>SharpPcap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XPloit.Core\XPloit.Core.csproj">
+      <Project>{5333aa93-b792-47cc-b006-ef7e234c1234}</Project>
+      <Name>XPloit.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xploit.Helpers\XPloit.Helpers.csproj">
       <Project>{0981e164-5930-4ba0-983c-1cf679e5033f}</Project>

@@ -46,7 +46,7 @@ namespace XPloit.Core.Helpers
                 else if (command is SqlCommand) _Type = EDbType.SqlServer;
                 else if (command is OleDbCommand) _Type = EDbType.OleDb;
                 else if (command is OdbcCommand) _Type = EDbType.Odbc;
-                else if (command is OracleCommand) _Type = EDbType.Oracle;
+                //else if (command is OracleCommand) _Type = EDbType.Oracle;
             }
 
             public void AddParameter(string name, object value)

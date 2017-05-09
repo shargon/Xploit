@@ -28,9 +28,11 @@ namespace XPloit
             BuildLink.Dummy();
 
             // Configure
-            //Console.InputEncoding = Encoding.UTF8;
-            //Console.OutputEncoding = Encoding.UTF8;
-            using (CommandLayer command = new CommandLayer(new ConsoleIO()))
+            // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
+            // \"CryptKey=#Crypt0M3#\" 
+            Config cfg = ArgumentHelper.Parse<Config>(args);// ("\"Replay=d:\\temp\\console.txt\" \"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
+
+            using (CommandLayer command = new CommandLayer(new ConsoleIO(cfg.Interactive)))
             {
                 command.SetBackgroundColor(ConsoleColor.White);
                 command.SetBackgroundColor(ConsoleColor.Black);
@@ -43,16 +45,19 @@ namespace XPloit
 
                 if (GeoLite2LocationProvider.Current == null)
                 {
-                    /// TODO: Config the default GeoIp
-                    if (GeoLite2LocationProvider.LoadCurrent(
-                         Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-Blocks-IP.csv.gz"),
-                         Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-City-Locations-es.csv.gz")))
-                        command.WriteInfo("Loaded GeoIp", GeoLite2LocationProvider.Current.Count.ToString(), ConsoleColor.Green);
-                }
+                    // TODO: Config the default GeoIp
 
-                // TODO: Fix \"CryptKey=#Crypt0 M3#\" -> broken line whith white space
-                // \"CryptKey=#Crypt0M3#\" 
-                Config cfg = ArgumentHelper.Parse<Config>(args);// ("\"Replay=d:\\temp\\console.txt\" \"Listen={Port=23 CryptKey=#Test# IPFilter={OnlyAllowed=127.0.0.1,172.22.32.51}}\" \"User={UserName=root Password=toor}\"");
+                    string file1 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-Blocks-IP.csv.gz");
+                    string file2 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-City-Locations-es.csv.gz");
+
+                    if (File.Exists(file1) && File.Exists(file2))
+                    {
+                        command.WriteInfo("GeoIp files found, loading ...");
+
+                        if (GeoLite2LocationProvider.LoadCurrent(file1, file2))
+                            command.WriteInfo("Loaded GeoIp", GeoLite2LocationProvider.Current.Count.ToString(), ConsoleColor.Green);
+                    }
+                }
 
                 // Run file
                 if (!string.IsNullOrEmpty(cfg.Play))

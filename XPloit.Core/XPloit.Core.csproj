@@ -96,7 +96,6 @@
     <Compile Include="Interfaces\INopPhp.cs" />
     <Compile Include="Interfaces\INopAsm.cs" />
     <Compile Include="Interfaces\TcpModule.cs" />
-    <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuHelp.cs" />
     <Compile Include="Command\DefaultItems\CommandMenuQuit.cs" />
     <Compile Include="Enums\EArquitecture.cs" />
@@ -206,10 +205,12 @@
     <Compile Include="Dns\TSig\TSigRecord.cs" />
     <Compile Include="Extensions\IPAddressExtension.cs" />
     <Compile Include="Listeners\IO\ConsoleCursor.cs" />
+    <Compile Include="Listeners\IO\ConsoleIO.cs" />
     <Compile Include="ModuleHeader.cs" />
     <Compile Include="Mongo\RemovableValueT.cs" />
     <Compile Include="Mongo\XploitMongoRepository.cs" />
     <Compile Include="NotificationCenter.cs" />
+    <Compile Include="Sockets\Configs\IPFilter.cs" />
     <Compile Include="Sockets\Enums\EXPloitSocketMsgHeader.cs" />
     <Compile Include="Sockets\Headers\XPloitMsgHeaderReply.cs" />
     <Compile Include="Sockets\Headers\XPloitMsgHeaderId.cs" />
@@ -303,10 +304,6 @@
     <ProjectReference Include="..\XPloit.Res\XPloit.Res.csproj">
       <Project>{912c9a24-1f3d-4dec-973c-02b93303ffd4}</Project>
       <Name>XPloit.Res</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XPloit.Sniffer\XPloit.Sniffer.csproj">
-      <Project>{679bba57-3063-4f17-b491-4f0a730d6b02}</Project>
-      <Name>XPloit.Sniffer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,9 @@
-﻿using PacketDotNet;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
-using XPloit.Sniffer.Interfaces;
 
-namespace XPloit.Sniffer.Filters
+namespace XPloit.Core.Sockets.Configs
 {
-    public class IPFilter : IIpPacketFilter
+    public class IPFilter  
     {
         /// <summary>
         /// Not allowed ips
@@ -16,13 +14,6 @@ namespace XPloit.Sniffer.Filters
         /// </summary>
         public List<IPAddress> OnlyAllowed { get; set; }
 
-        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
-        {
-            if (IsAllowed(source.Address)) return true;
-            if (IsAllowed(dest.Address)) return true;
-
-            return false;
-        }
         /// <summary>
         /// Check if ip its allowed
         /// </summary>

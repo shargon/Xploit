@@ -1,6 +1,4 @@
-﻿using XPloit.Sniffer.Filters;
-
-namespace XPloit.Core.Sockets.Configs
+﻿namespace XPloit.Core.Sockets.Configs
 {
     public class ListenSocketConfig : ClientSocketConfig
     {

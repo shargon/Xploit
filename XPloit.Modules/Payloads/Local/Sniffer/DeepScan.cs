@@ -86,6 +86,7 @@ namespace Payloads.Local.Sniffer
         public bool Check()
         {
             Start(null);
+            if (DB == null) return true;
 
             using (DBHelper.DbCommandEx cmd = new DBHelper.DbCommandEx(DB))
             {

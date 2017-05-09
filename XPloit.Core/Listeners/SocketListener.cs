@@ -8,7 +8,6 @@ using XPloit.Core.Sockets.Enums;
 using XPloit.Core.Sockets.Interfaces;
 using XPloit.Core.Sockets.Protocols;
 using XPloit.Helpers;
-using XPloit.Sniffer.Filters;
 
 namespace XPloit.Core.Listeners
 {
