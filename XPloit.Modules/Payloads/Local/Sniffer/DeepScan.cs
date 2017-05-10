@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `credentials_telnet` (
                     cmd.ExecuteNonQuery();
                     WriteInfo("Creating credentials_telnet table", "OK", ConsoleColor.Green);
                 }
-                if (!cmd.TableExists("credentials_telnet"))
+                if (!cmd.TableExists("credentials_ftp"))
                 {
                     cmd.CommandText = @"
 CREATE TABLE IF NOT EXISTS `credentials_ftp` (

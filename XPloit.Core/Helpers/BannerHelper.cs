@@ -56,6 +56,7 @@ namespace XPloit.Core.Helpers
         {
             command.WriteLine(" |  |   _   |  |   _   _    _ _    _     |_   _     \\/   _   |   _   °  |_ ");
             command.WriteLine(" |/\\|  (/_  |  |  (_  (_)  | | |  (/_    |_  (_)    /\\  |_)  |  (_)  |  |_ ");
+            command.WriteLine("                                                        |");
         }
 
         public static void GetVespino(CommandLayer command)
