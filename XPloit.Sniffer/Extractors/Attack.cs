@@ -13,7 +13,8 @@ namespace XPloit.Sniffer.Extractors
         {
             None = 0,
             HttpSqli = 1,
-            HttpXss = 2
+            HttpXss = 2,
+            HttpLfi = 3
         }
 
         /// <summary>
