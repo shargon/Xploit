@@ -43,6 +43,11 @@
   <ItemGroup>
     <Compile Include="Lang.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Res.fr.Designer.cs">
+      <DependentUpon>Res.fr.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Res.en.Designer.cs">
       <DependentUpon>Res.en.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -50,6 +55,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Res.fr.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Res.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Res.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Res.en.Designer.cs</LastGenOutput>
