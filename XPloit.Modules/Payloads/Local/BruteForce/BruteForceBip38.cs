@@ -1,4 +1,5 @@
 ﻿using Auxiliary.Local;
+using NBitcoin;
 using XPloit.Core;
 using XPloit.Core.Attributes;
 using XPloit.Core.Enums;
@@ -26,26 +27,25 @@ namespace Payloads.Local.BruteForce
         public string PrivateKey { get; set; }
         #endregion
 
+        BitcoinEncryptedSecret _Check;
+
         public bool CheckPassword(string password)
         {
-
-            return false;
+            try
+            {
+                return _Check.GetSecret(password).PubKey.ToString(Network.Main) == Address;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public bool PreRun()
         {
-            //Key key = new Key(); //Create a new key
-            //BitcoinSecret secret = key.GetBitcoinSecret(Network.Main);
-            //Console.WriteLine(secret); //Will print the key in base58 check format
-            //BitcoinEncryptedSecret encrypted = secret.Encrypt("This is my secret password");
-            //Console.WriteLine(encrypted); //Will print the encrypted key in base58 check format
-            //key = encrypted.GetKey("This is my secret password"); //Get the same key as before
-
+            _Check = BitcoinEncryptedSecret.Create("6PnYGMDUnDnLB5PHiNo8bdB3tTsBTWdaXWWDjmbvnjJiyPM6U9xPi4kaKC", Network.Main);
             return true;
         }
-        public void PostRun()
-        {
-            
-        }
+        public void PostRun() { }
     }
 }

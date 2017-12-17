@@ -114,6 +114,7 @@
     <Compile Include="Exploits\Multi\VulnServer.cs" />
     <Compile Include="Nops\AsmX86\AsmX86Nop.cs" />
     <Compile Include="Nops\Php\PhpNop.cs" />
+    <Compile Include="Payloads\Local\BruteForce\BruteForceBip38.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerRaw.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceMySQLWireshark.cs" />
     <Compile Include="Payloads\Local\BruteForce\BruteForceBitLockerAPI.cs" />
