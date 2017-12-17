@@ -43,7 +43,7 @@ namespace Payloads.Local.BruteForce
 
         public bool PreRun()
         {
-            _Check = BitcoinEncryptedSecret.Create("6PnYGMDUnDnLB5PHiNo8bdB3tTsBTWdaXWWDjmbvnjJiyPM6U9xPi4kaKC", Network.Main);
+            _Check = BitcoinEncryptedSecret.Create(Address, Network.Main);
             return true;
         }
         public void PostRun() { }
