@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using System;
 using System.Net;
 using XPloit.Helpers;
 using XPloit.Helpers.Geolocate;
@@ -10,10 +8,6 @@ namespace XPloit.Sniffer.Extractors
 {
     public class ExtractBase : ICountryRecaller
     {
-        [BsonId]
-        public ObjectId _id { get; set; }
-
-
         IPAddress _Address;
         /// <summary>
         /// Date
@@ -43,10 +37,7 @@ namespace XPloit.Sniffer.Extractors
         /// <summary>
         /// Constructor
         /// </summary>
-        protected ExtractBase()
-        {
-            _id = ObjectId.GenerateNewId(DateTime.UtcNow);
-        }
+        protected ExtractBase() { }
         /// <summary>
         /// Base
         /// </summary>

@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Net;
@@ -21,7 +19,6 @@ namespace XPloit.Sniffer.Extractors
         /// Credential type
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]  // JSON.Net
-        [BsonRepresentation(BsonType.String)]         // Mongo
         public EAttackType Type { get; set; }
         /// <summary>
         /// Is Valid
