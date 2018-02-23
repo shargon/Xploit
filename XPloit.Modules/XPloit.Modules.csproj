@@ -104,6 +104,7 @@
     <Compile Include="Auxiliary\Local\ProcessKill.cs" />
     <Compile Include="Auxiliary\Local\WordListGenerator.cs" />
     <Compile Include="Auxiliary\Local\Windows\WMIManager.cs" />
+    <Compile Include="Encoders\Xor.cs" />
     <Compile Include="Exploits\Multi\Netcat\PrintFormat.cs" />
     <Compile Include="Auxiliary\Multi\SSH\FastExecution.cs" />
     <Compile Include="Auxiliary\Multi\SSH\SShBaseModule.cs" />
