@@ -87,6 +87,7 @@
     <Compile Include="Auxiliary\Local\Fuzzing\StreamFuzzer.cs" />
     <Compile Include="Auxiliary\Local\DatabaseQuery.cs" />
     <Compile Include="Auxiliary\Local\FileToHex.cs" />
+    <Compile Include="Auxiliary\Local\Windows\EntropyCalcExe.cs" />
     <Compile Include="Auxiliary\Local\Windows\KeyDown.cs" />
     <Compile Include="Auxiliary\Local\Windows\BinaryFromScreen.cs" />
     <Compile Include="Auxiliary\Local\RSync.cs" />
