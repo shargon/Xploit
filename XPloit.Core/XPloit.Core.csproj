@@ -88,6 +88,7 @@
     <Compile Include="Command\CommandTable.cs" />
     <Compile Include="Command\CommandTableCol.cs" />
     <Compile Include="Command\CommandTableRow.cs" />
+    <Compile Include="Cryptopgraphy\MD4.cs" />
     <Compile Include="Enums\EDbType.cs" />
     <Compile Include="Helpers\AsmHelper.cs" />
     <Compile Include="Helpers\BannerHelper.cs" />
