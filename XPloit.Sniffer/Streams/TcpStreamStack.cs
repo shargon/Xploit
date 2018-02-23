@@ -10,10 +10,16 @@ namespace XPloit.Sniffer.Streams
 {
     public class TcpStreamStack
     {
+        public class ResumePacket
+        {
+            public DateTime Date;
+            public PhysicalAddress HwSource, HwDest;
+            public IPEndPoint IpSource, IpDest;
+            public TcpPacket Tcp;
+        }
+
         Dictionary<string, TcpStream> _TcpStreams = new Dictionary<string, TcpStream>();
 
-        int _Dropped;
-        public int Dropped { get { return _Dropped; } }
         public TimeSpan TimeoutSync { get; set; }
         public TimeSpan Timeout { get; set; }
 
@@ -48,13 +54,13 @@ namespace XPloit.Sniffer.Streams
         {
             lock (_TcpStreams) return _TcpStreams.Remove(key);
         }
-        public bool GetStream(PhysicalAddress hwSource, PhysicalAddress hwDest, IPEndPoint ipSource, IPEndPoint ipDest, TcpPacket tcp, DateTime date, EStartTcpStreamMethod startTcpStreamMethod, out TcpStream stream)
+        public bool GetStream(ResumePacket packet, EStartTcpStreamMethod startTcpStreamMethod, out TcpStream stream)
         {
             ETcpEmisor em;
-            if (!TryGetValue(ipSource, ipDest, out stream, out em))
+            if (!TryGetValue(packet.IpSource, packet.IpDest, out stream, out em))
             {
-                bool syn = tcp.Syn;
-                bool ack = tcp.Ack;
+                bool syn = packet.Tcp.Syn;
+                bool ack = packet.Tcp.Ack;
 
                 // No data or no Sync
                 switch (startTcpStreamMethod)
@@ -81,14 +87,14 @@ namespace XPloit.Sniffer.Streams
 
                 lock (_TcpStreams)
                 {
-                    stream = new TcpStream(this, syn && ack ? ETcpEmisor.Server : ETcpEmisor.Client, hwSource, hwDest, ipSource, ipDest, tcp, date);
+                    stream = new TcpStream(this, syn && ack ? ETcpEmisor.Server : ETcpEmisor.Client, packet.HwSource, packet.HwDest, packet.IpSource, packet.IpDest, packet.Tcp, packet.Date);
                     _TcpStreams.Add(stream.Key, stream);
                 }
                 return true;
             }
 
             if (!stream.IsClossed)
-                stream.Add(date, em, tcp);
+                stream.Add(packet.Date, em, packet.Tcp);
 
             return false;
         }
@@ -104,7 +110,6 @@ namespace XPloit.Sniffer.Streams
                 lock (v) if (!v.IsClossed && !IsTimeouted(v, date))
                     {
                         v.Close();
-                        _Dropped++;
                         yield return v;
                     }
             }

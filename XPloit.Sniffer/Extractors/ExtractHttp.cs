@@ -17,6 +17,7 @@ namespace XPloit.Sniffer.Extractors
     {
         static string[] SqliWordList = new string[] { "concat(", "unionselect", "sysobjects", "1'='1", "version(", "@@version", "mysql.user", "xp_cmdshell", "groupby", "information_schema" };
         static string[] XssWordList = new string[] { "<script", "onerror=", "onmouseover=", "document.cookie", "javascript:" };
+        static string[] LfiWordList = new string[] { "../../", "/etc/passwd", "/etc/shadow", "php://" };
 
         static string[] UserWordList = new string[] {/* "u",*/ "login", "uid", "id", "userid", "user_id", "user", "uname", "username", "user_name", "usuario", "mail", "email", "name", "user_login", "email_login" };
         static string[] PasswordWordList = new string[] {/* "p",*/ "pass", "password", "key", "pwd", "clave", "hash", "password_login" };
@@ -26,7 +27,8 @@ namespace XPloit.Sniffer.Extractors
             User,
             Pass,
             SQLI,
-            XSS
+            XSS,
+            LFI
         }
 
         static IObjectExtractor _Current = new ExtractHttp();
@@ -143,12 +145,12 @@ namespace XPloit.Sniffer.Extractors
                                 }
                             }
 
-                            foreach (EDic attack in new EDic[] { EDic.SQLI, EDic.XSS })
+                            foreach (EDic attack in new EDic[] { EDic.SQLI, EDic.XSS, EDic.LFI })
                             {
                                 Dictionary<string, string> get = new Dictionary<string, string>();
                                 Dictionary<string, string> post = new Dictionary<string, string>();
 
-                                if (FillCoincidences(r.GET, attack, get) || 
+                                if (FillCoincidences(r.GET, attack, get) ||
                                     FillCoincidences(r.POST, attack, post))
                                 {
                                     Attack.EAttackType type;
@@ -156,6 +158,7 @@ namespace XPloit.Sniffer.Extractors
                                     {
                                         case EDic.SQLI: type = Attack.EAttackType.HttpSqli; break;
                                         case EDic.XSS: type = Attack.EAttackType.HttpXss; break;
+                                        case EDic.LFI: type = Attack.EAttackType.HttpLfi; break;
                                         default: continue;
                                     }
 
@@ -259,8 +262,10 @@ namespace XPloit.Sniffer.Extractors
             {
                 case EDic.User: return UserWordList;
                 case EDic.Pass: return PasswordWordList;
+
                 case EDic.SQLI: return SqliWordList;
                 case EDic.XSS: return XssWordList;
+                case EDic.LFI: return LfiWordList;
             }
 
             return null;

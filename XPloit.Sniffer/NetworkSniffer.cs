@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using XPloit.Sniffer.Enums;
@@ -19,7 +18,7 @@ namespace XPloit.Sniffer
 {
     public class NetworkSniffer : IDisposable
     {
-        const ushort BufferLength = 32 * 1024;
+        //const ushort BufferLength = 32 * 1024;
         //readonly Socket _socket;
 
         public delegate void delOnQueueObject(object sender, object[] enqueue);
@@ -35,19 +34,13 @@ namespace XPloit.Sniffer
         bool _IsDisposed, _HasFilters;
         ICaptureDevice _Device;
 
+        DateTime _ProcessDate = DateTime.MaxValue;
         BackgroundWorker _WorkerClean = new BackgroundWorker() { WorkerSupportsCancellation = true };
         BackgroundWorker _WorkerQueue = new BackgroundWorker() { WorkerSupportsCancellation = true };
-        BlockingCollection<cPacket> _SyncPackets = new BlockingCollection<cPacket>();
+        BlockingCollection<TcpStreamStack.ResumePacket> _SyncPackets = new BlockingCollection<TcpStreamStack.ResumePacket>();
         ConcurrentQueue<object> _Queue = new ConcurrentQueue<object>();
 
         public event delOnQueueObject OnDequeue;
-        class cPacket
-        {
-            public DateTime Date;
-            public PhysicalAddress HwSource, HwDest;
-            public IPEndPoint IpSource, IpDest;
-            public TcpPacket Tcp;
-        }
 
         public TimeSpan TimeoutSync { get { return _TcpStack.TimeoutSync; } set { _TcpStack.TimeoutSync = value; } }
         public TimeSpan Timeout { get { return _TcpStack.Timeout; } set { _TcpStack.Timeout = value; } }
@@ -149,13 +142,12 @@ namespace XPloit.Sniffer
 
             OnCaptureStop?.Invoke(sender, status);
         }
-        DateTime _ProcessDate = DateTime.MaxValue;
         void _Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            foreach (cPacket pc in _SyncPackets.GetConsumingEnumerable())
+            foreach (TcpStreamStack.ResumePacket pc in _SyncPackets.GetConsumingEnumerable())
             {
                 TcpStream stream;
-                bool isNew = _TcpStack.GetStream(pc.HwSource, pc.HwDest, pc.IpSource, pc.IpDest, pc.Tcp, pc.Date, StartTcpStreamMethod, out stream);
+                bool isNew = _TcpStack.GetStream(pc, StartTcpStreamMethod, out stream);
 
                 _ProcessDate = pc.Date;
                 if (stream != null && OnTcpStream != null)
@@ -177,14 +169,14 @@ namespace XPloit.Sniffer
                     t.Start();
                 }
 
-                Thread.Sleep(500);
+                Thread.Sleep(400);
                 if (!((_WorkerClean != null && !_WorkerClean.CancellationPending && !e.Cancel))) break;
 
                 if (OnTcpStream != null)
                     foreach (TcpStream stream in _TcpStack.CleanByTimeout(_ProcessDate))
                         OnTcpStream(this, stream, false, _Queue);
 
-                Thread.Sleep(500);
+                Thread.Sleep(400);
             }
 
             if (OnTcpStream != null)
@@ -221,7 +213,6 @@ namespace XPloit.Sniffer
                 Console.WriteLine(ex.ToString());
                 //foreach (object o in ls) _Queue.Enqueue(o);
             }
-
         }
         void Device_OnPacketArrival(object sender, CaptureEventArgs e)
         {
@@ -246,10 +237,13 @@ namespace XPloit.Sniffer
                         if (_HasFilters && !IsAllowedPacket(source, dest, IPProtocolType.TCP)) return;
                         OnPacket?.Invoke(this, ip.Protocol, et);
 
-                        if (_SyncPackets.Count > 40000)
+                        if (_SyncPackets.Count > 45000)
+                        {
+                            GC.Collect();
                             Thread.Sleep(1);
+                        }
 
-                        _SyncPackets.TryAdd(new cPacket()
+                        _SyncPackets.TryAdd(new TcpStreamStack.ResumePacket()
                         {
                             Date = e.Packet.Timeval.Date,
 
@@ -294,7 +288,7 @@ namespace XPloit.Sniffer
             //else 
 
             _Device.OnPacketArrival += Device_OnPacketArrival;
-            _SyncPackets = new BlockingCollection<cPacket>();
+            _SyncPackets = new BlockingCollection<TcpStreamStack.ResumePacket>();
             _Device.Open();
             if (!string.IsNullOrEmpty(Filter)) _Device.Filter = Filter;
             _Device.StartCapture();
@@ -349,9 +343,9 @@ namespace XPloit.Sniffer
         }*/
         bool IsAllowedPacket(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
         {
-            if (_Filters != null)
-                foreach (IIpPacketFilter filter in _Filters)
-                    if (!filter.IsAllowed(source, dest, protocol)) return false;
+            //if (_HasFilters)
+            foreach (IIpPacketFilter filter in _Filters)
+                if (!filter.IsAllowed(source, dest, protocol)) return false;
 
             return true;
         }
@@ -363,7 +357,10 @@ namespace XPloit.Sniffer
                 {
                     if (_Device.Started) _Device.Close();
                 }
-                catch (Exception e)
+                catch
+#if DEBUG
+                (Exception e)
+#endif
                 {
 
                 }
@@ -380,7 +377,7 @@ namespace XPloit.Sniffer
             // Clean
             while (_SyncPackets.Count > 0)
             {
-                cPacket item;
+                TcpStreamStack.ResumePacket item;
                 _SyncPackets.TryTake(out item);
             }
         }
