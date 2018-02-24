@@ -132,6 +132,8 @@
     <Compile Include="Payloads\Local\Windows\WMI\Query\Auto.cs" />
     <Compile Include="Payloads\Local\Windows\WMI\Action\ExecuteProcess.cs" />
     <Compile Include="Payloads\Multi\Windows\x86\PayloadX86WindowsMessageBox.cs" />
+    <Compile Include="Payloads\Evasion\Evasion_helpers.cs" />
+    <Compile Include="Payloads\Remote\Windows\cs\Meterpreter\rev_http.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -166,7 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Auxiliary\Remote\" />
-    <Folder Include="Payloads\Remote\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
