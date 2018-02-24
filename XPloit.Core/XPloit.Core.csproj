@@ -77,6 +77,11 @@
     <Compile Include="BruteForce\BruteForce.cs" />
     <Compile Include="BruteForce\BruteForceAllowedChars.cs" />
     <Compile Include="BruteForce\BruteForceStep.cs" />
+    <Compile Include="Charset\Cyrillic.cs" />
+    <Compile Include="Charset\Latin.cs" />
+    <Compile Include="Charset\Mix.cs" />
+    <Compile Include="Charset\Pattern.cs" />
+    <Compile Include="Charset\Special.cs" />
     <Compile Include="Collections\EncoderCollection.cs" />
     <Compile Include="Collections\JobCollection.cs" />
     <Compile Include="Collections\IModuleCollection.cs" />
