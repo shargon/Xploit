@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -182,5 +184,35 @@ namespace XPloit.Helpers
             if (bytes < 1024) return bytes.ToString() + " b";
             return bytes.ToString() + " b -> " + StringHelper.Convert2Kb(bytes);
         }
+
+        /// <summary>
+        /// Random String
+        /// </summary>
+        /// <param name="maxSize"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+
+        public static string RandomUniqString(int maxSize, List<string> list)
+        {
+
+            Random rnd = new Random(DateTime.Now.Millisecond - DateTime.Now.Second - DateTime.Now.Minute);
+            list = list.OrderBy(x => rnd.Next()).ToList();
+
+            byte[] data = new byte[1];
+
+            using (RNGCryptoServiceProvider cryptoServiceProvider = new RNGCryptoServiceProvider())
+            {
+                cryptoServiceProvider.GetNonZeroBytes(data);
+                data = new byte[maxSize];
+                cryptoServiceProvider.GetNonZeroBytes(data);
+            }
+
+            StringBuilder stringBuilder = new StringBuilder(maxSize);
+            foreach (byte num in data)
+                stringBuilder.Append(list[(int)num % list.Count]);
+
+            return stringBuilder.ToString();
+        }
+
     }
 }
