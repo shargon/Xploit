@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,6 +10,8 @@ namespace XPloit.Helpers
 {
     public class StringHelper
     {
+        static Random Rand = new Random();
+
         /// <summary>
         /// Split the first word, separated by whitespace, from the rest of the string and return it.
         /// </summary>
@@ -181,6 +185,32 @@ namespace XPloit.Helpers
         {
             if (bytes < 1024) return bytes.ToString() + " b";
             return bytes.ToString() + " b -> " + StringHelper.Convert2Kb(bytes);
+        }
+
+        /// <summary>
+        /// Random String
+        /// </summary>
+        /// <param name="maxSize"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static string RandomUniqString(int maxSize, List<string> list)
+        {
+            list = list.OrderBy(x => Rand.Next()).ToList();
+
+            byte[] data = new byte[1];
+
+            using (RNGCryptoServiceProvider cryptoServiceProvider = new RNGCryptoServiceProvider())
+            {
+                cryptoServiceProvider.GetNonZeroBytes(data);
+                data = new byte[maxSize];
+                cryptoServiceProvider.GetNonZeroBytes(data);
+            }
+
+            StringBuilder stringBuilder = new StringBuilder(maxSize);
+            foreach (byte num in data)
+                stringBuilder.Append(list[(int)num % list.Count]);
+
+            return stringBuilder.ToString();
         }
     }
 }
