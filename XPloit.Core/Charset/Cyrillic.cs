@@ -34,7 +34,6 @@ namespace XPloit.Core.Charset
             {
                 //lcyrillic
                 CharsetSelecting = Cyrillic.ToList();
-
             }
             else if (charsetName == "lcyrillic-space")
             {
@@ -155,48 +154,41 @@ namespace XPloit.Core.Charset
         /// <returns></returns>
         public static List<string> AlphabettMix(string charsetName)
         {
-
             if (charsetName == "mixcyrillic")
             {
                 //mixcyrillic
                 CharsetSelecting = Cyrillic.Concat(Cyrillic.ConvertAll(item => item.ToUpper())).ToList();
                 Validated = false;
-
             }
             else if (charsetName == "mixcyrillic-space")
             {
                 //mixcyrillic-space
                 CharsetSelecting = Cyrillic.Concat(Cyrillic.ConvertAll(item => item.ToUpper())).Concat(Space).ToList();
                 Validated = false;
-
             }
             else if (charsetName == "mixcyrillic-numeric")
             {
                 //mixcyrillic-numeric
                 CharsetSelecting = Cyrillic.Concat(Cyrillic.ConvertAll(item => item.ToUpper())).Concat(Digits).ToList();
                 Validated = false;
-
             }
             else if (charsetName == "mixcyrillic-numeric-space")
             {
                 //mixcyrillic-numeric-space
                 CharsetSelecting = Cyrillic.Concat(Cyrillic.ConvertAll(item => item.ToUpper())).Concat(Digits).Concat(Space).ToList();
                 Validated = false;
-
             }
             else if (charsetName == "mixcyrillic-numeric-symbol14")
             {
                 //mixcyrillic-numeric-symbol14
                 CharsetSelecting = Cyrillic.Concat(Cyrillic.ConvertAll(item => item.ToUpper())).Concat(Digits).Concat(Symbols14).ToList();
                 Validated = false;
-
             }
             else if (charsetName == "mixcyrillic-numeric-symbol14-space")
             {
                 //mixcyrillic-numeric-symbol14-space
                 CharsetSelecting = Cyrillic.Concat(Cyrillic.ConvertAll(item => item.ToUpper())).Concat(Digits).Concat(Symbols14).Concat(Space).ToList();
                 Validated = false;
-
             }
             else if (charsetName == "mixcyrillic-numeric-all")
             {

@@ -97,6 +97,7 @@
     <Compile Include="Helpers\AsmHelper.cs" />
     <Compile Include="Helpers\BannerHelper.cs" />
     <Compile Include="Helpers\DBHelper.cs" />
+    <Compile Include="Helpers\EvasionHelper.cs" />
     <Compile Include="Interfaces\IJobable.cs" />
     <Compile Include="Interfaces\INopPhp.cs" />
     <Compile Include="Interfaces\INopAsm.cs" />

@@ -46,7 +46,6 @@ namespace XPloit.Core.Charset
             return CharsetSelecting;
         }
 
-
         /// <summary>
         /// Transform Method Digit  
         /// </summary>
@@ -106,4 +105,3 @@ namespace XPloit.Core.Charset
         }
     }
 }
-

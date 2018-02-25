@@ -1,12 +1,12 @@
 ﻿using XPloit.Core.Charset;
 using XPloit.Helpers;
 
-namespace Payloads.Evasion
+namespace XPloit.Core.Helpers
 {
-    public class Evasion_helpers
+    public class EvasionHelper
     {
         private static string RandomVariable(string OBFUSCATION)
-        {            
+        {
             switch (OBFUSCATION)
             {
                 case "lalpha":
@@ -58,11 +58,11 @@ namespace Payloads.Evasion
                     {
                         OBFUSCATION = StringHelper.RandomUniqString(IntegerHelper.RandomInterger(20), Latin.AlphabetSvLowercase("sv-lalpha"));
                     }
-                    else if(select == 5 )
+                    else if (select == 5)
                     {
                         OBFUSCATION = StringHelper.RandomUniqString(IntegerHelper.RandomInterger(20), Latin.AlphabetSvMixcase("sv-ualpha"));
                     }
-                    else if(select == 6)
+                    else if (select == 6)
                     {
                         OBFUSCATION = StringHelper.RandomUniqString(IntegerHelper.RandomInterger(20), Latin.AlphabetSvMixcase("sv-mixalpha"));
                     }
@@ -90,7 +90,7 @@ namespace Payloads.Evasion
 
         public static string Variable(string variable, string OBFUSCATION)
         {
-            return (OBFUSCATION == "none") ? variable : Evasion_helpers.RandomVariable(OBFUSCATION);
+            return (OBFUSCATION == "none") ? variable : RandomVariable(OBFUSCATION);
         }
     }
 }

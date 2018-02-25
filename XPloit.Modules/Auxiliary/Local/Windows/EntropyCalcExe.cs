@@ -1,45 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
-using System.Windows.Forms;
 using XPloit.Core;
-using XPloit.Core.Enums;
 using XPloit.Core.Attributes;
 using XPloit.Helpers;
 using XPloit.Helpers.Attributes;
-using XPloit.Windows.Api;
-using XPloit.Windows.Api.Native;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace Auxiliary.Local.Windows
 {
     [ModuleInfo(Author = "Teeknofil", Description = "Entropy calculator should only be used with PE files")]
     public class EntropyCalcExe : Module
     {
-
         #region Properties
-        [ConfigurableProperty(Description = "Payload")]
-        public string payloadPath { get; set; }
-      
+        [ConfigurableProperty(Description = "Payload", Optional = false)]
+        public FileInfo payloadPath { get; set; }
         #endregion
-
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public EntropyCalcExe()
-        {
-           
-        }
-
 
         static string pack(double t)
         {
@@ -109,7 +83,6 @@ namespace Auxiliary.Local.Windows
             return h;
         }
 
-
         static int m(int x, int y)
         {
             int r = 0, f = 0, n = 0;
@@ -143,17 +116,20 @@ namespace Auxiliary.Local.Windows
             return r;
         }
 
-
-
         public override bool Run()
         {
-            Console.Write("\nEntropy Calculator\n");
-            byte[] b = File.ReadAllBytes(payloadPath);
+            WriteInfo("Entropy Calculator");
+            byte[] b = File.ReadAllBytes(payloadPath.FullName);
             double a = entropyA(b, b.Length);
             double _B = entropyB(b, b.Length);
             double t = (a * _B);
             shift(ref t, _B);
-            Console.Write("\tTotal File Length : {0} Bytes \n\tEntropy Level : {1}\n\tPacked: {2}\n\tTr.Dropper : {3}\n\n", b.Length, t, pack(t), dropper(t));
+
+            WriteInfo("Total File Length .", StringHelper.Convert2KbWithBytes(b.Length), ConsoleColor.Green);
+            WriteInfo("Entropy Level .....", t.ToString(), ConsoleColor.Green);
+            WriteInfo("Packed ............", pack(t), ConsoleColor.Green);
+            WriteInfo("Tr.Dropper ........", dropper(t), ConsoleColor.Green);
+
             return true;
         }
     }

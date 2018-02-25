@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace XPloit.Helpers
 {
     public class IntegerHelper
     {
+        static Random Rand = new Random();
         /// <summary>
         /// Ramdom numbers with custom seed
         /// </summary>
         /// <param name="max"></param>
         /// <returns></returns>
-
         public static int RandomInterger(int max)
         {
-            Thread.Sleep(1);
-            Random rdm = new Random(DateTime.Now.Millisecond - DateTime.Now.Second - DateTime.Now.Minute * max * max++);
-            return rdm.Next(max);
+            return Rand.Next(max);
         }
 
         /// <summary>
@@ -32,23 +27,15 @@ namespace XPloit.Helpers
         /// <returns></returns>
         public static int RandomInterger(int min, int max)
         {
-            int i = 0;
-            Thread.Sleep(1);
-            Random rdm = new Random(DateTime.Now.Millisecond - DateTime.Now.Second - DateTime.Now.Minute * max * max++);
-
             if (max > min)
             {
-                i = rdm.Next(min, max);
+                return Rand.Next(min, max);
             }
             else
             {
-                i = rdm.Next(max, min);
+                return Rand.Next(max, min);
             }
-
-            return i;
         }
-
-        
 
         /// <summary>
         /// Ramdom big numbers with custom value
@@ -57,7 +44,6 @@ namespace XPloit.Helpers
         /// <returns></returns>
         public static BigInteger RandomBigInteger(int seedNumber)
         {
-
             if (seedNumber > 9999)
             {
                 seedNumber = 9999;
@@ -65,8 +51,7 @@ namespace XPloit.Helpers
 
             char[] chArray1 = new char[62];
             char[] chArray2 = "0123456789".ToCharArray();
-            Random rnd = new Random(DateTime.Now.Millisecond);
-            chArray2 = chArray2.OrderBy(x => rnd.Next()).ToArray();
+            chArray2 = chArray2.OrderBy(x => Rand.Next()).ToArray();
             byte[] data = new byte[1];
 
             using (RNGCryptoServiceProvider cryptoServiceProvider = new RNGCryptoServiceProvider())
@@ -78,10 +63,9 @@ namespace XPloit.Helpers
 
             StringBuilder stringBuilder = new StringBuilder(seedNumber);
             foreach (byte num in data)
-                stringBuilder.Append(chArray2[(int)num % chArray2.Length]);
+                stringBuilder.Append(chArray2[num % chArray2.Length]);
 
             return BigInteger.Parse(stringBuilder.ToString());
         }
-
     }
 }

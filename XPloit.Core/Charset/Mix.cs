@@ -16,11 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XPloit.Core.Charset
 {
@@ -38,7 +35,6 @@ namespace XPloit.Core.Charset
             return CharsetSelecting = list1.Concat(list2).ToList();
         }
 
-
         /// <summary>
         /// Mix three Transform Method
         /// </summary>
@@ -51,7 +47,6 @@ namespace XPloit.Core.Charset
             Validated = false;
             return CharsetSelecting = list1.Concat(list2).Concat(list3).ToList();
         }
-
 
         /// <summary>
         /// Mix four Transform Method

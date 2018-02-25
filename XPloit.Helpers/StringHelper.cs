@@ -10,6 +10,8 @@ namespace XPloit.Helpers
 {
     public class StringHelper
     {
+        static Random Rand = new Random();
+
         /// <summary>
         /// Split the first word, separated by whitespace, from the rest of the string and return it.
         /// </summary>
@@ -191,12 +193,9 @@ namespace XPloit.Helpers
         /// <param name="maxSize"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-
         public static string RandomUniqString(int maxSize, List<string> list)
         {
-
-            Random rnd = new Random(DateTime.Now.Millisecond - DateTime.Now.Second - DateTime.Now.Minute);
-            list = list.OrderBy(x => rnd.Next()).ToList();
+            list = list.OrderBy(x => Rand.Next()).ToList();
 
             byte[] data = new byte[1];
 
@@ -213,6 +212,5 @@ namespace XPloit.Helpers
 
             return stringBuilder.ToString();
         }
-
     }
 }

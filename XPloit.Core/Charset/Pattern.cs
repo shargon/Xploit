@@ -32,18 +32,15 @@ namespace XPloit.Core.Charset
             {
                 return CharsetSelecting;
             }
-
             set
             {
                 CharsetSelecting = value;
             }
         }
 
-
         /// <summary>
         /// Checks and validates the selection of the model in a method
         /// </summary>
-
         private static bool validated = true;
         public static bool Validated
         {
@@ -60,7 +57,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         /// Variable pattern
         /// </summary>
-
         private static string charsetName;
         public static string CharsetName
         {
@@ -74,7 +70,6 @@ namespace XPloit.Core.Charset
             }
         }
 
-
         private static List<string> space = new List<string>() { " " };
         protected static List<string> Space
         {
@@ -82,7 +77,6 @@ namespace XPloit.Core.Charset
             {
                 return space;
             }
-
             set
             {
                 space = value;
@@ -92,7 +86,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         /// ASCII Digits
         /// </summary>
-
         private static List<string> digits = new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
         protected static List<string> Digits
         {
@@ -100,7 +93,6 @@ namespace XPloit.Core.Charset
             {
                 return digits;
             }
-
             set
             {
                 digits = value;
@@ -117,7 +109,6 @@ namespace XPloit.Core.Charset
             {
                 return hexa;
             }
-
             set
             {
                 hexa = value;
@@ -127,7 +118,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         /// ASCII Punctuation & Symbols
         /// </summary>
-
         private static List<string> symbols14 = new List<string>() { "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=" };
         protected static List<string> Symbols14
         {
@@ -135,7 +125,6 @@ namespace XPloit.Core.Charset
             {
                 return symbols14;
             }
-
             set
             {
                 symbols14 = value;
@@ -145,7 +134,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         /// ASCII Punctuation & Symbols
         /// </summary>
-
         private static List<string> symbolsAll = new List<string>() { "~", "`", "[", "]", "{", "}", "|", "\\", ":", ";", "\"", "<", ">", ",", ".", "?", "/" };
         protected static List<string> SymbolsAll
         {
@@ -153,19 +141,16 @@ namespace XPloit.Core.Charset
             {
                 return symbolsAll;
             }
-
             set
             {
                 symbolsAll = value;
             }
         }
 
-
         /// <summary>
         /// The Basic Latin or C0 Controls and Basic Latin Unicode block is the first block of the Unicode standard, and the only block which is encoded in one byte in UTF-8. The block contains all the letters and control codes of the ASCII encoding.
         /// The Basic Latin block was included in its present form from version 1.0.0 of the Unicode Standard, without addition or alteration of the character repertoire.
         /// </summary>
-
         private static List<string> alphaBasicLatin = new List<string>() { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
         protected static List<string> AlphaBasicLatin
         {
@@ -173,7 +158,6 @@ namespace XPloit.Core.Charset
             {
                 return alphaBasicLatin;
             }
-
             set
             {
                 alphaBasicLatin = value;
@@ -191,7 +175,6 @@ namespace XPloit.Core.Charset
             {
                 return latin1;
             }
-
             set
             {
                 latin1 = value;
@@ -208,7 +191,6 @@ namespace XPloit.Core.Charset
             {
                 return latin1Symbols;
             }
-
             set
             {
                 latin1Symbols = value;
@@ -218,7 +200,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         ///  Latin Extended-B Croatian
         /// </summary>
-
         private static List<string> LatinExtendedCroatian = new List<string>() { "ǆ", "ǉ", "ǌ" };
         protected static    List<string> LatinExtendedBCroatian1
         {
@@ -226,7 +207,6 @@ namespace XPloit.Core.Charset
             {
                 return LatinExtendedCroatian;
             }
-
             set
             {
                 LatinExtendedCroatian = value;
@@ -236,7 +216,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         ///  Latin Extended-B Pinyin
         /// </summary>
-
         private static List<string> latinExtendedPinyin = new List<string>() { "ǎ", "ǐ", "ǒ", "ǔ", "ǖ", "ǘ", "ǚ", "ǜ" };
         protected static List<string> LatinExtendedPinyin
         {
@@ -244,7 +223,6 @@ namespace XPloit.Core.Charset
             {
                 return latinExtendedPinyin;
             }
-
             set
             {
                 latinExtendedPinyin = value;
@@ -254,7 +232,6 @@ namespace XPloit.Core.Charset
         /// <summary>
         /// Latin Extended-B Romanian 
         /// </summary>
-
         private  static List<string> latinExtendedRomanian = new List<string>() { "ș", "ț" };
         protected static List<string> LatinExtendedRomanian
         {
@@ -262,13 +239,11 @@ namespace XPloit.Core.Charset
             {
                 return latinExtendedRomanian;
             }
-
             set
             {
                 latinExtendedRomanian = value;
             }
         }
-
 
         /// <summary>
         /// Latin Extended-B Livonian 
@@ -280,13 +255,11 @@ namespace XPloit.Core.Charset
             {
                 return latinExtendedLivonian;
             }
-
             set
             {
                 latinExtendedLivonian = value;
             }
         }
-
 
         private static List<string> alphaSv = new List<string>() { "å", "ä", "ö" };
         protected static List<string> AlphaSv
@@ -295,7 +268,6 @@ namespace XPloit.Core.Charset
             {
                 return alphaSv;
             }
-
             set
             {
                 alphaSv = value;
@@ -312,7 +284,6 @@ namespace XPloit.Core.Charset
             {
                 return syllableFr;
             }
-
             set
             {
                 syllableFr = value;
@@ -334,6 +305,5 @@ namespace XPloit.Core.Charset
                 cyrillic = value;
             }
         }
-
     }
 }
