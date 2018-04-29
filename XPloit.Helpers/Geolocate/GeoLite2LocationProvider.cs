@@ -77,6 +77,7 @@ namespace XPloit.Helpers.Geolocate
                         {
                             switch (sp.Length)
                             {
+                                case 7:
                                 case 6:
                                     {
                                         // Archivo de paises

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 #endif
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using XPloit.Core.Collections;
@@ -47,8 +49,8 @@ namespace XPloit
                 {
                     // TODO: Config the default GeoIp
 
-                    string file1 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-Blocks-IP.csv.gz");
-                    string file2 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-City-Locations-es.csv.gz");
+                    string file1 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-Blocks-IPv4.csv.gz");
+                    string file2 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"GeoLite2", "GeoLite2-City-Locations-en.csv.gz");
 
                     if (File.Exists(file1) && File.Exists(file2))
                     {
