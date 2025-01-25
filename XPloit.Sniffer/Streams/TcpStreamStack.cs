@@ -56,11 +56,10 @@ namespace XPloit.Sniffer.Streams
         }
         public bool GetStream(ResumePacket packet, EStartTcpStreamMethod startTcpStreamMethod, out TcpStream stream)
         {
-            ETcpEmisor em;
-            if (!TryGetValue(packet.IpSource, packet.IpDest, out stream, out em))
+            if (!TryGetValue(packet.IpSource, packet.IpDest, out stream, out var em))
             {
-                bool syn = packet.Tcp.Syn;
-                bool ack = packet.Tcp.Ack;
+                var syn = packet.Tcp.Synchronize;
+                var ack = packet.Tcp.Acknowledgment;
 
                 // No data or no Sync
                 switch (startTcpStreamMethod)

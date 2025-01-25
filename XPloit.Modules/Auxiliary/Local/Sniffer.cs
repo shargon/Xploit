@@ -33,7 +33,7 @@ namespace Auxiliary.Local
 
             void Dequeue(object sender, object[] obj);
             void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue);
-            void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet);
+            void OnPacket(object sender, ProtocolType protocolType, EthernetPacket packet);
         }
 
         string _Interface;
@@ -55,7 +55,7 @@ namespace Auxiliary.Local
         [ConfigurableProperty(Description = "Filter", Optional = true)]
         public string Filter { get; set; }
         [ConfigurableProperty(Description = "Filter protocols", Optional = true)]
-        public IPProtocolType[] FilterProtocols { get; set; }
+        public ProtocolType[] FilterProtocols { get; set; }
         [ConfigurableProperty(Description = "Filter only the Tor Request")]
         public bool FilterOnlyTorRequest { get; set; }
         [AutoFill("GetAllDevices")]
@@ -97,7 +97,7 @@ namespace Auxiliary.Local
             pay.Start(this);
             if (FilterOnlyTorRequest) TorHelper.UpdateTorExitNodeList(true);
 
-            NetworkSniffer s = new NetworkSniffer(Interface)
+            var s = new NetworkSniffer(Interface)
             {
                 Timeout = TcpTimeout,
                 TimeoutSync = TcpTimeoutSync

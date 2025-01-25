@@ -14,7 +14,7 @@ namespace XPloit.Sniffer.Filters
         /// </summary>
         public List<ushort> AvailablePorts { get { return _AvailablePorts; } }
 
-        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, ProtocolType protocol)
         {
             return AvailablePorts.Contains((ushort)source.Port) || AvailablePorts.Contains((ushort)dest.Port);
         }

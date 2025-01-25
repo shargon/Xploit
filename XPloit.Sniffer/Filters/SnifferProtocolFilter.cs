@@ -7,14 +7,14 @@ namespace XPloit.Sniffer.Filters
 {
     public class SnifferProtocolFilter : IIpPacketFilter
     {
-        List<IPProtocolType> _AvailableProtocols;
+        private readonly List<ProtocolType> _AvailableProtocols;
 
         /// <summary>
         /// Port
         /// </summary>
-        public List<IPProtocolType> AvailableProtocols { get { return _AvailableProtocols; } }
+        public List<ProtocolType> AvailableProtocols { get { return _AvailableProtocols; } }
 
-        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, ProtocolType protocol)
         {
             return AvailableProtocols.Contains(protocol);
         }
@@ -23,9 +23,9 @@ namespace XPloit.Sniffer.Filters
         /// Constructor
         /// </summary>
         /// <param name="protocols">Protocols</param>
-        public SnifferProtocolFilter(params IPProtocolType[] protocols)
+        public SnifferProtocolFilter(params ProtocolType[] protocols)
         {
-            _AvailableProtocols = new List<IPProtocolType>(protocols);
+            _AvailableProtocols = new List<ProtocolType>(protocols);
         }
 
         public override string ToString() { return string.Join(",", _AvailableProtocols); }

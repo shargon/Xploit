@@ -33,7 +33,7 @@ namespace Payloads.Local.BruteForce
         {
             try
             {
-                return _Check.GetSecret(password).PubKey.ToString(Network.Main) == Address;
+                return _Check.GetSecret(password).PubKey.ToString() == Address;
             }
             catch
             {

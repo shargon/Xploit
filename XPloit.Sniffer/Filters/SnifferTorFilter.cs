@@ -7,7 +7,7 @@ namespace XPloit.Sniffer.Filters
 {
     public class SnifferTorFilter : IIpPacketFilter
     {
-        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, ProtocolType protocol)
         {
             TorHelper.UpdateTorExitNodeList(true);
 
