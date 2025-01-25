@@ -7,7 +7,7 @@ namespace XPloit.Sniffer.Filters
 {
     public class SnifferIPFilter : IPFilter, IIpPacketFilter
     {
-        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, IPProtocolType protocol)
+        public bool IsAllowed(IPEndPoint source, IPEndPoint dest, ProtocolType protocol)
         {
             if (IsAllowed(source.Address)) return true;
             if (IsAllowed(dest.Address)) return true;

@@ -16,7 +16,7 @@ namespace Payloads.Local.Sniffer
     public class TcpPacketInjection : Payload, Auxiliary.Local.Sniffer.IPayloadSniffer
     {
         EthernetPacket[] packets = null;
-    
+
         #region Properties
         [RequireExists]
         [ConfigurableProperty(Description = "File for replication (Ip & Ethernet layer overrided)", Optional = false)]
@@ -32,7 +32,7 @@ namespace Payloads.Local.Sniffer
 
         public void Start(object sender) { }
         public void Stop(object sender) { }
-        public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
+        public void OnPacket(object sender, ProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null ||
@@ -49,16 +49,16 @@ namespace Payloads.Local.Sniffer
             foreach (EthernetPacket p in packets)
             {
                 // Override ethernet
-                p.DestinationHwAddress = stream.DestinationHwAddress;
-                p.SourceHwAddress = stream.SourceHwAddress;
+                p.DestinationHardwareAddress = stream.DestinationHwAddress;
+                p.SourceHardwareAddress = stream.SourceHwAddress;
                 p.UpdateCalculatedValues();
 
-                IpPacket ip = (IpPacket)p.PayloadPacket;
+                var ip = (IPPacket)p.PayloadPacket;
                 ip.SourceAddress = stream.Source.Address;
                 ip.DestinationAddress = stream.Destination.Address;
                 ip.UpdateCalculatedValues();
 
-                if (ip.Protocol != IPProtocolType.TCP) continue;
+                if (ip.Protocol != ProtocolType.Tcp) continue;
 
                 TcpPacket tcp = (TcpPacket)ip.PayloadPacket;
                 tcp.SourcePort = (ushort)stream.Source.Port;

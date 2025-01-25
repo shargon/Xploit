@@ -28,7 +28,7 @@ namespace Payloads.Local.Sniffer
 
             return true;
         }
-        public void OnPacket(object sender, IPProtocolType protocolType, EthernetPacket packet) { }
+        public void OnPacket(object sender, ProtocolType protocolType, EthernetPacket packet) { }
         public void OnTcpStream(object sender, TcpStream stream, bool isNew, ConcurrentQueue<object> queue)
         {
             if (stream == null) return;

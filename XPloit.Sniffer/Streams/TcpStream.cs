@@ -72,7 +72,7 @@ namespace XPloit.Sniffer.Streams
                     {
                         if (_ClientStack == null)
                         {
-                            _ClientStack = new TcpPacketStack((uint)(sequenceNumber + tcp.PayloadData.Length + (tcp.Syn ? 1 : 0)));
+                            _ClientStack = new TcpPacketStack((uint)(sequenceNumber + tcp.PayloadData.Length + (tcp.Synchronize ? 1 : 0)));
                             AppendPacket(date, _ClientStack, emisor, tcp);
                             return;
                         }
@@ -83,7 +83,7 @@ namespace XPloit.Sniffer.Streams
                     {
                         if (_ServerStack == null)
                         {
-                            _ServerStack = new TcpPacketStack((uint)(sequenceNumber + tcp.PayloadData.Length + (tcp.Syn && tcp.Ack ? 1 : 0)));
+                            _ServerStack = new TcpPacketStack((uint)(sequenceNumber + tcp.PayloadData.Length + (tcp.Synchronize && tcp.Acknowledgment ? 1 : 0)));
                             AppendPacket(date, _ServerStack, emisor, tcp);
                             return;
                         }
@@ -102,7 +102,7 @@ namespace XPloit.Sniffer.Streams
         }
         void AppendPacket(DateTime date, TcpPacketStack stack, ETcpEmisor emisor, TcpPacket tcp)
         {
-            if (tcp.Fin || tcp.Rst)
+            if (tcp.Finished || tcp.Reset)
                 Close();
 
             _LastPacket = tcp;
